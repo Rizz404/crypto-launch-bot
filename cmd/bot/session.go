@@ -230,6 +230,17 @@ func (s *session) resume(ctx context.Context, prev *storage.SessionState) error 
 		if !ok {
 			continue
 		}
+		// Entry plans (ATR stop/target/trailing settings) are not persisted.
+		// Replaying the remaining entry would open inventory without its
+		// intended protection. Keep existing positions and native brackets,
+		// but require a fresh strategy signal for any unfinished entry.
+		if o.Tag == domain.TagEntry {
+			o.Status, o.UpdatedAt = domain.OrderCanceled, time.Now()
+			o.Reason = "paper restart: entry plan unavailable"
+			s.rec.Order(o)
+			s.onNotice(slog.LevelWarn, "pending paper entry canceled on restart", "client_id", o.ClientID, "symbol", o.Symbol)
+			continue
+		}
 		accepted, err := sim.PlaceOrder(ctx, o)
 		if err != nil {
 			s.log.Warn("could not restore order", "client_id", o.ClientID, "err", err)
