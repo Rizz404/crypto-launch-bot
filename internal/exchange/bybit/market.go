@@ -274,3 +274,23 @@ func send(ctx context.Context, ch chan<- exchange.StreamEvent, ev exchange.Strea
 	case <-ctx.Done():
 	}
 }
+
+// FundingRates implements exchange.FundingSource for linear perpetuals.
+func (c *Client) FundingRates(ctx context.Context) ([]exchange.FundingRate, error) {
+	var r struct {
+		List []struct {
+			Symbol          string          `json:"symbol"`
+			FundingRate     decimal.Decimal `json:"fundingRate"`
+			NextFundingTime string          `json:"nextFundingTime"`
+		} `json:"list"`
+	}
+	if err := c.get(ctx, "/v5/market/tickers", url.Values{"category": {"linear"}}, &r); err != nil {
+		return nil, err
+	}
+	out := make([]exchange.FundingRate, 0, len(r.List))
+	for _, f := range r.List {
+		next, _ := strconv.ParseInt(f.NextFundingTime, 10, 64)
+		out = append(out, exchange.FundingRate{Symbol: f.Symbol, Rate: f.FundingRate, Next: time.UnixMilli(next).UTC()})
+	}
+	return out, nil
+}

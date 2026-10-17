@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/rizz404/trading-bot/internal/domain"
 )
 
@@ -70,3 +72,16 @@ func (e *APIError) Error() string {
 
 // RateLimited reports whether the error is a rate-limit or IP-ban response.
 func (e *APIError) RateLimited() bool { return e.HTTPStatus == 429 || e.HTTPStatus == 418 }
+
+// FundingRate is the current funding of a perpetual contract.
+type FundingRate struct {
+	Symbol string
+	Rate   decimal.Decimal // per funding interval; positive: longs pay
+	Next   time.Time
+}
+
+// FundingSource is implemented by market data clients that report funding
+// rates of their perpetual contracts.
+type FundingSource interface {
+	FundingRates(ctx context.Context) ([]FundingRate, error)
+}

@@ -208,3 +208,20 @@ func parseKlineRow(r []json.RawMessage) (domain.Candle, error) {
 	k.OpenTime = time.UnixMilli(openMs).UTC()
 	return k, nil
 }
+
+// FundingRates implements exchange.FundingSource for USDⓈ-M perpetuals.
+func (c *Client) FundingRates(ctx context.Context) ([]exchange.FundingRate, error) {
+	var r []struct {
+		Symbol          string          `json:"symbol"`
+		LastFundingRate decimal.Decimal `json:"lastFundingRate"`
+		NextFundingTime int64           `json:"nextFundingTime"`
+	}
+	if err := c.get(ctx, domain.Futures, "/fapi/v1/premiumIndex", nil, 10, &r); err != nil {
+		return nil, err
+	}
+	out := make([]exchange.FundingRate, len(r))
+	for i, f := range r {
+		out[i] = exchange.FundingRate{Symbol: f.Symbol, Rate: f.LastFundingRate, Next: time.UnixMilli(f.NextFundingTime).UTC()}
+	}
+	return out, nil
+}
