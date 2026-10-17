@@ -73,6 +73,18 @@ type Config struct {
 	Risk       risk.Config               `koanf:"risk"`
 	Backtest   BacktestConfig            `koanf:"backtest"`
 	Paper      PaperConfig               `koanf:"paper"`
+	Telegram   TelegramConfig            `koanf:"telegram"`
+}
+
+// TelegramConfig configures notifications and remote commands.
+type TelegramConfig struct {
+	Enabled bool   `koanf:"enabled"`
+	Token   Secret `koanf:"token"` // only via TB_TELEGRAM__TOKEN
+	// ChatIDs may receive notifications and run commands.
+	ChatIDs []int64 `koanf:"chat_ids"`
+	// NotifyLevel is the minimum engine notice level forwarded (info, warn, error).
+	NotifyLevel  string `koanf:"notify_level"`
+	DailySummary bool   `koanf:"daily_summary"`
 }
 
 // PaperConfig configures simulated trading on live data. Fees and slippage
@@ -178,8 +190,9 @@ func defaults() Config {
 			Timeframes:      []string{"1m", "1h"},
 			InitialBackfill: 1000,
 		},
-		Risk:  risk.DefaultConfig(),
-		Paper: PaperConfig{InitialBalance: 1000, Resume: true},
+		Risk:     risk.DefaultConfig(),
+		Paper:    PaperConfig{InitialBalance: 1000, Resume: true},
+		Telegram: TelegramConfig{NotifyLevel: "warn", DailySummary: true},
 		Backtest: BacktestConfig{
 			InitialBalance: 1000,
 			SlippageBps:    2,
@@ -256,6 +269,9 @@ func checkNoSecretsInFile(k *koanf.Koanf) error {
 			}
 		}
 	}
+	if k.String("telegram.token") != "" {
+		errs = append(errs, errors.New("telegram.token must not be set in the config file, use TB_TELEGRAM__TOKEN"))
+	}
 	return errors.Join(errs...)
 }
 
@@ -285,6 +301,18 @@ func (c *Config) Validate() error {
 		errs = append(errs, errors.New("metrics.listen is required when metrics are enabled"))
 	}
 
+	if c.Telegram.Enabled {
+		if c.Telegram.Token == "" {
+			errs = append(errs, errors.New("telegram.enabled needs a token (set TB_TELEGRAM__TOKEN)"))
+		}
+		if len(c.Telegram.ChatIDs) == 0 {
+			errs = append(errs, errors.New("telegram.chat_ids must list at least one chat"))
+		}
+		var lvl slog.Level
+		if err := lvl.UnmarshalText([]byte(c.Telegram.NotifyLevel)); err != nil {
+			errs = append(errs, fmt.Errorf("telegram.notify_level %q is invalid", c.Telegram.NotifyLevel))
+		}
+	}
 	if c.MarketData.Exchange != "binance" {
 		errs = append(errs, fmt.Errorf("marketdata.exchange %q is not supported yet (only binance)", c.MarketData.Exchange))
 	}

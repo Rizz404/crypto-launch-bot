@@ -94,3 +94,12 @@ backtest:
 paper:
   initial_balance: 1000   # per account (exchange + market)
   resume: true            # continue the previous paper session's balances and positions
+
+# Telegram notifications and commands (/help lists them).
+# Create a bot with @BotFather; the token goes in TB_TELEGRAM__TOKEN.
+# Get your chat id by messaging @userinfobot.
+telegram:
+  enabled: false
+  chat_ids: []             # e.g. [123456789]
+  notify_level: warn       # engine notices forwarded: info | warn | error
+  daily_summary: true      # message at 00:00 UTC
