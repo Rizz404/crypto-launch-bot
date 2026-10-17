@@ -14,6 +14,8 @@ import (
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/exchange"
 	"github.com/rizz404/trading-bot/internal/exchange/binance"
+	"github.com/rizz404/trading-bot/internal/exchange/bybit"
+	"github.com/rizz404/trading-bot/internal/exchange/okx"
 	"github.com/rizz404/trading-bot/internal/marketdata"
 	"github.com/rizz404/trading-bot/internal/storage"
 	"github.com/rizz404/trading-bot/internal/strategy"
@@ -24,6 +26,10 @@ func MarketSource(name string, testnet bool, log *slog.Logger) (exchange.MarketD
 	switch name {
 	case "binance":
 		return binance.New(binance.Options{Testnet: testnet, Log: log}), nil
+	case "bybit":
+		return bybit.New(bybit.Options{Testnet: testnet, Log: log}), nil
+	case "okx":
+		return okx.New(okx.Options{Testnet: testnet, Log: log}), nil
 	default:
 		return nil, fmt.Errorf("unsupported exchange %q", name)
 	}
@@ -158,6 +164,12 @@ func LiveBroker(cfg *config.Config, name string, markets []domain.Market, log *s
 	case "binance":
 		c := binance.New(binance.Options{Testnet: testnet, Log: log})
 		return binance.NewTrader(c, ex.APIKey.Reveal(), ex.APISecret.Reveal(), markets), nil
+	case "bybit":
+		c := bybit.New(bybit.Options{Testnet: testnet, Log: log})
+		return bybit.NewTrader(c, ex.APIKey.Reveal(), ex.APISecret.Reveal(), markets), nil
+	case "okx":
+		c := okx.New(okx.Options{Testnet: testnet, Log: log})
+		return okx.NewTrader(c, ex.APIKey.Reveal(), ex.APISecret.Reveal(), ex.Passphrase.Reveal(), markets), nil
 	default:
 		return nil, fmt.Errorf("live trading on %s is not supported", name)
 	}
