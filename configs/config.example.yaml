@@ -69,6 +69,57 @@ strategies:
       allow_short: true
       exit_on_cross: true
 
+  # Long grid between lower and upper (one symbol per instance).
+  - id: grid-eth
+    name: grid
+    enabled: false
+    exchange: binance
+    market: spot
+    symbols: [ETHUSDT]
+    params: {timeframe: 1m, lower: 2500, upper: 3500, levels: 20, quote_per_level: 20, stop_below: 2300}
+
+  # Scheduled buys, sell all at +3% from the average entry.
+  - id: dca-btc
+    name: dca
+    enabled: false
+    exchange: binance
+    market: spot
+    symbols: [BTCUSDT]
+    params: {interval: 24h, quote_amount: 20, max_buys: 10, dip_pct: 0.02, take_profit: 0.03, stop_loss: 0}
+
+  # Cash-and-carry: long spot + short perp while funding is high (Binance:
+  # separate spot and futures wallets; both need funds).
+  - id: funding-btc
+    name: funding
+    enabled: false
+    exchange: binance
+    market: futures
+    symbols: [BTCUSDT]
+    legs: [{market: spot, symbol: BTCUSDT}]
+    leverage: 1
+    params: {entry_rate: 0.0003, exit_rate: 0.00005, quote_amount: 100}
+
+  # Cross-exchange perp spread (needs margin on both exchanges).
+  - id: xspread-btc
+    name: xspread
+    enabled: false
+    exchange: binance
+    market: futures
+    symbols: [BTCUSDT]
+    legs: [{exchange: bybit, market: futures, symbol: BTCUSDT}]
+    leverage: 2
+    params: {entry_bps: 30, exit_bps: 5, quote_amount: 100}
+
+  # Basic market maker (post-only quotes around the last price).
+  - id: mm-btc
+    name: mm
+    enabled: false
+    exchange: binance
+    market: futures
+    symbols: [BTCUSDT]
+    leverage: 1
+    params: {spread_bps: 20, order_quote: 20, max_inventory_quote: 100, skew_bps: 10, requote_bps: 5, min_requote: 5s}
+
 risk:
   risk_per_trade: 0.01     # lose at most 1% of equity when a stop is hit
   position_pct: 0.10       # margin per position when a strategy gives no stop

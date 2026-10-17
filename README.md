@@ -41,6 +41,19 @@ Menjalankan bot di dalam container:
 podman compose -f deploy/compose.yml --profile bot up -d --build
 ```
 
+## Strategi bawaan
+
+| Nama | Ide |
+|---|---|
+| `emacross` | EMA cross + filter RSI, SL/TP berbasis ATR |
+| `grid` | order limit bertingkat (long grid) |
+| `dca` | beli berkala, jual saat untung dari harga rata-rata |
+| `funding` | long spot + short perp saat funding tinggi |
+| `xspread` | selisih harga perp antar-exchange |
+| `mm` | market making sederhana (quote post-only) |
+
+Contoh konfigurasi ada di [configs/config.example.yaml](configs/config.example.yaml). Semua masih belum dites (lihat [docs/plan.md](docs/plan.md)).
+
 ## Perintah
 
 ```
