@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"sync/atomic"
 	"time"
 
 	"github.com/rizz404/trading-bot/internal/domain"
@@ -74,6 +75,21 @@ type Client struct {
 	log        *slog.Logger
 	spotLim    *exchange.WeightLimiter
 	futuresLim *exchange.WeightLimiter
+	onWeight   atomic.Pointer[func(domain.Market, int)]
+}
+
+// SetWeightObserver installs a callback receiving the request weight used
+// in the current minute, as reported by every response.
+func (c *Client) SetWeightObserver(fn func(m domain.Market, used int)) { c.onWeight.Store(&fn) }
+
+func (c *Client) observeWeight(m domain.Market, h http.Header) {
+	fn := c.onWeight.Load()
+	if fn == nil {
+		return
+	}
+	if used, err := strconv.Atoi(h.Get("X-Mbx-Used-Weight-1m")); err == nil {
+		(*fn)(m, used)
+	}
 }
 
 var _ exchange.MarketData = (*Client)(nil)
@@ -132,6 +148,7 @@ func (c *Client) get(ctx context.Context, m domain.Market, path string, q url.Va
 		return fmt.Errorf("%s GET %s: %w", c.name, path, err)
 	}
 	defer func() { _ = resp.Body.Close() }()
+	c.observeWeight(m, resp.Header)
 
 	if resp.StatusCode != http.StatusOK {
 		apiErr := &exchange.APIError{Exchange: c.name, HTTPStatus: resp.StatusCode}

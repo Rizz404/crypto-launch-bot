@@ -168,6 +168,7 @@ func (t *Trader) do(ctx context.Context, m domain.Market, method, path, query st
 		return fmt.Errorf("%s %s %s: %w", t.c.name, method, path, err)
 	}
 	defer func() { _ = resp.Body.Close() }()
+	t.c.observeWeight(m, resp.Header)
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 4<<20))
 	if err != nil {
 		return err
@@ -210,3 +211,6 @@ func apiCode(err error) int {
 	}
 	return 0
 }
+
+// SetWeightObserver forwards to the underlying client.
+func (t *Trader) SetWeightObserver(fn func(m domain.Market, used int)) { t.c.SetWeightObserver(fn) }
