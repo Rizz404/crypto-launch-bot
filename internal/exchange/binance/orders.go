@@ -281,6 +281,10 @@ func (t *Trader) PlaceBracket(ctx context.Context, stop, target domain.Order) ([
 	return out, nil
 }
 
+// LinkedBracket implements broker.LinkedBrackets: two-legged spot brackets
+// are OCO lists; futures legs are independent conditional orders.
+func (t *Trader) LinkedBracket(m domain.Market) bool { return m == domain.Spot }
+
 // SetLeverage implements broker.LeverageSetter: isolated margin with the
 // given leverage.
 func (t *Trader) SetLeverage(ctx context.Context, m domain.Market, symbol string, leverage int) error {
