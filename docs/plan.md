@@ -4,9 +4,9 @@
 
 ## Status saat ini (2026-10-17)
 
-- **Fase 0–6 selesai** (2026-10-17; Fase 2–6 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
+- **Fase 0–7 selesai** (2026-10-17; Fase 2–7 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
 - Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
-- **Langkah berikutnya: Fase 7** (adapter Bybit + OKX: market data dan trading).
+- **Langkah berikutnya: Fase 8** (strategi lanjutan: grid/DCA, arbitrase funding/cross-exchange, market making).
 - **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
 - Cara menjalankan: lihat [README.md](../README.md).
 - Tandai fase yang selesai di bagian "Progres" di bawah setiap kali satu fase beres.
@@ -35,7 +35,7 @@
 - [x] Fase 4: Binance LiveBroker (testnet/mainnet) (2026-10-17, belum dites)
 - [x] Fase 5: Telegram + Prometheus/Grafana (2026-10-17, belum dites)
 - [x] Fase 6: Web dashboard (2026-10-17, belum dites)
-- [ ] Fase 7: Bybit + OKX
+- [x] Fase 7: Bybit + OKX (2026-10-17, belum dites)
 - [ ] Fase 8: Strategi lanjutan (grid/DCA, arbitrase, market making)
 - [ ] Fase 9: Testing (semua fitur)
 - [ ] Fase 10: Fixing (semua temuan Fase 9)
@@ -79,6 +79,12 @@
   - Dashboard di browser (desktop + HP, light/dark): overview, partial auto-refresh, tombol pause/resume/kill/reset (konfirmasi), chart candle dengan marker trade (posisi marker di bar yang benar), chart equity, daftar dan detail backtest.
   - Keamanan: basic auth saat `TB_WEB__PASSWORD` di-set; validasi menolak listen non-localhost tanpa password; aksi `POST` tanpa header `HX-Request` → 403; header CSP/X-Frame-Options; CSP tidak memblokir htmx/lightweight-charts.
   - Mode tanpa sesi (hanya market data): halaman tetap jalan, tanpa panel live.
+- **Fase 7** (format publik sudah dilihat 2026-10-17; semua jalur private belum pernah dijalankan)
+  - Contract test bersama untuk ketiga adapter (`exchange.MarketData` + `broker.Live`) dengan fixture terekam.
+  - Bybit: kline REST dibalik ke oldest-first, `confirm` di WS, subscribe maksimal 10 arg per request (spot), ping 20 detik; sign REST `ts+key+recvWindow+query|body`; auth WS `GET/realtime`; `triggerDirection` stop vs TP; spot `orderFilter=StopOrder` (cancel juga butuh `orderFilter`); `marketUnit=baseCoin`; fee spot buy dalam base; status `Deactivated`/`PartiallyFilledCanceled`; set margin mode isolated untuk UTA (account-wide!); kode error 110043/110025/110001/170213.
+  - OKX: **konversi kontrak swap** (qty, minSz, lotSz, posisi, fill, volume) di setiap jalur; paginasi `history-candles` dengan `before`/`after`; bar UTC (`6Hutc`, `1Dutc`, …); `volCcy24h` swap × harga; demo trading (`x-simulated-trading: 1`, `wspap.okx.com`); login WS menunggu event `login`; pemetaan `orders-algo.ordId` → `algoClOrdId`; fee negatif = biaya; `tgtCcy=base_ccy` untuk market spot; error per item (`sCode`); posisi net mode; akun harus mode "spot and futures".
+  - ID order engine sekarang alfanumerik (`tb` + hash 7 karakter + sequence) — pastikan diterima ketiga exchange dan tidak bentrok.
+  - Wallet unified (Bybit/OKX): sesi menolak dua market di exchange yang sama.
 
 ## Pertanyaan terbuka (belum diputuskan)
 
@@ -151,6 +157,15 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 - `internal/web`: server `net/http` + templ ([internal/web/views](../internal/web/views/), hasil generate `*_templ.go` ikut di-commit; regenerate dengan `make generate`, tool templ dipasang sebagai `go tool`). htmx 2.0.11 dan lightweight-charts 5.2.1 di-embed (`internal/web/static`), tanpa CDN saat runtime.
 - Dashboard jalan di dalam `bot run` (`web.listen`, default `127.0.0.1:8080`). Sesi diakses lewat antarmuka `web.Live` ([cmd/bot/web.go](../cmd/bot/web.go)).
 - Rute: `/` (overview), `/partials/*` (HTMX), `POST /actions/{pause,resume,kill,reset}`, `/chart?series=exchange:market:symbol:tf[&run=id]`, `/api/candles`, `/api/equity`, `/backtests`, `/backtests/{id}`.
+
+### Fase 7 (Bybit dan OKX)
+
+- `internal/exchange/bybit` dan `internal/exchange/okx` mengikuti pola Binance: `Client` (market data, `exchange.MarketData`) dan `Trader` (`broker.Live`). Sumber detail API: dokumentasi resmi Bybit (repo `bybit-exchange/docs`) dan OKX (`/docs-v5`), diambil 2026-10-17.
+- Simbol memakai format asli exchange (OKX: `BTC-USDT`, `BTC-USDT-SWAP`). Qty di seluruh bot selalu dalam satuan base; adapter OKX mengonversi kontrak ↔ base memakai `ctVal`.
+- SL/TP: Bybit memakai order kondisional (`triggerPrice`, `StopOrder` untuk spot); OKX memakai algo `conditional`. Keduanya tidak mengunci saldo sebelum trigger, jadi SL dan TP dipasang sebagai dua order terpisah (tanpa OCO bawaan; engine membatalkan leg lainnya).
+- `exchange.TriggerBook` memetakan order hasil trigger ke ID order kondisional (dipakai OKX; Binance punya versi sendiri di `binance.Trader`).
+- `broker.UnifiedWallet`: Bybit (UTA) dan OKX memakai satu wallet untuk spot dan futures; bot hanya memperdagangkan satu market per exchange tersebut.
+- ID order engine diubah jadi alfanumerik (OKX menolak `-`).
 
 ---
 
