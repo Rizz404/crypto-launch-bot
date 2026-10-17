@@ -4,9 +4,9 @@
 
 ## Status saat ini (2026-10-17)
 
-- **Fase 0 dan Fase 1 selesai** (2026-10-17). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
+- **Fase 0–2 selesai** (2026-10-17; Fase 2 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
 - Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
-- **Langkah berikutnya: Fase 2** (indikator streaming, interface Strategy + `emacross`, SimBroker, `cmd/backtest`). Data historis dibaca lewat `storage.Store.Candles`.
+- **Langkah berikutnya: Fase 3** (risk limits + kill switch, persistensi order/fill/posisi, PaperBroker, `bot run` mode paper).
 - **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
 - Cara menjalankan: lihat [README.md](../README.md).
 - Tandai fase yang selesai di bagian "Progres" di bawah setiap kali satu fase beres.
@@ -30,7 +30,7 @@
 
 - [x] Fase 0: Fondasi (2026-10-17)
 - [x] Fase 1: Domain + Binance market data (2026-10-17)
-- [ ] Fase 2: Indikator + Strategy + Backtester
+- [x] Fase 2: Indikator + Strategy + Backtester (2026-10-17, belum dites)
 - [ ] Fase 3: Risk + OMS + Paper trading
 - [ ] Fase 4: Binance LiveBroker (testnet/mainnet)
 - [ ] Fase 5: Telegram + Prometheus/Grafana
@@ -45,6 +45,15 @@
 
 - Uji adapter Binance terhadap mainnet setelah DNS lokal diperbaiki (lihat catatan jaringan di bawah).
 - Universe spot: putuskan dan uji pengecualian saham ter-tokenisasi (lihat pertanyaan terbuka).
+- **Fase 2**
+  - `indicator`: nilai EMA/SMA/RSI/ATR/MACD/Bollinger dibandingkan referensi (TA-Lib/TradingView); seed EMA dari SMA; RSI saat loss = 0.
+  - `portfolio.Account`: average entry, partial close, flip posisi, fee pro-rata ke trade, funding (long bayar saat rate positif), `Snapshot` (equity, used margin).
+  - `broker.Sim`: aturan fill (market di open bar berikutnya, gap di stop/TP, limit sebagai maker, urutan stop sebelum TP), order hanya cocok dengan candle yang open ≥ waktu order, slippage, fee.
+  - `engine`: entry → SL/TP terpasang setelah fill; satu leg kena → leg lain dibatalkan; reversal (exit lalu entry); trailing stop bergeser hanya ke arah untung; stop yang sudah terlewati → exit market; stop ditolak → posisi ditutup; antrean event broker (tanpa deadlock saat broker memanggil handler secara sinkron); `CloseAll`; `SetPaused`.
+  - `risk.Size`: sizing berbasis jarak stop, fallback `position_pct`, cap `max_position_pct` dan free margin, pembulatan lot, tolak di bawah minimum.
+  - `backtest`: urutan event (TF eksekusi sebelum TF strategi pada close time yang sama), funding tiap 8 jam, metrik (CAGR, MDD, Sharpe/Sortino, profit factor ∞ → `null` di JSON), split in-sample/out-of-sample, CSV, `-save` ke DB.
+  - Migrasi `00002` up/down; `config` men-decode `strategies[].params`, map `backtest.fees` di-merge dengan default.
+  - Golden test `emacross` dan eksperimen parameter default.
 
 ## Pertanyaan terbuka (belum diputuskan)
 
@@ -80,6 +89,16 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 - sqlc tidak dipakai. Query cukup sedikit, jadi ditulis dengan pgx langsung di [internal/storage/marketdata.go](../internal/storage/marketdata.go), dengan decimal ↔ numeric lewat `pgx-shopspring-decimal`.
 - Integration test DB: `make test-integration` (butuh `make up`), file `*_integration_test.go` dengan build tag `integration`.
 - Batasan yang diketahui: kalau backfill satu seri gagal lalu candle live seri itu masuk, gap sebelumnya tidak diisi ulang otomatis. Isi lewat `datafetch` (aman diulang).
+
+### Fase 2 (strategi dan backtest)
+
+- **OMS ada di package `engine`**, bukan package `oms` terpisah ([internal/engine/orders.go](../internal/engine/orders.go)). Engine meneruskan candle ke strategi, men-sizing intent lewat `risk`, memasang SL/TP setelah entry fill, membatalkan leg lain saat satu leg kena, menggeser trailing stop saat candle close, dan menangani reversal.
+- Event broker diantrekan, lalu diproses oleh pemegang lock engine (`unlockAndDrain`). Ini perlu karena broker (misalnya `Sim.CancelOrder`) boleh memanggil handler secara sinkron saat engine memegang lock.
+- Strategi mengembalikan `strategy.Intent`: `Enter`/`Exit` untuk strategi arah, dan `Place`/`Cancel`/`CancelAll` untuk order mentah (grid, market making). Hook opsional: `FillHandler`, `PriceHandler` (candle yang belum close), `TimerHandler`. Strategi didaftarkan lewat `strategy.Register` dan diimpor oleh `internal/strategy/all`.
+- `portfolio.Account` = satu wallet (exchange + market), karena wallet spot dan futures Binance terpisah. `portfolio.Book` menggabungkan semua akun.
+- `broker.Broker` adalah antarmuka order. `BracketPlacer` dipakai untuk broker yang butuh SL+TP terhubung (OCO di Binance spot), dan `LeverageSetter` untuk futures. `broker.Sim` dipakai backtest dan nanti paper trading.
+- Backtest tidak punya periode warmup terpisah: indikator mulai siap di dalam rentang `-from`. Funding memakai rate konstan (`backtest.funding_rate`), karena histori funding belum disimpan.
+- Hasil `backtest -save` masuk ke `strategy_runs` (mode `backtest`, `summary` = metrik JSON), `trades`, dan `equity_snapshots` (sampel per jam).
 
 ---
 
