@@ -1,0 +1,34 @@
+{
+  "promtool_unit_cases": 15,
+  "promtool_config_valid": true,
+  "datasources": {
+    "prometheus": "OK",
+    "timescaledb": "OK"
+  },
+  "rules": [
+    {
+      "name": "TradingBotDown",
+      "health": "ok"
+    },
+    {
+      "name": "KillSwitchActive",
+      "health": "ok"
+    },
+    {
+      "name": "StaleMarketData",
+      "health": "ok"
+    },
+    {
+      "name": "EngineErrors",
+      "health": "ok"
+    },
+    {
+      "name": "SlowOrderPlacement",
+      "health": "ok"
+    },
+    {
+      "name": "ExchangeWeightHigh",
+      "health": "ok"
+    }
+  ]
+}

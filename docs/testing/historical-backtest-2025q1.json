@@ -1,0 +1,252 @@
+{
+  "dataset": {
+    "exchange": "binance",
+    "market": "USDT-M perpetual",
+    "symbol": "BTCUSDT",
+    "timeframe": "1h",
+    "from_inclusive": "2025-01-01T00:00:00Z",
+    "to_exclusive": "2025-04-01T00:00:00Z",
+    "candles": 2160,
+    "sources": [
+      {
+        "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-01.zip",
+        "sha256": "9ebc05c9b3d5ab3591edf65bc5c7e5dbc2f96c1efc4adc4ea198c651a99a41b1"
+      },
+      {
+        "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-02.zip",
+        "sha256": "077d761098eb5f2dbde65457833b9edab41ea6475284a77fcce0d4bec1bfb5cf"
+      },
+      {
+        "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-03.zip",
+        "sha256": "08043384c3336b0fa3eeee06e113a6f1eceb6d3fbe7b2971e9b9fa83625fdfb9"
+      }
+    ],
+    "official_checksums_verified": true
+  },
+  "assumptions": {
+    "initial_balance_per_segment": 1000,
+    "leverage": 2,
+    "maker_fee": 0.0002,
+    "taker_fee": 0.0005,
+    "slippage_bps": 2,
+    "constant_funding_rate_per_8h": 0.0001,
+    "tick_size": "0.1",
+    "quantity_step": "0.001",
+    "min_notional": "50",
+    "risk": "risk.DefaultConfig",
+    "split": "2025-03-05T00:00:00Z; segments start independently; no separate warmup",
+    "note": "Hourly OHLC fills and constant funding; current-style instrument rules are assumptions, not historical rule snapshots. No live orders. This small parameter comparison is not evidence of future returns."
+  },
+  "results": [
+    {
+      "params": {
+        "to": "2025-03-05T00:00:00Z",
+        "from": "2025-01-01T00:00:00Z",
+        "params": {
+          "fast": 12,
+          "slow": 26,
+          "timeframe": "1h"
+        },
+        "segment": "in-sample",
+        "slippage_bps": 2,
+        "initial_balance": "1000"
+      },
+      "metrics": {
+        "End": "2025-03-05T00:00:00Z",
+        "CAGR": -0.2891524380519195,
+        "Start": "2025-01-01T01:00:00Z",
+        "AvgWin": 7.687242386139287,
+        "Sharpe": -2.676887917852507,
+        "Trades": 44,
+        "AvgLoss": -5.465139947526666,
+        "Sortino": -3.155176671723171,
+        "WinRate": 0.3181818181818182,
+        "AvgTrade": -1.2802910231784081,
+        "TotalFees": 16.91997270985,
+        "FinalEquity": 942.82943905359,
+        "MaxDrawdown": 0.10648137707827221,
+        "TotalReturn": -0.05717056094640993,
+        "ProfitFactor": 0.65641132974497,
+        "TotalFunding": 0.04634453000000009,
+        "InitialEquity": 1000,
+        "AvgHoldingTime": 50645000000000
+      },
+      "strategy": "research-default"
+    },
+    {
+      "params": {
+        "to": "2025-04-01T00:00:00Z",
+        "from": "2025-03-05T00:00:00Z",
+        "params": {
+          "fast": 12,
+          "slow": 26,
+          "timeframe": "1h"
+        },
+        "segment": "out-of-sample",
+        "slippage_bps": 2,
+        "initial_balance": "1000"
+      },
+      "metrics": {
+        "End": "2025-04-01T00:00:00Z",
+        "CAGR": -0.37560991073783334,
+        "Start": "2025-03-05T01:00:00Z",
+        "AvgWin": 5.64890057265375,
+        "Sharpe": -5.209390900280704,
+        "Trades": 23,
+        "AvgLoss": -4.9844582460060005,
+        "Sortino": -5.848164305645005,
+        "WinRate": 0.34782608695652173,
+        "AvgTrade": -1.285898656906957,
+        "TotalFees": 8.98967862886,
+        "FinalEquity": 965.81222390449,
+        "MaxDrawdown": 0.03487251734551001,
+        "TotalReturn": -0.03418777609551005,
+        "ProfitFactor": 0.6044281691989466,
+        "TotalFunding": -0.29848028000000004,
+        "InitialEquity": 1000,
+        "AvgHoldingTime": 42573000000000
+      },
+      "strategy": "research-default"
+    },
+    {
+      "params": {
+        "to": "2025-03-05T00:00:00Z",
+        "from": "2025-01-01T00:00:00Z",
+        "params": {
+          "fast": 6,
+          "slow": 18,
+          "timeframe": "1h"
+        },
+        "segment": "in-sample",
+        "slippage_bps": 2,
+        "initial_balance": "1000"
+      },
+      "metrics": {
+        "End": "2025-03-05T00:00:00Z",
+        "CAGR": -0.18895050824425574,
+        "Start": "2025-01-01T01:00:00Z",
+        "AvgWin": 6.399496178835556,
+        "Sharpe": -1.5403195743451399,
+        "Trades": 82,
+        "AvgLoss": -3.812146636408364,
+        "Sortino": -1.9106708906142136,
+        "WinRate": 0.32926829268292684,
+        "AvgTrade": -0.44977644114512205,
+        "TotalFees": 33.02512499389999,
+        "FinalEquity": 964.52104335343,
+        "MaxDrawdown": 0.07311924675826609,
+        "TotalReturn": -0.03547895664657008,
+        "ProfitFactor": 0.8240949656617126,
+        "TotalFunding": 0.7074927800000003,
+        "InitialEquity": 1000,
+        "AvgHoldingTime": 32575000000000
+      },
+      "strategy": "research-fast"
+    },
+    {
+      "params": {
+        "to": "2025-04-01T00:00:00Z",
+        "from": "2025-03-05T00:00:00Z",
+        "params": {
+          "fast": 6,
+          "slow": 18,
+          "timeframe": "1h"
+        },
+        "segment": "out-of-sample",
+        "slippage_bps": 2,
+        "initial_balance": "1000"
+      },
+      "metrics": {
+        "End": "2025-04-01T00:00:00Z",
+        "CAGR": 0.2510593577713993,
+        "Start": "2025-03-05T01:00:00Z",
+        "AvgWin": 9.176236885001538,
+        "Sharpe": 1.6394805294041965,
+        "Trades": 35,
+        "AvgLoss": -4.584227182080455,
+        "Sortino": 2.3215018757115153,
+        "WinRate": 0.37142857142857144,
+        "AvgTrade": 0.5268023285499996,
+        "TotalFees": 15.781799020750002,
+        "FinalEquity": 1016.68120695777,
+        "MaxDrawdown": 0.039755860275005404,
+        "TotalReturn": 0.01668120695776998,
+        "ProfitFactor": 1.18282135250154,
+        "TotalFunding": -0.24010174000000006,
+        "InitialEquity": 1000,
+        "AvgHoldingTime": 33531000000000
+      },
+      "strategy": "research-fast"
+    },
+    {
+      "params": {
+        "to": "2025-03-05T00:00:00Z",
+        "from": "2025-01-01T00:00:00Z",
+        "params": {
+          "fast": 20,
+          "slow": 50,
+          "timeframe": "1h"
+        },
+        "segment": "in-sample",
+        "slippage_bps": 2,
+        "initial_balance": "1000"
+      },
+      "metrics": {
+        "End": "2025-03-05T00:00:00Z",
+        "CAGR": -0.15283655190466072,
+        "Start": "2025-01-01T01:00:00Z",
+        "AvgWin": 8.154451248400001,
+        "Sharpe": -1.5492000732924534,
+        "Trades": 27,
+        "AvgLoss": -5.644107207527778,
+        "Sortino": -1.9217302714678888,
+        "WinRate": 0.3333333333333333,
+        "AvgTrade": -1.0445877222185185,
+        "TotalFees": 10.087462079900002,
+        "FinalEquity": 971.7961315001,
+        "MaxDrawdown": 0.07398781523224952,
+        "TotalReturn": -0.028203868499899976,
+        "ProfitFactor": 0.7223862825925838,
+        "TotalFunding": 0.28242213999999993,
+        "InitialEquity": 1000,
+        "AvgHoldingTime": 55600000000000
+      },
+      "strategy": "research-slow"
+    },
+    {
+      "params": {
+        "to": "2025-04-01T00:00:00Z",
+        "from": "2025-03-05T00:00:00Z",
+        "params": {
+          "fast": 20,
+          "slow": 50,
+          "timeframe": "1h"
+        },
+        "segment": "out-of-sample",
+        "slippage_bps": 2,
+        "initial_balance": "1000"
+      },
+      "metrics": {
+        "End": "2025-04-01T00:00:00Z",
+        "CAGR": -0.2727324556115751,
+        "Start": "2025-03-05T01:00:00Z",
+        "AvgWin": 5.96863860676,
+        "Sharpe": -4.028764039043138,
+        "Trades": 14,
+        "AvgLoss": -5.898861595753333,
+        "Sortino": -4.331970780371656,
+        "WinRate": 0.35714285714285715,
+        "AvgTrade": -1.6604686662842856,
+        "TotalFees": 5.842732627979999,
+        "FinalEquity": 976.75343867202,
+        "MaxDrawdown": 0.03112264137276373,
+        "TotalReturn": -0.023246561327979975,
+        "ProfitFactor": 0.5621271635659423,
+        "TotalFunding": -0.21306374,
+        "InitialEquity": 1000,
+        "AvgHoldingTime": 32914000000000
+      },
+      "strategy": "research-slow"
+    }
+  ]
+}

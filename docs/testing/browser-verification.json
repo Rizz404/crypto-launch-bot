@@ -1,0 +1,10 @@
+{
+  "dialogs": 2,
+  "markers": 28,
+  "candles": 648,
+  "overflow": {
+    "width": 390,
+    "scroll": 390
+  },
+  "errors": []
+}

@@ -1,6 +1,6 @@
 # trading-bot
 
-Bot trading crypto otomatis dalam Go (Binance, Bybit, OKX; spot + futures).
+Bot trading crypto otomatis dalam Go (Binance dan Bybit; spot + futures).
 Plan, keputusan, dan progres ada di [docs/plan.md](docs/plan.md).
 
 ## Prasyarat
@@ -27,7 +27,7 @@ Download data historis:
 ./bin/datafetch -market spot -symbols BTCUSDT,ETHUSDT -tf 1m -from 2026-09-01
 ```
 
-> **Jaringan:** kalau DNS lokal memblokir domain exchange (semua host Binance/Bybit/OKX
+> **Jaringan:** kalau DNS lokal memblokir domain exchange (semua host Binance/Bybit
 > me-resolve ke IP yang sama), bot tidak bisa terhubung ke mainnet. Perbaiki DNS sistem
 > (misalnya DNS-over-TLS di systemd-resolved). Testnet Binance tidak terkena blokir ini.
 
@@ -52,7 +52,7 @@ podman compose -f deploy/compose.yml --profile bot up -d --build
 | `xspread` | selisih harga perp antar-exchange |
 | `mm` | market making sederhana (quote post-only) |
 
-Contoh konfigurasi ada di [configs/config.example.yaml](configs/config.example.yaml). Semua masih belum dites (lihat [docs/plan.md](docs/plan.md)).
+Contoh konfigurasi ada di [configs/config.example.yaml](configs/config.example.yaml). Unit/contract test lokal dan integration paper dengan restart sudah berjalan. Validasi data live/testnet masih berlanjut; bukti dan sisa pengujian ada di [docs/plan.md](docs/plan.md#hasil-testing-2026-10-17).
 
 ## Perintah
 
@@ -69,5 +69,6 @@ Semua key config bisa di-override lewat env dengan prefix `TB_` dan `__` sebagai
 ```sh
 make test
 make test-integration   # butuh `make up`
+make test-monitoring    # promtool dalam container sementara, tanpa jaringan
 make lint
 ```
