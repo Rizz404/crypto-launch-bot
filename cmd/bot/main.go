@@ -186,7 +186,7 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 func startFeeds(ctx context.Context, cfg *config.Config, store *storage.Store, m *marketdata.Metrics,
 	log *slog.Logger, errc chan<- error,
 ) (*sync.WaitGroup, error) {
-	src, err := app.MarketSource(cfg, cfg.App.Mode == config.ModeTestnet, log)
+	src, err := app.MarketSource(cfg.MarketData.Exchange, cfg.App.Mode == config.ModeTestnet, log)
 	if err != nil {
 		return nil, err
 	}

@@ -19,13 +19,13 @@ import (
 	"github.com/rizz404/trading-bot/internal/strategy"
 )
 
-// MarketSource returns the market data client named in the config.
-func MarketSource(cfg *config.Config, testnet bool, log *slog.Logger) (exchange.MarketData, error) {
-	switch cfg.MarketData.Exchange {
+// MarketSource returns the public market data client of an exchange.
+func MarketSource(name string, testnet bool, log *slog.Logger) (exchange.MarketData, error) {
+	switch name {
 	case "binance":
 		return binance.New(binance.Options{Testnet: testnet, Log: log}), nil
 	default:
-		return nil, fmt.Errorf("unsupported market data exchange %q", cfg.MarketData.Exchange)
+		return nil, fmt.Errorf("unsupported exchange %q", name)
 	}
 }
 
@@ -135,4 +135,13 @@ func Fees(fees map[string]broker.Fees) map[domain.Market]broker.Fees {
 		out[domain.Market(k)] = v
 	}
 	return out
+}
+
+// ExchangeName is the name used for an exchange's data, accounts and orders
+// in a mode: testnet data and orders never mix with mainnet ones.
+func ExchangeName(exchange string, mode config.Mode) string {
+	if mode == config.ModeTestnet {
+		return exchange + "-testnet"
+	}
+	return exchange
 }

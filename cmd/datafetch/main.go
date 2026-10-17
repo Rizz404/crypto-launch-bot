@@ -97,7 +97,7 @@ func run() error {
 	defer pool.Close()
 	store := storage.NewStore(pool)
 
-	src, err := app.MarketSource(cfg, *testnet, log)
+	src, err := app.MarketSource(cfg.MarketData.Exchange, *testnet, log)
 	if err != nil {
 		return err
 	}
