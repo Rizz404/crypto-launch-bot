@@ -27,6 +27,7 @@ import (
 	"github.com/rizz404/trading-bot/internal/config"
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/logging"
+	"github.com/rizz404/trading-bot/internal/portfolio"
 	"github.com/rizz404/trading-bot/internal/storage"
 	"github.com/rizz404/trading-bot/internal/strategy"
 	_ "github.com/rizz404/trading-bot/internal/strategy/all"
@@ -193,7 +194,8 @@ func saveRun(ctx context.Context, store *storage.Store, sc strategy.Config, segm
 			pts = append(pts, storage.EquityPoint{Time: p.Time, Equity: p.Equity, Balance: p.Equity})
 		}
 	}
-	if err := store.InsertEquity(ctx, id, sc.Exchange, pts); err != nil {
+	account := portfolio.AccountKey{Exchange: sc.Exchange, Market: sc.Market}.String()
+	if err := store.InsertEquity(ctx, id, account, pts); err != nil {
 		return id, err
 	}
 	return id, store.FinishRun(ctx, id, "completed", res.Metrics)
