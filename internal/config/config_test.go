@@ -84,7 +84,8 @@ func TestValidateModeGuards(t *testing.T) {
 		{"testnet ok", "testnet", true, creds, ""},
 		{"testnet mode on mainnet", "testnet", false, creds, "testnet must be true"},
 		{"live mode on testnet", "live", true, creds, "testnet must be false"},
-		{"live ok", "live", false, creds, ""},
+		{"live ok", "live", false, append(creds, "TB_APP__ALLOW_LIVE=true"), ""},
+		{"live without allow_live", "live", false, creds, "allow_live"},
 		{"testnet without creds", "testnet", true, nil, "needs API credentials"},
 		{"unknown mode", "yolo", true, nil, "app.mode"},
 	}

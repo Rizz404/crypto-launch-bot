@@ -106,7 +106,10 @@ type BacktestConfig struct {
 }
 
 type AppConfig struct {
-	Mode      Mode   `koanf:"mode"`
+	Mode Mode `koanf:"mode"`
+	// AllowLive must be true to run in live (mainnet) mode: a deliberate
+	// second switch so real orders are never sent by accident.
+	AllowLive bool   `koanf:"allow_live"`
 	LogLevel  string `koanf:"log_level"`
 	LogFormat string `koanf:"log_format"`
 }
@@ -265,6 +268,9 @@ func (c *Config) Validate() error {
 	var lvl slog.Level
 	if err := lvl.UnmarshalText([]byte(c.App.LogLevel)); err != nil {
 		errs = append(errs, fmt.Errorf("app.log_level %q is invalid", c.App.LogLevel))
+	}
+	if c.App.Mode == ModeLive && !c.App.AllowLive {
+		errs = append(errs, errors.New("live mode sends real orders: set app.allow_live: true to confirm"))
 	}
 	if c.App.LogFormat != "json" && c.App.LogFormat != "text" {
 		errs = append(errs, fmt.Errorf("app.log_format %q must be json or text", c.App.LogFormat))
