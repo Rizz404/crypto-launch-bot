@@ -155,6 +155,23 @@ CLI `backtest -split 0.7 -save -out ...` dijalankan untuk tiga pasangan EMA. Spl
 
 Asumsi: saldo awal 1000 per segmen, leverage 2, risk default, taker 0,05%, maker 0,02%, slippage 2 bps, funding konstan 0,01% per 8 jam, fill OHLC 1h, tanpa warmup terpisah. Tick/lot/min-notional adalah asumsi aturan instrumen, bukan snapshot historis. Belum ada bukti cukup untuk memilih parameter live; default konfigurasi belum diubah. Perbandingan tiga parameter pada satu pair dan satu kuartal belum memadai untuk validasi strategi.
 
+### Validasi emacross lebih luas (2026-10-17)
+
+Data publik REST mainnet Binance USDT-M (laptop kini bisa menjangkaunya): BTC, ETH, SOL, BNB, XRP, 1h dan 4h, 2023-10-01 sampai 2026-10-01, 164.400 candle, gap 0, aturan instrumen dari `exchangeInfo` saat unduh. DB riset terpisah `tradingbot_research_test`. Grid EMA 6/18, 9/21, 12/26, 20/50 × 1h/4h, split 50% (in-sample sampai 2025-04-01, out-of-sample sesudahnya), fill 1h, fee/slippage/funding default, leverage 2, risk default. Rincian: [emacross-grid-2023-2026.json](testing/emacross-grid-2023-2026.json).
+
+| TF | EMA | Return IS rata-rata | Return OOS rata-rata | Simbol untung OOS | MDD OOS terburuk |
+|---|---|---:|---:|---:|---:|
+| 4h | 20/50 | +0,9% | +0,5% | 3/5 | 16,7% |
+| 4h | 6/18 | +11,8% | −4,2% | 2/5 | 20,1% |
+| 4h | 9/21 | +7,9% | −7,1% | 1/5 | 20,0% |
+| 4h | 12/26 | +6,5% | −7,9% | 1/5 | 19,3% |
+| 1h | 9/21 | −12,9% | −14,2% | 0/5 | 20,7% |
+| 1h | 6/18 | −15,3% | −16,1% | 0/5 | 20,2% |
+| 1h | 20/50 | −10,3% | −17,2% | 0/5 | 20,1% |
+| 1h | 12/26 (default kode) | −8,1% | −18,8% | 0/5 | 20,2% |
+
+Kesimpulan: semua varian 1h rugi di kedua segmen; varian 4h yang unggul in-sample berbalik rugi out-of-sample (overfitting/perubahan rezim). 4h 20/50 paling tidak buruk tetapi tidak konsisten per pair (OOS SOL +14,3%, XRP +8,6%, BTC +2,3%, BNB −8,2%, ETH −14,3%). 38 dari 80 segmen berhenti karena kill switch drawdown 20%. **Emacross dengan bentuk sekarang tidak layak untuk live.** Default kode (1h 12/26) tidak diubah; pilihan parameter/strategi diputuskan user sebelum Fase 11 (opsi: pakai 4h 20/50 hanya untuk uji operasional, menambah filter rezim/tren, atau menguji strategi lain seperti DCA/grid dengan validasi yang sama).
+
 ### Rilis GitHub dan persiapan VPS (2026-10-17)
 
 - Repo private: [Rizz404/trading-bot](https://github.com/Rizz404/trading-bot), branch `main`. Riwayat lokal sudah di-push melalui SSH; kredensial di `.env` dan konfigurasi lokal tetap di-ignore. Varian `.env.*` juga di-ignore, kecuali `.env.example`.
@@ -192,13 +209,13 @@ Asumsi: saldo awal 1000 per segmen, leverage 2, risk default, taker 0,05%, maker
 ### Sisa Fase 9
 
 - [x] Repo private, GitHub Actions, publikasi image GHCR, dan akses baca GHCR/repo dari VPS sudah berhasil. Digest yang sedang dipakai dan rilis baru yang belum dideploy tercatat di checkpoint handoff.
-- [ ] Selesaikan verifikasi operasi VPS: deploy/health/resource limit, restart graceful dengan posisi terbuka, backup manual + restore, dan timer observasi/backup sudah lolos. Tersisa: hasil timer backup terjadwal pertama, salinan backup di luar server, dan pemantauan memori Grafana. Docker aktif/enabled, tetapi reboot host tidak diuji dan jangan dilakukan pada server Plesk bersama untuk tes ini.
-- [ ] Audit lanjutan: late fill setelah cancel/timeout REST, replay setelah reconciliation, sizing/margin raw order dan reservasi inventori spot, state internal strategi setelah restart (misalnya penghitung DCA), failure/retry dan private WS/SL/TP exchange nyata. Skenario partial fill/pending/restart yang sudah lolos dirinci di atas.
+- [ ] Selesaikan verifikasi operasi VPS: deploy/health/resource limit, restart graceful dengan posisi terbuka, backup manual + restore, timer observasi/backup, dan pemulihan setelah reboot host (tak terduga) sudah lolos. Tersisa: hasil timer backup terjadwal pertama dan pemantauan memori Grafana. **Salinan backup di luar server ditunda sampai semua fase selesai dan benar-benar live (keputusan user, 2026-10-17).** Jangan sengaja me-reboot server Plesk bersama untuk tes.
+- [ ] Audit lanjutan. Selesai (2026-10-17): order request ambigu (timeout/5xx/`-1007`) dicek ke exchange sebelum dianggap gagal (`fix(binance): resolve order requests that failed ambiguously`); siklus DCA dipulihkan dari posisi setelah restart, tidak membeli ulang dari 1 (`fix(strategy): resume dca cycles from restored positions`); DB ditunggu hingga 60 detik saat start dan run yang tertinggal ditutup `interrupted`. Private WS/SL/TP spot nyata lolos di testnet. Tersisa: replay setelah reconciliation, sizing/margin raw order dan reservasi inventori spot (grid/mm), state grid/mm setelah restart, futures.
 - [x] Fixture REST/WS **terekam** Binance Spot dan integration test testnet opt-in (lihat "Order nyata di Binance Spot Testnet"). Futures belum terekam (butuh Demo key); Bybit ditunda karena pembatasan akses.
 - [ ] Paper live **24 jam** dan restart dengan data live. Restart dengan data live dan posisi terbuka sudah lolos dua kali. Reboot host tak terduga (15:18–15:42 UTC) pulih otomatis. Observasi 24 jam dihitung ulang dari 15:42:27 UTC; nilai sampel setelah 2026-10-18 15:43 UTC. Retry recorder belum diuji ulang dengan pemutusan DB di VPS.
 - [ ] Order spot/futures pada lingkungan pengujian Binance, native SL/TP, restart/reconciliation, kill switch. **Spot lolos di level adapter dan bot penuh `app.mode: testnet`** (entry, OCO, exit strategi, restart/reconciliation dengan posisi terbuka, kill switch dashboard, saldo non-bot tidak tersentuh). Tersisa: fee non-nol, run panjang, dan Futures (kredensial Demo belum disiapkan). Bybit ditunda.
 - [x] Backtest historis nyata, split CLI, `-save`, CSV, dan perbandingan awal tiga parameter `emacross` (hasil di atas).
-- [ ] Validasi strategi pada periode/pair lain, fill intrabar dan funding historis, lalu putuskan parameter default berdasarkan bukti lebih luas.
+- [ ] Validasi strategi: grid emacross 3 tahun × 5 pair × 1h/4h selesai (lihat "Validasi emacross lebih luas"); **tidak ditemukan edge yang konsisten**. Tersisa: keputusan user soal parameter default/strategi sebelum Fase 11, fill intrabar lebih halus dan funding historis.
 - [ ] Telegram sungguhan, flush/pesan shutdown dan daily summary, serta monitoring sesi trading 24 jam. Config/rules/provisioning/health monitoring lokal sudah diverifikasi.
 - [x] Browser desktop light + mobile dark: HTMX/CSP, konfirmasi kontrol, chart candle/marker/equity dan halaman backtest dengan database test. Variasi tampilan lainnya dapat diperluas.
 - [ ] Putuskan universe saham ter-tokenisasi bersama user. Risk live dan persetujuan Fase 11 tetap belum diputuskan.
@@ -257,7 +274,7 @@ Asumsi: saldo awal 1000 per segmen, leverage 2, risk default, taker 0,05%, maker
 
 ## Pertanyaan terbuka (belum diputuskan)
 
-- Timeframe dan parameter default strategi `emacross` (tentukan lewat eksperimen backtest di Fase 9).
+- Timeframe dan parameter default strategi `emacross`: grid 2026-10-17 tidak menemukan edge konsisten (lihat "Validasi emacross lebih luas"). Perlu keputusan user: strategi/parameter apa yang dibawa ke Fase 11.
 - Saham ter-tokenisasi di Binance spot (base berakhiran `B`: `NVDAB`, `TSLAB`, `SPYB`, `SNDKB`, `SPCXB`, dan lain-lain) lolos ke universe spot karena tidak punya penanda di `exchangeInfo`. Perlu keputusan user: dikecualikan (lewat `universe.exclude_bases` atau aturan baru) atau dibiarkan. Universe futures tidak terpengaruh, karena kontrak `TRADIFI_PERPETUAL` sudah disaring.
 - Batas risk konkret untuk live (max drawdown %, rugi harian %, leverage maksimum). Usulkan nilai konservatif, lalu minta persetujuan user.
 

@@ -1,0 +1,182 @@
+{
+ "purpose": "emacross parameter validation across symbols and a walk-forward split; not evidence of future returns",
+ "dataset": {
+  "source": "Binance USDT-M futures REST klines (mainnet, public)",
+  "symbols": [
+   "BTCUSDT",
+   "ETHUSDT",
+   "SOLUSDT",
+   "BNBUSDT",
+   "XRPUSDT"
+  ],
+  "timeframes": [
+   "1h",
+   "4h"
+  ],
+  "from_inclusive": "2023-10-01",
+  "to_exclusive": "2026-10-01",
+  "candles": 164400,
+  "gaps": 0,
+  "instrument_rules": "exchangeInfo at download time (2026-10-17), not historical snapshots"
+ },
+ "assumptions": {
+  "initial_balance_per_segment": 1000,
+  "leverage": 2,
+  "risk": "risk.DefaultConfig (1% risk per trade, kill switch at 5% daily loss / 20% drawdown)",
+  "fees": "maker 0.02%, taker 0.05%",
+  "slippage_bps": 2,
+  "funding": "constant 0.01% per 8h",
+  "exec_timeframe": "1h OHLC fills",
+  "strategy_defaults": "RSI 14 (70/30), ATR 14, stop 2 ATR, target 3 ATR, shorts allowed, exit on opposite cross",
+  "split": "50%: in-sample 2023-10-01..2025-04-01, out-of-sample 2025-04-01..2026-10-01; segments start fresh"
+ },
+ "segments_halted_by_kill_switch": "38 of 80",
+ "grid": [
+  {
+   "tf": "4h",
+   "ema": "20/50",
+   "is_avg_return_pct": 0.9,
+   "oos_avg_return_pct": 0.5,
+   "oos_winning_symbols": 3,
+   "oos_worst_mdd_pct": 16.7
+  },
+  {
+   "tf": "4h",
+   "ema": "6/18",
+   "is_avg_return_pct": 11.8,
+   "oos_avg_return_pct": -4.2,
+   "oos_winning_symbols": 2,
+   "oos_worst_mdd_pct": 20.1
+  },
+  {
+   "tf": "4h",
+   "ema": "9/21",
+   "is_avg_return_pct": 7.9,
+   "oos_avg_return_pct": -7.1,
+   "oos_winning_symbols": 1,
+   "oos_worst_mdd_pct": 20.0
+  },
+  {
+   "tf": "4h",
+   "ema": "12/26",
+   "is_avg_return_pct": 6.5,
+   "oos_avg_return_pct": -7.9,
+   "oos_winning_symbols": 1,
+   "oos_worst_mdd_pct": 19.3
+  },
+  {
+   "tf": "1h",
+   "ema": "9/21",
+   "is_avg_return_pct": -12.9,
+   "oos_avg_return_pct": -14.2,
+   "oos_winning_symbols": 0,
+   "oos_worst_mdd_pct": 20.7
+  },
+  {
+   "tf": "1h",
+   "ema": "6/18",
+   "is_avg_return_pct": -15.3,
+   "oos_avg_return_pct": -16.1,
+   "oos_winning_symbols": 0,
+   "oos_worst_mdd_pct": 20.2
+  },
+  {
+   "tf": "1h",
+   "ema": "20/50",
+   "is_avg_return_pct": -10.3,
+   "oos_avg_return_pct": -17.2,
+   "oos_winning_symbols": 0,
+   "oos_worst_mdd_pct": 20.1
+  },
+  {
+   "tf": "1h",
+   "ema": "12/26",
+   "is_avg_return_pct": -8.1,
+   "oos_avg_return_pct": -18.8,
+   "oos_winning_symbols": 0,
+   "oos_worst_mdd_pct": 20.2
+  }
+ ],
+ "ema_4h_20_50_per_symbol": [
+  {
+   "symbol": "BNBUSDT",
+   "segment": "out-of-sample",
+   "return_pct": -8.2,
+   "mdd_pct": 13.4,
+   "trades": 66,
+   "profit_factor": 0.79
+  },
+  {
+   "symbol": "BTCUSDT",
+   "segment": "out-of-sample",
+   "return_pct": 2.3,
+   "mdd_pct": 5.9,
+   "trades": 53,
+   "profit_factor": 1.09
+  },
+  {
+   "symbol": "ETHUSDT",
+   "segment": "out-of-sample",
+   "return_pct": -14.3,
+   "mdd_pct": 16.7,
+   "trades": 53,
+   "profit_factor": 0.59
+  },
+  {
+   "symbol": "SOLUSDT",
+   "segment": "out-of-sample",
+   "return_pct": 14.3,
+   "mdd_pct": 9.6,
+   "trades": 56,
+   "profit_factor": 1.53
+  },
+  {
+   "symbol": "XRPUSDT",
+   "segment": "out-of-sample",
+   "return_pct": 8.6,
+   "mdd_pct": 6.8,
+   "trades": 56,
+   "profit_factor": 1.27
+  },
+  {
+   "symbol": "BNBUSDT",
+   "segment": "in-sample",
+   "return_pct": 2.8,
+   "mdd_pct": 7.4,
+   "trades": 58,
+   "profit_factor": 1.1
+  },
+  {
+   "symbol": "BTCUSDT",
+   "segment": "in-sample",
+   "return_pct": 3.2,
+   "mdd_pct": 7.3,
+   "trades": 48,
+   "profit_factor": 1.11
+  },
+  {
+   "symbol": "ETHUSDT",
+   "segment": "in-sample",
+   "return_pct": -11.2,
+   "mdd_pct": 12.9,
+   "trades": 59,
+   "profit_factor": 0.68
+  },
+  {
+   "symbol": "SOLUSDT",
+   "segment": "in-sample",
+   "return_pct": 7.3,
+   "mdd_pct": 7.9,
+   "trades": 63,
+   "profit_factor": 1.23
+  },
+  {
+   "symbol": "XRPUSDT",
+   "segment": "in-sample",
+   "return_pct": 2.1,
+   "mdd_pct": 8.4,
+   "trades": 57,
+   "profit_factor": 1.08
+  }
+ ]
+}
