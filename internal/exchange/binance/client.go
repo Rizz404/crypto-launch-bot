@@ -24,6 +24,11 @@ type Endpoints struct {
 	FuturesREST string
 	SpotWS      string // combined streams are served at SpotWS + "/stream"
 	FuturesWS   string
+	// SpotWSAPI carries the spot user data stream (listen keys were
+	// retired on 2026-02-20).
+	SpotWSAPI string
+	// FuturesPrivateWS serves user data streams at "/stream?streams=<listenKey>".
+	FuturesPrivateWS string
 }
 
 var (
@@ -33,13 +38,17 @@ var (
 		SpotWS:      "wss://stream.binance.com:9443",
 		// The legacy wss://fstream.binance.com/stream still accepts
 		// connections but no longer sends market data.
-		FuturesWS: "wss://fstream.binance.com/market",
+		FuturesWS:        "wss://fstream.binance.com/market",
+		SpotWSAPI:        "wss://ws-api.binance.com:443/ws-api/v3",
+		FuturesPrivateWS: "wss://fstream.binance.com/private",
 	}
 	Testnet = Endpoints{
-		SpotREST:    "https://testnet.binance.vision",
-		FuturesREST: "https://testnet.binancefuture.com",
-		SpotWS:      "wss://stream.testnet.binance.vision",
-		FuturesWS:   "wss://fstream.binancefuture.com",
+		SpotREST:         "https://testnet.binance.vision",
+		FuturesREST:      "https://testnet.binancefuture.com",
+		SpotWS:           "wss://stream.testnet.binance.vision",
+		FuturesWS:        "wss://fstream.binancefuture.com",
+		SpotWSAPI:        "wss://ws-api.testnet.binance.vision/ws-api/v3",
+		FuturesPrivateWS: "wss://fstream.binancefuture.com",
 	}
 )
 
