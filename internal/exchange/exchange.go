@@ -1,5 +1,5 @@
 // Package exchange defines the exchange-agnostic interfaces implemented by
-// each exchange adapter (binance, bybit, okx).
+// each exchange adapter (binance, bybit).
 package exchange
 
 import (
