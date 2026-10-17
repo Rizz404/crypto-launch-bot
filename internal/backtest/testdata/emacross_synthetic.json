@@ -1,0 +1,19 @@
+{
+  "Candles": 120,
+  "Trades": 11,
+  "Final": "1122.1963915522",
+  "Drawdown": "0.00056938",
+  "Exits": [
+    "take_profit:10.51944324",
+    "take_profit:10.6395138864",
+    "take_profit:10.7729238",
+    "take_profit:10.8295052058",
+    "take_profit:10.96303422",
+    "take_profit:11.1002745",
+    "take_profit:11.21651478",
+    "take_profit:11.35399506",
+    "take_profit:11.46999534",
+    "take_profit:11.60771562",
+    "take_profit:11.7234759"
+  ]
+}

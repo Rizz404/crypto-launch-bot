@@ -130,8 +130,7 @@ func Run(ctx context.Context, cfg Config, src CandleSource) (*Result, error) {
 	log.Info("backtest loaded", "candles", len(candles), "exec_tf", execTF, "timeframes", tfs)
 
 	res := &Result{Config: cfg, Candles: len(candles)}
-	var lastSample time.Time
-	for _, c := range candles {
+	for i, c := range candles {
 		if err := ctx.Err(); err != nil {
 			return nil, err
 		}
@@ -151,8 +150,10 @@ func Run(ctx context.Context, cfg Config, src CandleSource) (*Result, error) {
 			eng.Tick(ctx, now) // timer-driven strategies (DCA, funding)
 		}
 
-		if now.After(lastSample) {
-			lastSample = now
+		// Sample only after every symbol/account/timeframe at this close
+		// time has updated its ledger. Sampling the first event loses the
+		// other accounts' mark-to-market PnL, including the final bar.
+		if i+1 == len(candles) || !candles[i+1].CloseTime().Equal(now) {
 			res.Equity = append(res.Equity, EquityPoint{Time: now, Equity: book.Total().Equity})
 		}
 	}
