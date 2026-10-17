@@ -91,6 +91,11 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 	for i, sc := range strategies {
 		ids[i] = sc.ID
 	}
+	if n, err := store.CloseInterruptedRuns(ctx, string(mode)); err != nil {
+		return nil, err
+	} else if n > 0 {
+		log.Warn("previous session did not shut down cleanly", "runs", n)
+	}
 	runID, err := store.CreateRun(ctx, storage.Run{InstanceID: "session", Strategy: "engine", Mode: string(mode),
 		Params: map[string]any{"strategies": ids, "risk": cfg.Risk}})
 	if err != nil {
