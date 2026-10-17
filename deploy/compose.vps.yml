@@ -1,0 +1,96 @@
+# Run from the repository root with --env-file .env.vps.
+# BOT_IMAGE must identify an image published by the successful GitHub workflow.
+name: trading-bot-paper
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  db:
+    image: docker.io/timescale/timescaledb:2.30.2-pg17
+    environment:
+      POSTGRES_USER: bot
+      POSTGRES_DB: tradingbot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}
+      TIMESCALEDB_TELEMETRY: "off"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bot -d tradingbot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    logging: *logging
+
+  prometheus:
+    image: docker.io/prom/prometheus:v3.15.0
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=7d
+    volumes:
+      - ./prometheus/prometheus.vps.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:${PROMETHEUS_PORT:-19090}:9090"
+    restart: unless-stopped
+    logging: *logging
+
+  grafana:
+    image: docker.io/grafana/grafana:13.2.4
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env.vps}
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      POSTGRES_USER: bot
+      POSTGRES_DB: tradingbot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-13000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      prometheus:
+        condition: service_started
+    restart: unless-stopped
+    logging: *logging
+
+  bot:
+    image: ${BOT_IMAGE:?Set BOT_IMAGE to the published GHCR image digest}
+    command: ["run"]
+    env_file: ../.env.vps
+    environment:
+      TB_APP__MODE: ${TB_APP__MODE:-paper}
+      TB_APP__ALLOW_LIVE: "false"
+      TB_DATABASE__URL: postgres://bot:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}@db:5432/tradingbot?sslmode=disable
+      TB_METRICS__LISTEN: 0.0.0.0:9100
+      TB_WEB__LISTEN: 0.0.0.0:8080
+      TB_WEB__PASSWORD: ${TB_WEB__PASSWORD:?Set TB_WEB__PASSWORD in .env.vps}
+    volumes:
+      - ../configs/config.yaml:/app/configs/config.yaml:ro
+    ports:
+      - "127.0.0.1:${BOT_WEB_PORT:-18080}:8080"
+      - "127.0.0.1:${BOT_METRICS_PORT:-19100}:9100"
+    depends_on:
+      db:
+        condition: service_healthy
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 30s
+    restart: unless-stopped
+    logging: *logging
+
+volumes:
+  db-data:
+  prometheus-data:
+  grafana-data:

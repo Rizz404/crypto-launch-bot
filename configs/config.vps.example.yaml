@@ -1,0 +1,53 @@
+# Operational paper-test configuration, not a validated profitable strategy.
+# Copy to configs/config.yaml on the VPS; secrets belong in .env.vps.
+app:
+  mode: paper
+  allow_live: false
+  log_level: info
+  log_format: json
+
+exchanges:
+  binance:
+    enabled: true
+    testnet: true
+  bybit:
+    enabled: false
+
+marketdata:
+  exchange: binance
+  markets: [spot]
+  symbols: [BTCUSDT, ETHUSDT]
+  timeframes: [1m]
+  initial_backfill: 1000
+
+strategies:
+  - id: paper-ema-1m
+    name: emacross
+    enabled: true
+    exchange: binance
+    market: spot
+    symbols: [BTCUSDT, ETHUSDT]
+    leverage: 1
+    params:
+      timeframe: 1m
+      fast: 12
+      slow: 26
+      allow_short: false
+
+paper:
+  initial_balance: 1000
+  resume: true
+
+telegram:
+  enabled: false
+  chat_ids: []
+  notify_level: warn
+  daily_summary: true
+
+web:
+  enabled: true
+  listen: 0.0.0.0:8080
+
+metrics:
+  enabled: true
+  listen: 0.0.0.0:9100
