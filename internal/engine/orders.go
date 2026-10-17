@@ -222,7 +222,11 @@ func (e *Engine) place(ctx context.Context, o domain.Order) error {
 	tracked := o
 	e.orders[o.ClientID] = &tracked
 
+	start := time.Now()
 	accepted, err := b.PlaceOrder(ctx, o)
+	if e.cfg.Hooks.OnPlaced != nil {
+		e.cfg.Hooks.OnPlaced(o.Exchange, time.Since(start), err)
+	}
 	if err != nil {
 		delete(e.orders, o.ClientID)
 		o.Status, o.Reason = domain.OrderRejected, err.Error()

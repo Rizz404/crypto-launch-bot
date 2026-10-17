@@ -28,10 +28,11 @@ import (
 // Hooks observe the engine; all are optional and are called with the
 // engine lock held, so they must not call back into the engine.
 type Hooks struct {
-	OnOrder  func(domain.Order)                               // every order state change
-	OnFill   func(domain.Fill, domain.Order)                  // every execution
-	OnTrade  func(domain.Trade)                               // every closed round trip
-	OnNotice func(level slog.Level, msg string, attrs ...any) // alerts for humans
+	OnOrder  func(domain.Order)                                   // every order state change
+	OnFill   func(domain.Fill, domain.Order)                      // every execution
+	OnTrade  func(domain.Trade)                                   // every closed round trip
+	OnNotice func(level slog.Level, msg string, attrs ...any)     // alerts for humans
+	OnPlaced func(exchange string, took time.Duration, err error) // broker call latency
 }
 
 type Config struct {
