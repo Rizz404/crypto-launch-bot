@@ -76,7 +76,7 @@ func TestPaperSessionRestartPersistsNewOrders(t *testing.T) {
 	conf := &config.Config{App: config.AppConfig{Mode: config.ModePaper}, Risk: risk.DefaultConfig(),
 		Paper: config.PaperConfig{InitialBalance: 1000}, Telegram: config.TelegramConfig{NotifyLevel: "warn"}}
 	sc := strategy.Config{ID: "dca-test", Name: "dca", Exchange: ex, Market: domain.Futures, Symbols: []string{"BTCUSDT"}, Leverage: 1,
-		Params: map[string]any{"quote_amount": 10, "max_buys": 1, "interval": "24h"}}
+		Params: map[string]any{"quote_amount": 10, "max_buys": 2, "interval": "1h"}}
 	h := &errorLog{}
 	log := slog.New(h)
 	for i := range 2 {
@@ -99,7 +99,14 @@ func TestPaperSessionRestartPersistsNewOrders(t *testing.T) {
 			}
 			c := domain.Candle{Exchange: ex, Market: domain.Futures, Symbol: "BTCUSDT", Timeframe: "1m", Close: decimal.NewFromInt(100)}
 			s.onUpdate(ctx, c)
-			s.eng.Tick(ctx, time.Now())
+			now := time.Now()
+			s.eng.Tick(ctx, now)
+			if i > 0 {
+				// The first timer after a restart only resumes the cycle from
+				// the restored position; buy 2/2 follows one interval later.
+				assert.Empty(t, s.eng.OpenOrders()[1:], "no immediate re-buy after a restart")
+				s.eng.Tick(ctx, now.Add(time.Hour))
+			}
 			s.onUpdate(ctx, c)
 			positions := s.book.Total().OpenPositions
 			assert.Equal(t, 1, positions)
