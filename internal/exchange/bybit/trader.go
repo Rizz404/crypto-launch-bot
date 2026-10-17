@@ -191,7 +191,7 @@ func (t *Trader) SetLeverage(ctx context.Context, m domain.Market, symbol string
 	l := strconv.Itoa(leverage)
 	err := t.signed(ctx, http.MethodPost, "/v5/position/set-leverage", nil,
 		map[string]any{"category": "linear", "symbol": symbol, "buyLeverage": l, "sellLeverage": l}, nil)
-	if c := apiCode(err); c != 0 && c != 110043 { // 110043: leverage not modified
+	if err != nil && apiCode(err) != 110043 { // 110043: leverage not modified
 		return fmt.Errorf("set leverage: %w", err)
 	}
 	return nil
@@ -211,7 +211,7 @@ func (t *Trader) Start(ctx context.Context, wg *sync.WaitGroup) error {
 			t.c.log.Warn("could not switch the unified account to isolated margin", "err", err)
 		}
 		err = t.signed(ctx, http.MethodPost, "/v5/position/switch-mode", nil, map[string]any{"category": "linear", "coin": "USDT", "mode": 0}, nil)
-		if c := apiCode(err); c != 0 && c != 110025 { // 110025: already one-way
+		if err != nil && apiCode(err) != 110025 { // 110025: already one-way
 			return fmt.Errorf("set one-way mode: %w", err)
 		}
 	}
