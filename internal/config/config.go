@@ -29,6 +29,9 @@ import (
 
 const envPrefix = "TB_"
 
+// SupportedExchanges have market data and trading adapters.
+var SupportedExchanges = []string{"binance", "bybit", "okx"}
+
 // Mode is the execution mode of the bot.
 type Mode string
 
@@ -338,8 +341,8 @@ func (c *Config) Validate() error {
 			errs = append(errs, fmt.Errorf("telegram.notify_level %q is invalid", c.Telegram.NotifyLevel))
 		}
 	}
-	if c.MarketData.Exchange != "binance" {
-		errs = append(errs, fmt.Errorf("marketdata.exchange %q is not supported yet (only binance)", c.MarketData.Exchange))
+	if !slices.Contains(SupportedExchanges, c.MarketData.Exchange) {
+		errs = append(errs, fmt.Errorf("marketdata.exchange %q must be one of %v", c.MarketData.Exchange, SupportedExchanges))
 	}
 	if len(c.MarketData.Markets) == 0 {
 		errs = append(errs, errors.New("marketdata.markets must not be empty"))
@@ -406,6 +409,9 @@ func (c *Config) Validate() error {
 		}
 		if (c.App.Mode == ModeTestnet || c.App.Mode == ModeLive) && (ex.APIKey == "" || ex.APISecret == "") {
 			errs = append(errs, fmt.Errorf("exchanges.%s needs API credentials in %s mode", name, c.App.Mode))
+		}
+		if name == "okx" && (c.App.Mode == ModeTestnet || c.App.Mode == ModeLive) && ex.Passphrase == "" {
+			errs = append(errs, errors.New("exchanges.okx needs a passphrase (TB_EXCHANGES__OKX__PASSPHRASE)"))
 		}
 	}
 	return errors.Join(errs...)
