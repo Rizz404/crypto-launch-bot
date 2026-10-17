@@ -1,0 +1,46 @@
+# Copy to configs/config.yaml and adjust.
+# Secrets (database password, API keys) go in .env or the environment,
+# never in this file. See .env.example.
+
+app:
+  mode: paper          # backtest | paper | testnet | live
+  log_level: info      # debug | info | warn | error
+  log_format: text     # json | text
+
+database:
+  # url is set via TB_DATABASE__URL
+  max_conns: 10
+
+metrics:
+  enabled: true
+  listen: 127.0.0.1:9100
+
+exchanges:
+  binance:
+    enabled: true
+    testnet: true
+  bybit:
+    enabled: false
+    testnet: true
+  okx:
+    enabled: false
+    testnet: true
+
+# Live candles recorded by `bot run`. Data comes from mainnet unless
+# app.mode is testnet (then stored under the exchange name "binance-testnet").
+marketdata:
+  exchange: binance
+  markets: [futures]       # spot and/or futures
+  timeframes: [1m, 1h]
+  symbols: []              # fixed list, e.g. [BTCUSDT, ETHUSDT]; empty = universe
+  initial_backfill: 1000   # candles fetched per series that has no history
+
+# Liquidity ranking used when marketdata.symbols is empty (and by datafetch).
+universe:
+  quote: USDT
+  top_n: 20
+  min_quote_volume: 20000000   # 24h volume in quote currency
+  max_spread_bps: 10
+  # Defaults to stablecoins, fiat, gold and wrapped tokens; setting this list
+  # replaces the defaults (see config.DefaultExcludeBases).
+  # exclude_bases: [USDC, FDUSD, ...]
