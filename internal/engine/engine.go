@@ -411,6 +411,9 @@ func (e *Engine) AdoptOrders(orders []domain.Order) {
 				p.targetID, p.takeProfit = o.ClientID, o.StopPrice
 			}
 			p.quantity = o.Remaining()
+			if lb, ok := e.brokers[o.Exchange].(broker.LinkedBrackets); ok && p.stopID != "" && p.targetID != "" {
+				p.linked = lb.LinkedBracket(o.Market)
+			}
 		}
 	}
 }

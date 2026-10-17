@@ -229,6 +229,32 @@ func (b *linkedBracketBroker) CancelOrder(ctx context.Context, o domain.Order) e
 	return nil
 }
 
+// A bracket adopted after a restart is just as linked (testnet: the kill
+// switch cancelled both legs of an adopted OCO, the second with -2011).
+func TestAdoptedLinkedBracketCanceledOnce(t *testing.T) {
+	h := setup(t)
+	lb := newLinkedBroker(h.s)
+	h.e.AddBroker(lb)
+	h.a.SetPosition(domain.Position{PositionKey: domain.PositionKey{Exchange: "sim", Market: domain.Futures, Symbol: "BTCUSDT"},
+		Side: domain.Long, Quantity: decimal.NewFromInt(1), EntryPrice: decimal.NewFromInt(100), Leverage: 1})
+	var legs []domain.Order
+	for _, leg := range []struct {
+		id, tag string
+		typ     domain.OrderType
+		price   int64
+	}{{"oldstop", domain.TagStopLoss, domain.OrderStopMarket, 95}, {"oldtp", domain.TagTakeProfit, domain.OrderTakeProfit, 105}} {
+		o, err := h.s.PlaceOrder(context.Background(), domain.Order{ClientID: leg.id, Exchange: "sim", Market: domain.Futures,
+			Symbol: "BTCUSDT", Side: domain.Sell, Type: leg.typ, Quantity: decimal.NewFromInt(1), StopPrice: decimal.NewFromInt(leg.price)})
+		require.NoError(t, err)
+		o.Tag = leg.tag
+		legs = append(legs, o)
+	}
+	lb.pairs["oldstop"], lb.pairs["oldtp"] = "oldtp", "oldstop"
+	h.e.AdoptOrders(legs)
+	h.e.Kill(context.Background(), "test")
+	assert.Equal(t, 1, lb.cancels)
+}
+
 // Exiting a position with a linked bracket cancels the list once and keeps
 // the strategy's reason on the exit order.
 func TestExitCancelsLinkedBracketOnceWithStrategyReason(t *testing.T) {
