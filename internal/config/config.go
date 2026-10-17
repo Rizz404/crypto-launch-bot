@@ -21,7 +21,9 @@ import (
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/v2"
 
+	"github.com/rizz404/trading-bot/internal/broker"
 	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/trading-bot/internal/risk"
 )
 
 const envPrefix = "TB_"
@@ -67,6 +69,30 @@ type Config struct {
 	Exchanges  map[string]ExchangeConfig `koanf:"exchanges"`
 	MarketData MarketDataConfig          `koanf:"marketdata"`
 	Universe   UniverseConfig            `koanf:"universe"`
+	Strategies []StrategyConfig          `koanf:"strategies"`
+	Risk       risk.Config               `koanf:"risk"`
+	Backtest   BacktestConfig            `koanf:"backtest"`
+}
+
+// StrategyConfig configures one strategy instance.
+type StrategyConfig struct {
+	ID       string         `koanf:"id"`
+	Name     string         `koanf:"name"`
+	Enabled  bool           `koanf:"enabled"`
+	Exchange string         `koanf:"exchange"`
+	Market   string         `koanf:"market"`
+	Symbols  []string       `koanf:"symbols"` // empty: the marketdata symbols/universe
+	Leverage int            `koanf:"leverage"`
+	Params   map[string]any `koanf:"params"`
+}
+
+// BacktestConfig holds simulation costs.
+type BacktestConfig struct {
+	InitialBalance float64                `koanf:"initial_balance"`
+	SlippageBps    float64                `koanf:"slippage_bps"`
+	FundingRate    float64                `koanf:"funding_rate"` // per 8h
+	ExecTimeframe  string                 `koanf:"exec_timeframe"`
+	Fees           map[string]broker.Fees `koanf:"fees"` // by market
 }
 
 type AppConfig struct {
@@ -138,6 +164,16 @@ func defaults() Config {
 			Markets:         []string{"futures"},
 			Timeframes:      []string{"1m", "1h"},
 			InitialBackfill: 1000,
+		},
+		Risk: risk.DefaultConfig(),
+		Backtest: BacktestConfig{
+			InitialBalance: 1000,
+			SlippageBps:    2,
+			FundingRate:    0.0001,
+			Fees: map[string]broker.Fees{
+				"spot":    {Maker: 0.001, Taker: 0.001},
+				"futures": {Maker: 0.0002, Taker: 0.0005},
+			},
 		},
 		Universe: UniverseConfig{
 			Quote:          "USDT",
@@ -258,6 +294,34 @@ func (c *Config) Validate() error {
 		errs = append(errs, errors.New("universe.quote and universe.top_n are required when marketdata.symbols is empty"))
 	}
 
+	ids := map[string]bool{}
+	for i, sc := range c.Strategies {
+		switch {
+		case sc.ID == "" || sc.Name == "":
+			errs = append(errs, fmt.Errorf("strategies[%d]: id and name are required", i))
+		case ids[sc.ID]:
+			errs = append(errs, fmt.Errorf("strategies[%d]: duplicate id %q", i, sc.ID))
+		}
+		ids[sc.ID] = true
+		if sc.Exchange == "" {
+			errs = append(errs, fmt.Errorf("strategies[%d] (%s): exchange is required", i, sc.ID))
+		}
+		if _, err := domain.ParseMarket(sc.Market); err != nil {
+			errs = append(errs, fmt.Errorf("strategies[%d] (%s): %w", i, sc.ID, err))
+		}
+	}
+	if c.Risk.MaxLeverage < 1 {
+		errs = append(errs, errors.New("risk.max_leverage must be >= 1"))
+	}
+	if c.Risk.RiskPerTrade <= 0 || c.Risk.RiskPerTrade > 0.1 {
+		errs = append(errs, errors.New("risk.risk_per_trade must be in (0, 0.1]"))
+	}
+	if c.Backtest.ExecTimeframe != "" {
+		if _, err := domain.ParseTimeframe(c.Backtest.ExecTimeframe); err != nil {
+			errs = append(errs, fmt.Errorf("backtest.exec_timeframe: %w", err))
+		}
+	}
+
 	for name, ex := range c.Exchanges {
 		if !ex.Enabled {
 			continue
@@ -275,6 +339,16 @@ func (c *Config) Validate() error {
 		}
 	}
 	return errors.Join(errs...)
+}
+
+// Strategy returns the strategy config with the given id.
+func (c *Config) Strategy(id string) (StrategyConfig, bool) {
+	for _, sc := range c.Strategies {
+		if sc.ID == id {
+			return sc, true
+		}
+	}
+	return StrategyConfig{}, false
 }
 
 // EnabledExchanges returns the names of enabled exchanges.

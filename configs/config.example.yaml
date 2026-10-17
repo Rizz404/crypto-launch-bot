@@ -44,3 +44,42 @@ universe:
   # Defaults to stablecoins, fiat, gold and wrapped tokens; setting this list
   # replaces the defaults (see config.DefaultExcludeBases).
   # exclude_bases: [USDC, FDUSD, ...]
+
+# Strategy instances. `bot run` starts the enabled ones; `backtest -strategy <id>`
+# can run any of them.
+strategies:
+  - id: emacross-1h
+    name: emacross
+    enabled: false
+    exchange: binance
+    market: futures
+    symbols: [BTCUSDT, ETHUSDT]   # empty = marketdata symbols / universe
+    leverage: 2
+    params:
+      timeframe: 1h
+      fast: 12
+      slow: 26
+      rsi_period: 14
+      rsi_long_max: 70
+      rsi_short_min: 30
+      atr_period: 14
+      stop_atr: 2
+      target_atr: 3
+      trail_atr: 0
+      allow_short: true
+      exit_on_cross: true
+
+risk:
+  risk_per_trade: 0.01     # lose at most 1% of equity when a stop is hit
+  position_pct: 0.10       # margin per position when a strategy gives no stop
+  max_position_pct: 0.25   # notional cap: 25% of equity x leverage
+  max_leverage: 3
+
+backtest:
+  initial_balance: 1000
+  slippage_bps: 2
+  funding_rate: 0.0001     # per 8h on futures
+  exec_timeframe: ""       # e.g. 1m for realistic intrabar stop fills (needs 1m data)
+  fees:
+    spot: {maker: 0.001, taker: 0.001}
+    futures: {maker: 0.0002, taker: 0.0005}
