@@ -229,12 +229,62 @@ func (e *Engine) OnCandle(ctx context.Context, c domain.Candle) {
 	}
 	e.trail(ctx, c)
 
+	// Candles that closed more than one bar ago come from warmup or gap
+	// backfill: strategies still see them (indicators need history) but
+	// their intents are dropped, since acting on stale signals is unsafe.
+	stale := e.cfg.Clock().Sub(c.CloseTime()) > c.Timeframe.Duration()
 	for _, inst := range e.instances {
 		if inst.cfg.Exchange != c.Exchange || inst.cfg.Market != c.Market || !inst.symbols[c.Symbol] || !inst.tfs[c.Timeframe] {
 			continue
 		}
-		e.apply(ctx, inst, inst.s.OnCandle(c))
+		intents := inst.s.OnCandle(c)
+		if stale {
+			if len(intents) > 0 {
+				e.log.Debug("dropping intents from stale candle", "strategy", inst.cfg.ID, "symbol", c.Symbol, "close", c.CloseTime())
+			}
+			continue
+		}
+		e.apply(ctx, inst, intents)
 	}
+	e.observeRisk(ctx)
+}
+
+// ObserveRisk feeds the current equity to the kill switch.
+func (e *Engine) ObserveRisk(ctx context.Context) {
+	e.mu.Lock()
+	defer e.unlockAndDrain(ctx)
+	e.observeRisk(ctx)
+}
+
+func (e *Engine) observeRisk(ctx context.Context) {
+	tripped, reason := e.cfg.Risk.Observe(e.cfg.Clock(), e.cfg.Book.Total().Equity)
+	if !tripped {
+		return
+	}
+	e.paused = true
+	e.notice(slog.LevelError, "KILL SWITCH: trading halted", "reason", reason, "close_positions", e.cfg.Risk.Config().CloseOnKill)
+	if e.cfg.Risk.Config().CloseOnKill {
+		e.closeAll(ctx, "kill_switch")
+	}
+}
+
+// ResetKillSwitch clears the kill switch and resumes entries.
+func (e *Engine) ResetKillSwitch() {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	e.cfg.Risk.Reset(e.cfg.Book.Total().Equity)
+	e.paused = false
+	e.notice(slog.LevelWarn, "kill switch reset, trading resumed")
+}
+
+// Kill trips the kill switch manually and closes all positions.
+func (e *Engine) Kill(ctx context.Context, reason string) {
+	e.mu.Lock()
+	defer e.unlockAndDrain(ctx)
+	e.cfg.Risk.Halt(reason)
+	e.paused = true
+	e.notice(slog.LevelError, "KILL SWITCH: manual", "reason", reason)
+	e.closeAll(ctx, "kill_switch")
 }
 
 // OnPrice processes a still-forming candle (live price update).
@@ -289,13 +339,49 @@ func (e *Engine) OpenOrders() []domain.Order {
 	return out
 }
 
-// TrackOrder registers an open order found on the exchange during
-// reconciliation, so its fills are handled.
-func (e *Engine) TrackOrder(o domain.Order) {
+// AdoptOrders starts tracking open orders that the engine did not place in
+// this session (left by a previous session, or found on the exchange during
+// reconciliation). Stop-loss and take-profit orders become the protection
+// of their position again; trailing settings are not recovered.
+func (e *Engine) AdoptOrders(orders []domain.Order) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
-	cp := o
-	e.orders[o.ClientID] = &cp
+	for _, o := range orders {
+		if !o.Status.Open() {
+			continue
+		}
+		cp := o
+		e.orders[o.ClientID] = &cp
+		key := domain.PositionKey{Exchange: o.Exchange, Market: o.Market, Symbol: o.Symbol}
+		switch o.Tag {
+		case domain.TagStopLoss, domain.TagTakeProfit:
+			p := e.protections[key]
+			if p == nil {
+				p = &protection{}
+				e.protections[key] = p
+			}
+			if o.Tag == domain.TagStopLoss {
+				p.stopID, p.stopPrice, p.best = o.ClientID, o.StopPrice, o.StopPrice
+			} else {
+				p.targetID, p.takeProfit = o.ClientID, o.StopPrice
+			}
+		}
+	}
+}
+
+// Unprotected returns open positions that have no stop loss order.
+func (e *Engine) Unprotected() []domain.Position {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	var out []domain.Position
+	for _, acct := range e.cfg.Book.Accounts() {
+		for _, pos := range acct.Positions() {
+			if p := e.protections[pos.PositionKey]; p == nil || p.stopID == "" {
+				out = append(out, pos)
+			}
+		}
+	}
+	return out
 }
 
 // CloseAll exits every open position (kill switch, shutdown on demand).
