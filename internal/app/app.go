@@ -9,12 +9,14 @@ import (
 
 	"github.com/shopspring/decimal"
 
+	"github.com/rizz404/trading-bot/internal/broker"
 	"github.com/rizz404/trading-bot/internal/config"
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/exchange"
 	"github.com/rizz404/trading-bot/internal/exchange/binance"
 	"github.com/rizz404/trading-bot/internal/marketdata"
 	"github.com/rizz404/trading-bot/internal/storage"
+	"github.com/rizz404/trading-bot/internal/strategy"
 )
 
 // MarketSource returns the market data client named in the config.
@@ -107,4 +109,30 @@ func Timeframes(names []string) ([]domain.Timeframe, error) {
 		out[i] = tf
 	}
 	return out, nil
+}
+
+// StrategyConfig converts a configured strategy instance. Symbols default
+// to fallback when the instance lists none.
+func StrategyConfig(sc config.StrategyConfig, fallback []string) (strategy.Config, error) {
+	m, err := domain.ParseMarket(sc.Market)
+	if err != nil {
+		return strategy.Config{}, err
+	}
+	symbols := sc.Symbols
+	if len(symbols) == 0 {
+		symbols = fallback
+	}
+	return strategy.Config{
+		ID: sc.ID, Name: sc.Name, Exchange: sc.Exchange, Market: m,
+		Symbols: symbols, Leverage: sc.Leverage, Params: sc.Params,
+	}, nil
+}
+
+// Fees converts the configured fee table.
+func Fees(fees map[string]broker.Fees) map[domain.Market]broker.Fees {
+	out := map[domain.Market]broker.Fees{}
+	for k, v := range fees {
+		out[domain.Market(k)] = v
+	}
+	return out
 }
