@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"io"
 	"log/slog"
+	"sync"
 	"testing"
 	"time"
 
@@ -13,8 +15,10 @@ import (
 
 	"github.com/rizz404/trading-bot/internal/broker"
 	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/trading-bot/internal/engine"
 	"github.com/rizz404/trading-bot/internal/metrics"
 	"github.com/rizz404/trading-bot/internal/portfolio"
+	"github.com/rizz404/trading-bot/internal/risk"
 )
 
 // The testnet account starts with 1 BTC that the bot never bought; a spot
@@ -62,6 +66,49 @@ func TestReconcileSpotManagesOnlyTheBotsHoldings(t *testing.T) {
 	s.reconcileSpot(a, state("0"), "USDT", false)
 	s.reconcileSpot(a, state("0"), "USDT", false)
 	assert.Empty(t, a.Positions(), "coins sold outside the bot close its position")
+}
+
+// fakeLive serves a fixed account state; orders go to the embedded Sim.
+type fakeLive struct {
+	*broker.Sim
+	state  *broker.AccountState
+	resync chan struct{}
+}
+
+func (f *fakeLive) PlaceBracket(context.Context, domain.Order, domain.Order) ([]domain.Order, error) {
+	return nil, nil
+}
+func (f *fakeLive) SetLeverage(context.Context, domain.Market, string, int) error { return nil }
+func (f *fakeLive) Start(context.Context, *sync.WaitGroup) error                  { return nil }
+func (f *fakeLive) AccountState(context.Context, domain.Market) (*broker.AccountState, error) {
+	return f.state, nil
+}
+func (f *fakeLive) SyncOrders(context.Context, []domain.Order, []domain.Order) {}
+func (f *fakeLive) Track([]domain.Order)                                       {}
+func (f *fakeLive) Resync() <-chan struct{}                                    { return f.resync }
+
+// Live accounts start with an empty ledger until the first reconcile; the
+// kill switch baseline must use the reconciled equity (found on the testnet:
+// every start tripped "daily loss 100%").
+func TestLiveStartDoesNotTripKillSwitch(t *testing.T) {
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	key := portfolio.AccountKey{Exchange: "binance-testnet", Market: domain.Spot}
+	book := portfolio.NewBook()
+	book.Add(portfolio.NewAccount(key, decimal.Zero, nil))
+	rm := risk.NewManager(risk.DefaultConfig(), log)
+	live := &fakeLive{Sim: broker.NewSim(broker.SimConfig{Exchange: key.Exchange, Clock: time.Now}), resync: make(chan struct{}),
+		state: &broker.AccountState{Market: domain.Spot, Balances: map[string]broker.Balance{"USDT": {Asset: "USDT", Wallet: decimal.NewFromInt(10000)}}}}
+	s := &session{log: log, book: book, risk: rm, lives: map[string]broker.Live{key.Exchange: live},
+		eng: engine.New(engine.Config{Book: book, Risk: rm, Log: log}), resync: make(chan struct{}, 1),
+		mismatch: map[domain.PositionKey]int{}, leverages: map[domain.PositionKey]int{},
+		quotes: map[portfolio.AccountKey]string{key: "USDT"}, instrument: map[domain.PositionKey]domain.Instrument{},
+		metrics: metrics.NewTrading(prometheus.NewRegistry())}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer func() { cancel(); s.liveWG.Wait() }()
+	require.NoError(t, s.start(ctx))
+	halted, reason := rm.Halted()
+	assert.False(t, halted, reason)
+	assert.Equal(t, "10000", book.Total().Equity.String())
 }
 
 func TestReconcileRequiresPersistentMismatchAndPreservesMetadata(t *testing.T) {

@@ -16,7 +16,10 @@ import (
 // start starts the live brokers and loads the exchange state (after
 // warmup, so last prices are known), then arms the kill switch baseline.
 func (s *session) start(ctx context.Context) error {
-	defer s.risk.Observe(time.Now(), s.book.Total().Equity)
+	// A closure: deferred arguments are evaluated immediately, which would
+	// observe the empty ledger before the first reconcile (equity 0 reads
+	// as a 100% daily loss and trips the kill switch on every live start).
+	defer func() { s.risk.Observe(time.Now(), s.book.Total().Equity) }()
 	if len(s.lives) == 0 {
 		return nil
 	}
