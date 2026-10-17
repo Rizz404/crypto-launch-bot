@@ -3,9 +3,11 @@ package exchange
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"math/rand/v2"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/coder/websocket"
@@ -16,7 +18,13 @@ import (
 // IdleTimeout (a silently dead or deprecated endpoint) and after
 // MaxLifetime (Binance drops connections after 24h).
 type WSStream struct {
-	URL         string
+	URL string
+	// URLFunc, if set, is called before every dial instead of using URL
+	// (e.g. to obtain a fresh listen key).
+	URLFunc func(ctx context.Context) (string, error)
+	// Setup, if set, runs after every dial and before onConnect, e.g. to
+	// send a subscription request. An error drops the connection.
+	Setup       func(ctx context.Context, conn *websocket.Conn) error
 	HTTPClient  *http.Client // optional
 	Log         *slog.Logger
 	MinBackoff  time.Duration
@@ -25,6 +33,19 @@ type WSStream struct {
 	MaxLifetime time.Duration
 	// OnReconnect is called before every reconnect attempt (not the first).
 	OnReconnect func()
+
+	mu   sync.Mutex
+	conn *websocket.Conn
+}
+
+// Kick drops the current connection; Run reconnects.
+func (s *WSStream) Kick() {
+	s.mu.Lock()
+	c := s.conn
+	s.mu.Unlock()
+	if c != nil {
+		_ = c.CloseNow()
+	}
 }
 
 func (s *WSStream) withDefaults() {
@@ -82,14 +103,38 @@ func (s *WSStream) Run(ctx context.Context, onConnect func(), handle func([]byte
 var errLifetime = errors.New("max connection lifetime reached")
 
 func (s *WSStream) session(ctx context.Context, onConnect func(), handle func([]byte)) error {
+	url := s.URL
+	if s.URLFunc != nil {
+		var err error
+		if url, err = s.URLFunc(ctx); err != nil {
+			return err
+		}
+	}
 	dialCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
-	conn, _, err := websocket.Dial(dialCtx, s.URL, &websocket.DialOptions{HTTPClient: s.HTTPClient})
+	conn, _, err := websocket.Dial(dialCtx, url, &websocket.DialOptions{HTTPClient: s.HTTPClient})
 	cancel()
 	if err != nil {
 		return err
 	}
 	defer func() { _ = conn.CloseNow() }()
 	conn.SetReadLimit(1 << 20)
+	s.mu.Lock()
+	s.conn = conn
+	s.mu.Unlock()
+	defer func() {
+		s.mu.Lock()
+		s.conn = nil
+		s.mu.Unlock()
+	}()
+
+	if s.Setup != nil {
+		setupCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
+		err := s.Setup(setupCtx, conn)
+		cancel()
+		if err != nil {
+			return fmt.Errorf("setup: %w", err)
+		}
+	}
 
 	if onConnect != nil {
 		onConnect()
