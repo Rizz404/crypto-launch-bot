@@ -192,3 +192,32 @@ func (s *Store) OpenOrders(ctx context.Context, runID int64) ([]domain.Order, er
 		return o, err
 	})
 }
+
+// OrderMeta is what the bot knows about an order beyond the exchange data.
+type OrderMeta struct {
+	Tag      string
+	Strategy string
+}
+
+// OrderMetas returns the stored tag and strategy of the given client ids.
+func (s *Store) OrderMetas(ctx context.Context, clientIDs []string) (map[string]OrderMeta, error) {
+	out := map[string]OrderMeta{}
+	if len(clientIDs) == 0 {
+		return out, nil
+	}
+	rows, err := s.pool.Query(ctx, `
+		SELECT client_order_id, coalesce(tag, ''), strategy FROM orders WHERE client_order_id = ANY($1)`, clientIDs)
+	if err != nil {
+		return nil, fmt.Errorf("order metas: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id string
+		var m OrderMeta
+		if err := rows.Scan(&id, &m.Tag, &m.Strategy); err != nil {
+			return nil, err
+		}
+		out[id] = m
+	}
+	return out, rows.Err()
+}
