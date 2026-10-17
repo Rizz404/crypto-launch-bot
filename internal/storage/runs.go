@@ -30,6 +30,12 @@ type Run struct {
 
 // CreateRun inserts a run and returns its id.
 func (s *Store) CreateRun(ctx context.Context, r Run) (int64, error) {
+	// A trading session spans multiple strategies and does not supply a
+	// single symbols list. pgx encodes a nil slice as SQL NULL, whereas
+	// strategy_runs.symbols is NOT NULL.
+	if r.Symbols == nil {
+		r.Symbols = []string{}
+	}
 	params, err := json.Marshal(r.Params)
 	if err != nil {
 		return 0, err
