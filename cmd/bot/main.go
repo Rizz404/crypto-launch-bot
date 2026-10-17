@@ -16,17 +16,15 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/app"
 	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/logging"
 	"github.com/rizz404/trading-bot/internal/marketdata"
 	"github.com/rizz404/trading-bot/internal/metrics"
 	"github.com/rizz404/trading-bot/internal/storage"
+	_ "github.com/rizz404/trading-bot/internal/strategy/all"
 )
 
 // version is set at build time with -ldflags "-X main.version=...".
@@ -149,26 +147,54 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 		}()
 	}
 
-	// Live data comes from testnet only in testnet mode, so paper trading
-	// sees real mainnet prices.
-	feeds, err := startFeeds(ctx, cfg, storage.NewStore(pool), marketdata.NewMetrics(reg), log, errc)
+	store := storage.NewStore(pool)
+	plan := newFeedPlan(cfg, log)
+	if err := plan.addMarketData(ctx, store); err != nil {
+		return err
+	}
+	strategies, err := plan.strategies(ctx, store)
 	if err != nil {
 		return err
 	}
 
-	// TODO(fase 3): strategies, risk manager and OMS consume the feeds.
-	log.Info("bot ready; recording market data, trading engine not implemented yet")
+	var sess *session
+	if len(strategies) > 0 {
+		if sess, err = newSession(ctx, cfg, store, strategies, log); err != nil {
+			return err
+		}
+		for _, series := range sess.Subscriptions() {
+			for key := range series {
+				plan.add(key.Exchange, key.Market, key.Symbol, key.Timeframe)
+			}
+		}
+		if err := sess.warmup(ctx); err != nil {
+			sess.close("startup failed")
+			return err
+		}
+		go sess.loop(ctx)
+	}
 
+	feeds := plan.start(ctx, store, marketdata.NewMetrics(reg), sess, errc)
+	log.Info("bot ready", "trading", sess != nil, "strategies", len(strategies))
+
+	var runErr error
 	select {
 	case <-ctx.Done():
 		log.Info("shutdown signal received")
-	case err := <-errc:
-		return err
+	case runErr = <-errc:
+		log.Error("stopping after error", "err", runErr)
 	}
 
 	stop := time.Now()
 	feeds.Wait()
 	log.Info("feeds stopped", "took", time.Since(stop).Round(time.Millisecond))
+	if sess != nil {
+		reason := "stopped"
+		if runErr != nil {
+			reason = "error: " + runErr.Error()
+		}
+		sess.close(reason)
+	}
 
 	if srv != nil {
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -178,54 +204,7 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 		}
 	}
 	log.Info("bot stopped")
-	return nil
-}
-
-// startFeeds starts one live candle feed per configured market. A feed that
-// stops for any reason other than shutdown reports to errc.
-func startFeeds(ctx context.Context, cfg *config.Config, store *storage.Store, m *marketdata.Metrics,
-	log *slog.Logger, errc chan<- error,
-) (*sync.WaitGroup, error) {
-	src, err := app.MarketSource(cfg.MarketData.Exchange, cfg.App.Mode == config.ModeTestnet, log)
-	if err != nil {
-		return nil, err
-	}
-	tfs, err := app.Timeframes(cfg.MarketData.Timeframes)
-	if err != nil {
-		return nil, err
-	}
-	rules := app.UniverseRules(cfg.Universe)
-
-	var wg sync.WaitGroup
-	for _, name := range cfg.MarketData.Markets {
-		market, err := domain.ParseMarket(name)
-		if err != nil {
-			return nil, err
-		}
-		symbols, err := app.ResolveSymbols(ctx, src, store, market, cfg.MarketData.Symbols, rules, log)
-		if err != nil {
-			return nil, err
-		}
-		feed := &marketdata.Feed{
-			Source:          src,
-			Store:           store,
-			Market:          market,
-			Subs:            app.Subscriptions(symbols, tfs),
-			InitialBackfill: cfg.MarketData.InitialBackfill,
-			Log:             log,
-			Metrics:         m,
-		}
-		log.Info("starting feed", "source", src.Name(), "market", market, "symbols", len(symbols), "timeframes", cfg.MarketData.Timeframes)
-		wg.Go(func() {
-			if err := feed.Run(ctx); err != nil && ctx.Err() == nil {
-				select {
-				case errc <- fmt.Errorf("%s feed: %w", market, err):
-				default:
-				}
-			}
-		})
-	}
-	return &wg, nil
+	return runErr
 }
 
 func envOr(key, def string) string {
