@@ -23,6 +23,7 @@ import (
 	"github.com/rizz404/trading-bot/internal/logging"
 	"github.com/rizz404/trading-bot/internal/marketdata"
 	"github.com/rizz404/trading-bot/internal/metrics"
+	"github.com/rizz404/trading-bot/internal/notify/telegram"
 	"github.com/rizz404/trading-bot/internal/storage"
 	_ "github.com/rizz404/trading-bot/internal/strategy/all"
 )
@@ -147,6 +148,25 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 		}()
 	}
 
+	// /stop on Telegram cancels this context like a signal does.
+	ctx, stopBot := context.WithCancel(ctx)
+	defer stopBot()
+
+	// Telegram outlives ctx briefly so the shutdown message is delivered.
+	var tg *telegram.Bot
+	tgCtx, tgCancel := context.WithCancel(context.Background())
+	tgDone := make(chan struct{})
+	defer func() {
+		tgCancel()
+		<-tgDone
+	}()
+	if cfg.Telegram.Enabled {
+		tg = telegram.New(cfg.Telegram.Token.Reveal(), cfg.Telegram.ChatIDs, log)
+		go func() { defer close(tgDone); tg.Run(tgCtx) }()
+	} else {
+		close(tgDone)
+	}
+
 	store := storage.NewStore(pool)
 	plan := newFeedPlan(cfg, log)
 	if err := plan.addMarketData(ctx, store); err != nil {
@@ -159,8 +179,11 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 
 	var sess *session
 	if len(strategies) > 0 {
-		if sess, err = newSession(ctx, cfg, store, strategies, log); err != nil {
+		if sess, err = newSession(ctx, cfg, store, strategies, metrics.NewTrading(reg), tg, log); err != nil {
 			return err
+		}
+		if tg != nil {
+			sess.registerCommands(tg, stopBot)
 		}
 		for _, series := range sess.Subscriptions() {
 			for key := range series {
@@ -180,6 +203,10 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 
 	feeds := plan.start(ctx, store, marketdata.NewMetrics(reg), sess, errc)
 	log.Info("bot ready", "trading", sess != nil, "strategies", len(strategies))
+	if tg != nil {
+		tg.Notify(fmt.Sprintf("🤖 <b>Bot started</b> · mode %s · %d strategies · version %s",
+			cfg.App.Mode, len(strategies), telegram.Escape(version)))
+	}
 
 	var runErr error
 	select {
@@ -208,6 +235,13 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 		}
 	}
 	log.Info("bot stopped")
+	if tg != nil {
+		msg := "🛑 <b>Bot stopped</b>"
+		if runErr != nil {
+			msg += "\nerror: " + telegram.Escape(runErr.Error())
+		}
+		tg.Notify(msg)
+	}
 	return runErr
 }
 

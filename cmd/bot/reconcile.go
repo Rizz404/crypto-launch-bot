@@ -39,6 +39,13 @@ func (s *session) start(ctx context.Context) error {
 				}
 			}
 		})
+		if wo, ok := lb.(interface {
+			SetWeightObserver(func(domain.Market, int))
+		}); ok {
+			wo.SetWeightObserver(func(m domain.Market, used int) {
+				s.metrics.UsedWeight.WithLabelValues(name, string(m)).Set(float64(used))
+			})
+		}
 		s.log.Info("live broker started", "exchange", name)
 	}
 	s.reconcile(ctx, true)
@@ -75,6 +82,7 @@ func (s *session) reconcile(ctx context.Context, initial bool) {
 			s.reconcileSpot(acct, st, quote, initial)
 		}
 		s.reconcileOrders(ctx, lb, acct.Key, st.OpenOrders, initial)
+		s.metrics.Reconciles.WithLabelValues("ok").Inc()
 	}
 	s.eng.ObserveRisk(ctx)
 }
@@ -109,6 +117,7 @@ func (s *session) reconcilePositions(acct *portfolio.Account, exchange []domain.
 			continue
 		}
 		delete(s.mismatch, key)
+		s.metrics.Reconciles.WithLabelValues("position_corrected").Inc()
 
 		if !hasX {
 			acct.SetPosition(domain.Position{PositionKey: key})

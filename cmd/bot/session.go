@@ -17,6 +17,8 @@ import (
 	"github.com/rizz404/trading-bot/internal/config"
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/engine"
+	"github.com/rizz404/trading-bot/internal/metrics"
+	"github.com/rizz404/trading-bot/internal/notify/telegram"
 	"github.com/rizz404/trading-bot/internal/portfolio"
 	"github.com/rizz404/trading-bot/internal/recorder"
 	"github.com/rizz404/trading-bot/internal/risk"
@@ -51,11 +53,17 @@ type session struct {
 	instrument map[domain.PositionKey]domain.Instrument
 	strategies []strategy.Config
 	runID      int64
-	notify     func(level slog.Level, msg string, attrs ...any) // optional, set before start
+	metrics    *metrics.Trading
+	tg         *telegram.Bot // optional
+	notifyMin  slog.Level
+	realized   map[string]decimal.Decimal // net realized PnL per strategy, this session
+	day        time.Time                  // UTC day of the last daily summary
 }
 
 // newSession builds the trading side of the bot for the configured mode.
-func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, strategies []strategy.Config, log *slog.Logger) (*session, error) {
+func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, strategies []strategy.Config,
+	m *metrics.Trading, tg *telegram.Bot, log *slog.Logger,
+) (*session, error) {
 	mode := cfg.App.Mode
 	paper := mode == config.ModePaper
 	s := &session{
@@ -63,7 +71,9 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 		sims: map[string]*broker.Sim{}, lives: map[string]broker.Live{}, resync: make(chan struct{}, 1),
 		mismatch: map[domain.PositionKey]int{}, quotes: map[portfolio.AccountKey]string{},
 		leverages: map[domain.PositionKey]int{}, instrument: map[domain.PositionKey]domain.Instrument{},
+		metrics: m, tg: tg, realized: map[string]decimal.Decimal{}, day: time.Now().UTC().Truncate(24 * time.Hour),
 	}
+	_ = s.notifyMin.UnmarshalText([]byte(cfg.Telegram.NotifyLevel))
 
 	var prev *storage.SessionState
 	if paper && cfg.Paper.Resume {
@@ -91,9 +101,10 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 	s.eng = engine.New(engine.Config{
 		Book: s.book, Risk: s.risk, Log: log, Clock: time.Now, IDSeed: time.Now().UnixMilli(),
 		Hooks: engine.Hooks{
-			OnOrder:  s.rec.Order,
-			OnFill:   func(f domain.Fill, _ domain.Order) { s.rec.Fill(f) },
+			OnOrder:  s.onOrder,
+			OnFill:   s.onFill,
 			OnNotice: s.onNotice,
+			OnPlaced: m.ObservePlace,
 		},
 	})
 
@@ -275,6 +286,8 @@ func (s *session) onUpdate(ctx context.Context, c domain.Candle) {
 func (s *session) loop(ctx context.Context) {
 	tick := time.NewTicker(time.Second)
 	defer tick.Stop()
+	gauges := time.NewTicker(10 * time.Second)
+	defer gauges.Stop()
 	snap := time.NewTicker(snapshotInterval)
 	defer snap.Stop()
 	for {
@@ -283,6 +296,9 @@ func (s *session) loop(ctx context.Context) {
 			return
 		case now := <-tick.C:
 			s.eng.Tick(ctx, now)
+		case now := <-gauges.C:
+			s.updateGauges()
+			s.dailySummary(ctx, now)
 		case now := <-snap.C:
 			s.reconcile(ctx, false)
 			s.snapshot(ctx, now)
@@ -317,14 +333,101 @@ func (s *session) close(reason string) {
 	}
 }
 
+// onTrade runs under the account lock: no engine calls here.
 func (s *session) onTrade(t domain.Trade) {
 	s.rec.Trade(t)
+	net := t.NetPnL()
 	s.log.Info("trade closed", "strategy", t.Strategy, "symbol", t.Symbol, "side", t.Side, "qty", t.Quantity,
-		"entry", t.EntryPrice, "exit", t.ExitPrice, "net_pnl", t.NetPnL().StringFixed(4), "reason", t.ExitReason)
+		"entry", t.EntryPrice, "exit", t.ExitPrice, "net_pnl", net.StringFixed(4), "reason", t.ExitReason)
+
+	result := "loss"
+	if net.IsPositive() {
+		result = "win"
+	}
+	s.metrics.Trades.WithLabelValues(t.Strategy, result, t.ExitReason).Inc()
+	s.realized[t.Strategy] = s.realized[t.Strategy].Add(net)
+	pnl, _ := s.realized[t.Strategy].Float64()
+	s.metrics.RealizedPnL.WithLabelValues(t.Strategy).Set(pnl)
+
+	if s.tg != nil {
+		icon := "🔴"
+		if net.IsPositive() {
+			icon = "🟢"
+		}
+		s.tg.Notify(fmt.Sprintf("%s <b>Closed %s %s</b> (%s)\nqty %s · %s → %s\nnet PnL <b>%s</b> · fees %s\nexit: %s",
+			icon, t.Side, telegram.Escape(t.Symbol), telegram.Escape(t.Strategy), t.Quantity, t.EntryPrice, t.ExitPrice,
+			net.StringFixed(2), t.Fees.StringFixed(2), telegram.Escape(t.ExitReason)))
+	}
+}
+
+func (s *session) onOrder(o domain.Order) {
+	s.rec.Order(o)
+	s.metrics.Orders.WithLabelValues(o.Exchange+":"+string(o.Market), o.Tag, string(o.Status)).Inc()
+}
+
+func (s *session) onFill(f domain.Fill, o domain.Order) {
+	s.rec.Fill(f)
+	s.metrics.Fills.WithLabelValues(f.Exchange+":"+string(f.Market), o.Tag).Inc()
+	if s.tg != nil && o.Tag == domain.TagEntry && o.Status == domain.OrderFilled {
+		s.tg.Notify(fmt.Sprintf("🔵 <b>Opened %s %s</b> (%s)\nqty %s @ %s\n%s",
+			strings.ToUpper(string(o.Side)), telegram.Escape(o.Symbol), telegram.Escape(o.Strategy),
+			o.FilledQty, o.AvgPrice.StringFixed(4), telegram.Escape(o.Reason)))
+	}
 }
 
 func (s *session) onNotice(level slog.Level, msg string, attrs ...any) {
-	if s.notify != nil {
-		s.notify(level, msg, attrs...)
+	s.metrics.Notices.WithLabelValues(strings.ToLower(level.String())).Inc()
+	if s.tg == nil || level < s.notifyMin {
+		return
 	}
+	icon := "ℹ️"
+	switch {
+	case level >= slog.LevelError:
+		icon = "🚨"
+	case level >= slog.LevelWarn:
+		icon = "⚠️"
+	}
+	var sb strings.Builder
+	fmt.Fprintf(&sb, "%s <b>%s</b>", icon, telegram.Escape(msg))
+	for i := 0; i+1 < len(attrs); i += 2 {
+		fmt.Fprintf(&sb, "\n%v: %s", attrs[i], telegram.Escape(fmt.Sprint(attrs[i+1])))
+	}
+	s.tg.Notify(sb.String())
+}
+
+func (s *session) updateGauges() {
+	for _, acct := range s.book.Accounts() {
+		snap := acct.Snapshot()
+		k := acct.Key.String()
+		f := func(d decimal.Decimal) float64 { v, _ := d.Float64(); return v }
+		s.metrics.Equity.WithLabelValues(k).Set(f(snap.Equity))
+		s.metrics.Balance.WithLabelValues(k).Set(f(snap.Balance))
+		s.metrics.Unrealized.WithLabelValues(k).Set(f(snap.UnrealizedPnL))
+		s.metrics.Exposure.WithLabelValues(k).Set(f(snap.Exposure))
+		s.metrics.OpenPositions.WithLabelValues(k).Set(float64(snap.OpenPositions))
+	}
+	killed, _ := s.risk.Halted()
+	s.metrics.SetFlags(killed, s.eng.Paused())
+}
+
+// dailySummary reports the previous UTC day once it has ended.
+func (s *session) dailySummary(ctx context.Context, now time.Time) {
+	day := now.UTC().Truncate(24 * time.Hour)
+	if !day.After(s.day) {
+		return
+	}
+	prev := s.day
+	s.day = day
+	if s.tg == nil || !s.cfg.Telegram.DailySummary {
+		return
+	}
+	st, err := s.store.TradeStatsBetween(ctx, s.runID, prev, day)
+	if err != nil {
+		s.log.Error("daily summary", "err", err)
+		return
+	}
+	total := s.book.Total()
+	s.tg.Notify(fmt.Sprintf("📊 <b>Daily summary %s</b>\ntrades %d (wins %d) · net PnL <b>%s</b> · fees %s\nequity %s · open positions %d",
+		prev.Format(time.DateOnly), st.Trades, st.Wins, st.NetPnL.StringFixed(2), st.Fees.StringFixed(2),
+		total.Equity.StringFixed(2), total.OpenPositions))
 }
