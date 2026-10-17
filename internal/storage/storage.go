@@ -3,12 +3,15 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
+	"time"
 
 	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
@@ -16,7 +19,13 @@ import (
 	"github.com/rizz404/trading-bot/migrations"
 )
 
-// Open creates a connection pool and verifies it with a ping.
+// ConnectWait is how long Open keeps retrying a database that is not
+// accepting connections yet (it starts alongside the bot after a reboot).
+var ConnectWait = time.Minute
+
+// Open creates a connection pool and verifies it with a ping, waiting up to
+// ConnectWait for a database that refuses connections. Other errors, such
+// as a wrong password, fail at once.
 func Open(ctx context.Context, url string, maxConns int32) (*pgxpool.Pool, error) {
 	cfg, err := pgxpool.ParseConfig(url)
 	if err != nil {
@@ -32,11 +41,26 @@ func Open(ctx context.Context, url string, maxConns int32) (*pgxpool.Pool, error
 	if err != nil {
 		return nil, fmt.Errorf("create pool: %w", err)
 	}
-	if err := pool.Ping(ctx); err != nil {
-		pool.Close()
-		return nil, fmt.Errorf("ping database: %w", err)
+	deadline := time.Now().Add(ConnectWait)
+	for delay := 250 * time.Millisecond; ; delay = min(delay*2, 5*time.Second) {
+		err := pool.Ping(ctx)
+		if err == nil {
+			return pool, nil
+		}
+		var connErr *pgconn.ConnectError
+		var pgErr *pgconn.PgError
+		retry := errors.As(err, &connErr) && !errors.As(err, &pgErr)
+		if !retry || time.Now().Add(delay).After(deadline) {
+			pool.Close()
+			return nil, fmt.Errorf("ping database: %w", err)
+		}
+		select {
+		case <-ctx.Done():
+			pool.Close()
+			return nil, fmt.Errorf("ping database: %w", ctx.Err())
+		case <-time.After(delay):
+		}
 	}
-	return pool, nil
 }
 
 // Migrator applies the embedded goose migrations.

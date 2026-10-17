@@ -55,6 +55,20 @@ func (s *Store) CreateRun(ctx context.Context, r Run) (int64, error) {
 }
 
 // FinishRun marks a run as stopped and stores its summary (any JSON value).
+// CloseInterruptedRuns marks session runs of mode that never finished
+// (the process was killed, or the database stopped first during a host
+// shutdown) as interrupted at their last recorded activity.
+func (s *Store) CloseInterruptedRuns(ctx context.Context, mode string) (int64, error) {
+	tag, err := s.pool.Exec(ctx, `
+		UPDATE strategy_runs r SET stop_reason = 'interrupted',
+			stopped_at = GREATEST(r.started_at, COALESCE((SELECT max(ts) FROM equity_snapshots e WHERE e.run_id = r.id), r.started_at))
+		WHERE r.mode = $1 AND r.instance_id = 'session' AND r.stopped_at IS NULL`, mode)
+	if err != nil {
+		return 0, fmt.Errorf("close interrupted runs: %w", err)
+	}
+	return tag.RowsAffected(), nil
+}
+
 func (s *Store) FinishRun(ctx context.Context, id int64, reason string, summary any) error {
 	var raw []byte
 	if summary != nil {

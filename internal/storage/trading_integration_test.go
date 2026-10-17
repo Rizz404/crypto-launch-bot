@@ -91,6 +91,51 @@ func TestTradingPersistenceAndSessionRecovery(t *testing.T) {
 
 // Rollbacks are opt-in and only allowed on a dedicated database ending
 // in _test; normal integration runs never roll back an existing database.
+// A host shutdown can stop the database before the bot finishes its run.
+func TestCloseInterruptedRuns(t *testing.T) {
+	s, ex := testStore(t)
+	ctx := context.Background()
+	const mode = "testnet" // the mode column is constrained; runs are removed by id
+	var ids []int64
+	t.Cleanup(func() {
+		for _, id := range ids {
+			_, _ = s.pool.Exec(ctx, "DELETE FROM equity_snapshots WHERE run_id=$1", id)
+			_, _ = s.pool.Exec(ctx, "DELETE FROM strategy_runs WHERE id=$1", id)
+		}
+	})
+	start := time.Date(2026, 10, 17, 15, 0, 0, 0, time.UTC)
+	create := func(at time.Time) int64 {
+		id, err := s.CreateRun(ctx, Run{InstanceID: "session", Strategy: "engine", Mode: mode, Exchange: ex, StartedAt: at})
+		require.NoError(t, err)
+		ids = append(ids, id)
+		return id
+	}
+	withEquity, empty, finished := create(start), create(start.Add(time.Minute)), create(start.Add(2*time.Minute))
+	last := start.Add(18 * time.Minute)
+	require.NoError(t, s.InsertEquity(ctx, withEquity, ex+":spot", []EquityPoint{{Time: last, Equity: decimal.NewFromInt(1000), Balance: decimal.NewFromInt(1000)}}))
+	require.NoError(t, s.FinishRun(ctx, finished, "stopped", nil))
+
+	n, err := s.CloseInterruptedRuns(ctx, mode)
+	require.NoError(t, err)
+	assert.GreaterOrEqual(t, n, int64(2))
+	stopped := func(id int64) (time.Time, string) {
+		var at time.Time
+		var reason string
+		require.NoError(t, s.pool.QueryRow(ctx, "SELECT stopped_at, stop_reason FROM strategy_runs WHERE id=$1", id).Scan(&at, &reason))
+		return at, reason
+	}
+	at, reason := stopped(withEquity)
+	assert.True(t, at.Equal(last), "stopped at the last recorded activity, got %s", at)
+	assert.Equal(t, "interrupted", reason)
+	at, _ = stopped(empty)
+	assert.True(t, at.Equal(start.Add(time.Minute)))
+	_, reason = stopped(finished)
+	assert.Equal(t, "stopped", reason)
+	n, err = s.CloseInterruptedRuns(ctx, mode)
+	require.NoError(t, err)
+	assert.Zero(t, n)
+}
+
 func TestMigrationCycle(t *testing.T) {
 	if os.Getenv("TB_TEST_MIGRATIONS") != "1" {
 		t.Skip("set TB_TEST_MIGRATIONS=1 on an isolated *_test database")
