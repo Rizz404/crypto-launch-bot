@@ -1,0 +1,134 @@
+package views
+
+templ Overview(st Status) {
+	@Layout("Overview", "overview") {
+		@StatusPanel(st)
+		if st.Live {
+			<section>
+				<h2>Equity (this session)</h2>
+				<div class="chart" data-chart="line" data-src="/api/equity"></div>
+			</section>
+			<section>
+				<h2>Positions</h2>
+				<div hx-get="/partials/positions" hx-trigger="load, every 5s">…</div>
+			</section>
+			<section>
+				<h2>Open orders</h2>
+				<div hx-get="/partials/orders" hx-trigger="load, every 10s">…</div>
+			</section>
+		}
+		<section>
+			<h2>Recent trades</h2>
+			<div hx-get="/partials/trades" hx-trigger="load, every 30s">…</div>
+		</section>
+	}
+}
+
+templ StatusPanel(st Status) {
+	<section id="status" hx-get="/partials/status" hx-trigger="every 5s" hx-swap="outerHTML">
+		if !st.Live {
+			<p class="muted">No trading session is running: the bot only records market data.</p>
+		} else {
+			<div class="cards">
+				<div class="card"><span class="label">Mode</span><span class="value">{ st.Mode }</span></div>
+				<div class="card"><span class="label">Equity</span><span class="value">{ st.Equity }</span></div>
+				<div class="card">
+					<span class="label">Unrealized</span>
+					<span class={ "value", templ.KV("pos", st.UnrealizedPos), templ.KV("neg", !st.UnrealizedPos) }>{ st.Unrealized }</span>
+				</div>
+				<div class="card"><span class="label">Exposure</span><span class="value">{ st.Exposure }</span></div>
+				<div class="card"><span class="label">Positions</span><span class="value">{ st.OpenPositions }</span></div>
+				<div class="card">
+					<span class="label">State</span>
+					if st.Killed {
+						<span class="value neg" title={ st.KillReason }>KILL SWITCH</span>
+					} else if st.Paused {
+						<span class="value warn">paused</span>
+					} else {
+						<span class="value pos">running</span>
+					}
+				</div>
+			</div>
+			if st.Killed {
+				<p class="alert">Kill switch: { st.KillReason }</p>
+			}
+			<div class="actions">
+				if st.Paused && !st.Killed {
+					<button hx-post="/actions/resume" hx-target="#status" hx-swap="outerHTML">Resume entries</button>
+				} else if !st.Paused {
+					<button hx-post="/actions/pause" hx-target="#status" hx-swap="outerHTML">Pause entries</button>
+				}
+				if st.Killed {
+					<button hx-post="/actions/reset" hx-target="#status" hx-swap="outerHTML" hx-confirm="Clear the kill switch and resume trading?">Reset kill switch</button>
+				} else {
+					<button class="danger" hx-post="/actions/kill" hx-target="#status" hx-swap="outerHTML" hx-confirm="Close ALL positions and halt trading?">Kill switch</button>
+				}
+			</div>
+			<table>
+				<thead><tr><th>Account</th><th>Balance</th><th>Equity</th><th>Unrealized</th><th>Free margin</th><th>Positions</th></tr></thead>
+				<tbody>
+					for _, a := range st.Accounts {
+						<tr><td>{ a.Key }</td><td>{ a.Balance }</td><td>{ a.Equity }</td><td>{ a.Unrealized }</td><td>{ a.FreeMargin }</td><td>{ a.Positions }</td></tr>
+					}
+				</tbody>
+			</table>
+		}
+	</section>
+}
+
+templ Positions(rows []PositionRow) {
+	if len(rows) == 0 {
+		@Empty("No open positions.")
+	} else {
+		<table>
+			<thead><tr><th>Account</th><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry</th><th>Mark</th><th>uPnL</th><th>Strategy</th><th>Opened</th></tr></thead>
+			<tbody>
+				for _, p := range rows {
+					<tr>
+						<td>{ p.Account }</td>
+						<td><a href={ templ.SafeURL(p.ChartHref) }>{ p.Symbol }</a></td>
+						<td>{ p.Side }</td><td>{ p.Qty }</td><td>{ p.Entry }</td><td>{ p.Mark }</td>
+						<td class={ templ.KV("pos", p.UPnLPositive), templ.KV("neg", !p.UPnLPositive) }>{ p.UPnL }</td>
+						<td>{ p.Strategy }</td><td>{ p.Opened }</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+}
+
+templ Orders(rows []OrderRow) {
+	if len(rows) == 0 {
+		@Empty("No open orders.")
+	} else {
+		<table>
+			<thead><tr><th>Symbol</th><th>Side</th><th>Type</th><th>Tag</th><th>Qty</th><th>Price</th><th>Strategy</th><th>Status</th><th>Created</th></tr></thead>
+			<tbody>
+				for _, o := range rows {
+					<tr><td>{ o.Symbol }</td><td>{ o.Side }</td><td>{ o.Type }</td><td>{ o.Tag }</td><td>{ o.Qty }</td><td>{ o.Price }</td><td>{ o.Strategy }</td><td>{ o.Status }</td><td>{ o.Created }</td></tr>
+				}
+			</tbody>
+		</table>
+	}
+}
+
+templ Trades(rows []TradeRow) {
+	if len(rows) == 0 {
+		@Empty("No trades yet.")
+	} else {
+		<table>
+			<thead><tr><th>Closed</th><th>Strategy</th><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry</th><th>Exit</th><th>Net PnL</th><th>Fees</th><th>Exit reason</th></tr></thead>
+			<tbody>
+				for _, t := range rows {
+					<tr>
+						<td>{ t.Closed }</td><td>{ t.Strategy }</td>
+						<td><a href={ templ.SafeURL(t.ChartHref) }>{ t.Symbol }</a></td>
+						<td>{ t.Side }</td><td>{ t.Qty }</td><td>{ t.Entry }</td><td>{ t.Exit }</td>
+						<td class={ templ.KV("pos", t.Win), templ.KV("neg", !t.Win) }>{ t.Net }</td>
+						<td>{ t.Fees }</td><td>{ t.Reason }</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+}

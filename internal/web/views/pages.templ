@@ -1,0 +1,87 @@
+package views
+
+templ Chart(p ChartPage) {
+	@Layout("Chart", "chart") {
+		<section>
+			<form method="get" action="/chart" class="picker">
+				<label>
+					Series
+					<select name="series" onchange="this.form.submit()">
+						for _, s := range p.Series {
+							<option value={ s.Href } selected?={ s.Href == p.Selected }>{ s.Label }</option>
+						}
+					</select>
+				</label>
+			</form>
+			if p.Note != "" {
+				<p class="muted">{ p.Note }</p>
+			}
+			if p.Src != "" {
+				<div class="chart tall" data-chart="candles" data-src={ p.Src }></div>
+				<p class="muted">Arrows mark trade entries (▲ long, ▼ short) and exits.</p>
+			}
+		</section>
+	}
+}
+
+templ Backtests(rows []RunRow) {
+	@Layout("Backtests", "backtests") {
+		<section>
+			<h2>Backtest runs</h2>
+			<p class="muted">Saved with <code>backtest -save</code>.</p>
+			if len(rows) == 0 {
+				@Empty("No saved backtests.")
+			} else {
+				<table>
+					<thead><tr><th>#</th><th>Strategy</th><th>Symbols</th><th>Segment</th><th>Period</th><th>Return</th><th>Max DD</th><th>Sharpe</th><th>Trades</th><th>Win rate</th><th>PF</th></tr></thead>
+					<tbody>
+						for _, r := range rows {
+							<tr>
+								<td><a href={ templ.SafeURL(r.Href) }>{ r.ID }</a></td>
+								<td>{ r.Instance }</td><td>{ r.Symbols }</td><td>{ r.Segment }</td><td>{ r.Period }</td>
+								<td class={ templ.KV("pos", r.Positive), templ.KV("neg", !r.Positive) }>{ r.Return }</td>
+								<td>{ r.MaxDD }</td><td>{ r.Sharpe }</td><td>{ r.Trades }</td><td>{ r.WinRate }</td><td>{ r.ProfitFactor }</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</section>
+	}
+}
+
+templ Backtest(d RunDetail) {
+	@Layout("Backtest", "backtests") {
+		<section>
+			<h2>Backtest #{ d.Run.ID } · { d.Run.Instance }</h2>
+			<p class="muted">{ d.Run.Symbols } · { d.Run.Segment } · { d.Run.Period }</p>
+			<div class="cards">
+				for _, m := range d.Metrics {
+					<div class="card"><span class="label">{ m[0] }</span><span class="value">{ m[1] }</span></div>
+				}
+			</div>
+		</section>
+		<section>
+			<h2>Equity</h2>
+			<div class="chart" data-chart="line" data-src={ d.EquitySrc }></div>
+		</section>
+		if len(d.Charts) > 0 {
+			<section>
+				<h2>Charts with trades</h2>
+				<p>
+					for _, c := range d.Charts {
+						<a class="pill" href={ templ.SafeURL(c.Href) }>{ c.Label }</a>
+					}
+				</p>
+			</section>
+		}
+		<section>
+			<h2>Parameters</h2>
+			<pre>{ d.Params }</pre>
+		</section>
+		<section>
+			<h2>Trades</h2>
+			@Trades(d.Trades)
+		</section>
+	}
+}
