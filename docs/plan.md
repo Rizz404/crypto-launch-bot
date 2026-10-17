@@ -92,6 +92,7 @@ Di sandbox Codex ini cache build perlu diarahkan ke direktori writable (`GOCACHE
 | Rendah | Pemotongan pesan Telegram berbasis byte memutus karakter UTF-8. | Pemotongan berbasis rune; `TestMessageTruncationPreservesUTF8`. |
 | Tinggi | Feed WS di VPS terputus berulang: resolver host (Tailscale → upstream ISP) kadang menjawab `stream.binance.com` dengan halaman blokir Trust Positif (`lamanlabuh.aduankonten.id`). ISP juga mencegat 8.8.8.8/9.9.9.9. | Keputusan user: sidecar resolver. CoreDNS khusus bot meneruskan lewat DNS-over-TLS (sertifikat `cloudflare-dns.com`); WS tersambung 0,26 detik setelah start. Commit `46fbbd3`, `1e8e78e`. |
 | Tinggi | Write recorder yang gagal (DB tidak terjangkau) langsung dibuang; order/fill bisa hilang dari DB. | Retry dengan backoff 1–30 detik tanpa mengubah urutan FIFO; trade (tanpa kunci unik) hanya diulang bila error pasti terjadi sebelum data terkirim; write yang sedang di-retry ikut flush saat shutdown. `TestTransientFailureRetriesInOrder` dan tiga test lain. |
+| Tinggi | Saat TP OCO spot ter-trigger, Binance mengirim leg SL `EXPIRED` **sebelum** fill TP (terekam di Spot Testnet). Engine menganggapnya stop ditolak dan mengirim market exit kedua: exit ganda/saldo tidak cukup dan notifikasi palsu. | `broker.LinkedBrackets` (Binance: spot); SL linked yang expired saat TP masih terbuka menunggu hasil TP, dan baru exit jika TP juga berakhir tanpa fill. `TestLinkedStopExpiryWaitsForTakeProfit` gagal pada kode lama. |
 | Sedang | CI memakai hasil test integration dari cache Go sehingga skema tidak dibuat di DB service baru; job paper recovery gagal begitu package `storage` tidak berubah. | `-count=1` di step integration CI dan `make test-integration`. |
 
 ### Pengujian lanjutan tanpa kredensial exchange (2026-10-17)
@@ -107,6 +108,21 @@ Di sandbox Codex ini cache build perlu diarahkan ke direktori writable (`GOCACHE
 - Monitoring: Grafana sehat, dashboard `tradingbot` terprovisi dengan 14 panel dan kedua datasource berstatus `OK`. Container lama Prometheus belum memiliki mount `alerts.yml`; compose diterapkan ulang. Kini config valid dan keenam rules berstatus `ok` di API. `make test-monitoring` menguji seluruh alert pada kondisi gagal/sehat dan hold time dalam container tanpa jaringan. Bukti: [monitoring-verification.json](testing/monitoring-verification.json). Tidak ada pesan Telegram nyata dikirim.
 
 Temuan lanjutan di atas sudah diperbaiki untuk melanjutkan pengujian: replay fill, status snapshot mendahului execution, proteksi partial entry/exit, reservasi order pending, refill Sim setelah restart, reversal serentak, cancel lintas exchange, entry tanpa rencana proteksi setelah paper restart, dan CSP chart.
+
+### Order nyata di Binance Spot Testnet (adapter, 2026-10-17)
+
+Test opt-in [testnet_test.go](../internal/exchange/binance/testnet_test.go) memakai endpoint testnet yang di-hardcode dan hanya jalan dengan build tag `testnet` plus `TB_TESTNET_ORDERS=1` (tidak ikut CI). Dijalankan dari laptop dengan BTCUSDT 0,00025 (sekitar 20 USDT testnet), juga dengan race detector:
+
+```sh
+TB_TESTNET_ORDERS=1 [TB_TESTNET_RECORD=1] TB_EXCHANGES__BINANCE__API_KEY=... TB_EXCHANGES__BINANCE__API_SECRET=... \
+  go test -count=1 -tags testnet -run TestSpotTestnet -v ./internal/exchange/binance
+```
+
+- **Lifecycle:** subscribe user stream WS API, market buy terisi lewat `executionReport`, OCO SL/TP diterima dan tampil di `openOrders` dengan tipe/harga benar, cancel satu leg membatalkan kedua leg (`CANCELED` dengan `C` = id asli), cancel kedua `-2011` memicu resync, flatten.
+- **Restart/reconciliation:** sesi kedua menemukan dan mengadopsi limit order sesi pertama; `SyncOrders` mengirim status akhir order yang dibatalkan selama "bot mati"; order adopsi bisa di-cancel.
+- **TP ter-trigger (best effort, lolos 2 dari 3 run; run gagal pertama berupa race di jalur "tidak ter-trigger" yang sudah diperbaiki):** fill TP dan leg SL `EXPIRED`. Urutan event asli menghasilkan temuan exit ganda di tabel atas. TP adalah market order setelah trigger: satu run terisi 81.535,01 untuk trigger sekitar 81.611 (slippage book testnet).
+- Respons REST order/OCO/cancel/query dan pesan user stream terekam di `internal/exchange/binance/testdata/testnet/` (tanpa kredensial, saldo akun REST tidak disimpan) dan diputar ulang offline oleh `TestRecordedSpotTestnetPayloads` di CI.
+- Batasan: komisi testnet 0, jadi jalur fee base/BNB belum diuji dengan nilai nyata. Futures (Demo key belum ada), engine/bot penuh dalam mode testnet, dan kill switch nyata belum dijalankan.
 
 ### Eksperimen backtest historis
 
@@ -160,9 +176,9 @@ Asumsi: saldo awal 1000 per segmen, leverage 2, risk default, taker 0,05%, maker
 - [x] Repo private, GitHub Actions, publikasi image GHCR, dan akses baca GHCR/repo dari VPS sudah berhasil. Digest yang sedang dipakai dan rilis baru yang belum dideploy tercatat di checkpoint handoff.
 - [ ] Selesaikan verifikasi operasi VPS: deploy/health/resource limit, restart graceful dengan posisi terbuka, backup manual + restore, dan timer observasi/backup sudah lolos. Tersisa: hasil timer backup terjadwal pertama, salinan backup di luar server, dan pemantauan memori Grafana. Docker aktif/enabled, tetapi reboot host tidak diuji dan jangan dilakukan pada server Plesk bersama untuk tes ini.
 - [ ] Audit lanjutan: late fill setelah cancel/timeout REST, replay setelah reconciliation, sizing/margin raw order dan reservasi inventori spot, state internal strategi setelah restart (misalnya penghitung DCA), failure/retry dan private WS/SL/TP exchange nyata. Skenario partial fill/pending/restart yang sudah lolos dirinci di atas.
-- [ ] Tambahkan fixture REST/WS **terekam** untuk Binance serta integration test testnet opt-in; pengujian Bybit ditunda karena pembatasan akses. Fixture sintetis saat ini belum membuktikan penerimaan order oleh exchange.
+- [x] Fixture REST/WS **terekam** Binance Spot dan integration test testnet opt-in (lihat "Order nyata di Binance Spot Testnet"). Futures belum terekam (butuh Demo key); Bybit ditunda karena pembatasan akses.
 - [ ] Paper live **24 jam** dan restart dengan data live. Restart dengan data live dan posisi terbuka sudah lolos dua kali. Observasi 24 jam dimulai 15:02:41 UTC setelah resolver DoT aktif; nilai sampel setelah 2026-10-18 15:03 UTC. Retry recorder belum diuji ulang dengan pemutusan DB di VPS.
-- [ ] Order spot/futures pada lingkungan pengujian Binance, native SL/TP, restart/reconciliation, kill switch. Kredensial Spot Testnet sudah terisi dan autentikasi baca akun berhasil; kredensial Futures Demo belum disiapkan. Bybit ditunda. Belum ada order nyata dikirim.
+- [ ] Order spot/futures pada lingkungan pengujian Binance, native SL/TP, restart/reconciliation, kill switch. **Spot di level adapter lolos** (entry, OCO, cancel, TP trigger, adopsi setelah restart). Tersisa: bot penuh `app.mode: testnet` (engine + recorder + reconciliation + kill switch), fee non-nol, dan Futures (kredensial Demo belum disiapkan). Bybit ditunda.
 - [x] Backtest historis nyata, split CLI, `-save`, CSV, dan perbandingan awal tiga parameter `emacross` (hasil di atas).
 - [ ] Validasi strategi pada periode/pair lain, fill intrabar dan funding historis, lalu putuskan parameter default berdasarkan bukti lebih luas.
 - [ ] Telegram sungguhan, flush/pesan shutdown dan daily summary, serta monitoring sesi trading 24 jam. Config/rules/provisioning/health monitoring lokal sudah diverifikasi.
