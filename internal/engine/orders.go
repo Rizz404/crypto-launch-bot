@@ -29,7 +29,11 @@ func (e *Engine) apply(ctx context.Context, inst *instance, intents []strategy.I
 			e.enter(ctx, inst, key, in)
 		case strategy.Exit:
 			delete(e.reversals, key)
-			e.exit(ctx, key, domain.TagExit)
+			reason := in.Reason
+			if reason == "" {
+				reason = domain.TagExit
+			}
+			e.exit(ctx, key, reason)
 		case strategy.Place:
 			e.placeRaw(ctx, inst, key, in)
 		case strategy.Cancel:
@@ -576,7 +580,13 @@ func (e *Engine) clearProtection(ctx context.Context, key domain.PositionKey) {
 		return
 	}
 	delete(e.protections, key)
-	for _, id := range []string{p.stopID, p.targetID} {
+	ids := []string{p.stopID, p.targetID}
+	if p.linked && p.targetID != "" && e.isOpen(p.stopID) {
+		// Cancelling one leg cancels the whole list at the exchange; a
+		// second request would only fail with "unknown order".
+		ids = []string{p.stopID}
+	}
+	for _, id := range ids {
 		if id != "" {
 			e.cancel(ctx, id)
 		}

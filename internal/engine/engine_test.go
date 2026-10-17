@@ -197,10 +197,60 @@ func TestBracketOrdersPersistBeforeFills(t *testing.T) {
 	h.s.OnCandle(h.bar(100, 110, 99, 105))
 }
 
-// linkedBracketBroker reports its brackets as exchange-linked (an OCO).
-type linkedBracketBroker struct{ bracketBroker }
+// linkedBracketBroker behaves like an OCO: cancelling one leg of a bracket
+// cancels the other at the "exchange" too.
+type linkedBracketBroker struct {
+	bracketBroker
+	pairs   map[string]string
+	cancels int
+}
 
-func (linkedBracketBroker) LinkedBracket(domain.Market) bool { return true }
+func newLinkedBroker(s *broker.Sim) *linkedBracketBroker {
+	return &linkedBracketBroker{bracketBroker: bracketBroker{Sim: s}, pairs: map[string]string{}}
+}
+
+func (*linkedBracketBroker) LinkedBracket(domain.Market) bool { return true }
+
+func (b *linkedBracketBroker) PlaceBracket(ctx context.Context, stop, target domain.Order) ([]domain.Order, error) {
+	b.pairs[stop.ClientID], b.pairs[target.ClientID] = target.ClientID, stop.ClientID
+	return b.bracketBroker.PlaceBracket(ctx, stop, target)
+}
+
+func (b *linkedBracketBroker) CancelOrder(ctx context.Context, o domain.Order) error {
+	b.cancels++
+	if err := b.Sim.CancelOrder(ctx, o); err != nil {
+		return err
+	}
+	if other, ok := b.pairs[o.ClientID]; ok {
+		delete(b.pairs, o.ClientID)
+		delete(b.pairs, other)
+		return b.Sim.CancelOrder(ctx, domain.Order{ClientID: other})
+	}
+	return nil
+}
+
+// Exiting a position with a linked bracket cancels the list once and keeps
+// the strategy's reason on the exit order.
+func TestExitCancelsLinkedBracketOnceWithStrategyReason(t *testing.T) {
+	h := setup(t)
+	lb := newLinkedBroker(h.s)
+	h.e.AddBroker(lb)
+	var exitReason string
+	h.e.cfg.Hooks.OnOrder = func(o domain.Order) {
+		if o.Tag == domain.TagExit {
+			exitReason = o.Reason
+		}
+	}
+	h.intent(strategy.Intent{Kind: strategy.Enter, Side: domain.Long, StopLoss: decimal.NewFromInt(95), TakeProfit: decimal.NewFromInt(105)})
+	h.s.OnCandle(h.bar(100, 100, 100, 100))
+	require.Len(t, h.e.OpenOrders(), 2)
+	h.intent(strategy.Intent{Kind: strategy.Exit, Reason: "opposite ema cross"})
+	assert.Equal(t, 1, lb.cancels, "one cancel removes the whole OCO list")
+	assert.Equal(t, "opposite ema cross", exitReason)
+	h.s.OnCandle(h.bar(100, 100, 100, 100))
+	assert.Empty(t, h.a.Positions())
+	assert.Empty(t, h.e.OpenOrders(), "the other leg's cancel event clears it")
+}
 
 // The Binance spot OCO sends "stop EXPIRED" before the take-profit fill
 // (recorded on the testnet). That expiry must not trigger a second exit.
@@ -219,7 +269,7 @@ func TestLinkedStopExpiryWaitsForTakeProfit(t *testing.T) {
 			h := setup(t)
 			var b broker.Broker = bracketBroker{Sim: h.s}
 			if tc.linked {
-				b = linkedBracketBroker{bracketBroker{Sim: h.s}}
+				b = newLinkedBroker(h.s)
 			}
 			h.e.AddBroker(b)
 			exits := 0
