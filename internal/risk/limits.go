@@ -67,7 +67,9 @@ func (m *Manager) Observe(now time.Time, equity decimal.Decimal) (tripped bool, 
 	defer m.mu.Unlock()
 
 	day := now.UTC().Truncate(24 * time.Hour)
-	if !day.Equal(m.day) {
+	// A ledger that is still empty (equity 0) is no baseline: the first
+	// positive equity of the day is, or the daily limit would stay off.
+	if !day.Equal(m.day) || !m.dayStart.IsPositive() {
 		m.day, m.dayStart = day, equity
 	}
 	if equity.GreaterThan(m.peak) {

@@ -95,3 +95,17 @@ func TestOrderLimits(t *testing.T) {
 	m.Halt("manual")
 	assert.ErrorContains(t, m.CheckOrder(o, d(100), b), "kill switch")
 }
+
+// A live ledger reads 0 until its first reconciliation; that is no daily
+// baseline (found on the testnet: day_start=0 left the daily limit off).
+func TestDailyBaselineIgnoresEmptyLedger(t *testing.T) {
+	m := NewManager(DefaultConfig(), nil)
+	now := time.Date(2026, 10, 17, 15, 0, 0, 0, time.UTC)
+	tripped, _ := m.Observe(now, decimal.Zero)
+	assert.False(t, tripped)
+	tripped, _ = m.Observe(now.Add(time.Minute), decimal.NewFromInt(10000))
+	assert.False(t, tripped)
+	tripped, reason := m.Observe(now.Add(2*time.Minute), decimal.NewFromInt(9400))
+	assert.True(t, tripped, "6% below the first positive equity of the day")
+	assert.Contains(t, reason, "daily loss")
+}
