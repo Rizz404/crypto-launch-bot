@@ -111,6 +111,24 @@ func TestDCAScheduleDipLimitAndAverageEntryExit(t *testing.T) {
 	require.Len(t, timer.OnTimer(c.now.Add(3*time.Hour)), 1, "starts a fresh cycle")
 }
 
+// After a restart the counters are gone but the position is restored: the
+// cycle must not restart at buy 1 and buy again at once.
+func TestDCAResumesCycleFromRestoredPosition(t *testing.T) {
+	c := ctx()
+	k := strategy.Leg{Exchange: "sim", Market: domain.Spot, Symbol: "BTCUSDT"}
+	c.prices[k] = decimal.NewFromInt(80)
+	// Three buys of 10 quote each: cost 30 at an average of 100.
+	c.positions[k] = domain.Position{EntryPrice: decimal.NewFromInt(100), Quantity: decimal.RequireFromString("0.3"), Side: domain.Long}
+	s := makeStrategy(t, c, cfg("dca", domain.Spot, map[string]any{"quote_amount": 10, "interval": "1h", "max_buys": 4, "dip_pct": 0.05, "take_profit": 0.1}))
+	timer := s.(strategy.TimerHandler)
+	assert.Empty(t, timer.OnTimer(c.now), "the next buy waits a full interval after the restart")
+	orders := timer.OnTimer(c.now.Add(time.Hour))
+	require.Len(t, orders, 1)
+	assert.Equal(t, "dca buy 4/4", orders[0].Reason, "counts the three buys the position already holds")
+	c.prices[k] = decimal.NewFromInt(50)
+	assert.Empty(t, timer.OnTimer(c.now.Add(2*time.Hour)), "max buys reached")
+}
+
 func TestFundingHedgeDirectionCooldownAndRepair(t *testing.T) {
 	c := ctx()
 	spot := strategy.Leg{Exchange: "sim", Market: domain.Spot, Symbol: "BTCUSDT"}

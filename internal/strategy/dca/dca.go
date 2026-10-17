@@ -5,6 +5,7 @@ package dca
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -29,6 +30,9 @@ type series struct {
 	buys      int
 	lastBuy   time.Time
 	lastPrice decimal.Decimal
+	// synced is set once the state reflects the account: after a restart
+	// the counters are gone but the position the buys built is not.
+	synced bool
 }
 
 type Strategy struct {
@@ -82,7 +86,7 @@ func (s *Strategy) OnCandle(c domain.Candle) []strategy.Intent {
 	if hitSL {
 		reason = "dca stop loss"
 	}
-	*st = series{} // start a new cycle
+	*st = series{synced: true} // start a new cycle
 	return []strategy.Intent{{Kind: strategy.Exit, Market: c.Market, Symbol: c.Symbol, Reason: reason}}
 }
 
@@ -90,6 +94,9 @@ func (s *Strategy) OnCandle(c domain.Candle) []strategy.Intent {
 func (s *Strategy) OnTimer(now time.Time) []strategy.Intent {
 	var out []strategy.Intent
 	for sym, st := range s.series {
+		if !st.synced {
+			s.resume(sym, st, now)
+		}
 		if st.buys >= s.p.MaxBuys || (!st.lastBuy.IsZero() && now.Sub(st.lastBuy) < s.p.Interval) {
 			continue
 		}
@@ -109,4 +116,19 @@ func (s *Strategy) OnTimer(now time.Time) []strategy.Intent {
 		})
 	}
 	return out
+}
+
+// resume rebuilds the cycle of a position that exists before the first
+// timer (a restart): the buys are estimated from its cost, the next buy waits
+// a full interval, and the dip filter starts from the average entry.
+func (s *Strategy) resume(sym string, st *series, now time.Time) {
+	st.synced = true
+	pos, has := s.ctx.Position(s.cfg.Exchange, s.cfg.Market, sym)
+	if !has || !pos.Quantity.IsPositive() {
+		return
+	}
+	cost, _ := pos.Quantity.Mul(pos.EntryPrice).Float64()
+	st.buys = max(1, int(math.Round(cost/s.p.QuoteAmount)))
+	st.lastBuy, st.lastPrice = now, pos.EntryPrice
+	s.ctx.Log().Info("dca cycle resumed from position", "symbol", sym, "buys", st.buys, "max_buys", s.p.MaxBuys)
 }
