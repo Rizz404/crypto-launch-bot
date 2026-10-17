@@ -4,9 +4,13 @@
 
 ## Status saat ini (2026-10-17)
 
-- **Fase 0–8 selesai** (2026-10-17). Fase 2–8 dibangun tanpa test; semua jalur trading belum pernah dijalankan. `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
+- **Fase 0–8 selesai dibangun** (2026-10-17). Engine strategi/risk/order, broker, adapter, monitoring, dan dashboard sudah ada. **Fase 9 sedang berjalan**: unit/contract test, partial fill/replay/pending risk, paper restart, backtest historis dengan split/CSV/DB, browser, dan monitoring lokal sudah diuji. Uji trading dengan exchange sungguhan masih tersisa.
+- **Perubahan scope (2026-10-17):** atas permintaan user, dukungan OKX dihapus karena user tidak memiliki dan tidak ingin membuat akunnya. Setelah penghapusan ini, adapter yang tersisa adalah **Binance dan Bybit**; akun/API key OKX tidak lagi diperlukan.
+- Adapter, wiring, konfigurasi/passphrase, helper order yang hanya dipakai adapter yang dihapus, serta test terkait sudah dibersihkan. Contoh konfigurasi, `.env` lokal, dan `configs/config.yaml` sudah disesuaikan. Setelah perubahan ini, `make build`, `go test -race ./...`, `go vet -tags integration ./...`, dan `golangci-lint run` lolos. Fase 9 tetap berjalan sesuai daftar sisa pengujian di bawah.
+- **Kendala akses terbaru (2026-10-17):** user melaporkan Bybit terkena regulatory restriction dan saat ini hanya menyiapkan Binance Spot Testnet (login GitHub) serta Telegram. Fokus pengujian aktif adalah **Binance**. Adapter Bybit tetap ada dan dinonaktifkan di konfigurasi lokal; pengujian exchange nyata Bybit serta arbitrase lintas exchange (`xspread`) **ditunda**, bukan dinyatakan lolos. Penyelesaian Fase 9 pada cakupan aktif tidak membuktikan kesiapan fitur yang ditunda. Pengujian Futures Binance tetap menunggu kredensial Futures Demo yang terpisah.
+- Preflight terbaru: autentikasi baca akun Binance Spot Testnet berhasil dan `canTrade=true`. Tidak ada order dikirim. Token Telegram terverifikasi melalui `getMe` setelah satu retry (permintaan pertama timeout). Bagian Telegram belum ada di konfigurasi lokal sehingga integrasi bot masih nonaktif dan whitelist chat belum dikonfigurasi. Tidak ada pesan Telegram dikirim.
 - Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
-- **Langkah berikutnya: Fase 9 (Testing)** — kerjakan seluruh "Backlog testing" di bawah. Setelah itu Fase 10 (Fixing). Fase 2–8 dibangun tanpa test (sesuai keputusan user).
+- **Langkah berikutnya: lanjutkan sisa Fase 9** dari bagian "Hasil testing" dan "Backlog testing" di bawah. Temuan yang menghalangi pengujian lokal sudah diperbaiki dengan regression test; Fase 9 dan audit Fase 10 belum selesai.
 - **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
 - Cara menjalankan: lihat [README.md](../README.md).
 - Tandai fase yang selesai di bagian "Progres" di bawah setiap kali satu fase beres.
@@ -35,11 +39,95 @@
 - [x] Fase 4: Binance LiveBroker (testnet/mainnet) (2026-10-17, belum dites)
 - [x] Fase 5: Telegram + Prometheus/Grafana (2026-10-17, belum dites)
 - [x] Fase 6: Web dashboard (2026-10-17, belum dites)
-- [x] Fase 7: Bybit + OKX (2026-10-17, belum dites)
+- [x] Fase 7: Bybit (2026-10-17, belum dites)
 - [x] Fase 8: Strategi lanjutan (grid/DCA, arbitrase, market making) (2026-10-17, belum dites)
-- [ ] Fase 9: Testing (semua fitur)
+- [ ] Fase 9: Testing (sedang berjalan; hasil lokal di bawah)
 - [ ] Fase 10: Fixing (semua temuan Fase 9)
 - [ ] Fase 11: Live mini + VPS
+
+## Hasil testing (2026-10-17)
+
+### Sudah diverifikasi secara lokal
+
+- [x] `go test -race ./...`, `go build ./...`, `go vet ./...`, dan `golangci-lint run` lolos. Race detector tidak melaporkan race pada skenario yang dijalankan.
+- [x] Indikator: seed/warmup EMA/SMA, Wilder RSI/ATR termasuk gap dan zero loss, MACD, Bollinger, crossover. Acuan berupa deret pendek dengan perhitungan aritmatika independen; perbandingan lengkap terhadap TA-Lib/TradingView masih tersisa.
+- [x] Portfolio: average entry, partial close, flip long → short, alokasi fee/funding, saldo/equity/margin, salinan posisi. Risk: sizing stop/fallback, pembulatan lot/minimum, cap leverage/equity/free margin, posisi/exposure, UTC daily loss, drawdown, halt/reset.
+- [x] Sim/engine: harga market/limit/stop/TP, fee/slippage, candle sebelum waktu order, stop lebih dahulu dari TP, cancel callback sinkron, entry → proteksi → exit, trailing, pause/kill/CloseAll, stop ditolak/terlewati, reversal dasar, warmup candle basi, adopsi proteksi, ID alfanumerik.
+- [x] Backtest: referensi return/CAGR/MDD/Sharpe/Sortino/PF, PF tak hingga menjadi JSON `null`, funding 8-jam, timer DCA, equity multi-akun, ekspor CSV, error/cancel propagation. Golden `emacross`: 120 candle **sintetis** pada seri bernama BTCUSDT, 11 trade, dengan fee/slippage; fixture di `internal/backtest/testdata/emacross_synthetic.json`. Fixture ini tidak dipakai untuk memilih parameter strategi.
+- [x] Semua strategi bawaan: perilaku dasar grid (fill penuh, restart, stop), DCA (jadwal/dip/max buys/TP), funding hedge (arah/grace/repair), xspread (dua arah/cooldown/convergence), mm (inventori spot/post-only/requote), dan validasi parameter tidak dikenal.
+- [x] Contract REST bersama Binance/Bybit menggunakan **fixture sintetis dan HTTP transport lokal**: instrumen, satuan base, urutan klines, market order/cancel, payload signature HMAC. Parser WS tambahan: key kembar executionReport Binance dan confirm/direction Bybit. Fixture rekaman exchange dan lifecycle private WS nyata masih tersisa.
+- [x] Telegram dengan transport palsu: whitelist, dispatch, escape, batas antrean, UTF-8 pesan panjang, redaksi error token. Web dengan `httptest`: basic auth, security headers, HX guard, pause/resume/kill/reset, halaman tanpa sesi dan static asset. Metrics: flag kill/pause dan label latensi broker.
+- [x] Config: params strategi, merge fee default, secret ditolak dari YAML, password wajib di luar loopback. Recorder: FIFO, antrean penuh, shutdown flush.
+- [x] Integration test TimescaleDB pada database sementara **terpisah** `tradingbot_phase9_test`: candle/instrumen, order sebelum fill, metadata, perpindahan run order yang diadopsi, posisi/saldo sesi, FinishRun, migrasi 00001–00003 up → down → up. Pipeline paper: DCA → Sim → engine → recorder → DB, dua sesi dengan restart dan posisi terbuka, tanpa error recorder; juga lolos race detector.
+
+Perintah pengulangan (database harus terpisah dari database bot yang dipakai):
+
+```sh
+go test -race ./...
+TB_TEST_DATABASE_URL='<URL database test>' go test -race -tags integration ./internal/storage
+# Rollback migrasi hanya opt-in pada database dengan nama berakhiran _test:
+TB_TEST_DATABASE_URL='<URL database test>' TB_TEST_MIGRATIONS=1 go test -tags integration ./internal/storage -run TestMigrationCycle
+# Jalankan terpisah dari test storage/bot lain karena recovery memilih sesi terbaru:
+TB_TEST_SESSION_DATABASE_URL='<URL database test yang sudah dimigrasi>' go test -race -tags integration ./cmd/bot -run TestPaperSession
+```
+
+Di sandbox Codex ini cache build perlu diarahkan ke direktori writable (`GOCACHE=/tmp/trading-bot-go-cache`). Test fixture HTTP/WS dan koneksi database juga memerlukan akses socket localhost.
+
+### Temuan yang sudah diperbaiki dengan regression test
+
+| Prioritas | Temuan | Perbaikan / bukti |
+|---|---|---|
+| Kritis | Sesi trading gagal dibuat karena `symbols=nil` dikirim sebagai SQL NULL ke kolom NOT NULL. | `storage.CreateRun` menormalisasi list kosong; `TestPaperSessionRestartPersistsNewOrders` menjalankan pipeline sesi sungguhan ke DB. |
+| Tinggi | Bracket yang diterima broker tidak melewati hook order dan exchange ID hilang; fill/proteksi tidak tersimpan dengan benar. | Engine mencatat respons tiap leg sebelum event fill; `TestBracketOrdersPersistBeforeFills`. |
+| Tinggi | Leg SL tetap aktif ketika leg TP gagal ditempatkan. | Engine membatalkan leg yang sudah diterima sebelum exit; `TestPartialBracketFailureCancelsAcceptedLeg`. |
+| Tinggi | Adopsi order tidak dipersistensikan ke sesi aktif; restart berikutnya bisa kehilangan order yang belum berubah status. | `AdoptOrders` memanggil hook recorder; `TestAdoptOrdersRestoresProtection`. |
+| Tinggi | Shutdown membatalkan write recorder yang sudah diambil dari antrean sehingga flush melewatkannya. | Write yang sedang berjalan memakai context terpisah dengan timeout, lalu antrean di-flush; test FIFO/flush dan integration restart. |
+| Tinggi | Bybit menganggap kegagalan jaringan set leverage/mode one-way sebagai sukses karena `apiCode(err)==0`. | Error non-API diteruskan; `TestSetLeveragePropagatesNetworkFailure` dan contract test. |
+| Tinggi | Error HTTP Telegram berlapis dapat menampilkan URL yang memuat token. | Semua lapisan URL error dilepas dan token diredaksi; `TestTransportErrorsDoNotExposeToken`. |
+| Sedang | ID exchange Sim (`sim-1`, dst.) berulang setelah restart, melanggar unique index dan menggagalkan persistensi order/fill. | ID Sim diturunkan dari client ID; integration paper dua sesi. |
+| Sedang | Equity backtest multi-akun diambil sebelum seluruh event pada timestamp yang sama selesai. | Sampel dibuat setelah event terakhir pada timestamp itu; `TestMultiAccountEquityIncludesAllEventsAtSameTimestamp`. |
+| Sedang | Override fee maker saja mengubah fee taker default menjadi nol. | Default fee di-seed per field sebelum overlay YAML/env; `TestStrategyParamsAndFeeOverridesKeepDefaults`. |
+| Rendah | Pemotongan pesan Telegram berbasis byte memutus karakter UTF-8. | Pemotongan berbasis rune; `TestMessageTruncationPreservesUTF8`. |
+
+### Pengujian lanjutan tanpa kredensial exchange (2026-10-17)
+
+- Pada tahap pengujian ini ditambahkan **14 fungsi test Go** serta **15 pemeriksaan alert** di `deploy/prometheus/alerts.test.yml`. Cakupan test yang dipertahankan mengikuti scope exchange saat ini.
+- Suite `go test -race ./...`, `go vet -tags integration ./...`, `golangci-lint run`, dan `make build` lolos. Verifikasi akhir gabungan `go test -race -p 1 -tags integration ./...` juga lolos pada database test terpisah. `make build` sekarang juga menghasilkan `bin/backtest`. Integration paper restart dengan posisi serta order pending lolos tiga kali dengan race detector.
+- Partial fill: setiap bagian entry mendapat SL/TP sesuai kuantitas; bagian berikutnya mengganti ukuran bracket. Fill SL/TP parsial mengecilkan bracket sisa. Protective fill membatalkan sisa entry. Trade ID yang sama tidak mengubah ledger/fee dua kali. Snapshot status `filled` tidak menghapus order sebelum semua execution lokal diproses.
+- Risk memasukkan **sisa kuantitas** order pending ke exposure dan slot posisi, termasuk order mentah strategi. Sizing entry mengurangi free margin dengan margin yang dicadangkan order pending. Reservasi baru dilepas setelah acknowledgement cancel, bukan setelah request cancel saja.
+- Reversal menunggu fill exit hingga posisi flat sebelum mengirim entry lawan arah; pause mencegah deferred entry. `CancelAll` dibatasi exchange + market + simbol + strategi.
+- Paper resume: posisi dan order strategi dipulihkan. **Entry pending dibatalkan**, sebab rencana ATR SL/TP/trailing belum dipersistensikan; status canceled dipindahkan ke sesi aktif. Order Sim parsial hanya mengisi `Remaining()`, termasuk fee dan weighted average yang benar.
+- Browser headless Brave: overview, partial HTMX, pause/resume, konfirmasi kill/reset, daftar/detail backtest, chart equity/candle dengan **648 candle dan 28 marker**, desktop light dan mobile dark (390×844). Tidak ada overflow halaman mobile dan tidak ada error JS/CSP setelah perbaikan. State live saat uji browser adalah fixture, hasil backtest berasal dari data historis. Bukti ringkas: [browser-verification.json](testing/browser-verification.json).
+- CSS atribusi bawaan lightweight-charts sebelumnya ditolak CSP. Kini hanya hash stylesheet versi library yang diizinkan; `unsafe-inline` dan `unsafe-eval` tetap tidak diaktifkan. Regression test menghitung hash dari library yang di-vendor.
+- Monitoring: Grafana sehat, dashboard `tradingbot` terprovisi dengan 14 panel dan kedua datasource berstatus `OK`. Container lama Prometheus belum memiliki mount `alerts.yml`; compose diterapkan ulang. Kini config valid dan keenam rules berstatus `ok` di API. `make test-monitoring` menguji seluruh alert pada kondisi gagal/sehat dan hold time dalam container tanpa jaringan. Bukti: [monitoring-verification.json](testing/monitoring-verification.json). Tidak ada pesan Telegram nyata dikirim.
+
+Temuan lanjutan di atas sudah diperbaiki untuk melanjutkan pengujian: replay fill, status snapshot mendahului execution, proteksi partial entry/exit, reservasi order pending, refill Sim setelah restart, reversal serentak, cancel lintas exchange, entry tanpa rencana proteksi setelah paper restart, dan CSP chart.
+
+### Eksperimen backtest historis
+
+Arsip publik Binance **USDT-M BTCUSDT 1h, 2025-01-01 sampai sebelum 2025-04-01** berhasil diakses lewat `data.binance.vision`, tanpa API key. Ada 2160 candle berurutan tanpa gap; SHA-256 ketiga ZIP cocok dengan checksum resmi. API trading live masih memerlukan pemeriksaan jaringan terpisah.
+
+CLI `backtest -split 0.7 -save -out ...` dijalankan untuk tiga pasangan EMA. Split pada **2025-03-05 UTC**: 1512 bar in-sample dan 648 bar out-of-sample, masing-masing memakai akun simulasi baru. Semua hasil, trade, dan equity curve tersimpan ke database test dan CSV. Rincian parameter, asumsi, sumber, checksum, dan metrik: [historical-backtest-2025q1.json](testing/historical-backtest-2025q1.json).
+
+| EMA fast/slow | Return in-sample | Return out-of-sample | Trade IS/OOS | MDD IS/OOS |
+|---|---:|---:|---:|---:|
+| 12/26 (default) | -5,72% | -3,42% | 44 / 23 | 10,65% / 3,49% |
+| 6/18 | -3,55% | +1,67% | 82 / 35 | 7,31% / 3,98% |
+| 20/50 | -2,82% | -2,32% | 27 / 14 | 7,40% / 3,11% |
+
+Asumsi: saldo awal 1000 per segmen, leverage 2, risk default, taker 0,05%, maker 0,02%, slippage 2 bps, funding konstan 0,01% per 8 jam, fill OHLC 1h, tanpa warmup terpisah. Tick/lot/min-notional adalah asumsi aturan instrumen, bukan snapshot historis. Belum ada bukti cukup untuk memilih parameter live; default konfigurasi belum diubah. Perbandingan tiga parameter pada satu pair dan satu kuartal belum memadai untuk validasi strategi.
+
+### Sisa Fase 9
+
+- [ ] Audit lanjutan: late fill setelah cancel/timeout REST, replay setelah reconciliation, sizing/margin raw order dan reservasi inventori spot, state internal strategi setelah restart (misalnya penghitung DCA), failure/retry dan private WS/SL/TP exchange nyata. Skenario partial fill/pending/restart yang sudah lolos dirinci di atas.
+- [ ] Tambahkan fixture REST/WS **terekam** untuk Binance serta integration test testnet opt-in; pengujian Bybit ditunda karena pembatasan akses. Fixture sintetis saat ini belum membuktikan penerimaan order oleh exchange.
+- [ ] Paper live **24 jam**, reconnect/backfill dan restart dengan data live. Probe publik `https://fapi.binance.com/fapi/v1/time` pada sesi ini gagal `curl: (35) Recv failure: Connection reset by peer`; belum ada paper live yang berjalan.
+- [ ] Order spot/futures pada lingkungan pengujian Binance, native SL/TP, restart/reconciliation, kill switch. Kredensial Spot Testnet sudah terisi dan autentikasi baca akun berhasil; kredensial Futures Demo belum disiapkan. Bybit ditunda. Belum ada order nyata dikirim.
+- [x] Backtest historis nyata, split CLI, `-save`, CSV, dan perbandingan awal tiga parameter `emacross` (hasil di atas).
+- [ ] Validasi strategi pada periode/pair lain, fill intrabar dan funding historis, lalu putuskan parameter default berdasarkan bukti lebih luas.
+- [ ] Telegram sungguhan, flush/pesan shutdown dan daily summary, serta monitoring sesi trading 24 jam. Config/rules/provisioning/health monitoring lokal sudah diverifikasi.
+- [x] Browser desktop light + mobile dark: HTMX/CSP, konfirmasi kontrol, chart candle/marker/equity dan halaman backtest dengan database test. Variasi tampilan lainnya dapat diperluas.
+- [ ] Putuskan universe saham ter-tokenisasi bersama user. Risk live dan persetujuan Fase 11 tetap belum diputuskan.
 
 ## Backlog testing (diisi selama Fase 2–8, dikerjakan di Fase 9)
 
@@ -79,17 +167,16 @@
   - Dashboard di browser (desktop + HP, light/dark): overview, partial auto-refresh, tombol pause/resume/kill/reset (konfirmasi), chart candle dengan marker trade (posisi marker di bar yang benar), chart equity, daftar dan detail backtest.
   - Keamanan: basic auth saat `TB_WEB__PASSWORD` di-set; validasi menolak listen non-localhost tanpa password; aksi `POST` tanpa header `HX-Request` → 403; header CSP/X-Frame-Options; CSP tidak memblokir htmx/lightweight-charts.
   - Mode tanpa sesi (hanya market data): halaman tetap jalan, tanpa panel live.
-- **Fase 7** (format publik sudah dilihat 2026-10-17; semua jalur private belum pernah dijalankan)
-  - Contract test bersama untuk ketiga adapter (`exchange.MarketData` + `broker.Live`) dengan fixture terekam.
+- **Fase 7 — ditunda karena pembatasan akses Bybit** (format publik sudah dilihat 2026-10-17; semua jalur private belum pernah dijalankan)
+  - Contract test bersama untuk kedua adapter (Binance dan Bybit) (`exchange.MarketData` + `broker.Live`) dengan fixture terekam.
   - Bybit: kline REST dibalik ke oldest-first, `confirm` di WS, subscribe maksimal 10 arg per request (spot), ping 20 detik; sign REST `ts+key+recvWindow+query|body`; auth WS `GET/realtime`; `triggerDirection` stop vs TP; spot `orderFilter=StopOrder` (cancel juga butuh `orderFilter`); `marketUnit=baseCoin`; fee spot buy dalam base; status `Deactivated`/`PartiallyFilledCanceled`; set margin mode isolated untuk UTA (account-wide!); kode error 110043/110025/110001/170213.
-  - OKX: **konversi kontrak swap** (qty, minSz, lotSz, posisi, fill, volume) di setiap jalur; paginasi `history-candles` dengan `before`/`after`; bar UTC (`6Hutc`, `1Dutc`, …); `volCcy24h` swap × harga; demo trading (`x-simulated-trading: 1`, `wspap.okx.com`); login WS menunggu event `login`; pemetaan `orders-algo.ordId` → `algoClOrdId`; fee negatif = biaya; `tgtCcy=base_ccy` untuk market spot; error per item (`sCode`); posisi net mode; akun harus mode "spot and futures".
-  - ID order engine sekarang alfanumerik (`tb` + hash 7 karakter + sequence) — pastikan diterima ketiga exchange dan tidak bentrok.
-  - Wallet unified (Bybit/OKX): sesi menolak dua market di exchange yang sama.
+  - ID order engine sekarang alfanumerik (`tb` + hash 7 karakter + sequence) — pastikan diterima kedua exchange dan tidak bentrok.
+  - Wallet unified (Bybit): sesi menolak dua market di exchange yang sama.
 - **Fase 8**
   - `grid`: level aritmatika/geometris, buy awal di bawah harga, order balasan setelah fill penuh (pemetaan harga ke level setelah pembulatan tick), restart tidak menggandakan order (cek `OpenOrders`), `stop_below` membatalkan semua dan exit.
   - `dca`: jadwal beli (`interval`, `dip_pct`, `max_buys`), TP/SL dari harga rata-rata, siklus baru setelah exit, timer berjalan di backtest (`eng.Tick`).
-  - `funding`: data funding (Binance `premiumIndex`, Bybit tickers; OKX belum ada sumber) di-poll tiap 5 menit; buka/tutup dua kaki; kaki timpang dibongkar setelah grace; tidak bisa di-backtest (tidak ada histori funding).
-  - `xspread`: arah posisi benar untuk spread positif/negatif, cooldown saat order dalam perjalanan, butuh dua broker live di mode testnet/live.
+  - `funding`: data funding (Binance `premiumIndex`, Bybit tickers) di-poll tiap 5 menit; buka/tutup dua kaki; kaki timpang dibongkar setelah grace; tidak bisa di-backtest (tidak ada histori funding).
+  - `xspread` **ditunda untuk pengujian exchange nyata**: arah posisi benar untuk spread positif/negatif, cooldown saat order dalam perjalanan, butuh dua broker live di mode testnet/live. Unit test sintetis tetap dipertahankan; tidak bisa divalidasi dengan Binance saja.
   - `mm`: requote (CancelAll + ref baru) hanya saat harga bergerak/fill/tanpa order, skew inventori, batas inventori, spot tidak menjual tanpa inventori. Backtest market making memakai fill limit `Sim` yang terlalu optimistis (tanpa antrean order book).
   - Legs: routing candle per instrumen di engine, akun dan subscription untuk semua leg, cek wallet unified ikut menghitung leg, backtest multi-akun (equity total, `InitialBalance` per akun).
   - Risk `max_exposure_pct` menghitung kedua kaki strategi hedged sebagai exposure; sesuaikan batas atau ubah perhitungan.
@@ -108,11 +195,11 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 - `flake.nix` diganti `.mise.toml` (lihat aturan kerja di atas).
 - Migrasi memakai **goose sebagai library**. File SQL di [migrations/](../migrations/) di-embed ke binary, lalu dijalankan dengan `bot migrate up|down|status`. CLI goose tidak diperlukan. `bot run` menolak start kalau masih ada migrasi pending.
 - **sqlc ditunda** sampai Fase 1, ketika query pertama dibutuhkan. Pertimbangkan pgx biasa kalau query-nya sedikit.
-- Config: defaults → YAML (`configs/config.yaml`, di-gitignore) → `.env` → environment proses. Key env: prefix `TB_`, pemisah nesting `__` (contoh: `TB_EXCHANGES__BINANCE__API_KEY`). `api_key`/`api_secret`/`passphrase` **ditolak** kalau ada di YAML. Mode `testnet` mewajibkan `testnet: true` di setiap exchange yang aktif, dan mode `live` mewajibkan `testnet: false`. Lihat [internal/config/config.go](../internal/config/config.go).
+- Config: defaults → YAML (`configs/config.yaml`, di-gitignore) → `.env` → environment proses. Key env: prefix `TB_`, pemisah nesting `__` (contoh: `TB_EXCHANGES__BINANCE__API_KEY`). `api_key`/`api_secret` **ditolak** kalau ada di YAML. Mode `testnet` mewajibkan `testnet: true` di setiap exchange yang aktif, dan mode `live` mewajibkan `testnet: false`. Lihat [internal/config/config.go](../internal/config/config.go).
 - Tipe `config.Secret` tidak pernah tercetak (`***`), baik lewat fmt maupun slog. Pakai `.Reveal()` hanya ketika nilai aslinya benar-benar dibutuhkan.
 - Metrics: `/metrics` dan `/healthz` (ping DB) di `127.0.0.1:9100`. Prometheus di compose men-scrape `bot:9100` (bot di container, `--profile bot`) dan `host.containers.internal:9100` (bot di host). Di rootless podman, target host hanya `up` kalau bot listen `0.0.0.0` (`TB_METRICS__LISTEN=0.0.0.0:9100`), karena `host.containers.internal` tidak mengarah ke loopback host.
 - Versi image yang di-pin: `timescale/timescaledb:2.30.2-pg17`, `prom/prometheus:v3.15.0`, `grafana/grafana:13.2.4`, build `golang:1.27.2-alpine`, runtime `distroless/static-debian12:nonroot`.
-- **Jaringan dev (2026-10-17):** DNS lokal membelokkan semua domain Binance/Bybit/OKX ke `43.173.57.48` (diblokir). Koneksi lewat IP asli tembus, dan testnet Binance tidak diblokir. User memilih memperbaiki DNS sistem sendiri, jadi bot **tidak** punya resolver DoH bawaan. Sebelum DNS diperbaiki, uji mainnet hanya bisa lewat `curl --resolve` atau `binance.Options.HTTPClient` dengan dialer khusus.
+- **Jaringan dev (2026-10-17):** DNS lokal membelokkan semua domain Binance/Bybit ke `43.173.57.48` (diblokir). Koneksi lewat IP asli tembus, dan testnet Binance tidak diblokir. User memilih memperbaiki DNS sistem sendiri, jadi bot **tidak** punya resolver DoH bawaan. Sebelum DNS diperbaiki, uji mainnet hanya bisa lewat `curl --resolve` atau `binance.Options.HTTPClient` dengan dialer khusus.
 - Grafana memprovisikan datasource `Prometheus` (uid `prometheus`) dan `TimescaleDB` (uid `timescaledb`). Dashboard JSON diletakkan di `deploy/grafana/dashboards/`.
 
 ### Fase 1 (market data)
@@ -142,15 +229,16 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 ### Fase 3 (risk, persistensi, paper)
 
 - `bot run` sekarang punya **sesi trading** kalau ada strategi dengan `enabled: true` ([cmd/bot/session.go](../cmd/bot/session.go)). Satu sesi = satu baris `strategy_runs` dengan `instance_id = 'session'`, dan semua order/fill/trade/equity sesi ditulis ke run itu lewat `internal/recorder` (asinkron). Kolom `strategy` di tabel order dan posisi mencatat strategi pemiliknya.
+- Paper restart membatalkan order `TagEntry` yang belum selesai karena rencana proteksinya belum disimpan. Posisi, native bracket, dan raw order strategi tetap dipulihkan. Sim mengisi sisa kuantitas order parsial, bukan seluruh kuantitas awal.
 - Feed mencakup gabungan simbol dan timeframe dari `marketdata` dan dari strategi ([cmd/bot/feeds.go](../cmd/bot/feeds.go)). Nama exchange mengikuti mode: di mode `testnet` data, akun, dan order memakai nama `binance-testnet` (`app.ExchangeName`).
 - Paper trading memakai `broker.Sim` dengan jam dinding. Setiap update candle yang belum close diperlakukan sebagai tick harga, dan candle close juga dicocokkan supaya lonjakan di antara tick tidak terlewat. Fee dan slippage diambil dari `backtest`.
 - Kill switch hanya disimpan di memori: setelah restart, puncak equity dan equity awal hari dihitung ulang dari equity saat itu.
-- Mode `testnet`/`live` dengan strategi aktif masih ditolak sampai Fase 4.
+- Mode `testnet`/`live` dengan strategi aktif disambungkan ke LiveBroker di Fase 4.
 
 ### Fase 4 (Binance live/testnet)
 
 - API Binance yang dipakai diverifikasi ke dokumentasi resmi (2026-10-17): **listenKey spot sudah dihapus 2026-02-20** → user data spot lewat WebSocket API; **order kondisional futures lewat Algo Order API** (`/fapi/v1/algoOrder`, event `ALGO_UPDATE`); user data futures di `/private/stream`. Sumber: `binance-spot-api-docs` (GitHub) dan `binance-connector-js` (di-generate dari OpenAPI resmi). Situs developers.binance.com dilindungi AWS WAF (tidak bisa diambil dengan curl).
-- `broker.Live` adalah antarmuka broker exchange sungguhan ([internal/broker/live.go](../internal/broker/live.go)); `binance.Trader` mengimplementasikannya ([internal/exchange/binance/](../internal/exchange/binance/)). Bybit/OKX di Fase 7 mengikuti antarmuka yang sama.
+- `broker.Live` adalah antarmuka broker exchange sungguhan ([internal/broker/live.go](../internal/broker/live.go)); `binance.Trader` mengimplementasikannya ([internal/exchange/binance/](../internal/exchange/binance/)). Bybit di Fase 7 mengikuti antarmuka yang sama.
 - `bot run` mode `testnet`/`live`: satu broker per exchange (semua market di exchange itu), user stream jalan, reconciliation saat start (setelah warmup), tiap menit, dan setiap stream reconnect ([cmd/bot/reconcile.go](../cmd/bot/reconcile.go)). Exchange adalah sumber kebenaran.
 - Order mainnet butuh **dua** saklar: `app.mode: live` dan `app.allow_live: true`.
 
@@ -166,14 +254,13 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 - Dashboard jalan di dalam `bot run` (`web.listen`, default `127.0.0.1:8080`). Sesi diakses lewat antarmuka `web.Live` ([cmd/bot/web.go](../cmd/bot/web.go)).
 - Rute: `/` (overview), `/partials/*` (HTMX), `POST /actions/{pause,resume,kill,reset}`, `/chart?series=exchange:market:symbol:tf[&run=id]`, `/api/candles`, `/api/equity`, `/backtests`, `/backtests/{id}`.
 
-### Fase 7 (Bybit dan OKX)
+### Fase 7 (Bybit)
 
-- `internal/exchange/bybit` dan `internal/exchange/okx` mengikuti pola Binance: `Client` (market data, `exchange.MarketData`) dan `Trader` (`broker.Live`). Sumber detail API: dokumentasi resmi Bybit (repo `bybit-exchange/docs`) dan OKX (`/docs-v5`), diambil 2026-10-17.
-- Simbol memakai format asli exchange (OKX: `BTC-USDT`, `BTC-USDT-SWAP`). Qty di seluruh bot selalu dalam satuan base; adapter OKX mengonversi kontrak ↔ base memakai `ctVal`.
-- SL/TP: Bybit memakai order kondisional (`triggerPrice`, `StopOrder` untuk spot); OKX memakai algo `conditional`. Keduanya tidak mengunci saldo sebelum trigger, jadi SL dan TP dipasang sebagai dua order terpisah (tanpa OCO bawaan; engine membatalkan leg lainnya).
-- `exchange.TriggerBook` memetakan order hasil trigger ke ID order kondisional (dipakai OKX; Binance punya versi sendiri di `binance.Trader`).
-- `broker.UnifiedWallet`: Bybit (UTA) dan OKX memakai satu wallet untuk spot dan futures; bot hanya memperdagangkan satu market per exchange tersebut.
-- ID order engine diubah jadi alfanumerik (OKX menolak `-`).
+- `internal/exchange/bybit` mengikuti pola Binance: `Client` (market data, `exchange.MarketData`) dan `Trader` (`broker.Live`). Sumber detail API: dokumentasi resmi Bybit (repo `bybit-exchange/docs`), diambil 2026-10-17.
+- Simbol Binance dan Bybit memakai format asli exchange, misalnya `BTCUSDT`. Qty di seluruh bot selalu dalam satuan base.
+- SL/TP Bybit memakai order kondisional (`triggerPrice`, `StopOrder` untuk spot). Order ini tidak mengunci saldo sebelum trigger, jadi SL dan TP dipasang sebagai dua order terpisah (tanpa OCO bawaan; engine membatalkan leg lainnya).
+- `broker.UnifiedWallet`: Bybit (UTA) memakai satu wallet untuk spot dan futures; bot hanya memperdagangkan satu market pada Bybit dalam satu sesi.
+- ID order engine memakai format alfanumerik yang konsisten antar-exchange.
 
 ### Fase 8 (strategi lanjutan)
 
@@ -188,7 +275,7 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 
 ## Context
 
-Folder `/home/rizz404/kodingan/trading-bot` masih kosong. Tujuannya membangun bot trading crypto **otomatis penuh** di **Binance, Bybit, dan OKX**, untuk **spot dan futures**, ditulis dalam **Go**. Belum ada strategi yang terbukti, jadi bot harus menjadi *platform eksperimen*. Strategi dimasukkan sebagai plug-in, dan kode strategi yang sama bisa diuji lewat backtest → paper → testnet → live dengan modal kecil (< $500).
+Folder `/home/rizz404/kodingan/trading-bot` masih kosong. Tujuannya membangun bot trading crypto **otomatis penuh** di **Binance dan Bybit**, untuk **spot dan futures**, ditulis dalam **Go**. Belum ada strategi yang terbukti, jadi bot harus menjadi *platform eksperimen*. Strategi dimasukkan sebagai plug-in, dan kode strategi yang sama bisa diuji lewat backtest → paper → testnet → live dengan modal kecil (< $500).
 
 Jangka panjang, bot mendukung indikator teknikal, grid/DCA, arbitrase, dan market making dengan timeframe campuran. **MVP fokus pada strategi indikator teknikal di Binance** untuk membuktikan seluruh pipeline: data → sinyal → risk → order → monitoring.
 
@@ -196,7 +283,7 @@ Keputusan yang sudah diambil:
 | Aspek | Pilihan |
 |---|---|
 | Bahasa | Go |
-| Exchange | Binance (MVP), lalu Bybit dan OKX. Adapter ditulis sendiri di belakang satu interface |
+| Exchange | Binance (MVP), lalu Bybit. Adapter ditulis sendiri di belakang satu interface |
 | Pasar | Spot + futures (USDT-M perpetual), margin **isolated, one-way** sebagai default |
 | Pair | Top 10–20 berdasarkan volume, lewat universe selector dengan filter likuiditas |
 | Strategi | Kode Go yang mengimplementasikan interface, dengan parameter di YAML |
@@ -242,7 +329,6 @@ trading-bot/
     exchange/       # interface Exchange + tipe umum, rate limiter, ws reconnect helper
       binance/      # spot + usdm futures (REST + WS)
       bybit/        # (fase 7)
-      okx/          # (fase 7)
     marketdata/     # feed candle/ticker, agregasi multi-timeframe, universe selector (top-N volume)
     indicator/      # EMA, SMA, RSI, MACD, ATR, Bollinger (streaming/incremental)
     strategy/       # interface Strategy + registry
@@ -359,8 +445,8 @@ Fase 0–1 dikerjakan dengan test langsung. Mulai Fase 2, ikuti "Aturan fase bui
 - templ + HTMX: overview equity, posisi terbuka, riwayat trade, chart candle dengan marker entry/exit (lightweight-charts), daftar strategi dan statusnya, hasil backtest.
 - Auth sederhana (password/token). Default bind ke localhost.
 
-**Fase 7 · Bybit + OKX**
-- Adapter untuk interface yang sama (spot + linear perp), termasuk endpoint testnet/demo masing-masing.
+**Fase 7 · Bybit**
+- Adapter untuk interface yang sama (spot + linear perp), termasuk endpoint testnet.
 
 **Fase 8 · Strategi lanjutan**
 - Grid / DCA (manajemen banyak order terbuka).
@@ -370,9 +456,9 @@ Fase 0–1 dikerjakan dengan test langsung. Mulai Fase 2, ikuti "Aturan fase bui
 **Fase 9 · Testing (semua fitur)**
 - Kerjakan seluruh "Backlog testing" dan semua butir di bagian "Verifikasi" di bawah.
 - Unit test: indikator (dibandingkan nilai referensi), sizing/risk, kill switch, OMS, SimBroker (fee/slippage/funding), metrik backtest, strategi.
-- Contract test bersama untuk semua adapter exchange (Binance, Bybit, OKX) dengan fixture respons REST/WS yang direkam, ditambah integration test opsional ke testnet dengan build tag `integration`.
+- Contract test adapter Binance dengan fixture respons REST/WS yang direkam, ditambah integration test opsional ke testnet dengan build tag `integration`. Bybit dan pengujian exchange nyata `xspread` ditunda sesuai kendala akses terbaru; test lokal yang sudah ada tetap dipertahankan.
 - Golden test backtest `emacross`, lalu eksperimen backtest untuk menentukan parameter default.
-- Uji end-to-end: paper run 24 jam, order sungguhan di testnet tiap exchange, reconciliation, Telegram, dan dashboard.
+- Uji end-to-end: paper run 24 jam, order sungguhan di Spot Testnet/Futures Demo Binance, reconciliation, Telegram, dan dashboard. Pengujian exchange nyata Bybit dan arbitrase lintas exchange ditunda.
 - Hasil: daftar temuan (bug, perilaku salah, celah keamanan) dicatat di plan, diurutkan berdasarkan tingkat keparahan.
 
 **Fase 10 · Fixing**
