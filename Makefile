@@ -2,7 +2,11 @@ COMPOSE ?= podman compose -f deploy/compose.yml
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 
-.PHONY: build test test-integration lint fmt up down logs migrate run image clean
+.PHONY: generate build test test-integration lint fmt up down logs migrate run image clean
+
+# templ templates -> *_templ.go (committed)
+generate:
+	go tool templ generate -path internal/web/views
 
 build:
 	go build -trimpath -ldflags "$(LDFLAGS)" -o bin/bot ./cmd/bot
