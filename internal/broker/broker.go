@@ -57,3 +57,10 @@ type LeverageSetter interface {
 type BracketPlacer interface {
 	PlaceBracket(ctx context.Context, stop, target domain.Order) ([]domain.Order, error)
 }
+
+// LinkedBrackets is implemented by brokers whose two-legged brackets on
+// market m are linked at the exchange: when one leg executes, the other
+// expires (a Binance spot OCO reports the expiry before the fill).
+type LinkedBrackets interface {
+	LinkedBracket(m domain.Market) bool
+}
