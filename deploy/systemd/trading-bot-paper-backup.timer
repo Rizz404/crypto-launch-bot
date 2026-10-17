@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily local backup of trading-bot-paper
+
+[Timer]
+OnCalendar=*-*-* 03:15:00 UTC
+RandomizedDelaySec=10min
+Persistent=true
+Unit=trading-bot-paper-backup.service
+
+[Install]
+WantedBy=timers.target

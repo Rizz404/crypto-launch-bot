@@ -1,0 +1,13 @@
+[Unit]
+Description=Record health evidence for trading-bot-paper only
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/trading-bot-paper/repo
+ExecStart=/usr/bin/python3 /opt/trading-bot-paper/repo/deploy/vps-observe.py
+UMask=0077
+Nice=10
+CPUQuota=10%
+MemoryMax=128M
+TimeoutStartSec=90

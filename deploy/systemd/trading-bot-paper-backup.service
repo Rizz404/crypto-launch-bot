@@ -1,0 +1,14 @@
+[Unit]
+Description=Back up trading-bot-paper database and configuration only
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/trading-bot-paper/repo
+ExecStart=/usr/bin/bash /opt/trading-bot-paper/repo/deploy/vps-backup.sh
+UMask=0077
+Nice=10
+IOSchedulingClass=idle
+CPUQuota=25%
+MemoryMax=128M
+TimeoutStartSec=15min
