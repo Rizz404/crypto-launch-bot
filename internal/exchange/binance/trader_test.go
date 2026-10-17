@@ -1,12 +1,17 @@
 package binance
 
 import (
+	"context"
+	"net/http"
+	"net/http/httptest"
 	"testing"
+
+	"github.com/shopspring/decimal"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/rizz404/trading-bot/internal/broker"
 	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestSpotExecutionCaseSensitiveFieldsAndBaseFee(t *testing.T) {
@@ -22,4 +27,53 @@ func TestSpotExecutionCaseSensitiveFieldsAndBaseFee(t *testing.T) {
 	assert.Equal(t, "2", events[0].Order.Quantity.String())
 	assert.Equal(t, domain.OrderFilled, events[0].Order.Status)
 	assert.Equal(t, int64(1767225600001), events[0].Fill.Time.UnixMilli())
+}
+
+// A timed-out order request may still execute; the trader asks the exchange
+// before reporting a failure, so a later fill is not orphaned.
+func TestAmbiguousPlaceFailureIsResolvedByQuery(t *testing.T) {
+	for _, tc := range []struct {
+		name     string
+		query    func(w http.ResponseWriter)
+		placed   bool
+		wantOpen bool
+	}{
+		{name: "executed", placed: true, wantOpen: true, query: func(w http.ResponseWriter) {
+			_, _ = w.Write([]byte(`{"symbol":"BTCUSDT","orderId":42,"clientOrderId":"tbx1","price":"0","origQty":"0.001","executedQty":"0.001","cummulativeQuoteQty":"81","status":"FILLED","type":"MARKET","side":"BUY","stopPrice":"0","time":1,"updateTime":2}`))
+		}},
+		{name: "never reached the exchange", query: func(w http.ResponseWriter) {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte(`{"code":-2013,"msg":"Order does not exist."}`))
+		}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch r.Method {
+				case http.MethodPost:
+					w.WriteHeader(http.StatusServiceUnavailable)
+					_, _ = w.Write([]byte(`{"code":-1007,"msg":"Timeout waiting for response from backend server. Send status unknown; execution status unknown."}`))
+				case http.MethodGet:
+					assert.Equal(t, "tbx1", r.URL.Query().Get("origClientOrderId"))
+					tc.query(w)
+				}
+			}))
+			defer srv.Close()
+			tr := NewTrader(testClient(srv), "key", "secret", []domain.Market{domain.Spot})
+			tr.SetHandler(func(broker.Event) {})
+			o, err := tr.PlaceOrder(context.Background(), domain.Order{ClientID: "tbx1", Market: domain.Spot, Symbol: "BTCUSDT",
+				Side: domain.Buy, Type: domain.OrderMarket, Quantity: decimal.RequireFromString("0.001")})
+			if !tc.placed {
+				require.Error(t, err)
+				assert.Equal(t, -1007, apiCode(err))
+				return
+			}
+			require.NoError(t, err)
+			assert.Equal(t, "42", o.ExchangeID)
+			assert.Equal(t, domain.OrderFilled, o.Status)
+			tr.mu.Lock()
+			_, open := tr.open["tbx1"]
+			tr.mu.Unlock()
+			assert.Equal(t, tc.wantOpen, open, "kept for mapping the fill event")
+		})
+	}
 }

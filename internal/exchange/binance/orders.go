@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/trading-bot/internal/exchange"
 )
 
 func binanceSide(s domain.Side) string { return strings.ToUpper(string(s)) }
@@ -35,6 +36,18 @@ func (t *Trader) PlaceOrder(ctx context.Context, o domain.Order) (domain.Order, 
 	default:
 		err = t.placeSpot(ctx, &o)
 	}
+	if err != nil && ambiguous(err) {
+		// The request may have reached the exchange (timeout, broken
+		// connection, "execution status unknown"). Forgetting the order would
+		// leave a later fill unmapped, so ask the exchange first.
+		if found, qerr := t.resolvePlaced(ctx, o); qerr == nil {
+			t.log.Warn("order placed despite a failed request", "client_id", o.ClientID, "status", found.Status, "err", err)
+			o.ExchangeID, o.Status, err = found.ExchangeID, found.Status, nil
+		} else if apiCode(qerr) != -2013 {
+			t.log.Error("order state unknown after a failed request", "client_id", o.ClientID, "err", err, "query_err", qerr)
+			t.requestResync()
+		}
+	}
 	if err != nil {
 		t.mu.Lock()
 		delete(t.open, o.ClientID)
@@ -51,6 +64,38 @@ func (t *Trader) PlaceOrder(ctx context.Context, o domain.Order) (domain.Order, 
 	}
 	t.mu.Unlock()
 	return o, nil
+}
+
+// ambiguous reports whether a failed order request may still have been
+// executed: transport failures and timeouts, or a server-side error.
+func ambiguous(err error) bool {
+	var api *exchange.APIError
+	if errors.As(err, &api) {
+		return api.HTTPStatus >= 500 || api.Code == -1007
+	}
+	return true
+}
+
+// resolvePlaced looks the order up by its client id, retrying briefly. An
+// order the exchange does not know fails with -2013.
+func (t *Trader) resolvePlaced(ctx context.Context, o domain.Order) (domain.Order, error) {
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 15*time.Second)
+	defer cancel()
+	var err error
+	for attempt := range 3 {
+		if attempt > 0 {
+			select {
+			case <-ctx.Done():
+				return o, ctx.Err()
+			case <-time.After(time.Second):
+			}
+		}
+		var found domain.Order
+		if found, err = t.queryOrder(ctx, o); err == nil || apiCode(err) == -2013 {
+			return found, err
+		}
+	}
+	return o, err
 }
 
 // Track registers orders placed earlier (adopted during reconciliation) so
