@@ -103,7 +103,7 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 
 	s.risk = risk.NewManager(cfg.Risk, log)
 	s.eng = engine.New(engine.Config{
-		Book: s.book, Risk: s.risk, Log: log, Clock: time.Now, IDSeed: time.Now().UnixMilli(),
+		Book: s.book, Risk: s.risk, Log: log, Clock: time.Now, IDSeed: time.Now().UnixMilli(), HoldRisk: true,
 		Hooks: engine.Hooks{
 			OnOrder:  s.onOrder,
 			OnFill:   s.onFill,

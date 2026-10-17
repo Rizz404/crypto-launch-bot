@@ -4,7 +4,6 @@ import (
 	"context"
 	"log/slog"
 	"strings"
-	"time"
 
 	"github.com/shopspring/decimal"
 
@@ -16,10 +15,9 @@ import (
 // start starts the live brokers and loads the exchange state (after
 // warmup, so last prices are known), then arms the kill switch baseline.
 func (s *session) start(ctx context.Context) error {
-	// A closure: deferred arguments are evaluated immediately, which would
-	// observe the empty ledger before the first reconcile (equity 0 reads
-	// as a 100% daily loss and trips the kill switch on every live start).
-	defer func() { s.risk.Observe(time.Now(), s.book.Total().Equity) }()
+	// The engine holds kill switch observations until the ledger has been
+	// reconciled: before that, equity is 0 or a restored position alone.
+	defer func() { s.eng.ArmRisk(ctx) }()
 	if len(s.lives) == 0 {
 		return nil
 	}
@@ -224,7 +222,36 @@ func (s *session) reconcileOrders(ctx context.Context, lb broker.Live, key portf
 			adopt[i].Tag = domain.TagStrategy
 		}
 	}
+	adopt = s.cancelOrphanedProtection(ctx, lb, key, adopt)
+	if len(adopt) == 0 {
+		return
+	}
 	lb.Track(adopt)
 	s.eng.AdoptOrders(adopt)
 	s.log.Info("adopted open orders from exchange", "account", key, "count", len(adopt))
+}
+
+// cancelOrphanedProtection cancels stop-loss and take-profit orders left
+// from an earlier session whose position the bot no longer holds (closed
+// while it was down, or by a kill switch before they were adopted). On spot
+// they would otherwise sell coins the bot does not own. The rest is returned.
+func (s *session) cancelOrphanedProtection(ctx context.Context, lb broker.Live, key portfolio.AccountKey, orders []domain.Order) []domain.Order {
+	acct := s.book.Account(key)
+	keep := orders[:0]
+	canceled := map[string]bool{}
+	for _, o := range orders {
+		protective := o.Tag == domain.TagStopLoss || o.Tag == domain.TagTakeProfit
+		if _, open := acct.Position(o.Symbol); !protective || open {
+			keep = append(keep, o)
+			continue
+		}
+		s.onNotice(slog.LevelWarn, "protective order without a position canceled", "symbol", o.Symbol, "client_id", o.ClientID, "tag", o.Tag)
+		lb.Track([]domain.Order{o})
+		// The second leg of an OCO is gone once the first is canceled.
+		if err := lb.CancelOrder(ctx, o); err != nil && !canceled[o.Symbol] {
+			s.log.Warn("cancel orphaned protective order", "client_id", o.ClientID, "err", err)
+		}
+		canceled[o.Symbol] = true
+	}
+	return keep
 }

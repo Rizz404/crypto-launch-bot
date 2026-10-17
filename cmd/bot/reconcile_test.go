@@ -111,6 +111,47 @@ func TestLiveStartDoesNotTripKillSwitch(t *testing.T) {
 	assert.Equal(t, "10000", book.Total().Equity.String())
 }
 
+// A stop/take-profit pair left from a position closed before adoption
+// (seen on the testnet after a startup kill switch) must not be adopted: on
+// spot it would sell coins the bot does not own.
+func TestOrphanedProtectionIsCanceledNotAdopted(t *testing.T) {
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	key := portfolio.AccountKey{Exchange: "sim", Market: domain.Spot}
+	book := portfolio.NewBook()
+	book.Add(portfolio.NewAccount(key, decimal.NewFromInt(1000), nil))
+	sim := broker.NewSim(broker.SimConfig{Exchange: key.Exchange, Clock: time.Now})
+	sim.SetHandler(func(broker.Event) {})
+	live := &fakeLive{Sim: sim, resync: make(chan struct{})}
+	s := &session{log: log, book: book, metrics: metrics.NewTrading(prometheus.NewRegistry())}
+	ctx := context.Background()
+	order := func(id, tag string, typ domain.OrderType, symbol string) domain.Order {
+		o := domain.Order{ClientID: id, Exchange: key.Exchange, Market: key.Market, Symbol: symbol, Side: domain.Sell,
+			Type: typ, Quantity: decimal.RequireFromString("0.001"), StopPrice: decimal.NewFromInt(90), Tag: tag}
+		placed, err := sim.PlaceOrder(ctx, o)
+		require.NoError(t, err)
+		placed.Tag = tag
+		return placed
+	}
+	stop := order("tbstop", domain.TagStopLoss, domain.OrderStopMarket, "BTCUSDT")
+	target := order("tbtp", domain.TagTakeProfit, domain.OrderTakeProfit, "BTCUSDT")
+	grid := order("tbgrid", domain.TagStrategy, domain.OrderStopMarket, "BTCUSDT")
+	book.Account(key).SetPosition(domain.Position{PositionKey: domain.PositionKey{Exchange: key.Exchange, Market: key.Market, Symbol: "ETHUSDT"},
+		Side: domain.Long, Quantity: decimal.NewFromInt(1), EntryPrice: decimal.NewFromInt(100), Leverage: 1})
+	ethStop := order("tbethstop", domain.TagStopLoss, domain.OrderStopMarket, "ETHUSDT")
+
+	kept := s.cancelOrphanedProtection(ctx, live, key, []domain.Order{stop, target, grid, ethStop})
+	var ids []string
+	for _, o := range kept {
+		ids = append(ids, o.ClientID)
+	}
+	assert.Equal(t, []string{"tbgrid", "tbethstop"}, ids, "strategy orders and protection of open positions are adopted")
+	var open []string
+	for _, o := range sim.OpenOrders() {
+		open = append(open, o.ClientID)
+	}
+	assert.ElementsMatch(t, []string{"tbgrid", "tbethstop"}, open)
+}
+
 func TestReconcileRequiresPersistentMismatchAndPreservesMetadata(t *testing.T) {
 	s := &session{log: slog.New(slog.NewTextHandler(io.Discard, nil)), mismatch: map[domain.PositionKey]int{},
 		leverages: map[domain.PositionKey]int{}, metrics: metrics.NewTrading(prometheus.NewRegistry())}
