@@ -128,6 +128,44 @@ tunnel atau laptop ditutup.
 
 ## Backup, update, dan rollback
 
+Target Plesk menggunakan `/opt/trading-bot-paper/repo`. Kunci deploy read-only dan
+`known_hosts` khusus proyek berada di direktori saudara `access/`; jangan menyalin
+private key dari laptop atau mengubah konfigurasi SSH global. Password lokal
+dibuat di VPS pada `.env.vps` (mode `600`). Untuk membaca password dashboard saat
+dibutuhkan, buka file itu sendiri melalui terminal SSH; jangan tempel isinya ke
+chat atau log.
+
+Script `deploy/vps-backup.sh` membuat dump custom PostgreSQL beserta arsip
+konfigurasi rahasia di `/opt/trading-bot-paper/backups`. Tujuh backup sukses
+terbaru dipertahankan. Script memvalidasi daftar isi dump dan checksum; validasi
+tersebut belum menggantikan uji restore penuh. Backup lokal tetap mengandung
+secret, sehingga direktori harus `700` dan file `600`.
+
+`deploy/vps-observe.py` mencatat status container, health, datasource monitoring,
+metrics, waktu candle, gap 1m, equity terbaru, serta disk kosong setiap lima menit
+ke `evidence/samples-YYYYMMDD.jsonl`. Retention sampel 14 hari. Pemeriksaan gap ini
+khusus konfigurasi paper dua seri 1m; sesuaikan script bila universe/timeframe
+diubah. Sampel ini bukan pemantau eksternal dan tidak mengirim notifikasi.
+
+Unit systemd di `deploy/systemd/` hanya untuk project baru ini. Sebelum memasang,
+pastikan nama unit belum digunakan. Setelah bot sehat, pasang unit lalu aktifkan
+dua timer berikut (tidak perlu me-restart Docker/Plesk):
+
+```sh
+install -m 644 deploy/systemd/trading-bot-paper-* /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now trading-bot-paper-observe.timer trading-bot-paper-backup.timer
+systemctl start trading-bot-paper-observe.service trading-bot-paper-backup.service
+systemctl list-timers 'trading-bot-paper-*'
+```
+
+Timer backup berjalan setiap hari sekitar 03:15 UTC (10:15 WIB); backup yang
+terlewat saat server mati dijalankan setelah boot. Setiap service memiliki limit
+CPU/memori dan prioritas rendah. Periksa hasil melalui `journalctl -u
+trading-bot-paper-observe.service` serta `journalctl -u
+trading-bot-paper-backup.service`. Gagal health hanya mencatat temuan, tanpa
+mengubah stack lain atau melakukan pemulihan otomatis.
+
 Sebelum update, simpan digest dan commit lama serta backup database:
 
 ```sh
@@ -137,10 +175,9 @@ dc exec -T db pg_dump -U bot -d tradingbot -Fc > backups/before-update.dump
 chmod 600 backups/before-update.dump
 ```
 
-Cadangkan juga konfigurasi lokal secara aman di luar repo. Backup di disk VPS
-yang sama tidak melindungi dari kehilangan server; jadwal dan salinan di luar
-server disiapkan saat target VPS sudah diketahui. Jangan gunakan `down -v` pada
-stack yang berisi data yang ingin dipertahankan.
+Backup di disk VPS yang sama tidak melindungi dari kehilangan server. Salinan di
+luar server dan uji restore penuh tetap perlu disiapkan. Jangan gunakan `down -v`
+pada stack yang berisi data yang ingin dipertahankan.
 
 Untuk update: hentikan bot secara graceful, checkout commit baru dari GitHub,
 ubah `BOT_IMAGE` ke digest yang lolos CI, tarik image, jalankan migrasi, lalu
