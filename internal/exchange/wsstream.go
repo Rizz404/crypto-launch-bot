@@ -7,7 +7,9 @@ import (
 	"log/slog"
 	"math/rand/v2"
 	"net/http"
+	"net/http/httptrace"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/coder/websocket"
@@ -106,6 +108,18 @@ func (s *WSStream) Run(ctx context.Context, onConnect func(), handle func([]byte
 
 var errLifetime = errors.New("max connection lifetime reached")
 
+// dialTrace records the last dial stage that started in stage.
+func dialTrace(stage *atomic.Value) *httptrace.ClientTrace {
+	stage.Store("start")
+	set := func(s string) { stage.Store(s) }
+	return &httptrace.ClientTrace{
+		DNSStart:          func(httptrace.DNSStartInfo) { set("dns") },
+		ConnectStart:      func(string, string) { set("connect") },
+		TLSHandshakeStart: func() { set("tls") },
+		GotConn:           func(httptrace.GotConnInfo) { set("upgrade") },
+	}
+}
+
 func (s *WSStream) session(ctx context.Context, onConnect func(), handle func([]byte)) error {
 	url := s.URL
 	if s.URLFunc != nil {
@@ -115,10 +129,13 @@ func (s *WSStream) session(ctx context.Context, onConnect func(), handle func([]
 		}
 	}
 	dialCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	var stage atomic.Value
+	dialCtx = httptrace.WithClientTrace(dialCtx, dialTrace(&stage))
 	conn, _, err := websocket.Dial(dialCtx, url, &websocket.DialOptions{HTTPClient: s.HTTPClient})
 	cancel()
 	if err != nil {
-		return err
+		// The stage tells a hanging DNS lookup from a stuck TCP or TLS setup.
+		return fmt.Errorf("dial (stage %v): %w", stage.Load(), err)
 	}
 	defer func() { _ = conn.CloseNow() }()
 	conn.SetReadLimit(1 << 20)
