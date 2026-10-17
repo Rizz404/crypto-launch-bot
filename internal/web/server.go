@@ -64,6 +64,7 @@ func (s *Server) Handler() http.Handler {
 	mux := http.NewServeMux()
 	static, _ := fs.Sub(staticFS, "static")
 	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServerFS(static)))
+	mux.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusNoContent) })
 
 	mux.HandleFunc("GET /{$}", s.overview)
 	mux.HandleFunc("GET /partials/status", s.partialStatus)
@@ -100,7 +101,9 @@ func securityHeaders(next http.Handler) http.Handler {
 		h.Set("X-Frame-Options", "DENY")
 		h.Set("X-Content-Type-Options", "nosniff")
 		h.Set("Referrer-Policy", "no-referrer")
-		h.Set("Content-Security-Policy", "default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:")
+		// lightweight-charts 5.2.1 injects a fixed attribution stylesheet.
+		// Allow that exact style; keep scripts and other inline styles blocked.
+		h.Set("Content-Security-Policy", "default-src 'self'; style-src 'self' 'sha256-3pRED1tOXas1FXFoPb9TGCjmYe9XQsmO9OV23khV2nY='; script-src 'self'; img-src 'self' data:")
 		next.ServeHTTP(w, r)
 	})
 }
