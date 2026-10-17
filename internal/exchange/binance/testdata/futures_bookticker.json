@@ -1,0 +1,38 @@
+[
+ {
+  "symbol": "BTCUSDT",
+  "bidPrice": "81513.60",
+  "bidQty": "3.006",
+  "askPrice": "81513.70",
+  "askQty": "6.129",
+  "time": 1792212666491,
+  "lastUpdateId": 11842891170655
+ },
+ {
+  "symbol": "ETHUSDT",
+  "bidPrice": "2425.99",
+  "bidQty": "243.122",
+  "askPrice": "2426.00",
+  "askQty": "91.877",
+  "time": 1792212672207,
+  "lastUpdateId": 11842891547708
+ },
+ {
+  "symbol": "SOLUSDT",
+  "bidPrice": "104.6900",
+  "bidQty": "1930.00",
+  "askPrice": "104.7000",
+  "askQty": "714.94",
+  "time": 1792212672283,
+  "lastUpdateId": 11842891551720
+ },
+ {
+  "symbol": "USDCUSDT",
+  "bidPrice": "1.0007210",
+  "bidQty": "387737",
+  "askPrice": "1.0007220",
+  "askQty": "293961",
+  "time": 1792212670031,
+  "lastUpdateId": 11842891405689
+ }
+]
