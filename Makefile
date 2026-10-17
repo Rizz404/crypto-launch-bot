@@ -1,8 +1,9 @@
 COMPOSE ?= podman compose -f deploy/compose.yml
+PROMETHEUS_IMAGE ?= docker.io/prom/prometheus:v3.15.0
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 
-.PHONY: generate build test test-integration lint fmt up down logs migrate run image clean
+.PHONY: generate build test test-integration test-monitoring lint fmt up down logs migrate run image clean
 
 # templ templates -> *_templ.go (committed)
 generate:
@@ -11,9 +12,14 @@ generate:
 build:
 	go build -trimpath -ldflags "$(LDFLAGS)" -o bin/bot ./cmd/bot
 	go build -trimpath -ldflags "$(LDFLAGS)" -o bin/datafetch ./cmd/datafetch
+	go build -trimpath -ldflags "$(LDFLAGS)" -o bin/backtest ./cmd/backtest
 
 test:
 	go test ./...
+
+test-monitoring:
+	podman run --rm --network none -v "$(CURDIR)/deploy/prometheus:/checks:ro" -w /checks \
+		--entrypoint /bin/promtool $(PROMETHEUS_IMAGE) test rules alerts.test.yml
 
 # Needs the compose database running (make up).
 test-integration:
