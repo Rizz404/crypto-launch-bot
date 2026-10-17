@@ -29,6 +29,9 @@ type Feed struct {
 	// OnCandle, if set, receives every closed candle exactly once per
 	// series, in open-time order (backfilled and live alike).
 	OnCandle func(domain.Candle)
+	// OnUpdate, if set, receives every update of still-forming candles
+	// (their Close is the latest trade price).
+	OnUpdate func(domain.Candle)
 	Log      *slog.Logger
 	Metrics  *Metrics // optional
 
@@ -61,6 +64,9 @@ func (f *Feed) Run(ctx context.Context) error {
 			f.backfill(ctx)
 		case exchange.EventCandle:
 			if !ev.Candle.Closed {
+				if f.OnUpdate != nil {
+					f.OnUpdate(ev.Candle)
+				}
 				continue
 			}
 			if f.Metrics != nil {
