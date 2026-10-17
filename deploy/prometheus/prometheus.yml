@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: tradingbot
+    static_configs:
+      # Bot running in the compose "bot" profile.
+      - targets: ["bot:9100"]
+        labels: {instance: container}
+      # Bot running on the host with `make run`.
+      - targets: ["host.containers.internal:9100"]
+        labels: {instance: host}
