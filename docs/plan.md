@@ -4,9 +4,9 @@
 
 ## Status saat ini (2026-10-17)
 
-- **Fase 0–7 selesai** (2026-10-17; Fase 2–7 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
+- **Fase 0–8 selesai** (2026-10-17). Fase 2–8 dibangun tanpa test; semua jalur trading belum pernah dijalankan. `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
 - Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
-- **Langkah berikutnya: Fase 8** (strategi lanjutan: grid/DCA, arbitrase funding/cross-exchange, market making).
+- **Langkah berikutnya: Fase 9 (Testing)** — kerjakan seluruh "Backlog testing" di bawah. Setelah itu Fase 10 (Fixing). Fase 2–8 dibangun tanpa test (sesuai keputusan user).
 - **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
 - Cara menjalankan: lihat [README.md](../README.md).
 - Tandai fase yang selesai di bagian "Progres" di bawah setiap kali satu fase beres.
@@ -36,7 +36,7 @@
 - [x] Fase 5: Telegram + Prometheus/Grafana (2026-10-17, belum dites)
 - [x] Fase 6: Web dashboard (2026-10-17, belum dites)
 - [x] Fase 7: Bybit + OKX (2026-10-17, belum dites)
-- [ ] Fase 8: Strategi lanjutan (grid/DCA, arbitrase, market making)
+- [x] Fase 8: Strategi lanjutan (grid/DCA, arbitrase, market making) (2026-10-17, belum dites)
 - [ ] Fase 9: Testing (semua fitur)
 - [ ] Fase 10: Fixing (semua temuan Fase 9)
 - [ ] Fase 11: Live mini + VPS
@@ -85,6 +85,14 @@
   - OKX: **konversi kontrak swap** (qty, minSz, lotSz, posisi, fill, volume) di setiap jalur; paginasi `history-candles` dengan `before`/`after`; bar UTC (`6Hutc`, `1Dutc`, …); `volCcy24h` swap × harga; demo trading (`x-simulated-trading: 1`, `wspap.okx.com`); login WS menunggu event `login`; pemetaan `orders-algo.ordId` → `algoClOrdId`; fee negatif = biaya; `tgtCcy=base_ccy` untuk market spot; error per item (`sCode`); posisi net mode; akun harus mode "spot and futures".
   - ID order engine sekarang alfanumerik (`tb` + hash 7 karakter + sequence) — pastikan diterima ketiga exchange dan tidak bentrok.
   - Wallet unified (Bybit/OKX): sesi menolak dua market di exchange yang sama.
+- **Fase 8**
+  - `grid`: level aritmatika/geometris, buy awal di bawah harga, order balasan setelah fill penuh (pemetaan harga ke level setelah pembulatan tick), restart tidak menggandakan order (cek `OpenOrders`), `stop_below` membatalkan semua dan exit.
+  - `dca`: jadwal beli (`interval`, `dip_pct`, `max_buys`), TP/SL dari harga rata-rata, siklus baru setelah exit, timer berjalan di backtest (`eng.Tick`).
+  - `funding`: data funding (Binance `premiumIndex`, Bybit tickers; OKX belum ada sumber) di-poll tiap 5 menit; buka/tutup dua kaki; kaki timpang dibongkar setelah grace; tidak bisa di-backtest (tidak ada histori funding).
+  - `xspread`: arah posisi benar untuk spread positif/negatif, cooldown saat order dalam perjalanan, butuh dua broker live di mode testnet/live.
+  - `mm`: requote (CancelAll + ref baru) hanya saat harga bergerak/fill/tanpa order, skew inventori, batas inventori, spot tidak menjual tanpa inventori. Backtest market making memakai fill limit `Sim` yang terlalu optimistis (tanpa antrean order book).
+  - Legs: routing candle per instrumen di engine, akun dan subscription untuk semua leg, cek wallet unified ikut menghitung leg, backtest multi-akun (equity total, `InitialBalance` per akun).
+  - Risk `max_exposure_pct` menghitung kedua kaki strategi hedged sebagai exposure; sesuaikan batas atau ubah perhitungan.
 
 ## Pertanyaan terbuka (belum diputuskan)
 
@@ -166,6 +174,13 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 - `exchange.TriggerBook` memetakan order hasil trigger ke ID order kondisional (dipakai OKX; Binance punya versi sendiri di `binance.Trader`).
 - `broker.UnifiedWallet`: Bybit (UTA) dan OKX memakai satu wallet untuk spot dan futures; bot hanya memperdagangkan satu market per exchange tersebut.
 - ID order engine diubah jadi alfanumerik (OKX menolak `-`).
+
+### Fase 8 (strategi lanjutan)
+
+- Strategi baru: `grid`, `dca`, `funding`, `xspread`, `mm` ([internal/strategy/](../internal/strategy/)); helper dua kaki di `internal/strategy/hedge`. Semua didaftarkan lewat `internal/strategy/all`.
+- `strategy.Config.Legs` (YAML `strategies[].legs`) menambah instrumen di market/exchange lain; engine meneruskan candle semua instrumen ke strategi, dan sesi membuat akun + subscription untuk tiap leg. `strategy.Context` sekarang punya `LastPrice` dan `Funding`.
+- Funding rate dari `exchange.FundingSource` (Binance, Bybit) di-poll sesi tiap 5 menit ke engine (`SetFunding`).
+- Backtest sekarang multi-akun (satu `Sim` per exchange, satu akun per exchange+market, saldo awal per akun) dan menjalankan timer strategi.
 
 ---
 
