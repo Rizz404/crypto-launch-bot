@@ -1,0 +1,71 @@
+{
+  "checked_at": "2026-10-17T14:16:57.168601+00:00",
+  "purpose": "Read-only handoff after user requested pause; not a completed 24-hour test",
+  "server_alias": "plesk",
+  "project_path": "/opt/trading-bot-paper/repo",
+  "source_commit": "d5a52e2b2f1aa1c5c78f2bbee7c55cb48468643f",
+  "existing_containers_checked": 28,
+  "existing_services_checked": 5,
+  "existing_service_changes": [],
+  "containers": [
+    {
+      "service": "bot",
+      "status": "running",
+      "restart_count": 0,
+      "oom_killed": false,
+      "image": "ghcr.io/rizz404/trading-bot@sha256:7818595501fa20eaa94a4a9ff0de74ad9a19678cd99de11f7e578fe969fec063"
+    },
+    {
+      "service": "db",
+      "status": "running",
+      "restart_count": 0,
+      "oom_killed": false,
+      "image": "docker.io/timescale/timescaledb:2.30.2-pg17"
+    },
+    {
+      "service": "grafana",
+      "status": "running",
+      "restart_count": 0,
+      "oom_killed": false,
+      "image": "docker.io/grafana/grafana:13.2.4"
+    },
+    {
+      "service": "prometheus",
+      "status": "running",
+      "restart_count": 0,
+      "oom_killed": false,
+      "image": "docker.io/prom/prometheus:v3.15.0"
+    }
+  ],
+  "healthz": "ok",
+  "database": {
+    "series": [
+      {
+        "symbol": "BTCUSDT",
+        "candles": 1007,
+        "latest_open": "2026-10-17T14:15:00+00:00",
+        "gaps": 0
+      },
+      {
+        "symbol": "ETHUSDT",
+        "candles": 1007,
+        "latest_open": "2026-10-17T14:15:00+00:00",
+        "gaps": 0
+      }
+    ],
+    "orders": 0,
+    "fills": 0,
+    "trades": 0,
+    "latest_equity": "2026-10-17T14:16:38.797161+00:00",
+    "runs": [
+      {
+        "id": 1,
+        "mode": "paper",
+        "started_at": "2026-10-17T14:09:38.764002+00:00",
+        "stopped_at": null
+      }
+    ]
+  },
+  "operations_scripts_checked_out": false,
+  "systemd_units": ""
+}

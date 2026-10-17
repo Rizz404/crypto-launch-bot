@@ -5,6 +5,11 @@ menguji kode, membangun image, lalu menerbitkannya ke GHCR. VPS menarik image ha
 CI; folder kerja laptop tidak disalin ke server. Deploy pertama adalah paper Spot.
 Fase 9 tetap berjalan dan mainnet tetap memerlukan persetujuan Fase 11.
 
+**Checkpoint 2026-10-17:** deployment awal paper sudah berjalan, tetapi langkah
+backup/timer di panduan ini belum dipasang pada VPS. Lihat [handoff VPS](handoff-vps.md)
+untuk commit/image yang benar-benar aktif, hasil uji koneksi, dan pekerjaan tersisa.
+Panduan ini menjelaskan prosedur; bukan pernyataan bahwa semua langkah sudah dilakukan.
+
 ## Pipeline
 
 `.github/workflows/ci.yml` berjalan pada push ke `main`, pull request, dan pemicu
