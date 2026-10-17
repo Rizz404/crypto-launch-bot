@@ -61,10 +61,12 @@ type Engine struct {
 	instruments map[instKey]domain.Instrument
 	lastPrice   map[instKey]decimal.Decimal
 	instances   []*instance
-	orders      map[string]*domain.Order // open orders by client id
-	refs        map[string]string        // strategy/ref -> client id
+	orders      map[string]*domain.Order   // open orders by client id
+	fillIDs     map[string]map[string]bool // trade ids already applied per open order
+	refs        map[string]string          // strategy/ref -> client id
 	entries     map[domain.PositionKey]*entryPlan
 	exits       map[domain.PositionKey]string // pending exit order id
+	reversals   map[domain.PositionKey]reversal
 	protections map[domain.PositionKey]*protection
 	leverage    map[domain.PositionKey]int
 	leverageSet map[domain.PositionKey]int
@@ -94,6 +96,11 @@ type entryPlan struct {
 	trailing   float64
 }
 
+type reversal struct {
+	inst   *instance
+	intent strategy.Intent
+}
+
 // protection tracks the protective orders of an open position.
 type protection struct {
 	stopID, targetID string
@@ -101,6 +108,7 @@ type protection struct {
 	takeProfit       decimal.Decimal
 	trailing         float64
 	best             decimal.Decimal // best price since entry, for trailing
+	quantity         decimal.Decimal // position size covered by the bracket
 }
 
 func New(cfg Config) *Engine {
@@ -117,9 +125,11 @@ func New(cfg Config) *Engine {
 		instruments: map[instKey]domain.Instrument{},
 		lastPrice:   map[instKey]decimal.Decimal{},
 		orders:      map[string]*domain.Order{},
+		fillIDs:     map[string]map[string]bool{},
 		refs:        map[string]string{},
 		entries:     map[domain.PositionKey]*entryPlan{},
 		exits:       map[domain.PositionKey]string{},
+		reversals:   map[domain.PositionKey]reversal{},
 		protections: map[domain.PositionKey]*protection{},
 		leverage:    map[domain.PositionKey]int{},
 		leverageSet: map[domain.PositionKey]int{},
@@ -362,6 +372,7 @@ func (e *Engine) AdoptOrders(orders []domain.Order) {
 		}
 		cp := o
 		e.orders[o.ClientID] = &cp
+		e.orderChanged(cp)
 		key := domain.PositionKey{Exchange: o.Exchange, Market: o.Market, Symbol: o.Symbol}
 		switch o.Tag {
 		case domain.TagStopLoss, domain.TagTakeProfit:
@@ -375,6 +386,7 @@ func (e *Engine) AdoptOrders(orders []domain.Order) {
 			} else {
 				p.targetID, p.takeProfit = o.ClientID, o.StopPrice
 			}
+			p.quantity = o.Remaining()
 		}
 	}
 }
@@ -402,6 +414,7 @@ func (e *Engine) CloseAll(ctx context.Context, reason string) {
 }
 
 func (e *Engine) closeAll(ctx context.Context, reason string) {
+	clear(e.reversals)
 	for _, acct := range e.cfg.Book.Accounts() {
 		for _, pos := range acct.Positions() {
 			e.exit(ctx, pos.PositionKey, reason)
@@ -459,7 +472,7 @@ func (e *Engine) notice(level slog.Level, msg string, attrs ...any) {
 }
 
 // newClientID returns "tb" + a 7-character strategy hash + a base-36
-// sequence: alphanumeric only (OKX rejects other characters), at most 32
+// sequence: alphanumeric only, at most 32
 // characters, and the fixed-width hash keeps ids of different strategies
 // from colliding.
 func (e *Engine) newClientID(inst *instance) string {

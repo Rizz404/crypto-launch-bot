@@ -28,6 +28,7 @@ func (e *Engine) apply(ctx context.Context, inst *instance, intents []strategy.I
 		case strategy.Enter:
 			e.enter(ctx, inst, key, in)
 		case strategy.Exit:
+			delete(e.reversals, key)
 			e.exit(ctx, key, domain.TagExit)
 		case strategy.Place:
 			e.placeRaw(ctx, inst, key, in)
@@ -37,7 +38,7 @@ func (e *Engine) apply(ctx context.Context, inst *instance, intents []strategy.I
 			}
 		case strategy.CancelAll:
 			for id, o := range e.orders {
-				if o.Strategy == inst.cfg.ID && o.Tag == domain.TagStrategy && o.Symbol == in.Symbol && o.Market == in.Market {
+				if o.Strategy == inst.cfg.ID && o.Tag == domain.TagStrategy && o.Exchange == in.Exchange && o.Symbol == in.Symbol && o.Market == in.Market {
 					e.cancel(ctx, id)
 				}
 			}
@@ -67,14 +68,22 @@ func (e *Engine) enter(ctx context.Context, inst *instance, key domain.PositionK
 	}
 
 	snap := acct.Snapshot()
-	freeMargin := snap.FreeMargin()
+	freeMargin := snap.FreeMargin().Sub(e.pendingMargin(key.Exchange, key.Market))
 	if pos, has := acct.Position(key.Symbol); has {
 		if pos.Side == in.Side {
 			return // already positioned
 		}
-		// Reverse: close first; its margin becomes available.
+		// Defer the new entry until executions confirm that the old
+		// position is flat. Submission order alone does not imply fill order.
+		e.reversals[key] = reversal{inst: inst, intent: in}
 		e.exit(ctx, key, "reverse")
-		freeMargin = freeMargin.Add(pos.Notional(price).Div(decimal.NewFromInt(int64(max(pos.Leverage, 1)))))
+		if _, pending := e.exits[key]; !pending {
+			delete(e.reversals, key)
+		}
+		return
+	}
+	if _, pending := e.exits[key]; pending {
+		return
 	}
 
 	lev := e.cfg.Risk.Leverage(inst.cfg.Leverage, key.Market)
@@ -91,7 +100,7 @@ func (e *Engine) enter(ctx context.Context, inst *instance, key domain.PositionK
 		Side: in.Side.EntrySide(), Type: domain.OrderMarket, Quantity: qty,
 		Tag: domain.TagEntry, Strategy: inst.cfg.ID, Reason: in.Reason,
 	}
-	if err := e.cfg.Risk.CheckOrder(o, price, e.cfg.Book); err != nil {
+	if err := e.cfg.Risk.CheckOrder(o, price, e.cfg.Book, e.pendingRiskOrders()...); err != nil {
 		e.notice(slog.LevelWarn, "entry blocked by risk limits", "strategy", inst.cfg.ID, "symbol", key.Symbol, "err", err)
 		return
 	}
@@ -192,7 +201,7 @@ func (e *Engine) placeRaw(ctx context.Context, inst *instance, key domain.Positi
 		return
 	}
 	if !o.ReduceOnly {
-		if err := e.cfg.Risk.CheckOrder(o, ref, e.cfg.Book); err != nil {
+		if err := e.cfg.Risk.CheckOrder(o, ref, e.cfg.Book, e.pendingRiskOrders()...); err != nil {
 			e.notice(slog.LevelWarn, "order blocked by risk limits", "strategy", inst.cfg.ID, "symbol", key.Symbol, "err", err)
 			return
 		}
@@ -288,6 +297,7 @@ func (e *Engine) onOrderUpdate(ctx context.Context, upd domain.Order) {
 		return
 	}
 	delete(e.orders, o.ClientID)
+	delete(e.fillIDs, o.ClientID)
 
 	key := domain.PositionKey{Exchange: o.Exchange, Market: o.Market, Symbol: o.Symbol}
 	switch o.Tag {
@@ -302,6 +312,7 @@ func (e *Engine) onOrderUpdate(ctx context.Context, upd domain.Order) {
 	case domain.TagExit:
 		if e.exits[key] == o.ClientID {
 			delete(e.exits, key)
+			delete(e.reversals, key)
 			if o.Status != domain.OrderCanceled {
 				e.notice(slog.LevelError, "exit order did not fill", "symbol", o.Symbol, "status", o.Status, "reason", o.Reason)
 			}
@@ -321,14 +332,29 @@ func (e *Engine) onFill(ctx context.Context, f domain.Fill, upd domain.Order) {
 		e.log.Warn("fill for unknown order", "client_id", f.OrderClientID, "symbol", f.Symbol)
 		return
 	}
+	if !f.Quantity.IsPositive() || !f.Price.IsPositive() {
+		e.log.Error("invalid execution ignored", "client_id", f.OrderClientID, "trade_id", f.TradeID)
+		return
+	}
+	if f.TradeID != "" {
+		seen := e.fillIDs[f.OrderClientID]
+		if seen == nil {
+			seen = map[string]bool{}
+			e.fillIDs[f.OrderClientID] = seen
+		}
+		if seen[f.TradeID] {
+			return
+		}
+		seen[f.TradeID] = true
+	}
 	newQty := o.FilledQty.Add(f.Quantity)
 	o.AvgPrice = o.AvgPrice.Mul(o.FilledQty).Add(f.Price.Mul(f.Quantity)).Div(newQty)
 	o.FilledQty = newQty
-	o.Status = upd.Status
+	// The status snapshot can be ahead of executions replayed after a
+	// reconnect. Keep tracking until the local execution ledger is full.
+	o.Status = domain.OrderPartiallyFilled
 	if o.FilledQty.GreaterThanOrEqual(o.Quantity) {
 		o.Status = domain.OrderFilled
-	} else if !o.Status.Open() && o.Status != domain.OrderFilled {
-		o.Status = domain.OrderPartiallyFilled
 	}
 	o.UpdatedAt = f.Time
 	order := *o
@@ -344,12 +370,18 @@ func (e *Engine) onFill(ctx context.Context, f domain.Fill, upd domain.Order) {
 	done := order.Status == domain.OrderFilled
 	if done {
 		delete(e.orders, order.ClientID)
+		delete(e.fillIDs, order.ClientID)
+		if e.exits[key] == order.ClientID {
+			delete(e.exits, key)
+		}
 	}
 
 	switch order.Tag {
 	case domain.TagEntry:
-		if plan := e.entries[key]; plan != nil && plan.orderID == order.ClientID && done {
-			delete(e.entries, key)
+		if plan := e.entries[key]; plan != nil && plan.orderID == order.ClientID {
+			if done {
+				delete(e.entries, key)
+			}
 			e.protect(ctx, key, plan)
 		}
 	case domain.TagExit:
@@ -357,8 +389,23 @@ func (e *Engine) onFill(ctx context.Context, f domain.Fill, upd domain.Order) {
 			delete(e.exits, key)
 		}
 	case domain.TagStopLoss, domain.TagTakeProfit:
+		// A protective execution ends the entry attempt. Otherwise its
+		// unfilled remainder could reopen the position after this exit.
+		if plan := e.entries[key]; plan != nil {
+			delete(e.entries, key)
+			e.cancel(ctx, plan.orderID)
+		}
 		if done {
 			e.log.Info("protective order filled", "symbol", key.Symbol, "tag", order.Tag, "price", f.Price)
+		}
+		if p := e.protections[key]; p != nil {
+			if acct := e.account(key); acct != nil {
+				if pos, open := acct.Position(key.Symbol); open {
+					next := &protection{stopPrice: p.stopPrice, takeProfit: p.takeProfit, trailing: p.trailing, best: p.best}
+					e.clearProtection(ctx, key)
+					e.placeProtection(ctx, key, pos, next)
+				}
+			}
 		}
 	}
 
@@ -366,6 +413,10 @@ func (e *Engine) onFill(ctx context.Context, f domain.Fill, upd domain.Order) {
 	if acct := e.account(key); acct != nil {
 		if _, open := acct.Position(key.Symbol); !open {
 			e.clearProtection(ctx, key)
+			if next, ok := e.reversals[key]; ok && done && order.Tag == domain.TagExit {
+				delete(e.reversals, key)
+				e.enter(ctx, next.inst, key, next.intent)
+			}
 		}
 	}
 
@@ -386,6 +437,10 @@ func (e *Engine) protect(ctx context.Context, key domain.PositionKey, plan *entr
 	if !has {
 		return
 	}
+	if p := e.protections[key]; p != nil && p.quantity.Equal(pos.Quantity) {
+		return
+	}
+	e.clearProtection(ctx, key)
 	stop := plan.stopLoss
 	if !stop.IsPositive() && plan.trailing > 0 {
 		trail := decimal.NewFromFloat(plan.trailing)
@@ -397,6 +452,7 @@ func (e *Engine) protect(ctx context.Context, key domain.PositionKey, plan *entr
 
 // placeProtection places the protective orders described by p for pos.
 func (e *Engine) placeProtection(ctx context.Context, key domain.PositionKey, pos domain.Position, p *protection) {
+	p.quantity = pos.Quantity
 	ins := e.instruments[instKey{key.Exchange, key.Market, key.Symbol}]
 	price := e.lastPrice[instKey{key.Exchange, key.Market, key.Symbol}]
 	if !price.IsPositive() {
@@ -437,10 +493,28 @@ func (e *Engine) placeProtection(ctx context.Context, key domain.PositionKey, po
 				e.orders[o.ClientID] = &t
 			}
 		}
-		if _, err := bp.PlaceBracket(ctx, stop, target); err != nil {
-			delete(e.orders, stop.ClientID)
-			delete(e.orders, target.ClientID)
+		placed, err := bp.PlaceBracket(ctx, stop, target)
+		accepted := make(map[string]bool, len(placed))
+		for _, o := range placed {
+			accepted[o.ClientID] = true
+			if tracked := e.orders[o.ClientID]; tracked != nil {
+				tracked.ExchangeID = o.ExchangeID
+				e.orderChanged(*tracked)
+			}
+		}
+		if err != nil {
 			delete(e.protections, key)
+			// Some brokers place the legs sequentially. An accepted first
+			// leg still exists at the exchange if the second one fails.
+			for _, o := range []domain.Order{stop, target} {
+				if accepted[o.ClientID] {
+					e.cancel(ctx, o.ClientID)
+				} else if tracked := e.orders[o.ClientID]; tracked != nil {
+					tracked.Status, tracked.Reason = domain.OrderRejected, err.Error()
+					e.orderChanged(*tracked)
+					delete(e.orders, o.ClientID)
+				}
+			}
 			e.notice(slog.LevelError, "protective orders failed, closing position", "symbol", key.Symbol, "err", err)
 			e.exit(ctx, key, domain.TagExit)
 		}
