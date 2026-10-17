@@ -25,7 +25,7 @@ test-monitoring:
 # Needs the compose database running (make up).
 test-integration:
 	TB_TEST_DATABASE_URL=$${TB_TEST_DATABASE_URL:-postgres://bot:bot@localhost:5432/tradingbot?sslmode=disable} \
-		go test -tags integration ./...
+		go test -count=1 -tags integration ./...
 
 lint:
 	golangci-lint run
