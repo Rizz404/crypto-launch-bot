@@ -4,9 +4,9 @@
 
 ## Status saat ini (2026-10-17)
 
-- **Fase 0–2 selesai** (2026-10-17; Fase 2 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
+- **Fase 0–3 selesai** (2026-10-17; Fase 2–3 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
 - Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
-- **Langkah berikutnya: Fase 3** (risk limits + kill switch, persistensi order/fill/posisi, PaperBroker, `bot run` mode paper).
+- **Langkah berikutnya: Fase 4** (Binance LiveBroker: signed REST, order spot/futures, user data stream, reconciliation).
 - **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
 - Cara menjalankan: lihat [README.md](../README.md).
 - Tandai fase yang selesai di bagian "Progres" di bawah setiap kali satu fase beres.
@@ -31,7 +31,7 @@
 - [x] Fase 0: Fondasi (2026-10-17)
 - [x] Fase 1: Domain + Binance market data (2026-10-17)
 - [x] Fase 2: Indikator + Strategy + Backtester (2026-10-17, belum dites)
-- [ ] Fase 3: Risk + OMS + Paper trading
+- [x] Fase 3: Risk + OMS + Paper trading (2026-10-17, belum dites)
 - [ ] Fase 4: Binance LiveBroker (testnet/mainnet)
 - [ ] Fase 5: Telegram + Prometheus/Grafana
 - [ ] Fase 6: Web dashboard
@@ -54,6 +54,12 @@
   - `backtest`: urutan event (TF eksekusi sebelum TF strategi pada close time yang sama), funding tiap 8 jam, metrik (CAGR, MDD, Sharpe/Sortino, profit factor ∞ → `null` di JSON), split in-sample/out-of-sample, CSV, `-save` ke DB.
   - Migrasi `00002` up/down; `config` men-decode `strategies[].params`, map `backtest.fees` di-merge dengan default.
   - Golden test `emacross` dan eksperimen parameter default.
+- **Fase 3**
+  - `risk.CheckOrder`: `max_open_positions` (hanya untuk entry simbol baru), `max_exposure_pct`; kill switch `Observe`: rugi harian sejak 00:00 UTC, drawdown dari puncak, trip sekali, `Reset`/`Halt`; `close_on_kill` menutup semua posisi dan membatalkan order entry/strategi.
+  - Engine: candle basi (close lebih dari 1 bar yang lalu) tetap masuk ke strategi tapi intent-nya dibuang; `AdoptOrders` membangun ulang proteksi dari order SL/TP; `Unprotected`.
+  - Recorder: urutan tulis (order sebelum fill-nya), antrean penuh, flush saat shutdown; `UpsertOrder` memindahkan `run_id` order yang diadopsi ke sesi aktif.
+  - Paper: `bot run` mode paper dengan strategi aktif. Cek warmup dari DB (300 bar), fill dari tick harga live, resume sesi (`paper.resume`: saldo, posisi, order terbuka), snapshot equity tiap menit, `FinishRun` saat shutdown. Uji restart di tengah posisi.
+  - Migrasi `00003` up/down.
 
 ## Pertanyaan terbuka (belum diputuskan)
 
@@ -99,6 +105,14 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 - `broker.Broker` adalah antarmuka order. `BracketPlacer` dipakai untuk broker yang butuh SL+TP terhubung (OCO di Binance spot), dan `LeverageSetter` untuk futures. `broker.Sim` dipakai backtest dan nanti paper trading.
 - Backtest tidak punya periode warmup terpisah: indikator mulai siap di dalam rentang `-from`. Funding memakai rate konstan (`backtest.funding_rate`), karena histori funding belum disimpan.
 - Hasil `backtest -save` masuk ke `strategy_runs` (mode `backtest`, `summary` = metrik JSON), `trades`, dan `equity_snapshots` (sampel per jam).
+
+### Fase 3 (risk, persistensi, paper)
+
+- `bot run` sekarang punya **sesi trading** kalau ada strategi dengan `enabled: true` ([cmd/bot/session.go](../cmd/bot/session.go)). Satu sesi = satu baris `strategy_runs` dengan `instance_id = 'session'`, dan semua order/fill/trade/equity sesi ditulis ke run itu lewat `internal/recorder` (asinkron). Kolom `strategy` di tabel order dan posisi mencatat strategi pemiliknya.
+- Feed mencakup gabungan simbol dan timeframe dari `marketdata` dan dari strategi ([cmd/bot/feeds.go](../cmd/bot/feeds.go)). Nama exchange mengikuti mode: di mode `testnet` data, akun, dan order memakai nama `binance-testnet` (`app.ExchangeName`).
+- Paper trading memakai `broker.Sim` dengan jam dinding. Setiap update candle yang belum close diperlakukan sebagai tick harga, dan candle close juga dicocokkan supaya lonjakan di antara tick tidak terlewat. Fee dan slippage diambil dari `backtest`.
+- Kill switch hanya disimpan di memori: setelah restart, puncak equity dan equity awal hari dihitung ulang dari equity saat itu.
+- Mode `testnet`/`live` dengan strategi aktif masih ditolak sampai Fase 4.
 
 ---
 
