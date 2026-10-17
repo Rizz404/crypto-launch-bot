@@ -40,21 +40,25 @@ func (r *Recorder) RunID() int64 { return r.runID }
 // (for at most 10 seconds).
 func (r *Recorder) Run(ctx context.Context) {
 	defer close(r.done)
+	for ctx.Err() == nil {
+		select {
+		case j := <-r.jobs:
+			// Shutdown must not interrupt a write already removed from the
+			// queue; otherwise it is lost before the flush can see it.
+			writeCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 10*time.Second)
+			r.exec(writeCtx, j)
+			cancel()
+		case <-ctx.Done():
+		}
+	}
+	flushCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	for {
 		select {
 		case j := <-r.jobs:
-			r.exec(ctx, j)
-		case <-ctx.Done():
-			flushCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			defer cancel()
-			for {
-				select {
-				case j := <-r.jobs:
-					r.exec(flushCtx, j)
-				default:
-					return
-				}
-			}
+			r.exec(flushCtx, j)
+		default:
+			return
 		}
 	}
 }
