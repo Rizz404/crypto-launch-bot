@@ -449,19 +449,23 @@ func (e *Engine) notice(level slog.Level, msg string, attrs ...any) {
 	}
 }
 
+// newClientID returns "tb" + a 7-character strategy hash + a base-36
+// sequence: alphanumeric only (OKX rejects other characters), at most 32
+// characters, and the fixed-width hash keeps ids of different strategies
+// from colliding.
 func (e *Engine) newClientID(inst *instance) string {
 	e.seq++
-	prefix := "tb"
+	prefix := "tb0000000"
 	if inst != nil {
 		prefix = "tb" + inst.idPrefix
 	}
-	return prefix + "-" + strconv.FormatInt(e.seq, 36)
+	return prefix + strconv.FormatInt(e.seq, 36)
 }
 
 func shortHash(s string) string {
 	h := fnv.New32a()
 	_, _ = h.Write([]byte(s))
-	return strconv.FormatUint(uint64(h.Sum32()), 36)
+	return fmt.Sprintf("%07s", strconv.FormatUint(uint64(h.Sum32()), 36))
 }
 
 func (e *Engine) instanceByID(id string) *instance {
