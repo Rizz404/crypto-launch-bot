@@ -258,7 +258,7 @@ func (s *session) resume(ctx context.Context, prev *storage.SessionState) error 
 			o.Status, o.UpdatedAt = domain.OrderCanceled, time.Now()
 			o.Reason = "paper restart: entry plan unavailable"
 			s.rec.Order(o)
-			s.onNotice(slog.LevelWarn, "pending paper entry canceled on restart", "client_id", o.ClientID, "symbol", o.Symbol)
+			s.notice(slog.LevelWarn, "pending paper entry canceled on restart", "client_id", o.ClientID, "symbol", o.Symbol)
 			continue
 		}
 		accepted, err := sim.PlaceOrder(ctx, o)
@@ -271,7 +271,7 @@ func (s *session) resume(ctx context.Context, prev *storage.SessionState) error 
 	}
 	s.eng.AdoptOrders(adopted)
 	for _, p := range s.eng.Unprotected() {
-		s.onNotice(slog.LevelWarn, "restored position has no stop loss", "symbol", p.Symbol, "side", p.Side)
+		s.notice(slog.LevelWarn, "restored position has no stop loss", "symbol", p.Symbol, "side", p.Side)
 	}
 	s.log.Info("previous paper session resumed", "run_id", prev.RunID, "positions", len(prev.Positions), "orders", len(adopted))
 	return nil
@@ -479,6 +479,13 @@ func (s *session) onFill(f domain.Fill, o domain.Order) {
 			strings.ToUpper(string(o.Side)), telegram.Escape(o.Symbol), telegram.Escape(o.Strategy),
 			o.FilledQty, o.AvgPrice.StringFixed(4), telegram.Escape(o.Reason)))
 	}
+}
+
+// notice logs a session event and forwards it like an engine notice
+// (engine notices are already logged by the engine).
+func (s *session) notice(level slog.Level, msg string, attrs ...any) {
+	s.log.Log(context.Background(), level, msg, attrs...)
+	s.onNotice(level, msg, attrs...)
 }
 
 func (s *session) onNotice(level slog.Level, msg string, attrs ...any) {

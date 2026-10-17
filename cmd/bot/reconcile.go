@@ -51,7 +51,7 @@ func (s *session) start(ctx context.Context) error {
 	}
 	s.reconcile(ctx, true)
 	for _, p := range s.eng.Unprotected() {
-		s.onNotice(slog.LevelError, "open position without stop loss on the exchange", "symbol", p.Symbol, "market", p.Market, "side", p.Side, "qty", p.Quantity)
+		s.notice(slog.LevelError, "open position without stop loss on the exchange", "symbol", p.Symbol, "market", p.Market, "side", p.Side, "qty", p.Quantity)
 	}
 	return nil
 }
@@ -122,7 +122,7 @@ func (s *session) reconcilePositions(acct *portfolio.Account, exchange []domain.
 
 		if !hasX {
 			acct.SetPosition(domain.Position{PositionKey: key})
-			s.onNotice(slog.LevelWarn, "position closed outside the bot (manual, liquidation or missed fill)",
+			s.notice(slog.LevelWarn, "position closed outside the bot (manual, liquidation or missed fill)",
 				"symbol", sym, "side", o.Side, "qty", o.Quantity)
 			continue
 		}
@@ -136,7 +136,7 @@ func (s *session) reconcilePositions(acct *portfolio.Account, exchange []domain.
 		if initial && !hasO {
 			level, msg = slog.LevelInfo, "position loaded from exchange"
 		}
-		s.onNotice(level, msg, "symbol", sym, "side", p.Side, "qty", p.Quantity, "entry", p.EntryPrice)
+		s.notice(level, msg, "symbol", sym, "side", p.Side, "qty", p.Quantity, "entry", p.EntryPrice)
 	}
 }
 
@@ -245,7 +245,7 @@ func (s *session) cancelOrphanedProtection(ctx context.Context, lb broker.Live, 
 			keep = append(keep, o)
 			continue
 		}
-		s.onNotice(slog.LevelWarn, "protective order without a position canceled", "symbol", o.Symbol, "client_id", o.ClientID, "tag", o.Tag)
+		s.notice(slog.LevelWarn, "protective order without a position canceled", "symbol", o.Symbol, "client_id", o.ClientID, "tag", o.Tag)
 		lb.Track([]domain.Order{o})
 		// The second leg of an OCO is gone once the first is canceled.
 		if err := lb.CancelOrder(ctx, o); err != nil && !canceled[o.Symbol] {
