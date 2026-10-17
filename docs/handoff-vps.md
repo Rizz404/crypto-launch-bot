@@ -24,7 +24,8 @@ Bagian setelah ini adalah catatan handoff awal; jika bertentangan, ikuti bagian 
   Restore ke DB sementara lolos dan DB uji dihapus. Belum ada salinan di luar VPS.
 - Unit `trading-bot-paper-{backup,observe}.{service,timer}` terpasang; kedua timer
   aktif. Sampel ada di `evidence/samples-YYYYMMDD.jsonl`.
-- **Observasi 24 jam mulai 15:02:41 UTC**; nilai setelah 2026-10-18 15:03 UTC.
+- Host reboot tak terduga 15:18–15:42 UTC (bukan dari user maupun sesi ini; pemicu tidak diketahui). Stack pulih otomatis.
+- **Observasi 24 jam dihitung ulang dari 15:42:27 UTC** (keputusan user); nilai setelah 2026-10-18 15:43 UTC.
 - Baseline 28 container dan 5 service lama tetap tidak berubah setelah semua langkah.
 - Izin Claude untuk `ssh -o BatchMode=yes plesk ...` diberikan user lewat
   `.claude/settings.local.json` (lokal, tidak di-commit), terbatas pada project ini.
