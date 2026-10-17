@@ -44,6 +44,9 @@ type Config struct {
 	// IDSeed starts the client order id sequence. Use a time-based seed in
 	// live trading so ids never repeat across restarts.
 	IDSeed int64
+	// HoldRisk defers kill switch observations until ArmRisk: a live
+	// ledger only knows its equity after the first reconciliation.
+	HoldRisk bool
 }
 
 type instKey struct {
@@ -73,6 +76,7 @@ type Engine struct {
 	funding     map[instKey]strategy.FundingInfo
 	seq         int64
 	paused      bool
+	riskArmed   bool
 
 	qmu   sync.Mutex
 	queue []broker.Event
@@ -124,6 +128,7 @@ func New(cfg Config) *Engine {
 	return &Engine{
 		cfg:         cfg,
 		log:         cfg.Log,
+		riskArmed:   !cfg.HoldRisk,
 		brokers:     map[string]broker.Broker{},
 		instruments: map[instKey]domain.Instrument{},
 		lastPrice:   map[instKey]decimal.Decimal{},
@@ -262,7 +267,11 @@ func (e *Engine) OnCandle(ctx context.Context, c domain.Candle) {
 		}
 		e.apply(ctx, inst, intents)
 	}
-	e.observeRisk(ctx)
+	// Historical prices (warmup, gap backfill) say nothing about the
+	// account now and must not move the kill switch.
+	if !stale {
+		e.observeRisk(ctx)
+	}
 }
 
 // ObserveRisk feeds the current equity to the kill switch.
@@ -272,7 +281,19 @@ func (e *Engine) ObserveRisk(ctx context.Context) {
 	e.observeRisk(ctx)
 }
 
+// ArmRisk starts kill switch observations (see Config.HoldRisk) with the
+// current equity as the baseline.
+func (e *Engine) ArmRisk(ctx context.Context) {
+	e.mu.Lock()
+	defer e.unlockAndDrain(ctx)
+	e.riskArmed = true
+	e.observeRisk(ctx)
+}
+
 func (e *Engine) observeRisk(ctx context.Context) {
+	if !e.riskArmed {
+		return
+	}
 	tripped, reason := e.cfg.Risk.Observe(e.cfg.Clock(), e.cfg.Book.Total().Equity)
 	if !tripped {
 		return

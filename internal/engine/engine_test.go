@@ -315,6 +315,38 @@ func TestLinkedStopExpiryWaitsForTakeProfit(t *testing.T) {
 	}
 }
 
+// A restored live position is marked through warmup candles while the cash
+// balance is still unknown. Those historical swings tripped the kill switch
+// and sold the position on the testnet before the user stream was up.
+func TestHeldRiskIgnoresWarmupUntilArmed(t *testing.T) {
+	h := setup(t)
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	rm := risk.NewManager(risk.DefaultConfig(), log)
+	h.e = New(Config{Book: h.e.cfg.Book, Risk: rm, Log: log, Clock: func() time.Time { return h.now }, HoldRisk: true})
+	h.e.AddBroker(h.s)
+	h.a.SetBalance(decimal.Zero)
+	h.a.SetPosition(domain.Position{PositionKey: domain.PositionKey{Exchange: "sim", Market: domain.Futures, Symbol: "BTCUSDT"},
+		Side: domain.Long, Quantity: decimal.NewFromInt(1), EntryPrice: decimal.NewFromInt(100), Leverage: 1})
+
+	stale := h.bar(100, 101, 99, 101)
+	stale.OpenTime = h.now.Add(-time.Hour)
+	h.e.OnCandle(context.Background(), stale)
+	stale.OpenTime, stale.Close = stale.OpenTime.Add(time.Minute), decimal.NewFromInt(95)
+	h.e.OnCandle(context.Background(), stale)
+	h.e.OnCandle(context.Background(), h.bar(95, 96, 94, 96)) // live, but not armed yet
+	halted, reason := rm.Halted()
+	require.False(t, halted, reason)
+
+	h.a.SetBalance(decimal.NewFromInt(1000)) // the first reconcile
+	h.e.ArmRisk(context.Background())
+	halted, _ = rm.Halted()
+	assert.False(t, halted)
+	h.e.OnCandle(context.Background(), h.bar(96, 96, 40, 40))
+	halted, reason = rm.Halted()
+	assert.True(t, halted, "armed: a real loss of >5%% trips")
+	assert.Contains(t, reason, "daily loss")
+}
+
 func TestPartialBracketFailureCancelsAcceptedLeg(t *testing.T) {
 	h := setup(t)
 	h.e.AddBroker(bracketBroker{Sim: h.s, failTarget: true})
