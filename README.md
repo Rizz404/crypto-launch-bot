@@ -3,6 +3,10 @@
 Bot trading crypto otomatis dalam Go (Binance dan Bybit; spot + futures).
 Plan, keputusan, dan progres ada di [docs/plan.md](docs/plan.md).
 
+Rilis dan deploy VPS mengikuti alur GitHub Actions → GHCR → image dengan digest
+tetap. Panduan: [docs/deployment.md](docs/deployment.md). Konfigurasi VPS memakai
+mode paper secara default; pengujian 24 jam tetap bagian Fase 9.
+
 ## Prasyarat
 
 - Go 1.27 (lihat `.mise.toml`)
