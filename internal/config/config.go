@@ -72,6 +72,16 @@ type Config struct {
 	Strategies []StrategyConfig          `koanf:"strategies"`
 	Risk       risk.Config               `koanf:"risk"`
 	Backtest   BacktestConfig            `koanf:"backtest"`
+	Paper      PaperConfig               `koanf:"paper"`
+}
+
+// PaperConfig configures simulated trading on live data. Fees and slippage
+// come from the backtest section.
+type PaperConfig struct {
+	InitialBalance float64 `koanf:"initial_balance"` // per account (exchange + market)
+	// Resume restores balances, positions and open orders of the previous
+	// paper session instead of starting fresh.
+	Resume bool `koanf:"resume"`
 }
 
 // StrategyConfig configures one strategy instance.
@@ -165,7 +175,8 @@ func defaults() Config {
 			Timeframes:      []string{"1m", "1h"},
 			InitialBackfill: 1000,
 		},
-		Risk: risk.DefaultConfig(),
+		Risk:  risk.DefaultConfig(),
+		Paper: PaperConfig{InitialBalance: 1000, Resume: true},
 		Backtest: BacktestConfig{
 			InitialBalance: 1000,
 			SlippageBps:    2,

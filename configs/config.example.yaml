@@ -74,6 +74,11 @@ risk:
   position_pct: 0.10       # margin per position when a strategy gives no stop
   max_position_pct: 0.25   # notional cap: 25% of equity x leverage
   max_leverage: 3
+  max_open_positions: 3
+  max_exposure_pct: 1.5    # total notional cap: 150% of equity
+  daily_loss_limit: 0.05   # kill switch at -5% since 00:00 UTC
+  max_drawdown: 0.20       # kill switch at -20% from the equity peak
+  close_on_kill: true      # also close all positions when the kill switch trips
 
 backtest:
   initial_balance: 1000
@@ -83,3 +88,9 @@ backtest:
   fees:
     spot: {maker: 0.001, taker: 0.001}
     futures: {maker: 0.0002, taker: 0.0005}
+
+# Paper trading (app.mode: paper) simulates fills on live mainnet prices,
+# using the backtest fees and slippage.
+paper:
+  initial_balance: 1000   # per account (exchange + market)
+  resume: true            # continue the previous paper session's balances and positions
