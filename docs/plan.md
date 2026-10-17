@@ -4,9 +4,9 @@
 
 ## Status saat ini (2026-10-17)
 
-- **Fase 0–3 selesai** (2026-10-17; Fase 2–3 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
+- **Fase 0–4 selesai** (2026-10-17; Fase 2–4 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
 - Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
-- **Langkah berikutnya: Fase 4** (Binance LiveBroker: signed REST, order spot/futures, user data stream, reconciliation).
+- **Langkah berikutnya: Fase 5** (Telegram: notifikasi + perintah; metrics trading Prometheus; dashboard dan alert Grafana).
 - **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
 - Cara menjalankan: lihat [README.md](../README.md).
 - Tandai fase yang selesai di bagian "Progres" di bawah setiap kali satu fase beres.
@@ -32,7 +32,7 @@
 - [x] Fase 1: Domain + Binance market data (2026-10-17)
 - [x] Fase 2: Indikator + Strategy + Backtester (2026-10-17, belum dites)
 - [x] Fase 3: Risk + OMS + Paper trading (2026-10-17, belum dites)
-- [ ] Fase 4: Binance LiveBroker (testnet/mainnet)
+- [x] Fase 4: Binance LiveBroker (testnet/mainnet) (2026-10-17, belum dites)
 - [ ] Fase 5: Telegram + Prometheus/Grafana
 - [ ] Fase 6: Web dashboard
 - [ ] Fase 7: Bybit + OKX
@@ -60,6 +60,16 @@
   - Recorder: urutan tulis (order sebelum fill-nya), antrean penuh, flush saat shutdown; `UpsertOrder` memindahkan `run_id` order yang diadopsi ke sesi aktif.
   - Paper: `bot run` mode paper dengan strategi aktif. Cek warmup dari DB (300 bar), fill dari tick harga live, resume sesi (`paper.resume`: saldo, posisi, order terbuka), snapshot equity tiap menit, `FinishRun` saat shutdown. Uji restart di tengah posisi.
   - Migrasi `00003` up/down.
+- **Fase 4** (semua di testnet dulu; banyak perilaku API yang hanya diketahui dari dokumentasi/connector, belum pernah dicoba)
+  - Signature HMAC REST (query string) dan WS API (param diurutkan alfabetis) — cek terhadap contoh di dokumentasi (`openssl dgst`).
+  - Spot user data: `userDataStream.subscribe.signature` di `wss://ws-api.binance.com:443/ws-api/v3` (testnet `ws-api.testnet.binance.vision`); respons subscribe; event `executionReport` dengan semua key kembar; resubscribe setelah reconnect.
+  - Futures user data: `listenKey` + `wss://fstream.binance.com/private/stream?streams=<key>`. **URL private testnet belum pasti** (`fstream.binancefuture.com/stream`?). Keepalive 30 menit, `listenKeyExpired` → `Kick`.
+  - Futures SL/TP lewat **Algo Order** (`POST /fapi/v1/algoOrder`, `algoType=CONDITIONAL`, `triggerPrice`, `workingType=MARK_PRICE`, `priceProtect=true`). Belum pasti: format `ai` (string/angka), apakah order hasil trigger membawa `clientOrderId` sendiri, urutan `ALGO_UPDATE` vs `ORDER_TRADE_UPDATE` (fill ditahan ≤10 detik menunggu mapping), dan status `FINISHED` tanpa eksekusi.
+  - Spot OCO `POST /api/v3/orderList/oco` (above TAKE_PROFIT / below STOP_LOSS untuk SELL); cancel satu leg membatalkan list (cancel leg kedua → -2011, diabaikan).
+  - `SetLeverage` (isolated, -4046/-4048), `EnsureOneWay` (-4059), sinkronisasi jam dan -1021.
+  - Reconciliation: posisi futures dari `positionRisk` v3, saldo dari `/fapi/v3/balance` (`balance` = wallet), spot dari saldo base asset; koreksi hanya setelah 2 kali selisih berturut-turut; order `tb*` diadopsi dengan tag dari DB; `SyncOrders` memulihkan fill yang terlewat (fee 0).
+  - Fee spot dalam base asset (qty posisi < qty fill) dan fee BNB (tercatat 0) → dikoreksi lewat reconciliation; pastikan tidak ada drift.
+  - Guard: mode `live` ditolak tanpa `app.allow_live: true`; mode `testnet` ditolak jika exchange tidak `testnet: true`.
 
 ## Pertanyaan terbuka (belum diputuskan)
 
@@ -113,6 +123,13 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 - Paper trading memakai `broker.Sim` dengan jam dinding. Setiap update candle yang belum close diperlakukan sebagai tick harga, dan candle close juga dicocokkan supaya lonjakan di antara tick tidak terlewat. Fee dan slippage diambil dari `backtest`.
 - Kill switch hanya disimpan di memori: setelah restart, puncak equity dan equity awal hari dihitung ulang dari equity saat itu.
 - Mode `testnet`/`live` dengan strategi aktif masih ditolak sampai Fase 4.
+
+### Fase 4 (Binance live/testnet)
+
+- API Binance yang dipakai diverifikasi ke dokumentasi resmi (2026-10-17): **listenKey spot sudah dihapus 2026-02-20** → user data spot lewat WebSocket API; **order kondisional futures lewat Algo Order API** (`/fapi/v1/algoOrder`, event `ALGO_UPDATE`); user data futures di `/private/stream`. Sumber: `binance-spot-api-docs` (GitHub) dan `binance-connector-js` (di-generate dari OpenAPI resmi). Situs developers.binance.com dilindungi AWS WAF (tidak bisa diambil dengan curl).
+- `broker.Live` adalah antarmuka broker exchange sungguhan ([internal/broker/live.go](../internal/broker/live.go)); `binance.Trader` mengimplementasikannya ([internal/exchange/binance/](../internal/exchange/binance/)). Bybit/OKX di Fase 7 mengikuti antarmuka yang sama.
+- `bot run` mode `testnet`/`live`: satu broker per exchange (semua market di exchange itu), user stream jalan, reconciliation saat start (setelah warmup), tiap menit, dan setiap stream reconnect ([cmd/bot/reconcile.go](../cmd/bot/reconcile.go)). Exchange adalah sumber kebenaran.
+- Order mainnet butuh **dua** saklar: `app.mode: live` dan `app.allow_live: true`.
 
 ---
 
