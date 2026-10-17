@@ -7,6 +7,7 @@
 - **Fase 0 dan Fase 1 selesai** (2026-10-17). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
 - Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
 - **Langkah berikutnya: Fase 2** (indikator streaming, interface Strategy + `emacross`, SimBroker, `cmd/backtest`). Data historis dibaca lewat `storage.Store.Candles`.
+- **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
 - Cara menjalankan: lihat [README.md](../README.md).
 - Tandai fase yang selesai di bagian "Progres" di bawah setiap kali satu fase beres.
 
@@ -16,7 +17,14 @@
 - Jangan menjalankan perintah build/rebuild NixOS yang mengaktifkan konfigurasi (aturan global user).
 - Commit: Conventional Commits satu baris tanpa body, `type(scope): deskripsi` (contoh: `feat(binance): add futures kline stream`). Satu commit per scope, diurutkan sesuai alur pengerjaan. Tanpa `Co-Authored-By`. Aturan lengkap ada di `~/.claude/CLAUDE.md`.
 - Jangan pernah menaruh API key/secret di repo. Secret hanya lewat env/secret file.
-- Jangan menjalankan order ke mainnet sebelum user secara eksplisit menyetujui Fase 8.
+- Jangan menjalankan order ke mainnet sebelum user secara eksplisit menyetujui Fase 11 (live).
+
+## Aturan fase build (Fase 2–8)
+
+- Fokus menulis fitur. **Jangan** menulis unit test atau integration test baru, dan jangan melakukan uji end-to-end (paper run, order testnet, probe mainnet). Semua itu dikerjakan di Fase 9.
+- Pemeriksaan yang tetap wajib sebelum commit (cepat, bukan testing): `go build ./...`, `go vet ./...`, dan `golangci-lint run` bersih. Test lama dari Fase 0–1 harus tetap ter-compile (`go vet` mencakup file test).
+- Setiap hal yang perlu diuji, asumsi yang belum diverifikasi, atau perilaku API yang belum pasti dicatat di bagian **"Backlog testing"** di bawah, supaya tidak terlewat di Fase 9.
+- Test yang sudah ada dari Fase 0–1 dipertahankan; tidak perlu dihapus.
 
 ## Progres
 
@@ -24,16 +32,23 @@
 - [x] Fase 1: Domain + Binance market data (2026-10-17)
 - [ ] Fase 2: Indikator + Strategy + Backtester
 - [ ] Fase 3: Risk + OMS + Paper trading
-- [ ] Fase 4: Binance testnet (LiveBroker)
+- [ ] Fase 4: Binance LiveBroker (testnet/mainnet)
 - [ ] Fase 5: Telegram + Prometheus/Grafana
 - [ ] Fase 6: Web dashboard
 - [ ] Fase 7: Bybit + OKX
-- [ ] Fase 8: Live mini + VPS
-- [ ] Fase 9+: Strategi lanjutan (grid/DCA, arbitrase, market making)
+- [ ] Fase 8: Strategi lanjutan (grid/DCA, arbitrase, market making)
+- [ ] Fase 9: Testing (semua fitur)
+- [ ] Fase 10: Fixing (semua temuan Fase 9)
+- [ ] Fase 11: Live mini + VPS
+
+## Backlog testing (diisi selama Fase 2–8, dikerjakan di Fase 9)
+
+- Uji adapter Binance terhadap mainnet setelah DNS lokal diperbaiki (lihat catatan jaringan di bawah).
+- Universe spot: putuskan dan uji pengecualian saham ter-tokenisasi (lihat pertanyaan terbuka).
 
 ## Pertanyaan terbuka (belum diputuskan)
 
-- Timeframe dan parameter default strategi `emacross` (tentukan lewat eksperimen backtest di Fase 2).
+- Timeframe dan parameter default strategi `emacross` (tentukan lewat eksperimen backtest di Fase 9).
 - Saham ter-tokenisasi di Binance spot (base berakhiran `B`: `NVDAB`, `TSLAB`, `SPYB`, `SNDKB`, `SPCXB`, dan lain-lain) lolos ke universe spot karena tidak punya penanda di `exchangeInfo`. Perlu keputusan user: dikecualikan (lewat `universe.exclude_bases` atau aturan baru) atau dibiarkan. Universe futures tidak terpengaruh, karena kontrak `TRADIFI_PERPETUAL` sudah disaring.
 - Batas risk konkret untuk live (max drawdown %, rugi harian %, leverage maksimum). Usulkan nilai konservatif, lalu minta persetujuan user.
 
@@ -206,17 +221,19 @@ type Strategy interface {
 
 ## Fase pengerjaan
 
-**Fase 0 · Fondasi**
+Fase 0–1 dikerjakan dengan test langsung. Mulai Fase 2, ikuti "Aturan fase build": bangun dulu, test di Fase 9, perbaiki di Fase 10.
+
+**Fase 0 · Fondasi** (selesai)
 - `go mod init`, `.mise.toml`, `docker-compose` (TimescaleDB, Prometheus, Grafana), config loader, slog, kerangka Makefile/justfile.
 - Migrasi awal: `candles` (hypertable), `instruments`, `orders`, `fills`, `positions`, `equity_snapshots`, `strategy_runs`.
 
-**Fase 1 · Domain + Binance market data**
+**Fase 1 · Domain + Binance market data** (selesai)
 - Tipe domain, interface `Exchange`, adapter Binance (spot + USDⓈ-M futures): instruments, klines REST, tickers 24h, WS kline.
-- `cmd/datafetch`: download candle historis top-20 pair (1m, lalu agregasi ke timeframe lebih besar) ke Timescale.
+- `cmd/datafetch`: download candle historis ke Timescale.
 - Universe selector: top-N berdasarkan quote volume, dengan filter min volume, max spread, dan exclude stablecoin/leveraged token.
 
 **Fase 2 · Indikator + Strategy + Backtester**
-- Indikator streaming beserta unit test (dibandingkan dengan nilai referensi).
+- Indikator streaming: EMA, SMA, RSI, MACD, ATR, Bollinger.
 - Interface strategi + registry. Strategi contoh `emacross` (EMA cross + filter RSI, SL/TP berbasis ATR).
 - `SimBroker` dengan fee maker/taker, slippage (bps), dan funding rate untuk futures.
 - `cmd/backtest`: metrik total return, CAGR, max drawdown, Sharpe/Sortino, win rate, profit factor, jumlah trade. Equity curve diekspor ke CSV/DB.
@@ -225,12 +242,12 @@ type Strategy interface {
 **Fase 3 · Risk + OMS + Paper trading**
 - Risk manager: sizing (% equity atau berbasis ATR), max leverage, max exposure per aset/exchange/total, max posisi terbuka, batas rugi harian dan drawdown (kill switch).
 - OMS: lifecycle order, SL/TP/trailing, persist ke DB.
-- `PaperBroker` dan `cmd/bot --mode=paper` berjalan dengan data live Binance.
+- `PaperBroker` dan `bot run` mode `paper` yang menyambungkan `marketdata.Feed.OnCandle` ke strategi.
 
-**Fase 4 · Binance testnet (LiveBroker)**
-- Order endpoint (spot + futures), user data stream (listenKey + keepalive), set leverage/margin isolated, stop order native.
+**Fase 4 · Binance LiveBroker**
+- Signed REST (HMAC), order endpoint (spot + futures), user data stream (listenKey + keepalive), set leverage/margin isolated, stop order native.
 - Reconciliation saat startup dan berkala, `clientOrderId` idempoten, penanganan error/reject.
-- Jalankan di testnet spot dan testnet futures.
+- Mode `testnet` dan `live` di `bot run` (live tetap dijaga validasi config; order mainnet baru dijalankan di Fase 11).
 
 **Fase 5 · Telegram + Prometheus/Grafana**
 - Notifikasi: entry/exit, SL/TP kena, error, kill switch, ringkasan harian.
@@ -242,24 +259,36 @@ type Strategy interface {
 - Auth sederhana (password/token). Default bind ke localhost.
 
 **Fase 7 · Bybit + OKX**
-- Adapter untuk interface yang sama (spot + linear perp), termasuk testnet/demo masing-masing.
-- Contract test bersama, yaitu satu suite test yang dijalankan untuk semua adapter.
+- Adapter untuk interface yang sama (spot + linear perp), termasuk endpoint testnet/demo masing-masing.
 
-**Fase 8 · Live mini + VPS**
-- Live di Binance dengan modal sangat kecil dan batas risk ketat. Strategi baru naik ke tahap ini setelah lolos backtest dan minimal 1–2 minggu paper/testnet.
-- Deploy ke VPS di Tokyo/Singapore (systemd atau Docker), backup DB, dan alert kalau bot mati (heartbeat).
-
-**Fase 9+ · Strategi lanjutan**
+**Fase 8 · Strategi lanjutan**
 - Grid / DCA (manajemen banyak order terbuka).
 - Arbitrase: cross-exchange, dan spot-perp funding rate (basis/cash-and-carry).
 - Market making: butuh WS order book L2, manajemen inventori, dan latensi rendah.
+
+**Fase 9 · Testing (semua fitur)**
+- Kerjakan seluruh "Backlog testing" dan semua butir di bagian "Verifikasi" di bawah.
+- Unit test: indikator (dibandingkan nilai referensi), sizing/risk, kill switch, OMS, SimBroker (fee/slippage/funding), metrik backtest, strategi.
+- Contract test bersama untuk semua adapter exchange (Binance, Bybit, OKX) dengan fixture respons REST/WS yang direkam, ditambah integration test opsional ke testnet dengan build tag `integration`.
+- Golden test backtest `emacross`, lalu eksperimen backtest untuk menentukan parameter default.
+- Uji end-to-end: paper run 24 jam, order sungguhan di testnet tiap exchange, reconciliation, Telegram, dan dashboard.
+- Hasil: daftar temuan (bug, perilaku salah, celah keamanan) dicatat di plan, diurutkan berdasarkan tingkat keparahan.
+
+**Fase 10 · Fixing**
+- Perbaiki semua temuan Fase 9. Prioritas: keamanan dana (order, risk, kill switch, secret) → integritas data → sisanya.
+- Setiap perbaikan disertai test yang membuktikan bug-nya hilang. Ulangi test terkait sampai semuanya lolos.
+
+**Fase 11 · Live mini + VPS**
+- Hanya setelah Fase 10 bersih **dan** user menyetujui secara eksplisit.
+- Live di Binance dengan modal sangat kecil dan batas risk ketat. Strategi baru naik ke tahap ini setelah lolos backtest dan minimal 1–2 minggu paper/testnet.
+- Deploy ke VPS di Tokyo/Singapore (systemd atau Docker), backup DB, dan alert kalau bot mati (heartbeat).
 
 ## Catatan realistis
 - **Modal < $500 + 10–20 pair + futures**: min notional per order (sekitar 5–100 USDT tergantung pair dan exchange) membuat modal cepat terbagi tipis. Saat live awal, sebaiknya batasi ke 2–5 pair aktif sekaligus. Universe 20 pair tetap dipakai untuk backtest dan screening.
 - **Market making dan arbitrase cross-exchange** praktis tidak menguntungkan dengan modal < $500 karena fee tier dan saldo harus terpecah di beberapa exchange. Fitur ini tetap ada di roadmap, tapi diprioritaskan terakhir.
 - Pastikan akses dan legalitas exchange dari Indonesia sudah kamu cek sendiri. Ini di luar cakupan kode.
 
-## Verifikasi
+## Verifikasi (dikerjakan di Fase 9)
 - `go test ./...` untuk unit test indikator (dibandingkan nilai referensi), sizing/risk, pembulatan tick/lot, dan agregasi timeframe.
 - Contract test adapter exchange dengan fixture respons REST/WS yang direkam. Integration test opsional ke testnet, dengan build tag `integration`.
 - Golden test backtest: `emacross` di BTCUSDT pada rentang tetap harus menghasilkan metrik yang deterministik.
