@@ -6,6 +6,29 @@ berjalan di VPS; tidak ada langkah deployment baru setelah permintaan berhenti.
 Fase 9 belum selesai dan uji 24 jam belum dinyatakan dimulai/lulus secara formal.
 Baca [plan](plan.md) untuk cakupan lengkap dan [runbook](deployment.md) untuk operasi.
 
+## Status terbaru (Claude, 2026-10-17 15:05 UTC / 22:05 WIB)
+
+Bagian setelah ini adalah catatan handoff awal; jika bertentangan, ikuti bagian ini.
+
+- Berjalan: source `1e8e78e2987fdf0d835b036db0e0dfe3c44f45a2`, image
+  `ghcr.io/rizz404/trading-bot@sha256:fea8a18b4bcf5f2508c33ca3ea962dae467a074af4c6b0ea4b5ed98115903a7a`
+  (CI [39042941107](https://github.com/Rizz404/trading-bot/actions/runs/39042941107)
+  sukses). Rilis `cedbfdc`/`e34b989` sudah tercakup. Limit total kini
+  ±2,56 GiB RAM / 2,75 CPU (dns 64 MiB / 0,25 CPU).
+- Lima container: bot, db, prometheus, grafana, dan **dns** (CoreDNS 1.14.7).
+  Bot memakai resolver DNS-over-TLS di network `trading-bot-paper_resolver`
+  (172.31.253.0/29) karena resolver host kadang mengembalikan halaman blokir
+  Trust Positif untuk `stream.binance.com`. DNS host/Tailscale tidak diubah.
+- Restart graceful dengan posisi paper terbuka lolos dua kali (run 1 → 2 → 3).
+- Backup: `backups/pre-update-20261017T142721Z` dan `backups/backup-20261017T150314Z`.
+  Restore ke DB sementara lolos dan DB uji dihapus. Belum ada salinan di luar VPS.
+- Unit `trading-bot-paper-{backup,observe}.{service,timer}` terpasang; kedua timer
+  aktif. Sampel ada di `evidence/samples-YYYYMMDD.jsonl`.
+- **Observasi 24 jam mulai 15:02:41 UTC**; nilai setelah 2026-10-18 15:03 UTC.
+- Baseline 28 container dan 5 service lama tetap tidak berubah setelah semua langkah.
+- Izin Claude untuk `ssh -o BatchMode=yes plesk ...` diberikan user lewat
+  `.claude/settings.local.json` (lokal, tidak di-commit), terbatas pada project ini.
+
 ## Batas yang wajib dipertahankan
 
 - Server `ssh plesk` sudah memiliki Plesk dan banyak proyek produksi. Jangan

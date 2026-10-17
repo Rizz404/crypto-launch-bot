@@ -1,0 +1,81 @@
+{
+  "checked_at": "2026-10-17T15:05:00+00:00",
+  "purpose": "Operational checks on the plesk paper stack after the Claude takeover; not a completed 24-hour test",
+  "server_alias": "plesk",
+  "project_path": "/opt/trading-bot-paper/repo",
+  "existing_containers_checked": 28,
+  "existing_services_checked": 5,
+  "existing_service_changes": [],
+  "deployments": [
+    {
+      "source_commit": "2de9d447c0e3e46914e196f2175c234410aafee0",
+      "image": "ghcr.io/rizz404/trading-bot@sha256:e1f9baacb89f7a9e8d532557fc3ebc0634ce7609c904ef5bdd468320b1f48bba",
+      "ci_run": 39041022916,
+      "bot_stopped": "2026-10-17T14:44:51Z",
+      "bot_started": "2026-10-17T14:44:53Z",
+      "resumed": {"from_run": 1, "positions": 1, "orders": 2},
+      "finding": "websocket dial failed at stage connect; stream.binance.com resolved to Trust Positif block-page addresses"
+    },
+    {
+      "source_commit": "46fbbd30b1bc152823aa1792319b791527a6d59b",
+      "image": "ghcr.io/rizz404/trading-bot@sha256:8e4e78ca7434c3932b8bf6baea9267c569ba614a03dee725676c78b8cd50238b",
+      "ci_run": 39042410749,
+      "result": "dns container failed: exec /coredns: operation not permitted; deploy gate left the bot unchanged"
+    },
+    {
+      "source_commit": "1e8e78e2987fdf0d835b036db0e0dfe3c44f45a2",
+      "image": "ghcr.io/rizz404/trading-bot@sha256:fea8a18b4bcf5f2508c33ca3ea962dae467a074af4c6b0ea4b5ed98115903a7a",
+      "ci_run": 39042941107,
+      "dns_gate_answer": "AWS addresses (8), no block-page addresses",
+      "bot_stopped": "2026-10-17T15:02:40Z",
+      "bot_started": "2026-10-17T15:02:41Z",
+      "resumed": {"from_run": 2, "positions": 1, "orders": 2},
+      "websocket_connected": "2026-10-17T15:02:42.43Z"
+    }
+  ],
+  "dns_evidence": {
+    "host_resolver": "Tailscale MagicDNS 100.100.100.100",
+    "stream.binance.com": {
+      "system": ["139.255.196.196", "182.23.79.195"],
+      "8.8.8.8": "lamanlabuh.aduankonten.id",
+      "9.9.9.9": "lamanlabuh.aduankonten.id",
+      "1.1.1.1": "AWS addresses",
+      "cloudflare_doh": "AWS addresses"
+    },
+    "dot_853": "reachable, certificate cloudflare-dns.com verified"
+  },
+  "database_after_deploy": {
+    "runs": [
+      {"id": 1, "stopped_at": "2026-10-17T14:44:51Z"},
+      {"id": 2, "stopped_at": "2026-10-17T15:02:40Z"},
+      {"id": 3, "stopped_at": null}
+    ],
+    "candles_per_series": 1053,
+    "gaps_1m": 0
+  },
+  "backups": {
+    "pre_update": "backups/pre-update-20261017T142721Z",
+    "script_run": "backups/backup-20261017T150314Z",
+    "checksums": "OK",
+    "offsite_copy": false
+  },
+  "restore_drill": {
+    "target": "tradingbot_restore_test (dropped afterwards)",
+    "pg_restore_exit": 0,
+    "row_counts_restored_vs_live": {
+      "candles": [2108, 2108], "orders": [4, 4], "fills": [2, 2], "positions": [2, 2],
+      "strategy_runs": [3, 3], "equity_snapshots": [53, 53], "migration_version": [3, 3]
+    }
+  },
+  "systemd_units": {
+    "installed": ["trading-bot-paper-backup.service", "trading-bot-paper-backup.timer",
+                  "trading-bot-paper-observe.service", "trading-bot-paper-observe.timer"],
+    "names_previously_unused": true,
+    "systemd_analyze_findings": 0,
+    "first_observe_sample_problems": [],
+    "next_backup": "2026-10-18T03:23:28Z"
+  },
+  "memory_usage": {"bot": "13MiB/512MiB", "db": "126MiB/1GiB", "dns": "11MiB/64MiB",
+                   "prometheus": "122MiB/512MiB", "grafana": "468MiB/512MiB"},
+  "observation_24h": {"started": "2026-10-17T15:02:41Z", "earliest_assessment": "2026-10-18T15:03:00Z", "passed": null}
+}

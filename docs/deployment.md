@@ -95,6 +95,29 @@ di loopback. Mode default adalah `paper`. Mode `testnet` bisa diuji terpisah den
 key Spot Testnet; Futures masih memerlukan konfigurasi dan key Futures Demo yang
 terpisah. Jangan menjalankan dua proses pada sesi/DB paper yang sama.
 
+### Resolver DNS bot
+
+Di VPS Indonesia, resolver host bisa menjawab domain exchange (misalnya
+`stream.binance.com`) dengan alamat halaman blokir Trust Positif, dan ISP juga
+mencegat DNS ke 8.8.8.8/9.9.9.9. Atas keputusan user, service `dns` (CoreDNS,
+[Corefile](../deploy/coredns/Corefile)) meneruskan query bot lewat DNS-over-TLS ke
+Cloudflare dengan verifikasi sertifikat. Service ini hanya terhubung ke network
+`resolver` (172.31.253.0/29, IP tetap 172.31.253.2) dan hanya dipakai bot; DNS embedded
+Docker tetap menjawab nama service (`db`). DNS host dan service lain tidak diubah.
+Pilih subnet lain bila subnet itu sudah dipakai di server. Untuk memeriksa jawaban:
+
+```sh
+nsenter -t "$(docker inspect -f '{{.State.Pid}}' trading-bot-paper-dns-1)" -n \
+  dig +short @127.0.0.1 A stream.binance.com
+```
+
+Jawaban `139.255.196.196`/`182.23.79.195` (`lamanlabuh.aduankonten.id`) berarti
+masih terblokir. Error WS menyebut tahap dial (`stage dns|connect|tls|upgrade`).
+Binary CoreDNS memakai file capability port 53, sehingga service berjalan sebagai
+UID 0 dengan `cap_drop: ALL`, hanya `NET_BIND_SERVICE`, read-only, dan
+`no-new-privileges`. Saat update, nyalakan `dns` dan periksa jawabannya sebelum
+me-recreate bot.
+
 ## Start dan pemeriksaan
 
 Buat fungsi terminal berikut dari root repo:
@@ -107,8 +130,8 @@ Lalu tarik image, mulai infrastruktur, dan jalankan migrasi sebelum bot:
 
 ```sh
 dc pull
-dc up -d db prometheus grafana
-dc run --rm --no-deps bot migrate up
+dc up -d db dns prometheus grafana
+dc run --interactive=false --rm --no-deps bot migrate up
 dc up -d bot
 dc ps
 dc logs --tail 100 bot
@@ -145,6 +168,24 @@ konfigurasi rahasia di `/opt/trading-bot-paper/backups`. Tujuh backup sukses
 terbaru dipertahankan. Script memvalidasi daftar isi dump dan checksum; validasi
 tersebut belum menggantikan uji restore penuh. Backup lokal tetap mengandung
 secret, sehingga direktori harus `700` dan file `600`.
+
+Uji restore (lolos 2026-10-17) memakai DB sementara di container DB yang sama,
+lalu menghapusnya. TimescaleDB memerlukan pre/post restore:
+
+```sh
+b=../backups/backup-<waktu>
+q() { dc exec -T db psql -U bot -d "$1" -v ON_ERROR_STOP=1 -c "$2" </dev/null; }
+q postgres "CREATE DATABASE tradingbot_restore_test"
+q tradingbot_restore_test "CREATE EXTENSION IF NOT EXISTS timescaledb"
+q tradingbot_restore_test "SELECT timescaledb_pre_restore()"
+dc exec -T db pg_restore -U bot -d tradingbot_restore_test --exit-on-error < "$b/database.dump"
+q tradingbot_restore_test "SELECT timescaledb_post_restore()"
+# Bandingkan jumlah baris candles/orders/fills/strategy_runs dengan DB live, lalu:
+q postgres "DROP DATABASE tradingbot_restore_test"
+```
+
+Peringatan pg_dump tentang `circular foreign-key constraints` pada `continuous_agg`
+berasal dari katalog TimescaleDB dan tidak menggagalkan restore di atas.
 
 `deploy/vps-observe.py` mencatat status container, health, datasource monitoring,
 metrics, waktu candle, gap 1m, equity terbaru, serta disk kosong setiap lima menit
