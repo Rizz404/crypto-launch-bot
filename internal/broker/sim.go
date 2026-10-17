@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"slices"
-	"strconv"
 	"sync"
 	"time"
 
@@ -48,7 +47,6 @@ type Sim struct {
 	mu      sync.Mutex
 	handler Handler
 	orders  map[string]*simOrder
-	seq     int
 }
 
 type simOrder struct {
@@ -78,6 +76,9 @@ func (s *Sim) PlaceOrder(_ context.Context, o domain.Order) (domain.Order, error
 	if !o.Quantity.IsPositive() {
 		return o, fmt.Errorf("sim: quantity must be positive, got %s", o.Quantity)
 	}
+	if o.FilledQty.IsNegative() || !o.Remaining().IsPositive() {
+		return o, errors.New("sim: invalid filled quantity")
+	}
 	if o.Type == domain.OrderLimit && !o.Price.IsPositive() {
 		return o, errors.New("sim: limit order without price")
 	}
@@ -91,10 +92,15 @@ func (s *Sim) PlaceOrder(_ context.Context, o domain.Order) (domain.Order, error
 		return o, fmt.Errorf("sim: duplicate client id %s", o.ClientID)
 	}
 	now := s.cfg.Clock()
-	s.seq++
-	o.ExchangeID = "sim-" + strconv.Itoa(s.seq)
+	// Client IDs already identify orders across engine restarts. A local
+	// counter would repeat sim-1 in each paper session and violate the
+	// database's exchange-order-id uniqueness constraint.
+	o.ExchangeID = "sim-" + o.ClientID
 	o.Exchange = s.cfg.Exchange
 	o.Status = domain.OrderNew
+	if o.FilledQty.IsPositive() {
+		o.Status = domain.OrderPartiallyFilled
+	}
 	o.CreatedAt, o.UpdatedAt = now, now
 	s.orders[o.ClientID] = &simOrder{order: o, placedAt: now}
 	return o, nil
@@ -196,19 +202,20 @@ func (s *Sim) tryFill(id string, c domain.Candle) {
 	now := s.cfg.Clock()
 	fill := domain.Fill{
 		OrderClientID: o.ClientID,
-		TradeID:       o.ExchangeID + "-1",
+		TradeID:       o.ExchangeID + "-" + o.Quantity.String(),
 		Exchange:      s.cfg.Exchange,
 		Market:        o.Market,
 		Symbol:        o.Symbol,
 		Side:          o.Side,
 		Price:         price,
-		Quantity:      o.Quantity,
-		Fee:           price.Mul(o.Quantity).Mul(decimal.NewFromFloat(rate)),
+		Quantity:      o.Remaining(),
+		Fee:           price.Mul(o.Remaining()).Mul(decimal.NewFromFloat(rate)),
 		FeeAsset:      "QUOTE",
 		Maker:         maker,
 		Time:          now,
 	}
-	o.Status, o.FilledQty, o.AvgPrice, o.UpdatedAt = domain.OrderFilled, o.Quantity, price, now
+	o.AvgPrice = o.AvgPrice.Mul(o.FilledQty).Add(price.Mul(o.Remaining())).Div(o.Quantity)
+	o.Status, o.FilledQty, o.UpdatedAt = domain.OrderFilled, o.Quantity, now
 	h := s.handler
 	s.mu.Unlock()
 

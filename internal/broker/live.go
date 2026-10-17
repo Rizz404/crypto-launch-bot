@@ -48,7 +48,7 @@ type Live interface {
 }
 
 // UnifiedWallet is implemented by brokers whose spot and futures trading
-// share one wallet (Bybit unified trading account, OKX). The bot keeps one
+// share one wallet (Bybit unified trading account). The bot keeps one
 // ledger per market, so it trades a single market on such exchanges.
 type UnifiedWallet interface {
 	UnifiedWallet() bool
