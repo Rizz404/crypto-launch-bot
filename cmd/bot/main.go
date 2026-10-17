@@ -185,6 +185,9 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 		if tg != nil {
 			sess.registerCommands(tg, stopBot)
 		}
+		for _, src := range plan.byName {
+			sess.addSource(src)
+		}
 		for _, series := range sess.Subscriptions() {
 			for key := range series {
 				plan.add(key.Exchange, key.Market, key.Symbol, key.Timeframe)

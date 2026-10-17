@@ -120,28 +120,38 @@ func (p *feedPlan) strategies(ctx context.Context, store *storage.Store) ([]stra
 		if err != nil {
 			return nil, err
 		}
-		scfg.Exchange = src.Name()
 		if len(scfg.Symbols) == 0 {
 			return nil, fmt.Errorf("strategy %s: no symbols (set strategies[].symbols or include %s in marketdata.markets)", sc.ID, m)
 		}
-		if _, covered := p.symbols[k]; !covered || !subset(scfg.Symbols, p.symbols[k]) {
-			// Refresh instruments and validate the symbols.
-			if _, err := app.ResolveSymbols(ctx, src, store, m, scfg.Symbols, app.UniverseRules(p.cfg.Universe), p.log); err != nil {
+		var renameErr error
+		scfg = app.RenameExchanges(scfg, func(base string) string {
+			s, err := p.source(base)
+			if err != nil {
+				renameErr = err
+				return base
+			}
+			return s.Name()
+		})
+		if renameErr != nil {
+			return nil, fmt.Errorf("strategy %s: %w", sc.ID, renameErr)
+		}
+		// Refresh instruments and validate the symbols of every instrument
+		// not already covered by marketdata.
+		bySource := map[feedKey][]string{}
+		for _, in := range scfg.Instruments() {
+			fk := feedKey{in.Exchange, in.Market}
+			if !slices.Contains(p.symbols[fk], in.Symbol) {
+				bySource[fk] = append(bySource[fk], in.Symbol)
+			}
+		}
+		for fk, symbols := range bySource {
+			if _, err := app.ResolveSymbols(ctx, p.byName[fk.exchange], store, fk.market, symbols, app.UniverseRules(p.cfg.Universe), p.log); err != nil {
 				return nil, fmt.Errorf("strategy %s: %w", sc.ID, err)
 			}
 		}
 		out = append(out, scfg)
 	}
 	return out, nil
-}
-
-func subset(xs, of []string) bool {
-	for _, x := range xs {
-		if !slices.Contains(of, x) {
-			return false
-		}
-	}
-	return true
 }
 
 // start launches one feed per exchange and market. Feeds that stop for any

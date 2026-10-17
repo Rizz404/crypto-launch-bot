@@ -17,6 +17,7 @@ import (
 	"github.com/rizz404/trading-bot/internal/config"
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/engine"
+	"github.com/rizz404/trading-bot/internal/exchange"
 	"github.com/rizz404/trading-bot/internal/metrics"
 	"github.com/rizz404/trading-bot/internal/notify/telegram"
 	"github.com/rizz404/trading-bot/internal/portfolio"
@@ -34,30 +35,31 @@ const (
 // session is one trading run of the bot: engine, accounts, brokers and the
 // recorder that persists them.
 type session struct {
-	cfg        *config.Config
-	log        *slog.Logger
-	store      *storage.Store
-	book       *portfolio.Book
-	risk       *risk.Manager
-	eng        *engine.Engine
-	rec        *recorder.Recorder
-	recCancel  context.CancelFunc
-	sims       map[string]*broker.Sim // paper brokers by exchange name
-	lives      map[string]broker.Live // testnet/live brokers by exchange name
-	liveWG     sync.WaitGroup         // live broker goroutines
-	liveCancel context.CancelFunc     // stops the live broker goroutines
-	resync     chan struct{}          // reconcile requests from live brokers
-	mismatch   map[domain.PositionKey]int
-	quotes     map[portfolio.AccountKey]string
-	leverages  map[domain.PositionKey]int
-	instrument map[domain.PositionKey]domain.Instrument
-	strategies []strategy.Config
-	runID      int64
-	metrics    *metrics.Trading
-	tg         *telegram.Bot // optional
-	notifyMin  slog.Level
-	realized   map[string]decimal.Decimal // net realized PnL per strategy, this session
-	day        time.Time                  // UTC day of the last daily summary
+	cfg            *config.Config
+	log            *slog.Logger
+	store          *storage.Store
+	book           *portfolio.Book
+	risk           *risk.Manager
+	eng            *engine.Engine
+	rec            *recorder.Recorder
+	recCancel      context.CancelFunc
+	sims           map[string]*broker.Sim // paper brokers by exchange name
+	lives          map[string]broker.Live // testnet/live brokers by exchange name
+	liveWG         sync.WaitGroup         // live broker goroutines
+	liveCancel     context.CancelFunc     // stops the live broker goroutines
+	resync         chan struct{}          // reconcile requests from live brokers
+	mismatch       map[domain.PositionKey]int
+	quotes         map[portfolio.AccountKey]string
+	leverages      map[domain.PositionKey]int
+	instrument     map[domain.PositionKey]domain.Instrument
+	strategies     []strategy.Config
+	runID          int64
+	metrics        *metrics.Trading
+	tg             *telegram.Bot // optional
+	notifyMin      slog.Level
+	fundingSources map[string]exchange.FundingSource
+	realized       map[string]decimal.Decimal // net realized PnL per strategy, this session
+	day            time.Time                  // UTC day of the last daily summary
 }
 
 // newSession builds the trading side of the bot for the configured mode.
@@ -108,30 +110,47 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 		},
 	})
 
-	// Live brokers serve every market traded on their exchange.
+	// Every instrument a strategy trades (its symbols and legs) needs an
+	// account; live brokers serve all markets traded on their exchange.
+	type traded struct {
+		leg      strategy.Leg
+		leverage int
+	}
+	var instruments []traded
 	marketsByExchange := map[string][]domain.Market{}
 	for _, sc := range strategies {
-		if !slices.Contains(marketsByExchange[sc.Exchange], sc.Market) {
-			marketsByExchange[sc.Exchange] = append(marketsByExchange[sc.Exchange], sc.Market)
+		for _, in := range sc.Instruments() {
+			instruments = append(instruments, traded{in, sc.Leverage})
+			if !slices.Contains(marketsByExchange[in.Exchange], in.Market) {
+				marketsByExchange[in.Exchange] = append(marketsByExchange[in.Exchange], in.Market)
+			}
 		}
 	}
-
-	// One account per exchange + market traded.
-	for _, sc := range strategies {
-		key := portfolio.AccountKey{Exchange: sc.Exchange, Market: sc.Market}
-		ins, err := store.Instruments(ctx, key.Exchange, key.Market)
-		if err != nil {
-			return nil, err
+	loaded := map[portfolio.AccountKey][]domain.Instrument{}
+	for _, t := range instruments {
+		key := portfolio.AccountKey{Exchange: t.leg.Exchange, Market: t.leg.Market}
+		ins, ok := loaded[key]
+		if !ok {
+			var err error
+			if ins, err = store.Instruments(ctx, key.Exchange, key.Market); err != nil {
+				return nil, err
+			}
+			loaded[key] = ins
+			s.eng.SetInstruments(ins)
 		}
-		s.eng.SetInstruments(ins)
 		for _, in := range ins {
-			if slices.Contains(sc.Symbols, in.Symbol) {
+			if in.Symbol == t.leg.Symbol {
 				pk := domain.PositionKey{Exchange: key.Exchange, Market: key.Market, Symbol: in.Symbol}
 				s.instrument[pk] = in
-				s.leverages[pk] = s.risk.Leverage(sc.Leverage, key.Market)
+				s.leverages[pk] = s.risk.Leverage(t.leverage, key.Market)
 				s.quotes[key] = in.Quote
 			}
 		}
+	}
+
+	for _, t := range instruments {
+		exName := t.leg.Exchange
+		key := portfolio.AccountKey{Exchange: exName, Market: t.leg.Market}
 		if s.book.Account(key) != nil {
 			continue
 		}
@@ -139,22 +158,22 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 		if !paper {
 			// Live balances come from the exchange on the first reconcile.
 			s.book.Add(portfolio.NewAccount(key, decimal.Zero, s.onTrade))
-			if _, ok := s.lives[sc.Exchange]; !ok {
-				base := strings.TrimSuffix(sc.Exchange, "-testnet")
-				lb, err := app.LiveBroker(cfg, base, marketsByExchange[sc.Exchange], log)
+			if _, ok := s.lives[exName]; !ok {
+				base := strings.TrimSuffix(exName, "-testnet")
+				lb, err := app.LiveBroker(cfg, base, marketsByExchange[exName], log)
 				if err != nil {
 					return nil, err
 				}
-				if lb.Exchange() != sc.Exchange {
-					return nil, fmt.Errorf("broker name %s does not match account %s", lb.Exchange(), sc.Exchange)
+				if lb.Exchange() != exName {
+					return nil, fmt.Errorf("broker name %s does not match account %s", lb.Exchange(), exName)
 				}
-				if uw, ok := lb.(broker.UnifiedWallet); ok && uw.UnifiedWallet() && len(marketsByExchange[sc.Exchange]) > 1 {
+				if uw, ok := lb.(broker.UnifiedWallet); ok && uw.UnifiedWallet() && len(marketsByExchange[exName]) > 1 {
 					// One wallet backs both markets; separate ledgers would
 					// count the same cash twice.
 					return nil, fmt.Errorf("%s uses one wallet for spot and futures: trade a single market there (found %v)",
-						base, marketsByExchange[sc.Exchange])
+						base, marketsByExchange[exName])
 				}
-				s.lives[sc.Exchange] = lb
+				s.lives[exName] = lb
 				s.eng.AddBroker(lb)
 			}
 			log.Info("live account", "account", key, "mode", mode)
@@ -168,11 +187,11 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 			}
 		}
 		s.book.Add(portfolio.NewAccount(key, balance, s.onTrade))
-		if _, ok := s.sims[sc.Exchange]; !ok {
+		if _, ok := s.sims[exName]; !ok {
 			sim := broker.NewSim(broker.SimConfig{
-				Exchange: sc.Exchange, Fees: app.Fees(cfg.Backtest.Fees), SlippageBps: cfg.Backtest.SlippageBps, Clock: time.Now,
+				Exchange: exName, Fees: app.Fees(cfg.Backtest.Fees), SlippageBps: cfg.Backtest.SlippageBps, Clock: time.Now,
 			})
-			s.sims[sc.Exchange] = sim
+			s.sims[exName] = sim
 			s.eng.AddBroker(sim)
 		}
 		log.Info("paper account", "account", key, "balance", balance)
@@ -227,23 +246,63 @@ func (s *session) resume(ctx context.Context, prev *storage.SessionState) error 
 	return nil
 }
 
-// Subscriptions returns the series the strategies need, per market, keyed
-// by exchange name.
+// Subscriptions returns the series the strategies need, per account.
 func (s *session) Subscriptions() map[portfolio.AccountKey]map[domain.SeriesKey]bool {
 	out := map[portfolio.AccountKey]map[domain.SeriesKey]bool{}
 	tfs := s.eng.Timeframes()
 	for _, sc := range s.strategies {
-		key := portfolio.AccountKey{Exchange: sc.Exchange, Market: sc.Market}
-		if out[key] == nil {
-			out[key] = map[domain.SeriesKey]bool{}
-		}
-		for _, sym := range sc.Symbols {
+		for _, in := range sc.Instruments() {
+			key := portfolio.AccountKey{Exchange: in.Exchange, Market: in.Market}
+			if out[key] == nil {
+				out[key] = map[domain.SeriesKey]bool{}
+			}
 			for _, tf := range tfs {
-				out[key][domain.SeriesKey{Exchange: sc.Exchange, Market: sc.Market, Symbol: sym, Timeframe: tf}] = true
+				out[key][domain.SeriesKey{Exchange: in.Exchange, Market: in.Market, Symbol: in.Symbol, Timeframe: tf}] = true
 			}
 		}
 	}
 	return out
+}
+
+// addSource registers a market data client for funding rate polling.
+func (s *session) addSource(src exchange.MarketData) {
+	if fs, ok := src.(exchange.FundingSource); ok {
+		if s.fundingSources == nil {
+			s.fundingSources = map[string]exchange.FundingSource{}
+		}
+		s.fundingSources[src.Name()] = fs
+	}
+}
+
+// pollFunding refreshes funding rates of the perpetuals the strategies trade.
+func (s *session) pollFunding(ctx context.Context) {
+	wanted := map[string]map[string]bool{}
+	for _, sc := range s.strategies {
+		for _, in := range sc.Instruments() {
+			if in.Market == domain.Futures {
+				if wanted[in.Exchange] == nil {
+					wanted[in.Exchange] = map[string]bool{}
+				}
+				wanted[in.Exchange][in.Symbol] = true
+			}
+		}
+	}
+	for name, symbols := range wanted {
+		fs := s.fundingSources[name]
+		if fs == nil {
+			continue
+		}
+		rates, err := fs.FundingRates(ctx)
+		if err != nil {
+			s.log.Warn("funding rates", "exchange", name, "err", err)
+			continue
+		}
+		for _, r := range rates {
+			if symbols[r.Symbol] {
+				s.eng.SetFunding(name, r.Symbol, strategy.FundingInfo{Rate: r.Rate, Next: r.Next})
+			}
+		}
+	}
 }
 
 // warmup replays recent stored candles so indicators are ready. The engine
@@ -294,6 +353,9 @@ func (s *session) loop(ctx context.Context) {
 	defer tick.Stop()
 	gauges := time.NewTicker(10 * time.Second)
 	defer gauges.Stop()
+	funding := time.NewTicker(5 * time.Minute)
+	defer funding.Stop()
+	s.pollFunding(ctx)
 	snap := time.NewTicker(snapshotInterval)
 	defer snap.Stop()
 	for {
@@ -310,6 +372,8 @@ func (s *session) loop(ctx context.Context) {
 			s.snapshot(ctx, now)
 		case <-s.resync:
 			s.reconcile(ctx, false)
+		case <-funding.C:
+			s.pollFunding(ctx)
 		}
 	}
 }
