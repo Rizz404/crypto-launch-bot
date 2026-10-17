@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
+	"strings"
+	"sync"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -39,6 +41,14 @@ type session struct {
 	rec        *recorder.Recorder
 	recCancel  context.CancelFunc
 	sims       map[string]*broker.Sim // paper brokers by exchange name
+	lives      map[string]broker.Live // testnet/live brokers by exchange name
+	liveWG     sync.WaitGroup         // live broker goroutines
+	liveCancel context.CancelFunc     // stops the live broker goroutines
+	resync     chan struct{}          // reconcile requests from live brokers
+	mismatch   map[domain.PositionKey]int
+	quotes     map[portfolio.AccountKey]string
+	leverages  map[domain.PositionKey]int
+	instrument map[domain.PositionKey]domain.Instrument
 	strategies []strategy.Config
 	runID      int64
 	notify     func(level slog.Level, msg string, attrs ...any) // optional, set before start
@@ -47,13 +57,16 @@ type session struct {
 // newSession builds the trading side of the bot for the configured mode.
 func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, strategies []strategy.Config, log *slog.Logger) (*session, error) {
 	mode := cfg.App.Mode
-	if mode != config.ModePaper {
-		return nil, fmt.Errorf("trading in %s mode is not implemented yet (fase 4)", mode)
+	paper := mode == config.ModePaper
+	s := &session{
+		cfg: cfg, log: log, store: store, book: portfolio.NewBook(), strategies: strategies,
+		sims: map[string]*broker.Sim{}, lives: map[string]broker.Live{}, resync: make(chan struct{}, 1),
+		mismatch: map[domain.PositionKey]int{}, quotes: map[portfolio.AccountKey]string{},
+		leverages: map[domain.PositionKey]int{}, instrument: map[domain.PositionKey]domain.Instrument{},
 	}
-	s := &session{cfg: cfg, log: log, store: store, book: portfolio.NewBook(), sims: map[string]*broker.Sim{}, strategies: strategies}
 
 	var prev *storage.SessionState
-	if cfg.Paper.Resume {
+	if paper && cfg.Paper.Resume {
 		var err error
 		if prev, err = store.LastSessionState(ctx, string(mode)); err != nil {
 			return nil, err
@@ -84,12 +97,53 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 		},
 	})
 
-	// One account (and paper broker) per exchange + market traded.
+	// Live brokers serve every market traded on their exchange.
+	marketsByExchange := map[string][]domain.Market{}
+	for _, sc := range strategies {
+		if !slices.Contains(marketsByExchange[sc.Exchange], sc.Market) {
+			marketsByExchange[sc.Exchange] = append(marketsByExchange[sc.Exchange], sc.Market)
+		}
+	}
+
+	// One account per exchange + market traded.
 	for _, sc := range strategies {
 		key := portfolio.AccountKey{Exchange: sc.Exchange, Market: sc.Market}
+		ins, err := store.Instruments(ctx, key.Exchange, key.Market)
+		if err != nil {
+			return nil, err
+		}
+		s.eng.SetInstruments(ins)
+		for _, in := range ins {
+			if slices.Contains(sc.Symbols, in.Symbol) {
+				pk := domain.PositionKey{Exchange: key.Exchange, Market: key.Market, Symbol: in.Symbol}
+				s.instrument[pk] = in
+				s.leverages[pk] = s.risk.Leverage(sc.Leverage, key.Market)
+				s.quotes[key] = in.Quote
+			}
+		}
 		if s.book.Account(key) != nil {
 			continue
 		}
+
+		if !paper {
+			// Live balances come from the exchange on the first reconcile.
+			s.book.Add(portfolio.NewAccount(key, decimal.Zero, s.onTrade))
+			if _, ok := s.lives[sc.Exchange]; !ok {
+				base := strings.TrimSuffix(sc.Exchange, "-testnet")
+				lb, err := app.LiveBroker(cfg, base, marketsByExchange[sc.Exchange], log)
+				if err != nil {
+					return nil, err
+				}
+				if lb.Exchange() != sc.Exchange {
+					return nil, fmt.Errorf("broker name %s does not match account %s", lb.Exchange(), sc.Exchange)
+				}
+				s.lives[sc.Exchange] = lb
+				s.eng.AddBroker(lb)
+			}
+			log.Info("live account", "account", key, "mode", mode)
+			continue
+		}
+
 		balance := decimal.NewFromFloat(cfg.Paper.InitialBalance)
 		if prev != nil {
 			if b, ok := prev.Balances[key.String()]; ok {
@@ -104,11 +158,6 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 			s.sims[sc.Exchange] = sim
 			s.eng.AddBroker(sim)
 		}
-		ins, err := store.Instruments(ctx, key.Exchange, key.Market)
-		if err != nil {
-			return nil, err
-		}
-		s.eng.SetInstruments(ins)
 		log.Info("paper account", "account", key, "balance", balance)
 	}
 
@@ -124,7 +173,6 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 			return nil, err
 		}
 	}
-	s.risk.Observe(time.Now(), s.book.Total().Equity)
 	return s, nil
 }
 
@@ -236,7 +284,10 @@ func (s *session) loop(ctx context.Context) {
 		case now := <-tick.C:
 			s.eng.Tick(ctx, now)
 		case now := <-snap.C:
+			s.reconcile(ctx, false)
 			s.snapshot(ctx, now)
+		case <-s.resync:
+			s.reconcile(ctx, false)
 		}
 	}
 }
@@ -250,6 +301,10 @@ func (s *session) snapshot(ctx context.Context, now time.Time) {
 
 // close records a final snapshot, flushes the recorder and finishes the run.
 func (s *session) close(reason string) {
+	if s.liveCancel != nil {
+		s.liveCancel()
+	}
+	s.liveWG.Wait()
 	s.snapshot(context.Background(), time.Now())
 	s.recCancel()
 	s.rec.Wait()

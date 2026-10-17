@@ -171,6 +171,10 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 			sess.close("startup failed")
 			return err
 		}
+		if err := sess.start(ctx); err != nil {
+			sess.close("startup failed")
+			return err
+		}
 		go sess.loop(ctx)
 	}
 
