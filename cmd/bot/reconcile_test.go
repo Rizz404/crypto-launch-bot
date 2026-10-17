@@ -11,10 +11,58 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/rizz404/trading-bot/internal/broker"
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/metrics"
 	"github.com/rizz404/trading-bot/internal/portfolio"
 )
+
+// The testnet account starts with 1 BTC that the bot never bought; a spot
+// wallet on mainnet may hold the user's own coins the same way.
+func TestReconcileSpotManagesOnlyTheBotsHoldings(t *testing.T) {
+	s := &session{log: slog.New(slog.NewTextHandler(io.Discard, nil)), mismatch: map[domain.PositionKey]int{},
+		leverages: map[domain.PositionKey]int{}, metrics: metrics.NewTrading(prometheus.NewRegistry()),
+		instrument: map[domain.PositionKey]domain.Instrument{}}
+	key := domain.PositionKey{Exchange: "binance-testnet", Market: domain.Spot, Symbol: "BTCUSDT"}
+	s.instrument[key] = domain.Instrument{Exchange: key.Exchange, Market: key.Market, Symbol: key.Symbol, Base: "BTC", Quote: "USDT",
+		TickSize: decimal.RequireFromString("0.01"), StepSize: decimal.RequireFromString("0.00001"),
+		MinQty: decimal.RequireFromString("0.00001"), MinNotional: decimal.NewFromInt(5)}
+	a := portfolio.NewAccount(portfolio.AccountKey{Exchange: key.Exchange, Market: key.Market}, decimal.Zero, nil)
+	d := decimal.RequireFromString
+	state := func(btc string) *broker.AccountState {
+		return &broker.AccountState{Market: domain.Spot, Balances: map[string]broker.Balance{
+			"BTC":  {Asset: "BTC", Wallet: d(btc)},
+			"USDT": {Asset: "USDT", Wallet: d("10000")},
+		}}
+	}
+
+	s.reconcileSpot(a, state("1"), "USDT", true)
+	assert.Empty(t, a.Positions(), "holdings the bot did not buy are not its position")
+	assert.Equal(t, "10000", a.Snapshot().Balance.String())
+
+	ours := domain.Position{PositionKey: key, Side: domain.Long, Quantity: d("0.00025"), EntryPrice: d("80000"),
+		Leverage: 1, Strategy: "ema"}
+	a.SetPosition(ours)
+	s.reconcileSpot(a, state("1.00025"), "USDT", false)
+	got, ok := a.Position(key.Symbol)
+	require.True(t, ok)
+	assert.Equal(t, "0.00025", got.Quantity.String(), "never adopts the rest of the wallet")
+	assert.Equal(t, "ema", got.Strategy)
+	assert.Equal(t, "10020", a.Snapshot().Balance.String(), "cash plus the cost of the bot's coins")
+
+	// Without other coins in the wallet, a base-asset fee or a manual sale
+	// leaves less than the ledger expects: corrected after two samples.
+	s.reconcileSpot(a, state("0.0002"), "USDT", false)
+	got, _ = a.Position(key.Symbol)
+	assert.Equal(t, "0.00025", got.Quantity.String())
+	s.reconcileSpot(a, state("0.0002"), "USDT", false)
+	got, _ = a.Position(key.Symbol)
+	assert.Equal(t, "0.0002", got.Quantity.String())
+
+	s.reconcileSpot(a, state("0"), "USDT", false)
+	s.reconcileSpot(a, state("0"), "USDT", false)
+	assert.Empty(t, a.Positions(), "coins sold outside the bot close its position")
+}
 
 func TestReconcileRequiresPersistentMismatchAndPreservesMetadata(t *testing.T) {
 	s := &session{log: slog.New(slog.NewTextHandler(io.Discard, nil)), mismatch: map[domain.PositionKey]int{},

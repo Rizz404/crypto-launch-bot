@@ -139,9 +139,13 @@ func (s *session) reconcilePositions(acct *portfolio.Account, exchange []domain.
 	}
 }
 
-// reconcileSpot derives positions from base asset holdings of the traded
-// symbols. The ledger balance is cash plus the cost of those holdings, so
-// that equity = balance + unrealized PnL holds as on futures.
+// reconcileSpot checks the bot's spot positions against the base asset
+// holdings. A spot wallet also holds coins the bot never bought (decision
+// of the user, 2026-10-17): those are left alone, so a position is the
+// quantity the bot's own fills built, capped by what the wallet still
+// holds (coins sold outside the bot, or fees paid in the base asset). The
+// ledger balance is cash plus the cost of the bot's holdings, so that
+// equity = balance + unrealized PnL holds as on futures.
 func (s *session) reconcileSpot(acct *portfolio.Account, st *broker.AccountState, quote string, initial bool) {
 	var positions []domain.Position
 	cost := decimal.Zero
@@ -149,21 +153,22 @@ func (s *session) reconcileSpot(acct *portfolio.Account, st *broker.AccountState
 		if key.Exchange != acct.Key.Exchange || key.Market != acct.Key.Market {
 			continue
 		}
-		qty := in.RoundQty(st.Balances[in.Base].Wallet)
+		held := in.RoundQty(st.Balances[in.Base].Wallet)
 		ours, hasO := acct.Position(key.Symbol)
-		price := ours.EntryPrice
 		if !hasO {
-			price, _ = s.eng.LastPrice(key.Exchange, key.Market, key.Symbol)
+			if initial && held.IsPositive() {
+				s.log.Info("spot holdings not bought by the bot are left alone", "symbol", key.Symbol, "asset", in.Base, "qty", held)
+			}
+			continue
 		}
-		if !qty.IsPositive() || in.CheckOrder(price, qty) != nil {
-			continue // dust
+		qty := decimal.Min(ours.Quantity, held)
+		if !qty.IsPositive() || in.CheckOrder(ours.EntryPrice, qty) != nil {
+			continue // sold outside the bot, or only dust left
 		}
-		p := domain.Position{PositionKey: key, Side: domain.Long, Quantity: qty, EntryPrice: price, Leverage: 1}
-		if hasO {
-			p.Strategy, p.OpenedAt, p.Fees = ours.Strategy, ours.OpenedAt, ours.Fees
-		}
+		p := ours
+		p.Quantity = qty
 		positions = append(positions, p)
-		cost = cost.Add(qty.Mul(price))
+		cost = cost.Add(qty.Mul(p.EntryPrice))
 	}
 	s.reconcilePositions(acct, positions, initial)
 	acct.SetBalance(st.Balances[quote].Wallet.Add(cost))

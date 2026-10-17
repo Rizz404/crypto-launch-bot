@@ -78,7 +78,9 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 	_ = s.notifyMin.UnmarshalText([]byte(cfg.Telegram.NotifyLevel))
 
 	var prev *storage.SessionState
-	if paper && cfg.Paper.Resume {
+	// Live spot positions are the bot's own fills and only the database
+	// knows them; the wallet may hold more of the same coin.
+	if !paper || cfg.Paper.Resume {
 		var err error
 		if prev, err = store.LastSessionState(ctx, string(mode)); err != nil {
 			return nil, err
@@ -204,12 +206,30 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 		log.Info("strategy loaded", "id", sc.ID, "name", sc.Name, "account", sc.Exchange+":"+string(sc.Market), "symbols", sc.Symbols)
 	}
 
-	if prev != nil {
+	switch {
+	case prev != nil && paper:
 		if err := s.resume(ctx, prev); err != nil {
 			return nil, err
 		}
+	case prev != nil:
+		s.resumeLiveSpot(prev)
 	}
 	return s, nil
+}
+
+// resumeLiveSpot restores the spot positions of the previous live session.
+// Reconciliation then caps them by the wallet. Futures positions and all
+// open orders come from the exchange.
+func (s *session) resumeLiveSpot(prev *storage.SessionState) {
+	for _, p := range prev.Positions {
+		if p.Market != domain.Spot || s.lives[p.Exchange] == nil {
+			continue
+		}
+		if acct := s.book.Account(portfolio.AccountKey{Exchange: p.Exchange, Market: p.Market}); acct != nil {
+			acct.SetPosition(p)
+			s.log.Info("spot position restored", "run_id", prev.RunID, "symbol", p.Symbol, "qty", p.Quantity, "entry", p.EntryPrice)
+		}
+	}
 }
 
 // resume restores the positions and open orders of the previous session.
@@ -448,6 +468,11 @@ func (s *session) onOrder(o domain.Order) {
 
 func (s *session) onFill(f domain.Fill, o domain.Order) {
 	s.rec.Fill(f)
+	// Store the position now rather than at the next snapshot: after a
+	// crash, live spot restarts rely on it to know which coins are the bot's.
+	if acct := s.book.Account(portfolio.AccountKey{Exchange: f.Exchange, Market: f.Market}); acct != nil {
+		s.rec.Account(acct, time.Now())
+	}
 	s.metrics.Fills.WithLabelValues(f.Exchange+":"+string(f.Market), o.Tag).Inc()
 	if s.tg != nil && o.Tag == domain.TagEntry && o.Status == domain.OrderFilled {
 		s.tg.Notify(fmt.Sprintf("🔵 <b>Opened %s %s</b> (%s)\nqty %s @ %s\n%s",
