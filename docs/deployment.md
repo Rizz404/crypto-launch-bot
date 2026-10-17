@@ -38,6 +38,28 @@ baca paket GHCR private. Untuk GHCR, gunakan token khusus dengan `read:packages`
 melalui prompt `docker login ghcr.io --username Rizz404`, bukan lewat argumen
 password atau chat. Jangan menaruh token itu di repo.
 
+### Server Plesk bersama
+
+Target saat ini adalah alias SSH `plesk`, yang sudah menjalankan Plesk dan proyek
+lain. Pertahankan konfigurasi Plesk, web server, domain, firewall, Docker daemon,
+serta container/network/volume proyek lain. Jangan melakukan upgrade global,
+restart Docker, `docker system prune`, atau perubahan pada stack lain sebagai
+bagian deployment ini. Pilih direktori baru yang belum digunakan (calon:
+`/opt/trading-bot-paper`) dan project Compose khusus `trading-bot-paper`.
+
+Manifest membatasi DB ke 1 GiB/1 CPU dan bot, Prometheus, Grafana masing-masing
+512 MiB/0,5 CPU: total batas RAM 2,5 GiB dan CPU 2,5 core. TimescaleDB ditune
+untuk limit container, bukan total RAM host. Prometheus dibatasi retention 7 hari
+atau 1 GB data blok; WAL dan overhead bisa menambah pemakaian di luar angka itu.
+Log dibatasi 3 × 10 MB per container. Ini bukan kuota disk total; database,
+backup, dan image tetap perlu dipantau.
+
+Sebelum dan sesudah deployment, bandingkan status, waktu mulai, dan restart count
+container lama serta status service Plesk/web server. Jika terjadi masalah pada
+stack baru, hentikan hanya project `trading-bot-paper` untuk membebaskan resource;
+jangan mengubah proyek lama. Validasi port loopback masih tersedia tepat sebelum
+start dan jangan mengganti port aplikasi lain untuk membuat ruang bagi bot.
+
 Clone di server dari GitHub dan checkout commit yang sama dengan image:
 
 ```sh
