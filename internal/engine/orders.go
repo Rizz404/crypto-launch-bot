@@ -318,12 +318,34 @@ func (e *Engine) onOrderUpdate(ctx context.Context, upd domain.Order) {
 			}
 		}
 	case domain.TagStopLoss:
-		if p := e.protections[key]; p != nil && p.stopID == o.ClientID && o.Status != domain.OrderCanceled {
-			// The exchange refused our stop: never leave a position naked.
-			e.notice(slog.LevelError, "stop loss rejected, closing position", "symbol", o.Symbol, "status", o.Status, "reason", o.Reason)
+		p := e.protections[key]
+		if p == nil || p.stopID != o.ClientID || o.Status == domain.OrderCanceled {
+			break
+		}
+		if p.linked && e.isOpen(p.targetID) {
+			// The exchange expires a linked stop when the take-profit
+			// triggers, before reporting its fill. The take-profit's own
+			// outcome decides whether the position is still protected.
+			p.stopGone = true
+			e.log.Info("linked stop expired, waiting for the take profit", "symbol", o.Symbol, "status", o.Status)
+			break
+		}
+		// The exchange refused our stop: never leave a position naked.
+		e.notice(slog.LevelError, "stop loss rejected, closing position", "symbol", o.Symbol, "status", o.Status, "reason", o.Reason)
+		e.exit(ctx, key, domain.TagExit)
+	case domain.TagTakeProfit:
+		if p := e.protections[key]; p != nil && p.targetID == o.ClientID && p.stopGone {
+			e.notice(slog.LevelError, "take profit ended unfilled after its linked stop expired, closing position",
+				"symbol", o.Symbol, "status", o.Status, "reason", o.Reason)
 			e.exit(ctx, key, domain.TagExit)
 		}
 	}
+}
+
+// isOpen reports whether the engine tracks id as an open order.
+func (e *Engine) isOpen(id string) bool {
+	o, ok := e.orders[id]
+	return ok && o.Status.Open()
 }
 
 func (e *Engine) onFill(ctx context.Context, f domain.Fill, upd domain.Order) {
@@ -486,6 +508,9 @@ func (e *Engine) placeProtection(ctx context.Context, key domain.PositionKey, po
 	e.protections[key] = p
 
 	if bp, ok := e.brokers[key.Exchange].(broker.BracketPlacer); ok {
+		if lb, ok := bp.(broker.LinkedBrackets); ok && stop.ClientID != "" && target.ClientID != "" {
+			p.linked = lb.LinkedBracket(key.Market)
+		}
 		for _, o := range []domain.Order{stop, target} {
 			if o.ClientID != "" {
 				t := o

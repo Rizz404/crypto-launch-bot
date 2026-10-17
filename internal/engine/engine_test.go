@@ -197,6 +197,74 @@ func TestBracketOrdersPersistBeforeFills(t *testing.T) {
 	h.s.OnCandle(h.bar(100, 110, 99, 105))
 }
 
+// linkedBracketBroker reports its brackets as exchange-linked (an OCO).
+type linkedBracketBroker struct{ bracketBroker }
+
+func (linkedBracketBroker) LinkedBracket(domain.Market) bool { return true }
+
+// The Binance spot OCO sends "stop EXPIRED" before the take-profit fill
+// (recorded on the testnet). That expiry must not trigger a second exit.
+func TestLinkedStopExpiryWaitsForTakeProfit(t *testing.T) {
+	for _, tc := range []struct {
+		name         string
+		linked       bool
+		targetFills  bool
+		wantExitSent bool
+	}{
+		{name: "linked take profit fills", linked: true, targetFills: true},
+		{name: "linked take profit expires too", linked: true, wantExitSent: true},
+		{name: "independent legs", wantExitSent: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			h := setup(t)
+			var b broker.Broker = bracketBroker{Sim: h.s}
+			if tc.linked {
+				b = linkedBracketBroker{bracketBroker{Sim: h.s}}
+			}
+			h.e.AddBroker(b)
+			exits := 0
+			h.e.cfg.Hooks.OnOrder = func(o domain.Order) {
+				if o.Tag == domain.TagExit && o.Status == domain.OrderNew {
+					exits++
+				}
+			}
+			h.intent(strategy.Intent{Kind: strategy.Enter, Side: domain.Long, StopLoss: decimal.NewFromInt(95), TakeProfit: decimal.NewFromInt(105)})
+			h.s.OnCandle(h.bar(100, 100, 100, 100))
+			var stop, target domain.Order
+			for _, o := range h.e.OpenOrders() {
+				switch o.Tag {
+				case domain.TagStopLoss:
+					stop = o
+				case domain.TagTakeProfit:
+					target = o
+				}
+			}
+			require.NotEmpty(t, stop.ClientID)
+			require.NotEmpty(t, target.ClientID)
+
+			stop.Status = domain.OrderExpired
+			h.e.onBrokerEvent(broker.Event{Kind: broker.EventOrder, Order: stop})
+			if !tc.linked {
+				assert.Equal(t, 1, exits, "an independent stop that expired leaves the position naked")
+				return
+			}
+			assert.Zero(t, exits, "the linked stop expired because the take profit triggered")
+			if tc.targetFills {
+				require.NoError(t, h.s.CancelOrder(context.Background(), stop)) // gone at the exchange
+				h.s.OnCandle(h.bar(100, 110, 99, 105))
+				assert.Empty(t, h.a.Positions())
+				assert.Empty(t, h.e.OpenOrders())
+				assert.Zero(t, exits)
+				assert.Equal(t, "1010", h.a.Snapshot().Balance.String(), "two units sold once at 105")
+				return
+			}
+			target.Status = domain.OrderExpired
+			h.e.onBrokerEvent(broker.Event{Kind: broker.EventOrder, Order: target})
+			assert.Equal(t, 1, exits, "both linked legs ended unfilled: close at market")
+		})
+	}
+}
+
 func TestPartialBracketFailureCancelsAcceptedLeg(t *testing.T) {
 	h := setup(t)
 	h.e.AddBroker(bracketBroker{Sim: h.s, failTarget: true})

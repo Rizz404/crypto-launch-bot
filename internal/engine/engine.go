@@ -109,6 +109,9 @@ type protection struct {
 	trailing         float64
 	best             decimal.Decimal // best price since entry, for trailing
 	quantity         decimal.Decimal // position size covered by the bracket
+	// linked legs expire each other at the exchange (spot OCO); stopGone
+	// records that the stop expired while the take-profit was still open.
+	linked, stopGone bool
 }
 
 func New(cfg Config) *Engine {
