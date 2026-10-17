@@ -33,6 +33,10 @@ type WSStream struct {
 	MaxLifetime time.Duration
 	// OnReconnect is called before every reconnect attempt (not the first).
 	OnReconnect func()
+	// Ping, if set, is called every PingInterval while connected, for
+	// exchanges that expect application-level pings.
+	Ping         func(ctx context.Context, conn *websocket.Conn) error
+	PingInterval time.Duration
 
 	mu   sync.Mutex
 	conn *websocket.Conn
@@ -138,6 +142,25 @@ func (s *WSStream) session(ctx context.Context, onConnect func(), handle func([]
 
 	if onConnect != nil {
 		onConnect()
+	}
+	if s.Ping != nil && s.PingInterval > 0 {
+		pingCtx, stopPing := context.WithCancel(ctx)
+		defer stopPing()
+		go func() {
+			t := time.NewTicker(s.PingInterval)
+			defer t.Stop()
+			for {
+				select {
+				case <-pingCtx.Done():
+					return
+				case <-t.C:
+					if err := s.Ping(pingCtx, conn); err != nil {
+						_ = conn.CloseNow() // the read loop reconnects
+						return
+					}
+				}
+			}
+		}()
 	}
 
 	lifetime, cancelLifetime := context.WithTimeoutCause(ctx, s.MaxLifetime, errLifetime)
