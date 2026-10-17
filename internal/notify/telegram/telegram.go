@@ -19,6 +19,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 )
 
 const (
@@ -116,8 +117,8 @@ func (b *Bot) sendAll(ctx context.Context, text string) {
 }
 
 func (b *Bot) send(ctx context.Context, chatID int64, text string) error {
-	if len(text) > maxMessage {
-		text = text[:maxMessage] + "…"
+	if utf8.RuneCountInString(text) > maxMessage {
+		text = string([]rune(text)[:maxMessage]) + "…"
 	}
 	form := url.Values{
 		"chat_id":                  {strconv.FormatInt(chatID, 10)},
@@ -219,10 +220,12 @@ func (b *Bot) call(ctx context.Context, method string, form url.Values, out any)
 	if err != nil {
 		// The URL contains the token; never log it.
 		var uerr *url.Error
-		if errors.As(err, &uerr) {
-			return fmt.Errorf("%s: %w", method, uerr.Err)
+		for errors.As(err, &uerr) {
+			err = uerr.Err
 		}
-		return fmt.Errorf("%s: request failed", method)
+		// A custom transport may wrap URL errors more than once or put
+		// the URL in a plain error. Redact before returning it to logging.
+		return fmt.Errorf("%s: %s", method, strings.ReplaceAll(err.Error(), b.token, "[redacted]"))
 	}
 	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
