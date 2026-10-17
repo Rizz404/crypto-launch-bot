@@ -126,3 +126,28 @@ func (s *Store) Instruments(ctx context.Context, exchange string, m domain.Marke
 		return in, err
 	})
 }
+
+// TradeStats summarises the trades of a run closed since a time.
+type TradeStats struct {
+	Trades int
+	Wins   int
+	NetPnL decimal.Decimal
+	Fees   decimal.Decimal
+}
+
+func (s *Store) TradeStats(ctx context.Context, runID int64, since time.Time) (TradeStats, error) {
+	return s.TradeStatsBetween(ctx, runID, since, time.Now().Add(time.Hour))
+}
+
+// TradeStatsBetween summarises the trades of a run closed in [from, to).
+func (s *Store) TradeStatsBetween(ctx context.Context, runID int64, from, to time.Time) (TradeStats, error) {
+	var st TradeStats
+	err := s.pool.QueryRow(ctx, `
+		SELECT count(*), count(*) FILTER (WHERE net_pnl > 0), coalesce(sum(net_pnl), 0), coalesce(sum(fees), 0)
+		FROM trades WHERE run_id = $1 AND closed_at >= $2 AND closed_at < $3`, runID, from, to).
+		Scan(&st.Trades, &st.Wins, &st.NetPnL, &st.Fees)
+	if err != nil {
+		return st, fmt.Errorf("trade stats: %w", err)
+	}
+	return st, nil
+}
