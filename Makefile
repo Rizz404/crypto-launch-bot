@@ -1,4 +1,5 @@
 COMPOSE ?= podman compose -f deploy/compose.yml
+CONTAINER_ENGINE ?= podman
 PROMETHEUS_IMAGE ?= docker.io/prom/prometheus:v3.15.0
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
@@ -18,7 +19,7 @@ test:
 	go test ./...
 
 test-monitoring:
-	podman run --rm --network none -v "$(CURDIR)/deploy/prometheus:/checks:ro" -w /checks \
+	$(CONTAINER_ENGINE) run --rm --network none -v "$(CURDIR)/deploy/prometheus:/checks:ro" -w /checks \
 		--entrypoint /bin/promtool $(PROMETHEUS_IMAGE) test rules alerts.test.yml
 
 # Needs the compose database running (make up).
