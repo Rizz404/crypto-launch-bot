@@ -4,9 +4,9 @@
 
 ## Status saat ini (2026-10-17)
 
-- **Fase 0–4 selesai** (2026-10-17; Fase 2–4 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
+- **Fase 0–5 selesai** (2026-10-17; Fase 2–5 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
 - Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
-- **Langkah berikutnya: Fase 5** (Telegram: notifikasi + perintah; metrics trading Prometheus; dashboard dan alert Grafana).
+- **Langkah berikutnya: Fase 6** (web dashboard templ + HTMX).
 - **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
 - Cara menjalankan: lihat [README.md](../README.md).
 - Tandai fase yang selesai di bagian "Progres" di bawah setiap kali satu fase beres.
@@ -33,7 +33,7 @@
 - [x] Fase 2: Indikator + Strategy + Backtester (2026-10-17, belum dites)
 - [x] Fase 3: Risk + OMS + Paper trading (2026-10-17, belum dites)
 - [x] Fase 4: Binance LiveBroker (testnet/mainnet) (2026-10-17, belum dites)
-- [ ] Fase 5: Telegram + Prometheus/Grafana
+- [x] Fase 5: Telegram + Prometheus/Grafana (2026-10-17, belum dites)
 - [ ] Fase 6: Web dashboard
 - [ ] Fase 7: Bybit + OKX
 - [ ] Fase 8: Strategi lanjutan (grid/DCA, arbitrase, market making)
@@ -70,6 +70,11 @@
   - Reconciliation: posisi futures dari `positionRisk` v3, saldo dari `/fapi/v3/balance` (`balance` = wallet), spot dari saldo base asset; koreksi hanya setelah 2 kali selisih berturut-turut; order `tb*` diadopsi dengan tag dari DB; `SyncOrders` memulihkan fill yang terlewat (fee 0).
   - Fee spot dalam base asset (qty posisi < qty fill) dan fee BNB (tercatat 0) → dikoreksi lewat reconciliation; pastikan tidak ada drift.
   - Guard: mode `live` ditolak tanpa `app.allow_live: true`; mode `testnet` ditolak jika exchange tidak `testnet: true`.
+- **Fase 5**
+  - Telegram: long polling, whitelist `chat_ids` (chat lain diabaikan), escape HTML, pesan > 4096 karakter dipotong, antrean penuh, flush pesan "Bot stopped" saat shutdown, token tidak pernah muncul di log/error.
+  - Perintah: `/status`, `/positions`, `/balance`, `/pnl`, `/orders`, `/strategies`, `/pause`, `/resume` (ditolak saat kill switch aktif), `/killswitch confirm`, `/reset confirm`, `/stop confirm`, `/help`.
+  - Notifikasi: entry terisi, trade ditutup (PnL), notice engine ≥ `notify_level`, ringkasan harian 00:00 UTC.
+  - Metrics trading (`tradingbot_*`) terisi dengan benar; dashboard Grafana termuat (panel Prometheus + tabel TimescaleDB); alert Prometheus menyala sesuai kondisi (promtool hanya mengecek sintaks).
 
 ## Pertanyaan terbuka (belum diputuskan)
 
@@ -130,6 +135,12 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 - `broker.Live` adalah antarmuka broker exchange sungguhan ([internal/broker/live.go](../internal/broker/live.go)); `binance.Trader` mengimplementasikannya ([internal/exchange/binance/](../internal/exchange/binance/)). Bybit/OKX di Fase 7 mengikuti antarmuka yang sama.
 - `bot run` mode `testnet`/`live`: satu broker per exchange (semua market di exchange itu), user stream jalan, reconciliation saat start (setelah warmup), tiap menit, dan setiap stream reconnect ([cmd/bot/reconcile.go](../cmd/bot/reconcile.go)). Exchange adalah sumber kebenaran.
 - Order mainnet butuh **dua** saklar: `app.mode: live` dan `app.allow_live: true`.
+
+### Fase 5 (Telegram dan observability)
+
+- Telegram memakai HTTP Bot API langsung ([internal/notify/telegram](../internal/notify/telegram/)). Token hanya dari `TB_TELEGRAM__TOKEN`; `chat_ids` di YAML. Perintah berbahaya butuh argumen `confirm`. Perintah didaftarkan di [cmd/bot/commands.go](../cmd/bot/commands.go).
+- Metrics trading ada di [internal/metrics/trading.go](../internal/metrics/trading.go); sesi memperbarui gauge setiap 10 detik. Engine punya hook `OnPlaced` untuk latensi broker.
+- Dashboard `deploy/grafana/dashboards/trading-bot.json` (uid `tradingbot`) dan alert `deploy/prometheus/alerts.yml`. Belum ada Alertmanager: alert terlihat di UI Prometheus, sedangkan notifikasi real-time dikirim bot lewat Telegram.
 
 ---
 
