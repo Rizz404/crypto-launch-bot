@@ -11,8 +11,9 @@ import (
 )
 
 // CheckOrder enforces account-level limits before an order that increases
-// exposure is sent. price is the expected execution price.
-func (m *Manager) CheckOrder(o domain.Order, price decimal.Decimal, book *portfolio.Book) error {
+// exposure is sent. price is the expected execution price. pending contains
+// unfilled non-reduce-only orders with Price set to their reservation price.
+func (m *Manager) CheckOrder(o domain.Order, price decimal.Decimal, book *portfolio.Book, pending ...domain.Order) error {
 	m.mu.Lock()
 	halted, reason := m.halted, m.haltReason
 	m.mu.Unlock()
@@ -20,16 +21,36 @@ func (m *Manager) CheckOrder(o domain.Order, price decimal.Decimal, book *portfo
 		return fmt.Errorf("kill switch active: %s", reason)
 	}
 
+	if !price.IsPositive() || !o.Remaining().IsPositive() {
+		return fmt.Errorf("order price and remaining quantity must be positive")
+	}
+	if book.Account(portfolio.AccountKey{Exchange: o.Exchange, Market: o.Market}) == nil {
+		return fmt.Errorf("order account is missing")
+	}
 	total := book.Total()
-	if m.cfg.MaxOpenPositions > 0 && o.Tag == domain.TagEntry && total.OpenPositions >= m.cfg.MaxOpenPositions {
-		if acct := book.Account(portfolio.AccountKey{Exchange: o.Exchange, Market: o.Market}); acct != nil {
-			if _, has := acct.Position(o.Symbol); !has {
-				return fmt.Errorf("max open positions reached (%d)", m.cfg.MaxOpenPositions)
-			}
+	slots := map[domain.PositionKey]bool{}
+	for _, acct := range book.Accounts() {
+		for _, pos := range acct.Positions() {
+			slots[pos.PositionKey] = true
 		}
 	}
+	reserved := decimal.Zero
+	for _, p := range pending {
+		if p.ReduceOnly || !p.Status.Open() || !p.Remaining().IsPositive() {
+			continue
+		}
+		if !p.Price.IsPositive() {
+			return fmt.Errorf("pending order %s has no reservation price", p.ClientID)
+		}
+		reserved = reserved.Add(p.Remaining().Mul(p.Price))
+		slots[domain.PositionKey{Exchange: p.Exchange, Market: p.Market, Symbol: p.Symbol}] = true
+	}
+	key := domain.PositionKey{Exchange: o.Exchange, Market: o.Market, Symbol: o.Symbol}
+	if m.cfg.MaxOpenPositions > 0 && !slots[key] && len(slots) >= m.cfg.MaxOpenPositions {
+		return fmt.Errorf("max open positions reached (%d)", m.cfg.MaxOpenPositions)
+	}
 	if m.cfg.MaxExposurePct > 0 && total.Equity.IsPositive() {
-		after := total.Exposure.Add(o.Quantity.Mul(price))
+		after := total.Exposure.Add(reserved).Add(o.Remaining().Mul(price))
 		limit := total.Equity.Mul(decimal.NewFromFloat(m.cfg.MaxExposurePct))
 		if after.GreaterThan(limit) {
 			return fmt.Errorf("exposure %s would exceed limit %s (%.0f%% of equity)",
