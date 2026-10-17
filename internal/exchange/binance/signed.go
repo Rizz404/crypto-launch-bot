@@ -47,6 +47,10 @@ type Trader struct {
 	open map[string]domain.Order
 
 	resync chan struct{}
+
+	// tap, if set, sees every raw user stream message (tests record
+	// exchange payloads with it).
+	tap func(stream string, msg []byte)
 }
 
 type algoState struct {

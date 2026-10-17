@@ -1,0 +1,549 @@
+[
+  {
+    "stream": "spot-user",
+    "body": {
+      "id": "uds-1792250512630",
+      "status": 200,
+      "result": {
+        "subscriptionId": 0
+      },
+      "rateLimits": [
+        {
+          "rateLimitType": "REQUEST_WEIGHT",
+          "interval": "MINUTE",
+          "intervalNum": 1,
+          "limit": 6000,
+          "count": 127
+        }
+      ]
+    }
+  },
+  {
+    "stream": "rest",
+    "method": "GET",
+    "path": "/api/v3/openOrders",
+    "body": []
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "executionReport",
+        "E": 1792250513389,
+        "s": "BTCUSDT",
+        "c": "tbitmvcjoioc1",
+        "S": "BUY",
+        "o": "MARKET",
+        "f": "GTC",
+        "q": "0.00025000",
+        "p": "0.00000000",
+        "P": "0.00000000",
+        "F": "0.00000000",
+        "g": -1,
+        "C": "",
+        "x": "NEW",
+        "X": "NEW",
+        "r": "NONE",
+        "i": 3879561,
+        "l": "0.00000000",
+        "z": "0.00000000",
+        "L": "0.00000000",
+        "n": "0",
+        "N": null,
+        "T": 1792250513389,
+        "t": -1,
+        "I": 8466593,
+        "w": true,
+        "m": false,
+        "M": false,
+        "O": 1792250513389,
+        "Z": "0.00000000",
+        "Y": "0.00000000",
+        "Q": "0.00000000",
+        "W": 1792250513389,
+        "V": "EXPIRE_MAKER"
+      }
+    }
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "executionReport",
+        "E": 1792250513389,
+        "s": "BTCUSDT",
+        "c": "tbitmvcjoioc1",
+        "S": "BUY",
+        "o": "MARKET",
+        "f": "GTC",
+        "q": "0.00025000",
+        "p": "0.00000000",
+        "P": "0.00000000",
+        "F": "0.00000000",
+        "g": -1,
+        "C": "",
+        "x": "TRADE",
+        "X": "FILLED",
+        "r": "NONE",
+        "i": 3879561,
+        "l": "0.00025000",
+        "z": "0.00025000",
+        "L": "81532.15000000",
+        "n": "0.00000000",
+        "N": "BTC",
+        "T": 1792250513389,
+        "t": 696203,
+        "I": 8466594,
+        "w": false,
+        "m": false,
+        "M": true,
+        "O": 1792250513389,
+        "Z": "20.38303750",
+        "Y": "20.38303750",
+        "Q": "0.00000000",
+        "W": 1792250513389,
+        "V": "EXPIRE_MAKER"
+      }
+    }
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "outboundAccountPosition",
+        "E": 1792250513389,
+        "u": 1792250513389,
+        "B": [
+          {
+            "a": "BTC",
+            "f": "1.00025000",
+            "l": "0.00000000"
+          },
+          {
+            "a": "USDT",
+            "f": "9979.61738500",
+            "l": "0.00000000"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "stream": "rest",
+    "method": "POST",
+    "path": "/api/v3/order",
+    "body": {
+      "symbol": "BTCUSDT",
+      "orderId": 3879561,
+      "orderListId": -1,
+      "clientOrderId": "tbitmvcjoioc1",
+      "transactTime": 1792250513389,
+      "price": "0.00000000",
+      "origQty": "0.00025000",
+      "executedQty": "0.00025000",
+      "origQuoteOrderQty": "0.00000000",
+      "cummulativeQuoteQty": "20.38303750",
+      "status": "FILLED",
+      "timeInForce": "GTC",
+      "type": "MARKET",
+      "side": "BUY",
+      "workingTime": 1792250513389,
+      "selfTradePreventionMode": "EXPIRE_MAKER"
+    }
+  },
+  {
+    "stream": "rest",
+    "method": "GET",
+    "path": "/api/v3/openOrders",
+    "body": []
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "listStatus",
+        "E": 1792250514436,
+        "s": "BTCUSDT",
+        "g": 130859,
+        "c": "OCO",
+        "l": "EXEC_STARTED",
+        "L": "EXECUTING",
+        "r": "NONE",
+        "C": "tbitmvcjojh92-L",
+        "T": 1792250514435,
+        "O": [
+          {
+            "s": "BTCUSDT",
+            "i": 3879565,
+            "c": "tbitmvcjojh92"
+          },
+          {
+            "s": "BTCUSDT",
+            "i": 3879566,
+            "c": "tbitmvcjojh93"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "executionReport",
+        "E": 1792250514436,
+        "s": "BTCUSDT",
+        "c": "tbitmvcjojh92",
+        "S": "SELL",
+        "o": "STOP_LOSS",
+        "f": "GTC",
+        "q": "0.00025000",
+        "p": "0.00000000",
+        "P": "77455.54000000",
+        "F": "0.00000000",
+        "g": 130859,
+        "C": "",
+        "x": "NEW",
+        "X": "NEW",
+        "r": "NONE",
+        "i": 3879565,
+        "l": "0.00000000",
+        "z": "0.00000000",
+        "L": "0.00000000",
+        "n": "0",
+        "N": null,
+        "T": 1792250514435,
+        "t": -1,
+        "I": 8466604,
+        "w": false,
+        "m": false,
+        "M": false,
+        "O": 1792250514435,
+        "Z": "0.00000000",
+        "Y": "0.00000000",
+        "Q": "0.00000000",
+        "V": "EXPIRE_MAKER"
+      }
+    }
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "executionReport",
+        "E": 1792250514436,
+        "s": "BTCUSDT",
+        "c": "tbitmvcjojh93",
+        "S": "SELL",
+        "o": "TAKE_PROFIT",
+        "f": "GTC",
+        "q": "0.00025000",
+        "p": "0.00000000",
+        "P": "81548.46000000",
+        "F": "0.00000000",
+        "g": 130859,
+        "C": "",
+        "x": "NEW",
+        "X": "NEW",
+        "r": "NONE",
+        "i": 3879566,
+        "l": "0.00000000",
+        "z": "0.00000000",
+        "L": "0.00000000",
+        "n": "0",
+        "N": null,
+        "T": 1792250514435,
+        "t": -1,
+        "I": 8466605,
+        "w": false,
+        "m": false,
+        "M": false,
+        "O": 1792250514435,
+        "Z": "0.00000000",
+        "Y": "0.00000000",
+        "Q": "0.00000000",
+        "V": "EXPIRE_MAKER"
+      }
+    }
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "outboundAccountPosition",
+        "E": 1792250514436,
+        "u": 1792250514435,
+        "B": [
+          {
+            "a": "BTC",
+            "f": "1.00000000",
+            "l": "0.00025000"
+          },
+          {
+            "a": "USDT",
+            "f": "9979.61738500",
+            "l": "0.00000000"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "stream": "rest",
+    "method": "POST",
+    "path": "/api/v3/orderList/oco",
+    "body": {
+      "orderListId": 130859,
+      "contingencyType": "OCO",
+      "listStatusType": "EXEC_STARTED",
+      "listOrderStatus": "EXECUTING",
+      "listClientOrderId": "tbitmvcjojh92-L",
+      "transactionTime": 1792250514435,
+      "symbol": "BTCUSDT",
+      "orders": [
+        {
+          "symbol": "BTCUSDT",
+          "orderId": 3879565,
+          "clientOrderId": "tbitmvcjojh92"
+        },
+        {
+          "symbol": "BTCUSDT",
+          "orderId": 3879566,
+          "clientOrderId": "tbitmvcjojh93"
+        }
+      ],
+      "orderReports": [
+        {
+          "symbol": "BTCUSDT",
+          "orderId": 3879565,
+          "orderListId": 130859,
+          "clientOrderId": "tbitmvcjojh92",
+          "transactTime": 1792250514435,
+          "price": "0.00000000",
+          "origQty": "0.00025000",
+          "executedQty": "0.00000000",
+          "origQuoteOrderQty": "0.00000000",
+          "cummulativeQuoteQty": "0.00000000",
+          "status": "NEW",
+          "timeInForce": "GTC",
+          "type": "STOP_LOSS",
+          "side": "SELL",
+          "stopPrice": "77455.54000000",
+          "workingTime": -1,
+          "selfTradePreventionMode": "EXPIRE_MAKER"
+        },
+        {
+          "symbol": "BTCUSDT",
+          "orderId": 3879566,
+          "orderListId": 130859,
+          "clientOrderId": "tbitmvcjojh93",
+          "transactTime": 1792250514435,
+          "price": "0.00000000",
+          "origQty": "0.00025000",
+          "executedQty": "0.00000000",
+          "origQuoteOrderQty": "0.00000000",
+          "cummulativeQuoteQty": "0.00000000",
+          "status": "NEW",
+          "timeInForce": "GTC",
+          "type": "TAKE_PROFIT",
+          "side": "SELL",
+          "stopPrice": "81548.46000000",
+          "workingTime": -1,
+          "selfTradePreventionMode": "EXPIRE_MAKER"
+        }
+      ]
+    }
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "executionReport",
+        "E": 1792250566305,
+        "s": "BTCUSDT",
+        "c": "tbitmvcjojh92",
+        "S": "SELL",
+        "o": "STOP_LOSS",
+        "f": "GTC",
+        "q": "0.00025000",
+        "p": "0.00000000",
+        "P": "77455.54000000",
+        "F": "0.00000000",
+        "g": 130859,
+        "C": "",
+        "x": "EXPIRED",
+        "X": "EXPIRED",
+        "r": "NONE",
+        "eR": "OCO_TRIGGER",
+        "i": 3879565,
+        "l": "0.00000000",
+        "z": "0.00000000",
+        "L": "0.00000000",
+        "n": "0",
+        "N": null,
+        "T": 1792250566305,
+        "t": -1,
+        "I": 8467255,
+        "w": false,
+        "m": false,
+        "M": false,
+        "O": 1792250514435,
+        "Z": "0.00000000",
+        "Y": "0.00000000",
+        "Q": "0.00000000",
+        "V": "EXPIRE_MAKER"
+      }
+    }
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "executionReport",
+        "E": 1792250566305,
+        "s": "BTCUSDT",
+        "c": "tbitmvcjojh93",
+        "S": "SELL",
+        "o": "TAKE_PROFIT",
+        "f": "GTC",
+        "q": "0.00025000",
+        "p": "0.00000000",
+        "P": "81548.46000000",
+        "F": "0.00000000",
+        "g": 130859,
+        "C": "",
+        "x": "NEW",
+        "X": "NEW",
+        "r": "NONE",
+        "i": 3879566,
+        "l": "0.00000000",
+        "z": "0.00000000",
+        "L": "0.00000000",
+        "n": "0",
+        "N": null,
+        "T": 1792250566305,
+        "t": -1,
+        "I": 8467256,
+        "w": true,
+        "m": false,
+        "M": false,
+        "O": 1792250514435,
+        "Z": "0.00000000",
+        "Y": "0.00000000",
+        "Q": "0.00000000",
+        "W": 1792250566305,
+        "V": "EXPIRE_MAKER"
+      }
+    }
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "executionReport",
+        "E": 1792250566305,
+        "s": "BTCUSDT",
+        "c": "tbitmvcjojh93",
+        "S": "SELL",
+        "o": "TAKE_PROFIT",
+        "f": "GTC",
+        "q": "0.00025000",
+        "p": "0.00000000",
+        "P": "81548.46000000",
+        "F": "0.00000000",
+        "g": 130859,
+        "C": "",
+        "x": "TRADE",
+        "X": "FILLED",
+        "r": "NONE",
+        "i": 3879566,
+        "l": "0.00025000",
+        "z": "0.00025000",
+        "L": "81555.98000000",
+        "n": "0.00000000",
+        "N": "USDT",
+        "T": 1792250566305,
+        "t": 696271,
+        "I": 8467257,
+        "w": false,
+        "m": false,
+        "M": true,
+        "O": 1792250514435,
+        "Z": "20.38899500",
+        "Y": "20.38899500",
+        "Q": "0.00000000",
+        "W": 1792250566305,
+        "V": "EXPIRE_MAKER"
+      }
+    }
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "listStatus",
+        "E": 1792250566305,
+        "s": "BTCUSDT",
+        "g": 130859,
+        "c": "OCO",
+        "l": "ALL_DONE",
+        "L": "ALL_DONE",
+        "r": "NONE",
+        "C": "tbitmvcjojh92-L",
+        "T": 1792250566305,
+        "O": [
+          {
+            "s": "BTCUSDT",
+            "i": 3879565,
+            "c": "tbitmvcjojh92"
+          },
+          {
+            "s": "BTCUSDT",
+            "i": 3879566,
+            "c": "tbitmvcjojh93"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "stream": "spot-user",
+    "body": {
+      "subscriptionId": 0,
+      "event": {
+        "e": "outboundAccountPosition",
+        "E": 1792250566305,
+        "u": 1792250566305,
+        "B": [
+          {
+            "a": "BTC",
+            "f": "1.00000000",
+            "l": "0.00000000"
+          },
+          {
+            "a": "USDT",
+            "f": "10000.00638000",
+            "l": "0.00000000"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "stream": "rest",
+    "method": "GET",
+    "path": "/api/v3/openOrders",
+    "body": []
+  }
+]

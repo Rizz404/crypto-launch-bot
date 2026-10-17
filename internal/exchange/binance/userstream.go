@@ -159,6 +159,9 @@ type spotExecutionReport struct {
 }
 
 func (t *Trader) handleSpotMessage(b []byte) {
+	if t.tap != nil {
+		t.tap("spot-user", b)
+	}
 	var msg struct {
 		ID     string          `json:"id"`
 		Status int             `json:"status"`
@@ -307,6 +310,9 @@ type futuresAlgoUpdate struct {
 }
 
 func (t *Trader) handleFuturesMessage(b []byte, ws *exchange.WSStream) {
+	if t.tap != nil {
+		t.tap("futures-user", b)
+	}
 	var wrap struct {
 		Data json.RawMessage `json:"data"`
 	}
