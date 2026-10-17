@@ -69,13 +69,13 @@ jobs:
         with:
           go-version-file: go.mod
       - name: Test storage and apply schema
-        run: go test -race -tags integration ./internal/storage
+        run: go test -race -count=1 -tags integration ./internal/storage
       - name: Test migration rollback and reapply
         env:
           TB_TEST_MIGRATIONS: "1"
-        run: go test -race -tags integration ./internal/storage -run '^TestMigrationCycle$'
+        run: go test -race -count=1 -tags integration ./internal/storage -run '^TestMigrationCycle$'
       - name: Test paper restart against the migrated database
-        run: go test -race -tags integration ./cmd/bot -run '^TestPaperSession'
+        run: go test -race -count=1 -tags integration ./cmd/bot -run '^TestPaperSession'
 
   monitoring:
     name: Prometheus alerts
