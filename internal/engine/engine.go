@@ -68,6 +68,7 @@ type Engine struct {
 	protections map[domain.PositionKey]*protection
 	leverage    map[domain.PositionKey]int
 	leverageSet map[domain.PositionKey]int
+	funding     map[instKey]strategy.FundingInfo
 	seq         int64
 	paused      bool
 
@@ -79,7 +80,7 @@ type instance struct {
 	cfg       strategy.Config
 	s         strategy.Strategy
 	tfs       map[domain.Timeframe]bool
-	symbols   map[string]bool
+	routes    map[instKey]bool // instruments whose candles the strategy receives
 	idPrefix  string
 	nextTimer time.Time
 }
@@ -122,6 +123,7 @@ func New(cfg Config) *Engine {
 		protections: map[domain.PositionKey]*protection{},
 		leverage:    map[domain.PositionKey]int{},
 		leverageSet: map[domain.PositionKey]int{},
+		funding:     map[instKey]strategy.FundingInfo{},
 		seq:         cfg.IDSeed,
 	}
 }
@@ -152,9 +154,9 @@ func (e *Engine) AddStrategy(cfg strategy.Config) error {
 	if cfg.ID == "" {
 		cfg.ID = cfg.Name
 	}
-	inst := &instance{cfg: cfg, s: s, tfs: map[domain.Timeframe]bool{}, symbols: map[string]bool{}, idPrefix: shortHash(cfg.ID)}
-	for _, sym := range cfg.Symbols {
-		inst.symbols[sym] = true
+	inst := &instance{cfg: cfg, s: s, tfs: map[domain.Timeframe]bool{}, routes: map[instKey]bool{}, idPrefix: shortHash(cfg.ID)}
+	for _, in := range cfg.Instruments() {
+		inst.routes[instKey{in.Exchange, in.Market, in.Symbol}] = true
 	}
 
 	e.mu.Lock()
@@ -235,7 +237,7 @@ func (e *Engine) OnCandle(ctx context.Context, c domain.Candle) {
 	// their intents are dropped, since acting on stale signals is unsafe.
 	stale := e.cfg.Clock().Sub(c.CloseTime()) > c.Timeframe.Duration()
 	for _, inst := range e.instances {
-		if inst.cfg.Exchange != c.Exchange || inst.cfg.Market != c.Market || !inst.symbols[c.Symbol] || !inst.tfs[c.Timeframe] {
+		if !inst.routes[k] || !inst.tfs[c.Timeframe] {
 			continue
 		}
 		intents := inst.s.OnCandle(c)
@@ -300,7 +302,7 @@ func (e *Engine) OnPrice(ctx context.Context, c domain.Candle) {
 	}
 	for _, inst := range e.instances {
 		ph, ok := inst.s.(strategy.PriceHandler)
-		if !ok || inst.cfg.Exchange != c.Exchange || inst.cfg.Market != c.Market || !inst.symbols[c.Symbol] {
+		if !ok || !inst.routes[k] {
 			continue
 		}
 		e.apply(ctx, inst, ph.OnPrice(c))
@@ -319,6 +321,13 @@ func (e *Engine) Tick(ctx context.Context, now time.Time) {
 		inst.nextTimer = now.Add(th.Interval())
 		e.apply(ctx, inst, th.OnTimer(now))
 	}
+}
+
+// SetFunding updates the funding rate of a perpetual.
+func (e *Engine) SetFunding(exchange, symbol string, f strategy.FundingInfo) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	e.funding[instKey{exchange, domain.Futures, symbol}] = f
 }
 
 // LastPrice returns the latest known price of a symbol.

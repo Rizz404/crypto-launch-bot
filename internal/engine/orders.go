@@ -552,6 +552,16 @@ func (c *stratCtx) Instrument(exchange string, m domain.Market, symbol string) (
 	return in, ok
 }
 
+func (c *stratCtx) LastPrice(exchange string, m domain.Market, symbol string) (decimal.Decimal, bool) {
+	p, ok := c.e.lastPrice[instKey{exchange, m, symbol}]
+	return p, ok
+}
+
+func (c *stratCtx) Funding(exchange, symbol string) (strategy.FundingInfo, bool) {
+	f, ok := c.e.funding[instKey{exchange, domain.Futures, symbol}]
+	return f, ok
+}
+
 func (c *stratCtx) OpenOrders(symbol string) []domain.Order {
 	var out []domain.Order
 	for _, o := range c.e.orders {

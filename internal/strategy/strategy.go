@@ -87,6 +87,14 @@ type OrderSpec struct {
 	PostOnly   bool
 }
 
+// Leg is an extra instrument traded by multi-market or multi-exchange
+// strategies (funding arbitrage, cross-exchange spreads).
+type Leg struct {
+	Exchange string
+	Market   domain.Market
+	Symbol   string
+}
+
 // Config is the configuration of one strategy instance.
 type Config struct {
 	ID       string // unique instance id, e.g. "emacross-btc-1h"
@@ -94,8 +102,24 @@ type Config struct {
 	Exchange string
 	Market   domain.Market
 	Symbols  []string
+	Legs     []Leg // optional extra instruments; their candles are routed too
 	Leverage int
 	Params   map[string]any
+}
+
+// Instruments lists every (exchange, market, symbol) the instance trades.
+func (c Config) Instruments() []Leg {
+	out := make([]Leg, 0, len(c.Symbols)+len(c.Legs))
+	for _, s := range c.Symbols {
+		out = append(out, Leg{Exchange: c.Exchange, Market: c.Market, Symbol: s})
+	}
+	return append(out, c.Legs...)
+}
+
+// FundingInfo is the current funding rate of a perpetual contract.
+type FundingInfo struct {
+	Rate decimal.Decimal // per funding interval; positive: longs pay shorts
+	Next time.Time
 }
 
 // Context gives a strategy read access to the engine state.
@@ -107,6 +131,10 @@ type Context interface {
 	Instrument(exchange string, m domain.Market, symbol string) (domain.Instrument, bool)
 	// OpenOrders returns the strategy's open Place orders on symbol.
 	OpenOrders(symbol string) []domain.Order
+	// LastPrice is the latest known trade price of an instrument.
+	LastPrice(exchange string, m domain.Market, symbol string) (decimal.Decimal, bool)
+	// Funding returns the current funding rate of a perpetual, if known.
+	Funding(exchange, symbol string) (FundingInfo, bool)
 }
 
 // Strategy is implemented by every strategy.
