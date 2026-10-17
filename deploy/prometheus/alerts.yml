@@ -1,0 +1,42 @@
+groups:
+  - name: tradingbot
+    rules:
+      - alert: TradingBotDown
+        expr: max(up{job="tradingbot"}) == 0
+        for: 3m
+        labels: {severity: critical}
+        annotations:
+          summary: Trading bot metrics endpoint is down
+
+      - alert: KillSwitchActive
+        expr: max(tradingbot_kill_switch) == 1
+        labels: {severity: critical}
+        annotations:
+          summary: Kill switch tripped; trading is halted
+
+      - alert: StaleMarketData
+        expr: time() - min(tradingbot_marketdata_last_candle_close_timestamp_seconds{timeframe="1m"}) > 300
+        for: 2m
+        labels: {severity: warning}
+        annotations:
+          summary: No closed 1m candle for over 5 minutes
+
+      - alert: EngineErrors
+        expr: sum(increase(tradingbot_notices_total{level="error"}[10m])) > 0
+        labels: {severity: warning}
+        annotations:
+          summary: The engine reported errors in the last 10 minutes
+
+      - alert: SlowOrderPlacement
+        expr: histogram_quantile(0.95, sum by (le) (rate(tradingbot_order_place_seconds_bucket[10m]))) > 2
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: 95th percentile order placement above 2s
+
+      - alert: ExchangeWeightHigh
+        expr: max(tradingbot_exchange_used_weight) > 1800
+        for: 2m
+        labels: {severity: warning}
+        annotations:
+          summary: Exchange request weight close to the limit

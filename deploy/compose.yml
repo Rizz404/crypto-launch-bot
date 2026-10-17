@@ -26,6 +26,7 @@ services:
     image: docker.io/prom/prometheus:v3.15.0
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro,Z
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro,Z
       - prometheus-data:/prometheus
     ports:
       - "127.0.0.1:9090:9090"
