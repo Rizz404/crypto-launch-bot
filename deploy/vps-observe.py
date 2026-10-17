@@ -99,7 +99,7 @@ problems = [key for key in ("containers", "health", "grafana", "prometheus", "da
             if not sample[key]["ok"]]
 if sample["containers"]["ok"]:
     rows = sample["containers"]["data"]
-    if {r["service"] for r in rows} != {"bot", "db", "prometheus", "grafana"} or any(
+    if {r["service"] for r in rows} != {"bot", "db", "dns", "prometheus", "grafana"} or any(
             r["status"] != "running" or r["oom_killed"] for r in rows):
         problems.append("container_state")
 if sample["database"]["ok"]:

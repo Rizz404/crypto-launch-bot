@@ -76,6 +76,27 @@ services:
     restart: unless-stopped
     logging: *logging
 
+  # The host resolver may return block-page addresses for exchange domains;
+  # see deploy/coredns/Corefile. It only serves the bot.
+  dns:
+    image: docker.io/coredns/coredns:1.14.7
+    command: ["-conf", "/etc/coredns/Corefile"]
+    mem_limit: 64m
+    cpus: 0.25
+    pids_limit: 64
+    sysctls:
+      net.ipv4.ip_unprivileged_port_start: 53
+    volumes:
+      - ./coredns/Corefile:/etc/coredns/Corefile:ro
+    networks:
+      resolver:
+        ipv4_address: 172.31.253.2
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    logging: *logging
+
   bot:
     image: ${BOT_IMAGE:?Set BOT_IMAGE to the published GHCR image digest}
     mem_limit: 512m
@@ -96,9 +117,17 @@ services:
     ports:
       - "127.0.0.1:${BOT_WEB_PORT:-18080}:8080"
       - "127.0.0.1:${BOT_METRICS_PORT:-19100}:9100"
+    # Docker's embedded DNS forwards names it does not know to this address.
+    dns: [172.31.253.2]
+    networks:
+      default:
+        gw_priority: 1 # keep the default route on the main network
+      resolver: {}
     depends_on:
       db:
         condition: service_healthy
+      dns:
+        condition: service_started
     read_only: true
     tmpfs: [/tmp]
     cap_drop: [ALL]
@@ -106,6 +135,12 @@ services:
     stop_grace_period: 30s
     restart: unless-stopped
     logging: *logging
+
+networks:
+  resolver:
+    ipam:
+      config:
+        - subnet: 172.31.253.0/29
 
 volumes:
   db-data:

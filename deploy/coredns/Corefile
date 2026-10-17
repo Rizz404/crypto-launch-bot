@@ -1,0 +1,12 @@
+# Resolver for the bot only. Docker's embedded DNS still answers service names
+# (db, prometheus) and forwards everything else here. The upstream resolver of
+# the host returns block-page addresses for some exchange domains, so queries
+# go over DNS-over-TLS with a verified certificate instead.
+.:53 {
+    errors
+    forward . tls://1.1.1.1 tls://1.0.0.1 {
+        tls_servername cloudflare-dns.com
+        health_check 15s
+    }
+    cache 300
+}
