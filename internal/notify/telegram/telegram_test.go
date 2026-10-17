@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
@@ -46,6 +47,41 @@ func TestTransportErrorsDoNotExposeToken(t *testing.T) {
 	require.Error(t, err)
 	assert.NotContains(t, err.Error(), "fake-token")
 	assert.Contains(t, err.Error(), "offline")
+}
+
+// The shutdown notice is queued right before the bot cancels Telegram's
+// context; it was lost on the testnet ("sendMessage: context canceled").
+func TestShutdownDoesNotCutOffMessageBeingSent(t *testing.T) {
+	b := newBot()
+	sending := make(chan struct{})
+	delivered := make(chan string, 1)
+	b.http = &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
+		if strings.HasSuffix(r.URL.Path, "/getUpdates") {
+			<-r.Context().Done()
+			return nil, r.Context().Err()
+		}
+		close(sending)
+		time.Sleep(50 * time.Millisecond) // shutdown happens meanwhile
+		if err := r.Context().Err(); err != nil {
+			return nil, err
+		}
+		require.NoError(t, r.ParseForm())
+		delivered <- r.Form.Get("text")
+		return response(`{"ok":true,"result":{}}`), nil
+	})}
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+	go func() { b.Run(ctx); close(done) }()
+	b.Notify("Bot stopped")
+	<-sending
+	cancel()
+	<-done
+	select {
+	case text := <-delivered:
+		assert.Equal(t, "Bot stopped", text)
+	default:
+		t.Fatal("the message in flight was cancelled by shutdown")
+	}
 }
 
 func TestMessageTruncationPreservesUTF8(t *testing.T) {

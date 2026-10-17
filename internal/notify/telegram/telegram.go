@@ -102,8 +102,15 @@ func (b *Bot) sendLoop(ctx context.Context) {
 				}
 			}
 		case text := <-b.queue:
-			b.sendAll(ctx, text)
-			<-tick.C
+			// A message already taken from the queue (often the shutdown
+			// notice itself) must not be cut off when shutdown cancels ctx.
+			sendCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 10*time.Second)
+			b.sendAll(sendCtx, text)
+			cancel()
+			select {
+			case <-tick.C:
+			case <-ctx.Done():
+			}
 		}
 	}
 }
