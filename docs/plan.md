@@ -9,6 +9,7 @@
 - Adapter, wiring, konfigurasi/passphrase, helper order yang hanya dipakai adapter yang dihapus, serta test terkait sudah dibersihkan. Contoh konfigurasi, `.env` lokal, dan `configs/config.yaml` sudah disesuaikan. Setelah perubahan ini, `make build`, `go test -race ./...`, `go vet -tags integration ./...`, dan `golangci-lint run` lolos. Fase 9 tetap berjalan sesuai daftar sisa pengujian di bawah.
 - **Kendala akses terbaru (2026-10-17):** user melaporkan Bybit terkena regulatory restriction dan saat ini hanya menyiapkan Binance Spot Testnet (login GitHub) serta Telegram. Fokus pengujian aktif adalah **Binance**. Adapter Bybit tetap ada dan dinonaktifkan di konfigurasi lokal; pengujian exchange nyata Bybit serta arbitrase lintas exchange (`xspread`) **ditunda**, bukan dinyatakan lolos. Penyelesaian Fase 9 pada cakupan aktif tidak membuktikan kesiapan fitur yang ditunda. Pengujian Futures Binance tetap menunggu kredensial Futures Demo yang terpisah.
 - Preflight terbaru: autentikasi baca akun Binance Spot Testnet berhasil dan `canTrade=true`. Tidak ada order dikirim. Token Telegram terverifikasi melalui `getMe` setelah satu retry (permintaan pertama timeout). Bagian Telegram belum ada di konfigurasi lokal sehingga integrasi bot masih nonaktif dan whitelist chat belum dikonfigurasi. Tidak ada pesan Telegram dikirim.
+- **Alur deploy (keputusan user, 2026-10-17):** laptop tidak dapat dipakai untuk pengujian 24 jam. Hosting paper/testnet dipindahkan lebih awal ke VPS pada Fase 9. Kode/rilis harus melalui GitHub terlebih dahulu; jangan menyalin folder kerja laptop ke VPS. Repo private → GitHub Actions (test/build) → GHCR → VPS menarik image berdasarkan digest. Target SSH VPS belum diberikan; belum ada deployment. Lihat [panduan deployment](deployment.md). Trading mainnet tetap menunggu persetujuan Fase 11.
 - Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
 - **Langkah berikutnya: lanjutkan sisa Fase 9** dari bagian "Hasil testing" dan "Backlog testing" di bawah. Temuan yang menghalangi pengujian lokal sudah diperbaiki dengan regression test; Fase 9 dan audit Fase 10 belum selesai.
 - **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
@@ -43,7 +44,7 @@
 - [x] Fase 8: Strategi lanjutan (grid/DCA, arbitrase, market making) (2026-10-17, belum dites)
 - [ ] Fase 9: Testing (sedang berjalan; hasil lokal di bawah)
 - [ ] Fase 10: Fixing (semua temuan Fase 9)
-- [ ] Fase 11: Live mini + VPS
+- [ ] Fase 11: Live mini (hosting VPS paper/testnet dimajukan ke Fase 9)
 
 ## Hasil testing (2026-10-17)
 
@@ -117,8 +118,21 @@ CLI `backtest -split 0.7 -save -out ...` dijalankan untuk tiga pasangan EMA. Spl
 
 Asumsi: saldo awal 1000 per segmen, leverage 2, risk default, taker 0,05%, maker 0,02%, slippage 2 bps, funding konstan 0,01% per 8 jam, fill OHLC 1h, tanpa warmup terpisah. Tick/lot/min-notional adalah asumsi aturan instrumen, bukan snapshot historis. Belum ada bukti cukup untuk memilih parameter live; default konfigurasi belum diubah. Perbandingan tiga parameter pada satu pair dan satu kuartal belum memadai untuk validasi strategi.
 
+### Rilis GitHub dan persiapan VPS (2026-10-17)
+
+- Repo private: [Rizz404/trading-bot](https://github.com/Rizz404/trading-bot), branch `main`. Riwayat lokal sudah di-push melalui SSH; kredensial di `.env` dan konfigurasi lokal tetap di-ignore. Varian `.env.*` juga di-ignore, kecuali `.env.example`.
+- Workflow `.github/workflows/ci.yml`: format, modul, vet, lint, unit race, build, TimescaleDB sementara, migrasi up/down/up, paper recovery, alert Prometheus, dan smoke test CLI image. Publikasi GHCR hanya sesudah pemeriksaan lolos dan hanya dari `main` (push/pemicu manual). Perubahan docs saja tidak membangun ulang image.
+- Image mendukung amd64/arm64, berisi bot/datafetch/backtest, ditandai commit SHA, dan deploy memakai digest. Actions dipin ke SHA. CI memakai `GITHUB_TOKEN` bawaan; tidak memerlukan API key exchange/Telegram atau SSH VPS.
+- Manifest [deploy/compose.vps.yml](../deploy/compose.vps.yml) memakai image tanpa `build:`, volume persisten, log terbatas, Prometheus retention 7 hari, port host loopback, dan guard `allow_live=false`. [configs/config.vps.example.yaml](../configs/config.vps.example.yaml) adalah contoh paper Spot BTC/ETH untuk uji operasional. Akses server, service saat boot, backup terjadwal, dan pengujian 24 jam belum dijalankan.
+- Verifikasi lokal: actionlint lolos; manifest Compose berhasil diinterpolasi dengan nilai dummy; contoh YAML lolos loader/validasi; image native berhasil dibangun; versi serta bantuan ketiga CLI diuji tanpa jaringan. Test command Go dan alert Prometheus lolos. Temuan CLI `-h` sebelumnya exit 1 sudah diperbaiki agar exit 0.
+- Run GitHub pertama: [39035767847](https://github.com/Rizz404/trading-bot/actions/runs/39035767847), commit `182ae2ba80899ec448ca571149393997d5e0d1c3`; **seluruh job sukses**, termasuk smoke test image serta publikasi amd64/arm64. Run pertama dipicu manual setelah push awal belum menghasilkan run.
+- Image rilis: `ghcr.io/rizz404/trading-bot@sha256:7001d22390fe948ed976bc774c3e2b352079a75a37775cdef07e2c1b42b88c86`. Nilai diambil dari log job publikasi yang sukses. Metadata visibility paket belum bisa dibaca memakai token CLI saat ini; akses baca GHCR server belum disiapkan. Repo sudah diverifikasi private; paket baru GHCR default private, dan workflow tidak mengubah visibility.
+- Deploy VPS belum dilakukan. Target SSH, kapasitas server, registry login, dan service saat boot masih perlu diverifikasi sebelum pengujian paper 24 jam dimulai.
+
 ### Sisa Fase 9
 
+- [x] Repo private, GitHub Actions, dan publikasi image GHCR sudah berjalan; semua job CI pertama lolos. Digest rilis tercatat di bagian rilis di atas. Akses baca GHCR untuk VPS tetap perlu disiapkan.
+- [ ] Deploy paper ke VPS dan periksa service saat boot, health, backup, dan logging. Manifest VPS menarik image rilis berdasarkan digest; tidak membangun dari folder laptop. Target SSH belum diberikan.
 - [ ] Audit lanjutan: late fill setelah cancel/timeout REST, replay setelah reconciliation, sizing/margin raw order dan reservasi inventori spot, state internal strategi setelah restart (misalnya penghitung DCA), failure/retry dan private WS/SL/TP exchange nyata. Skenario partial fill/pending/restart yang sudah lolos dirinci di atas.
 - [ ] Tambahkan fixture REST/WS **terekam** untuk Binance serta integration test testnet opt-in; pengujian Bybit ditunda karena pembatasan akses. Fixture sintetis saat ini belum membuktikan penerimaan order oleh exchange.
 - [ ] Paper live **24 jam**, reconnect/backfill dan restart dengan data live. Probe publik `https://fapi.binance.com/fapi/v1/time` pada sesi ini gagal `curl: (35) Recv failure: Connection reset by peer`; belum ada paper live yang berjalan.
@@ -291,7 +305,7 @@ Keputusan yang sudah diambil:
 | Data | PostgreSQL + TimescaleDB |
 | Kontrol | Telegram, web dashboard (templ + HTMX), CLI, Prometheus + Grafana |
 | Testing | Backtest → paper → testnet → live mini |
-| Deploy | Lokal dulu (CachyOS + podman), nanti VPS di Tokyo/Singapore |
+| Deploy | GitHub private → CI/GHCR → VPS untuk paper/testnet Fase 9; laptop untuk pengembangan |
 
 ## Arsitektur
 
@@ -465,10 +479,10 @@ Fase 0–1 dikerjakan dengan test langsung. Mulai Fase 2, ikuti "Aturan fase bui
 - Perbaiki semua temuan Fase 9. Prioritas: keamanan dana (order, risk, kill switch, secret) → integritas data → sisanya.
 - Setiap perbaikan disertai test yang membuktikan bug-nya hilang. Ulangi test terkait sampai semuanya lolos.
 
-**Fase 11 · Live mini + VPS**
+**Fase 11 · Live mini**
 - Hanya setelah Fase 10 bersih **dan** user menyetujui secara eksplisit.
 - Live di Binance dengan modal sangat kecil dan batas risk ketat. Strategi baru naik ke tahap ini setelah lolos backtest dan minimal 1–2 minggu paper/testnet.
-- Deploy ke VPS di Tokyo/Singapore (systemd atau Docker), backup DB, dan alert kalau bot mati (heartbeat).
+- Gunakan hosting VPS yang sudah diverifikasi saat paper/testnet Fase 9; tinjau kembali backup DB, heartbeat, dan konfigurasi khusus live.
 
 ## Catatan realistis
 - **Modal < $500 + 10–20 pair + futures**: min notional per order (sekitar 5–100 USDT tergantung pair dan exchange) membuat modal cepat terbagi tipis. Saat live awal, sebaiknya batasi ke 2–5 pair aktif sekaligus. Universe 20 pair tetap dipakai untuk backtest dan screening.
