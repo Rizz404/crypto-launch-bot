@@ -107,12 +107,22 @@ func run() error {
 	}
 	defer pool.Close()
 	store := storage.NewStore(pool)
-	ins, err := store.Instruments(ctx, scfg.Exchange, scfg.Market)
-	if err != nil {
-		return err
-	}
-	if len(ins) == 0 {
-		return fmt.Errorf("no instruments stored for %s %s; run datafetch first", scfg.Exchange, scfg.Market)
+	var ins []domain.Instrument
+	loaded := map[portfolio.AccountKey]bool{}
+	for _, in := range scfg.Instruments() {
+		key := portfolio.AccountKey{Exchange: in.Exchange, Market: in.Market}
+		if loaded[key] {
+			continue
+		}
+		loaded[key] = true
+		got, err := store.Instruments(ctx, in.Exchange, in.Market)
+		if err != nil {
+			return err
+		}
+		if len(got) == 0 {
+			return fmt.Errorf("no instruments stored for %s %s; run datafetch first", in.Exchange, in.Market)
+		}
+		ins = append(ins, got...)
 	}
 
 	bt := backtest.Config{
@@ -194,8 +204,8 @@ func saveRun(ctx context.Context, store *storage.Store, sc strategy.Config, segm
 			pts = append(pts, storage.EquityPoint{Time: p.Time, Equity: p.Equity, Balance: p.Equity})
 		}
 	}
-	account := portfolio.AccountKey{Exchange: sc.Exchange, Market: sc.Market}.String()
-	if err := store.InsertEquity(ctx, id, account, pts); err != nil {
+	// The curve is the total over all accounts of the run.
+	if err := store.InsertEquity(ctx, id, "total", pts); err != nil {
 		return id, err
 	}
 	return id, store.FinishRun(ctx, id, "completed", res.Metrics)

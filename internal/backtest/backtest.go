@@ -29,7 +29,7 @@ type CandleSource interface {
 type Config struct {
 	Strategy       strategy.Config
 	From, To       time.Time
-	InitialBalance decimal.Decimal
+	InitialBalance decimal.Decimal // per account (exchange + market)
 	Fees           map[domain.Market]broker.Fees
 	SlippageBps    float64
 	// FundingRate is charged on futures positions every 8 hours (00, 08,
@@ -75,14 +75,23 @@ func Run(ctx context.Context, cfg Config, src CandleSource) (*Result, error) {
 	clock := func() time.Time { return now }
 
 	var trades []domain.Trade
+	onTrade := func(t domain.Trade) { trades = append(trades, t) }
 	book := portfolio.NewBook()
-	acct := portfolio.NewAccount(portfolio.AccountKey{Exchange: sc.Exchange, Market: sc.Market}, cfg.InitialBalance,
-		func(t domain.Trade) { trades = append(trades, t) })
-	book.Add(acct)
-
-	sim := broker.NewSim(broker.SimConfig{Exchange: sc.Exchange, Fees: cfg.Fees, SlippageBps: cfg.SlippageBps, Clock: clock})
 	eng := engine.New(engine.Config{Book: book, Risk: risk.NewManager(cfg.Risk, log), Log: log, Clock: clock, IDSeed: 0})
-	eng.AddBroker(sim)
+
+	// One simulated broker per exchange and one account per exchange and
+	// market, each starting with InitialBalance.
+	sims := map[string]*broker.Sim{}
+	for _, in := range sc.Instruments() {
+		key := portfolio.AccountKey{Exchange: in.Exchange, Market: in.Market}
+		if book.Account(key) == nil {
+			book.Add(portfolio.NewAccount(key, cfg.InitialBalance, onTrade))
+		}
+		if sims[in.Exchange] == nil {
+			sims[in.Exchange] = broker.NewSim(broker.SimConfig{Exchange: in.Exchange, Fees: cfg.Fees, SlippageBps: cfg.SlippageBps, Clock: clock})
+			eng.AddBroker(sims[in.Exchange])
+		}
+	}
 	eng.SetInstruments(cfg.Instruments)
 	if err := eng.AddStrategy(sc); err != nil {
 		return nil, err
@@ -96,9 +105,9 @@ func Run(ctx context.Context, cfg Config, src CandleSource) (*Result, error) {
 		tfs = append(tfs, execTF)
 	}
 	var candles []domain.Candle
-	for _, sym := range sc.Symbols {
+	for _, in := range sc.Instruments() {
 		for _, tf := range tfs {
-			key := domain.SeriesKey{Exchange: sc.Exchange, Market: sc.Market, Symbol: sym, Timeframe: tf}
+			key := domain.SeriesKey{Exchange: in.Exchange, Market: in.Market, Symbol: in.Symbol, Timeframe: tf}
 			cs, err := src.Candles(ctx, key, cfg.From, cfg.To)
 			if err != nil {
 				return nil, fmt.Errorf("load %s: %w", key, err)
@@ -128,25 +137,32 @@ func Run(ctx context.Context, cfg Config, src CandleSource) (*Result, error) {
 		}
 		if c.Timeframe == execTF {
 			now = c.OpenTime
-			sim.OnCandle(c)
+			sims[c.Exchange].OnCandle(c)
 		}
 		now = c.CloseTime()
-		if c.Timeframe == execTF && sc.Market == domain.Futures && !cfg.FundingRate.IsZero() &&
+		if c.Timeframe == execTF && c.Market == domain.Futures && !cfg.FundingRate.IsZero() &&
 			now.Truncate(fundingInterval).Equal(now) {
+			acct := book.Account(portfolio.AccountKey{Exchange: c.Exchange, Market: c.Market})
 			acct.Mark(c.Symbol, c.Close)
 			acct.ApplyFunding(c.Symbol, cfg.FundingRate, now)
 		}
 		eng.OnCandle(ctx, c)
+		if c.Timeframe == execTF {
+			eng.Tick(ctx, now) // timer-driven strategies (DCA, funding)
+		}
 
 		if now.After(lastSample) {
 			lastSample = now
-			res.Equity = append(res.Equity, EquityPoint{Time: now, Equity: acct.Snapshot().Equity})
+			res.Equity = append(res.Equity, EquityPoint{Time: now, Equity: book.Total().Equity})
 		}
 	}
 
 	res.Trades = trades
-	res.OpenPositions = acct.Positions()
-	res.Metrics = Compute(cfg.InitialBalance, res.Equity, trades)
+	for _, a := range book.Accounts() {
+		res.OpenPositions = append(res.OpenPositions, a.Positions()...)
+	}
+	initial := cfg.InitialBalance.Mul(decimal.NewFromInt(int64(len(book.Accounts()))))
+	res.Metrics = Compute(initial, res.Equity, trades)
 	return res, nil
 }
 
