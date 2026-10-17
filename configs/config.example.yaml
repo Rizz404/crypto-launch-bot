@@ -22,9 +22,6 @@ exchanges:
   bybit:
     enabled: false
     testnet: true
-  okx:
-    enabled: false
-    testnet: true
 
 # Live candles recorded by `bot run`. Data comes from mainnet unless
 # app.mode is testnet (then stored under the exchange name "binance-testnet").
@@ -162,8 +159,7 @@ web:
   listen: 127.0.0.1:8080
 
 # Notes on exchanges:
-# - Symbols are exchange-native: binance/bybit "BTCUSDT", okx spot "BTC-USDT",
-#   okx swap "BTC-USDT-SWAP".
-# - Bybit (unified account) and OKX share one wallet between spot and futures:
-#   the bot trades only one market per exchange there.
-# - Testnet mode uses Binance testnet, Bybit testnet and OKX demo trading.
+# - Binance and Bybit symbols use the exchange-native format "BTCUSDT".
+# - Bybit unified accounts share one wallet between spot and futures:
+#   the bot trades only one market at a time on Bybit.
+# - Testnet mode uses the Binance and Bybit testing environments.

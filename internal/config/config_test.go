@@ -145,3 +145,43 @@ universe:
 	assert.Equal(t, []string{"DOGE"}, cfg.Universe.ExcludeBases)
 	assert.Equal(t, "USDC", DefaultExcludeBases[0], "package default not mutated")
 }
+
+func TestStrategyParamsAndFeeOverridesKeepDefaults(t *testing.T) {
+	path := writeFile(t, "config.yaml", fmt.Sprintf(baseYAML, "paper", true)+`
+strategies:
+  - id: sample
+    name: emacross
+    exchange: binance
+    market: futures
+    symbols: [BTCUSDT]
+    params: {fast: 5, timeframe: 4h}
+backtest:
+  fees:
+    futures: {maker: 0.0001}
+`)
+	cfg, err := load(path, nil)
+	require.NoError(t, err)
+	sc, ok := cfg.Strategy("sample")
+	require.True(t, ok)
+	assert.Equal(t, "4h", sc.Params["timeframe"])
+	assert.EqualValues(t, 5, sc.Params["fast"])
+	assert.Equal(t, 0.0001, cfg.Backtest.Fees["futures"].Maker)
+	assert.Equal(t, 0.0005, cfg.Backtest.Fees["futures"].Taker)
+	assert.Equal(t, 0.001, cfg.Backtest.Fees["spot"].Taker)
+}
+
+func TestWebRequiresPasswordOffLoopbackAndRejectsYAMLSecrets(t *testing.T) {
+	for _, listen := range []string{"0.0.0.0:8080", "[::]:8080"} {
+		path := writeFile(t, "config.yaml", fmt.Sprintf(baseYAML, "paper", true)+fmt.Sprintf("web:\n  enabled: true\n  listen: %q\n", listen))
+		_, err := load(path, nil)
+		assert.ErrorContains(t, err, "TB_WEB__PASSWORD")
+		_, err = load(path, []string{"TB_WEB__PASSWORD=test-password"})
+		assert.NoError(t, err)
+	}
+	for _, secret := range []string{"web:\n  password: unsafe\n", "telegram:\n  token: unsafe\n", "    api_key: unsafe\n"} {
+		path := writeFile(t, "config.yaml", fmt.Sprintf(baseYAML, "paper", true)+secret)
+		_, err := load(path, nil)
+		require.Error(t, err)
+		assert.NotContains(t, err.Error(), "unsafe")
+	}
+}

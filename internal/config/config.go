@@ -30,7 +30,7 @@ import (
 const envPrefix = "TB_"
 
 // SupportedExchanges have market data and trading adapters.
-var SupportedExchanges = []string{"binance", "bybit", "okx"}
+var SupportedExchanges = []string{"binance", "bybit"}
 
 // Mode is the execution mode of the bot.
 type Mode string
@@ -160,11 +160,10 @@ type MetricsConfig struct {
 }
 
 type ExchangeConfig struct {
-	Enabled    bool   `koanf:"enabled"`
-	Testnet    bool   `koanf:"testnet"`
-	APIKey     Secret `koanf:"api_key"`
-	APISecret  Secret `koanf:"api_secret"`
-	Passphrase Secret `koanf:"passphrase"` // OKX only
+	Enabled   bool   `koanf:"enabled"`
+	Testnet   bool   `koanf:"testnet"`
+	APIKey    Secret `koanf:"api_key"`
+	APISecret Secret `koanf:"api_secret"`
 }
 
 // MarketDataConfig selects which live candles the bot records.
@@ -188,7 +187,7 @@ type UniverseConfig struct {
 }
 
 // secretKeys may only be set through the environment.
-var secretKeys = []string{"api_key", "api_secret", "passphrase"}
+var secretKeys = []string{"api_key", "api_secret"}
 
 // DefaultExcludeBases are assets that are pegged or wrapped, and therefore
 // not worth trading against USDT.
@@ -249,6 +248,17 @@ func Load(path, envFile string) (*Config, error) {
 
 func load(path string, environ []string) (*Config, error) {
 	k := koanf.New(".")
+	cfg := defaults()
+	// mapstructure replaces map values (Fees structs) rather than merging
+	// individual fields into them. Seed the leaf keys before overlays so
+	// changing only maker doesn't silently turn taker fees into zero.
+	for market, fees := range cfg.Backtest.Fees {
+		for field, value := range map[string]float64{"maker": fees.Maker, "taker": fees.Taker} {
+			if err := k.Set("backtest.fees."+market+"."+field, value); err != nil {
+				return nil, fmt.Errorf("load fee defaults: %w", err)
+			}
+		}
+	}
 
 	if err := k.Load(file.Provider(path), yaml.Parser()); err != nil {
 		return nil, fmt.Errorf("load config %s: %w", path, err)
@@ -266,7 +276,6 @@ func load(path string, environ []string) (*Config, error) {
 		return nil, fmt.Errorf("load env: %w", err)
 	}
 
-	cfg := defaults()
 	if err := k.Unmarshal("", &cfg); err != nil {
 		return nil, fmt.Errorf("decode config: %w", err)
 	}
@@ -426,9 +435,6 @@ func (c *Config) Validate() error {
 		}
 		if (c.App.Mode == ModeTestnet || c.App.Mode == ModeLive) && (ex.APIKey == "" || ex.APISecret == "") {
 			errs = append(errs, fmt.Errorf("exchanges.%s needs API credentials in %s mode", name, c.App.Mode))
-		}
-		if name == "okx" && (c.App.Mode == ModeTestnet || c.App.Mode == ModeLive) && ex.Passphrase == "" {
-			errs = append(errs, errors.New("exchanges.okx needs a passphrase (TB_EXCHANGES__OKX__PASSPHRASE)"))
 		}
 	}
 	return errors.Join(errs...)
