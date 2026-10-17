@@ -118,8 +118,17 @@ type StrategyConfig struct {
 	Exchange string         `koanf:"exchange"`
 	Market   string         `koanf:"market"`
 	Symbols  []string       `koanf:"symbols"` // empty: the marketdata symbols/universe
+	Legs     []LegConfig    `koanf:"legs"`    // extra instruments (arbitrage strategies)
 	Leverage int            `koanf:"leverage"`
 	Params   map[string]any `koanf:"params"`
+}
+
+// LegConfig is an extra instrument of a strategy. Exchange defaults to the
+// strategy exchange.
+type LegConfig struct {
+	Exchange string `koanf:"exchange"`
+	Market   string `koanf:"market"`
+	Symbol   string `koanf:"symbol"`
 }
 
 // BacktestConfig holds simulation costs.
@@ -381,6 +390,14 @@ func (c *Config) Validate() error {
 		}
 		if _, err := domain.ParseMarket(sc.Market); err != nil {
 			errs = append(errs, fmt.Errorf("strategies[%d] (%s): %w", i, sc.ID, err))
+		}
+		for j, leg := range sc.Legs {
+			if _, err := domain.ParseMarket(leg.Market); err != nil {
+				errs = append(errs, fmt.Errorf("strategies[%d].legs[%d] (%s): %w", i, j, sc.ID, err))
+			}
+			if leg.Symbol == "" {
+				errs = append(errs, fmt.Errorf("strategies[%d].legs[%d] (%s): symbol is required", i, j, sc.ID))
+			}
 		}
 	}
 	if c.Risk.MaxLeverage < 1 {
