@@ -12,6 +12,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"net"
 	"os"
 	"slices"
 	"strings"
@@ -74,6 +75,16 @@ type Config struct {
 	Backtest   BacktestConfig            `koanf:"backtest"`
 	Paper      PaperConfig               `koanf:"paper"`
 	Telegram   TelegramConfig            `koanf:"telegram"`
+	Web        WebConfig                 `koanf:"web"`
+}
+
+// WebConfig configures the dashboard served by `bot run`.
+type WebConfig struct {
+	Enabled bool   `koanf:"enabled"`
+	Listen  string `koanf:"listen"`
+	// Password enables HTTP basic auth (any user name); only via
+	// TB_WEB__PASSWORD. Required when listening beyond localhost.
+	Password Secret `koanf:"password"`
 }
 
 // TelegramConfig configures notifications and remote commands.
@@ -193,6 +204,7 @@ func defaults() Config {
 		Risk:     risk.DefaultConfig(),
 		Paper:    PaperConfig{InitialBalance: 1000, Resume: true},
 		Telegram: TelegramConfig{NotifyLevel: "warn", DailySummary: true},
+		Web:      WebConfig{Enabled: true, Listen: "127.0.0.1:8080"},
 		Backtest: BacktestConfig{
 			InitialBalance: 1000,
 			SlippageBps:    2,
@@ -269,6 +281,9 @@ func checkNoSecretsInFile(k *koanf.Koanf) error {
 			}
 		}
 	}
+	if k.String("web.password") != "" {
+		errs = append(errs, errors.New("web.password must not be set in the config file, use TB_WEB__PASSWORD"))
+	}
 	if k.String("telegram.token") != "" {
 		errs = append(errs, errors.New("telegram.token must not be set in the config file, use TB_TELEGRAM__TOKEN"))
 	}
@@ -301,6 +316,16 @@ func (c *Config) Validate() error {
 		errs = append(errs, errors.New("metrics.listen is required when metrics are enabled"))
 	}
 
+	if c.Web.Enabled {
+		host, _, err := net.SplitHostPort(c.Web.Listen)
+		ip := net.ParseIP(host)
+		switch {
+		case err != nil:
+			errs = append(errs, fmt.Errorf("web.listen %q: %w", c.Web.Listen, err))
+		case c.Web.Password == "" && host != "localhost" && (ip == nil || !ip.IsLoopback()):
+			errs = append(errs, errors.New("web.listen is not localhost: set TB_WEB__PASSWORD"))
+		}
+	}
 	if c.Telegram.Enabled {
 		if c.Telegram.Token == "" {
 			errs = append(errs, errors.New("telegram.enabled needs a token (set TB_TELEGRAM__TOKEN)"))

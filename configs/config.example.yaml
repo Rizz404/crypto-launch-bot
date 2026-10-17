@@ -103,3 +103,9 @@ telegram:
   chat_ids: []             # e.g. [123456789]
   notify_level: warn       # engine notices forwarded: info | warn | error
   daily_summary: true      # message at 00:00 UTC
+
+# Web dashboard served by `bot run`. Off localhost it needs TB_WEB__PASSWORD
+# (HTTP basic auth, any user name); put it behind TLS (reverse proxy or VPN).
+web:
+  enabled: true
+  listen: 127.0.0.1:8080
