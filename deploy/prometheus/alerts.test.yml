@@ -1,0 +1,89 @@
+# Run: make test-monitoring (promtool, no live services required).
+rule_files: [alerts.yml]
+evaluation_interval: 1m
+tests:
+  - name: failures and alert hold times
+    interval: 1m
+    input_series:
+      - series: 'up{job="tradingbot",instance="host"}'
+        values: '0x20'
+      - series: 'tradingbot_kill_switch'
+        values: '1x20'
+      - series: 'tradingbot_marketdata_last_candle_close_timestamp_seconds{timeframe="1m"}'
+        values: '0x20'
+      - series: 'tradingbot_notices_total{level="error"}'
+        values: '0+1x20'
+      - series: 'tradingbot_exchange_used_weight{exchange="binance",market="futures"}'
+        values: '2000x20'
+      - series: 'tradingbot_order_place_seconds_bucket{exchange="binance",result="ok",le="1"}'
+        values: '0+1x20'
+      - series: 'tradingbot_order_place_seconds_bucket{exchange="binance",result="ok",le="5"}'
+        values: '0+10x20'
+      - series: 'tradingbot_order_place_seconds_bucket{exchange="binance",result="ok",le="+Inf"}'
+        values: '0+10x20'
+    alert_rule_test:
+      - eval_time: 2m
+        alertname: TradingBotDown
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: StaleMarketData
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: SlowOrderPlacement
+        exp_alerts: []
+      - eval_time: 15m
+        alertname: TradingBotDown
+        exp_alerts:
+          - exp_labels: {severity: critical}
+            exp_annotations: {summary: Trading bot metrics endpoint is down}
+      - eval_time: 15m
+        alertname: KillSwitchActive
+        exp_alerts:
+          - exp_labels: {severity: critical}
+            exp_annotations: {summary: "Kill switch tripped; trading is halted"}
+      - eval_time: 15m
+        alertname: StaleMarketData
+        exp_alerts:
+          - exp_labels: {severity: warning}
+            exp_annotations: {summary: No closed 1m candle for over 5 minutes}
+      - eval_time: 15m
+        alertname: EngineErrors
+        exp_alerts:
+          - exp_labels: {severity: warning}
+            exp_annotations: {summary: The engine reported errors in the last 10 minutes}
+      - eval_time: 15m
+        alertname: SlowOrderPlacement
+        exp_alerts:
+          - exp_labels: {severity: warning}
+            exp_annotations: {summary: 95th percentile order placement above 2s}
+      - eval_time: 15m
+        alertname: ExchangeWeightHigh
+        exp_alerts:
+          - exp_labels: {severity: warning}
+            exp_annotations: {summary: Exchange request weight close to the limit}
+  - name: healthy signals do not alert
+    interval: 1m
+    input_series:
+      - series: 'up{job="tradingbot",instance="host"}'
+        values: '1x20'
+      - series: 'up{job="tradingbot",instance="container"}'
+        values: '0x20'
+      - series: 'tradingbot_kill_switch'
+        values: '0x20'
+      - series: 'tradingbot_marketdata_last_candle_close_timestamp_seconds{timeframe="1m"}'
+        values: '0+60x20'
+      - series: 'tradingbot_notices_total{level="error"}'
+        values: '0x20'
+      - series: 'tradingbot_exchange_used_weight{exchange="binance",market="futures"}'
+        values: '100x20'
+      - series: 'tradingbot_order_place_seconds_bucket{exchange="binance",result="ok",le="1"}'
+        values: '0+10x20'
+      - series: 'tradingbot_order_place_seconds_bucket{exchange="binance",result="ok",le="+Inf"}'
+        values: '0+10x20'
+    alert_rule_test:
+      - {eval_time: 15m, alertname: TradingBotDown, exp_alerts: []}
+      - {eval_time: 15m, alertname: KillSwitchActive, exp_alerts: []}
+      - {eval_time: 15m, alertname: StaleMarketData, exp_alerts: []}
+      - {eval_time: 15m, alertname: EngineErrors, exp_alerts: []}
+      - {eval_time: 15m, alertname: SlowOrderPlacement, exp_alerts: []}
+      - {eval_time: 15m, alertname: ExchangeWeightHigh, exp_alerts: []}
