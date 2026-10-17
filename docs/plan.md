@@ -4,9 +4,9 @@
 
 ## Status saat ini (2026-10-17)
 
-- **Fase 0–5 selesai** (2026-10-17; Fase 2–5 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
+- **Fase 0–6 selesai** (2026-10-17; Fase 2–6 belum dites). `bot run` merekam candle live Binance (spot/futures) ke TimescaleDB dengan backfill gap otomatis, dan `datafetch` mengunduh data historis. Engine trading (strategi, risk, order) belum ada.
 - Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
-- **Langkah berikutnya: Fase 6** (web dashboard templ + HTMX).
+- **Langkah berikutnya: Fase 7** (adapter Bybit + OKX: market data dan trading).
 - **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
 - Cara menjalankan: lihat [README.md](../README.md).
 - Tandai fase yang selesai di bagian "Progres" di bawah setiap kali satu fase beres.
@@ -34,7 +34,7 @@
 - [x] Fase 3: Risk + OMS + Paper trading (2026-10-17, belum dites)
 - [x] Fase 4: Binance LiveBroker (testnet/mainnet) (2026-10-17, belum dites)
 - [x] Fase 5: Telegram + Prometheus/Grafana (2026-10-17, belum dites)
-- [ ] Fase 6: Web dashboard
+- [x] Fase 6: Web dashboard (2026-10-17, belum dites)
 - [ ] Fase 7: Bybit + OKX
 - [ ] Fase 8: Strategi lanjutan (grid/DCA, arbitrase, market making)
 - [ ] Fase 9: Testing (semua fitur)
@@ -75,6 +75,10 @@
   - Perintah: `/status`, `/positions`, `/balance`, `/pnl`, `/orders`, `/strategies`, `/pause`, `/resume` (ditolak saat kill switch aktif), `/killswitch confirm`, `/reset confirm`, `/stop confirm`, `/help`.
   - Notifikasi: entry terisi, trade ditutup (PnL), notice engine ≥ `notify_level`, ringkasan harian 00:00 UTC.
   - Metrics trading (`tradingbot_*`) terisi dengan benar; dashboard Grafana termuat (panel Prometheus + tabel TimescaleDB); alert Prometheus menyala sesuai kondisi (promtool hanya mengecek sintaks).
+- **Fase 6**
+  - Dashboard di browser (desktop + HP, light/dark): overview, partial auto-refresh, tombol pause/resume/kill/reset (konfirmasi), chart candle dengan marker trade (posisi marker di bar yang benar), chart equity, daftar dan detail backtest.
+  - Keamanan: basic auth saat `TB_WEB__PASSWORD` di-set; validasi menolak listen non-localhost tanpa password; aksi `POST` tanpa header `HX-Request` → 403; header CSP/X-Frame-Options; CSP tidak memblokir htmx/lightweight-charts.
+  - Mode tanpa sesi (hanya market data): halaman tetap jalan, tanpa panel live.
 
 ## Pertanyaan terbuka (belum diputuskan)
 
@@ -141,6 +145,12 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 - Telegram memakai HTTP Bot API langsung ([internal/notify/telegram](../internal/notify/telegram/)). Token hanya dari `TB_TELEGRAM__TOKEN`; `chat_ids` di YAML. Perintah berbahaya butuh argumen `confirm`. Perintah didaftarkan di [cmd/bot/commands.go](../cmd/bot/commands.go).
 - Metrics trading ada di [internal/metrics/trading.go](../internal/metrics/trading.go); sesi memperbarui gauge setiap 10 detik. Engine punya hook `OnPlaced` untuk latensi broker.
 - Dashboard `deploy/grafana/dashboards/trading-bot.json` (uid `tradingbot`) dan alert `deploy/prometheus/alerts.yml`. Belum ada Alertmanager: alert terlihat di UI Prometheus, sedangkan notifikasi real-time dikirim bot lewat Telegram.
+
+### Fase 6 (web dashboard)
+
+- `internal/web`: server `net/http` + templ ([internal/web/views](../internal/web/views/), hasil generate `*_templ.go` ikut di-commit; regenerate dengan `make generate`, tool templ dipasang sebagai `go tool`). htmx 2.0.11 dan lightweight-charts 5.2.1 di-embed (`internal/web/static`), tanpa CDN saat runtime.
+- Dashboard jalan di dalam `bot run` (`web.listen`, default `127.0.0.1:8080`). Sesi diakses lewat antarmuka `web.Live` ([cmd/bot/web.go](../cmd/bot/web.go)).
+- Rute: `/` (overview), `/partials/*` (HTMX), `POST /actions/{pause,resume,kill,reset}`, `/chart?series=exchange:market:symbol:tf[&run=id]`, `/api/candles`, `/api/equity`, `/backtests`, `/backtests/{id}`.
 
 ---
 
