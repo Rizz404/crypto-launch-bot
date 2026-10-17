@@ -128,10 +128,35 @@ func StrategyConfig(sc config.StrategyConfig, fallback []string) (strategy.Confi
 	if len(symbols) == 0 {
 		symbols = fallback
 	}
-	return strategy.Config{
+	cfg := strategy.Config{
 		ID: sc.ID, Name: sc.Name, Exchange: sc.Exchange, Market: m,
 		Symbols: symbols, Leverage: sc.Leverage, Params: sc.Params,
-	}, nil
+	}
+	for _, l := range sc.Legs {
+		lm, err := domain.ParseMarket(l.Market)
+		if err != nil {
+			return strategy.Config{}, err
+		}
+		ex := l.Exchange
+		if ex == "" {
+			ex = sc.Exchange
+		}
+		cfg.Legs = append(cfg.Legs, strategy.Leg{Exchange: ex, Market: lm, Symbol: l.Symbol})
+	}
+	return cfg, nil
+}
+
+// RenameExchanges maps the base exchange names of a strategy and its legs
+// with fn (e.g. to their testnet data names).
+func RenameExchanges(cfg strategy.Config, fn func(base string) string) strategy.Config {
+	cfg.Exchange = fn(cfg.Exchange)
+	legs := make([]strategy.Leg, len(cfg.Legs))
+	for i, l := range cfg.Legs {
+		l.Exchange = fn(l.Exchange)
+		legs[i] = l
+	}
+	cfg.Legs = legs
+	return cfg
 }
 
 // Fees converts the configured fee table.
