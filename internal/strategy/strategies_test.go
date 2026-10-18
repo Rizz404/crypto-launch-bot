@@ -89,6 +89,22 @@ func TestGridLevelsFillRestartAndStop(t *testing.T) {
 	assert.Empty(t, s.OnCandle(bar(101)), "stopped grid stays stopped")
 }
 
+// Spot buys on Binance/Bybit pay the commission in the base coin: the sell
+// leg must not ask for more than arrived (rejected as insufficient balance).
+func TestGridSellsWhatTheBuyDelivered(t *testing.T) {
+	c := ctx()
+	s := makeStrategy(t, c, cfg("grid", domain.Spot, map[string]any{"lower": 90, "upper": 110, "levels": 4, "quote_per_level": 10}))
+	require.Len(t, s.OnCandle(bar(101)), 3)
+	fh := s.(strategy.FillHandler)
+	o := domain.Order{ClientID: "tbg1", Symbol: "BTCUSDT", Market: domain.Spot, Side: domain.Buy, Price: decimal.NewFromInt(95),
+		Status: domain.OrderPartiallyFilled, Tag: domain.TagStrategy, FilledQty: decimal.RequireFromString("0.06")}
+	assert.Empty(t, fh.OnFill(domain.Fill{BaseFee: decimal.RequireFromString("0.00006")}, o))
+	o.Status, o.FilledQty = domain.OrderFilled, decimal.RequireFromString("0.1")
+	sell := fh.OnFill(domain.Fill{BaseFee: decimal.RequireFromString("0.00004")}, o)
+	require.Len(t, sell, 1)
+	assert.Equal(t, "0.0999", sell[0].Order.Quantity.String(), "0.1 bought minus 0.0001 paid as commission")
+}
+
 func TestDCAScheduleDipLimitAndAverageEntryExit(t *testing.T) {
 	c := ctx()
 	k := strategy.Leg{Exchange: "sim", Market: domain.Spot, Symbol: "BTCUSDT"}

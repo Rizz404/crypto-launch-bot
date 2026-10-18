@@ -36,6 +36,8 @@ type Strategy struct {
 	levels  []decimal.Decimal
 	started bool
 	stopped bool
+	// baseFees sums the base-coin commission per order until it fills.
+	baseFees map[string]decimal.Decimal
 }
 
 func (s *Strategy) Init(ctx strategy.Context, cfg strategy.Config) error {
@@ -54,7 +56,7 @@ func (s *Strategy) Init(ctx strategy.Context, cfg strategy.Config) error {
 	if err != nil {
 		return err
 	}
-	s.tf, s.symbol = tf, cfg.Symbols[0]
+	s.tf, s.symbol, s.baseFees = tf, cfg.Symbols[0], map[string]decimal.Decimal{}
 	for i := 0; i <= s.p.Levels; i++ {
 		var px float64
 		if s.p.Geometric {
@@ -98,14 +100,23 @@ func (s *Strategy) OnCandle(c domain.Candle) []strategy.Intent {
 }
 
 // OnFill places the opposite order one level away once an order is filled.
-func (s *Strategy) OnFill(_ domain.Fill, o domain.Order) []strategy.Intent {
-	if o.Symbol != s.symbol || o.Status != domain.OrderFilled || s.stopped || o.Tag != domain.TagStrategy {
+func (s *Strategy) OnFill(f domain.Fill, o domain.Order) []strategy.Intent {
+	if o.Symbol != s.symbol || s.stopped || o.Tag != domain.TagStrategy {
 		return nil
 	}
+	if f.BaseFee.IsPositive() {
+		s.baseFees[o.ClientID] = s.baseFees[o.ClientID].Add(f.BaseFee)
+	}
+	if o.Status != domain.OrderFilled {
+		return nil
+	}
+	// Spot buys may pay the commission in the base coin: sell what arrived.
+	received := o.FilledQty.Sub(s.baseFees[o.ClientID])
+	delete(s.baseFees, o.ClientID)
 	i := s.levelIndex(o.Price)
 	switch {
 	case o.Side == domain.Buy && i+1 < len(s.levels):
-		return []strategy.Intent{s.order(o.Market, domain.Sell, i+1, o.FilledQty)}
+		return []strategy.Intent{s.order(o.Market, domain.Sell, i+1, received)}
 	case o.Side == domain.Sell && i-1 >= 0:
 		return []strategy.Intent{s.order(o.Market, domain.Buy, i-1, s.qty(s.levels[i-1]))}
 	}
