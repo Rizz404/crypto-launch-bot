@@ -6,7 +6,15 @@ berjalan di VPS; tidak ada langkah deployment baru setelah permintaan berhenti.
 Fase 9 belum selesai dan uji 24 jam belum dinyatakan dimulai/lulus secara formal.
 Baca [plan](plan.md) untuk cakupan lengkap dan [runbook](deployment.md) untuk operasi.
 
-## Status terbaru (Claude, 2026-10-18 15:50 UTC / 22:50 WIB)
+## Status terbaru (Claude, 2026-10-18 16:45 UTC / 23:45 WIB)
+
+- **Stack berjalan dalam mode testnet** (uji multi-strategi 3 hari, lihat plan "Fase 10"). Source `7cc70966c0d093f0db61eca1bbacd4db3e2bae77`, image
+  `ghcr.io/rizz404/trading-bot@sha256:0070bdc06e384868963a3c4a3392101a84ba66df4d634a63cf6b6e7f27ece3eb`.
+- `.env.vps` berisi kredensial Spot Testnet dan `TB_APP__MODE=testnet`. Config paper disimpan di `configs/config.paper.yaml`;
+  untuk kembali ke paper: salin balik, set `TB_APP__MODE=paper`, recreate bot.
+- Nama direktori/project tetap `trading-bot-paper` agar unit systemd, backup, dan observasi tidak berubah.
+
+## Status sebelumnya (Claude, 2026-10-18 15:50 UTC / 22:50 WIB)
 
 - **Observasi paper 24 jam lulus** (lihat plan, "Hasil observasi 24 jam").
 - Berjalan: source `eb4c11ba8a836f22006f52e9ea8c2fb5130bd14b`, image
