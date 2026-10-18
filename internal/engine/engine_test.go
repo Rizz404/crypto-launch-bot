@@ -373,6 +373,28 @@ func TestHeldRiskIgnoresWarmupUntilArmed(t *testing.T) {
 	assert.Contains(t, reason, "daily loss")
 }
 
+// Reconciliation reports a fill missed while the user stream was down under
+// a synthetic trade id. If the exchange's own execution arrives later, it
+// must not be counted a second time.
+func TestLateExecutionAfterSyncedFillIsNotCountedTwice(t *testing.T) {
+	h := setup(t)
+	key := domain.PositionKey{Exchange: "sim", Market: domain.Futures, Symbol: "BTCUSDT"}
+	h.e.AdoptOrders([]domain.Order{{ClientID: "tbraw1", Exchange: key.Exchange, Market: key.Market, Symbol: key.Symbol,
+		Side: domain.Buy, Type: domain.OrderLimit, Price: decimal.NewFromInt(100), Quantity: decimal.NewFromInt(1),
+		Status: domain.OrderNew, Tag: domain.TagStrategy, Strategy: "test"}})
+	fill := func(tradeID string) broker.Event {
+		return broker.Event{Kind: broker.EventFill,
+			Order: domain.Order{ClientID: "tbraw1", Status: domain.OrderFilled, FilledQty: decimal.NewFromInt(1), AvgPrice: decimal.NewFromInt(100)},
+			Fill: domain.Fill{OrderClientID: "tbraw1", TradeID: tradeID, Exchange: key.Exchange, Market: key.Market, Symbol: key.Symbol,
+				Side: domain.Buy, Price: decimal.NewFromInt(100), Quantity: decimal.NewFromInt(1), Time: h.now}}
+	}
+	h.e.onBrokerEvent(fill("sync-42-1")) // from SyncOrders
+	h.e.onBrokerEvent(fill("777"))       // the real execution, late
+	p, ok := h.a.Position(key.Symbol)
+	require.True(t, ok)
+	assert.Equal(t, "1", p.Quantity.String())
+}
+
 func TestPartialBracketFailureCancelsAcceptedLeg(t *testing.T) {
 	h := setup(t)
 	h.e.AddBroker(bracketBroker{Sim: h.s, failTarget: true})
