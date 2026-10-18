@@ -1,0 +1,97 @@
+# Multi-strategy operational test on the Binance Spot Testnet (test funds).
+# It checks that every spot strategy works against a real exchange at the
+# same time; the testnet charges no fees, so its profit says nothing about
+# live trading. Copy to configs/config.yaml on the VPS and set
+# TB_APP__MODE=testnet plus the Spot Testnet key in .env.vps.
+app:
+  mode: testnet
+  allow_live: false
+  log_level: info
+  log_format: json
+
+exchanges:
+  binance:
+    enabled: true
+    testnet: true
+  bybit:
+    enabled: false
+
+# One strategy per symbol: strategies on the same symbol would share one
+# position and disturb each other.
+marketdata:
+  exchange: binance
+  markets: [spot]
+  symbols: [BTCUSDT, ETHUSDT, SOLUSDT, XRPUSDT, DOGEUSDT]
+  timeframes: [1m]
+  initial_backfill: 1000
+
+strategies:
+  # The testnet keeps about two weeks of history (it is reset now and
+  # then), so slow indicators on 4h bars would not warm up; use 1h.
+  - id: ema-trend-btc
+    name: emacross
+    enabled: true
+    exchange: binance
+    market: spot
+    symbols: [BTCUSDT]
+    leverage: 1
+    params: {timeframe: 1h, fast: 9, slow: 21, trend_ema: 100, allow_short: false}
+
+  - id: ema-fast-eth
+    name: emacross
+    enabled: true
+    exchange: binance
+    market: spot
+    symbols: [ETHUSDT]
+    leverage: 1
+    params: {timeframe: 1m, fast: 12, slow: 26, allow_short: false}
+
+  # Range of about ±15% around the price when the test started (SOL 101.93
+  # on 2026-10-18); adjust before reusing.
+  - id: grid-sol
+    name: grid
+    enabled: true
+    exchange: binance
+    market: spot
+    symbols: [SOLUSDT]
+    leverage: 1
+    params: {timeframe: 1m, lower: 87, upper: 117, levels: 20, geometric: true, quote_per_level: 20, stop_below: 84}
+
+  # Hourly instead of daily so a few days show a whole cycle.
+  - id: dca-xrp
+    name: dca
+    enabled: true
+    exchange: binance
+    market: spot
+    symbols: [XRPUSDT]
+    leverage: 1
+    params: {timeframe: 1m, interval: 1h, quote_amount: 20, max_buys: 24, take_profit: 0.03}
+
+  - id: mm-doge
+    name: mm
+    enabled: true
+    exchange: binance
+    market: spot
+    symbols: [DOGEUSDT]
+    leverage: 1
+    params: {spread_bps: 30, order_quote: 20, max_inventory_quote: 100, skew_bps: 10, requote_bps: 10, min_requote: 30s}
+
+risk:
+  risk_per_trade: 0.005
+  max_position_pct: 0.05
+  max_open_positions: 5
+  max_exposure_pct: 1.0
+
+telegram:
+  enabled: true
+  chat_ids: []          # set the whitelisted chat id on the server
+  notify_level: warn
+  daily_summary: true
+
+web:
+  enabled: true
+  listen: 0.0.0.0:8080
+
+metrics:
+  enabled: true
+  listen: 0.0.0.0:9100
