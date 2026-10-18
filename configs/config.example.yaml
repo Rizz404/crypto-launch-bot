@@ -154,6 +154,7 @@ telegram:
   chat_ids: []             # e.g. [123456789]
   notify_level: warn       # engine notices forwarded: info | warn | error
   daily_summary: true      # message at 00:00 UTC
+  fx: true                 # show USDT amounts in USD and IDR (CoinGecko, ECB fallback; hourly)
 
 # Web dashboard served by `bot run`. Off localhost it needs TB_WEB__PASSWORD
 # (HTTP basic auth, any user name); put it behind TLS (reverse proxy or VPN).

@@ -87,6 +87,7 @@ telegram:
   chat_ids: []          # set the whitelisted chat id on the server
   notify_level: warn
   daily_summary: true
+  fx: true              # show USDT amounts in USD and IDR (public rates, hourly)
 
 web:
   enabled: true

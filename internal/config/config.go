@@ -99,6 +99,9 @@ type TelegramConfig struct {
 	// NotifyLevel is the minimum engine notice level forwarded (info, warn, error).
 	NotifyLevel  string `koanf:"notify_level"`
 	DailySummary bool   `koanf:"daily_summary"`
+	// FX adds the USD and IDR value of USDT amounts to messages, using public
+	// exchange rates refreshed hourly (user request, 2026-10-19).
+	FX bool `koanf:"fx"`
 }
 
 // PaperConfig configures simulated trading on live data. Fees and slippage
@@ -217,7 +220,7 @@ func defaults() Config {
 		},
 		Risk:     risk.DefaultConfig(),
 		Paper:    PaperConfig{InitialBalance: 1000, Resume: true},
-		Telegram: TelegramConfig{NotifyLevel: "warn", DailySummary: true},
+		Telegram: TelegramConfig{NotifyLevel: "warn", DailySummary: true, FX: true},
 		Web:      WebConfig{Enabled: true, Listen: "127.0.0.1:8080"},
 		Backtest: BacktestConfig{
 			InitialBalance: 1000,
