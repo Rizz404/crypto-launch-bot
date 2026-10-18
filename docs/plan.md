@@ -181,6 +181,20 @@ Data dan asumsi sama dengan grid emacross; futures dipakai sebagai proksi spot. 
 - **Grid** dipasang ulang tiap kuartal (±15%, 20 level geometris): rata-rata per kuartal BNB +0,91%, ETH −1,24%, SOL −0,17%, XRP −0,79%; sekitar separuh kuartal untung. Fill limit di simulasi optimistis, jadi hasil nyata kemungkinan lebih buruk.
 - Kesimpulan gabungan dengan grid emacross: **belum ada strategi dengan edge yang meyakinkan.** DCA berguna sebagai otomasi akumulasi aset yang memang ingin dipegang, bukan sumber return di atas buy-and-hold. Keputusan strategi Fase 11 ada di user.
 
+### Emacross dengan filter tren (2026-10-18)
+
+Parameter baru `trend_ema` (default 0 = nonaktif): entry long hanya di atas EMA periode itu, short hanya di bawahnya; exit tidak difilter. Data, split, dan asumsi sama. Rincian: [emacross-trend-2023-2026.json](testing/emacross-trend-2023-2026.json).
+
+| TF | EMA | Tren | Return OOS | Untung OOS | MDD OOS |
+|---|---|---|---:|---:|---:|
+| 4h | 20/50 | – | +0,5% | 3/5 | 16,7% |
+| 4h | 20/50 | 200 | +1,2% | 2/5 | 10,6% |
+| 4h | 9/21 | – | −7,1% | 1/5 | 20,0% |
+| 4h | 9/21 | 200 | +0,3% | 2/5 | 9,7% |
+| 1h | 9/21 | 100 | −11,8% | 0/5 | 20,2% |
+
+Filter tren terutama memangkas drawdown (sekitar setengahnya di 4h) dan mengubah rugi menjadi kira-kira impas; return tetap sekitar 0–1% dalam 18 bulan. Timeframe 1h tetap rugi. Belum ada edge yang layak untuk uang sungguhan.
+
 ### Rilis GitHub dan persiapan VPS (2026-10-17)
 
 - Repo private: [Rizz404/trading-bot](https://github.com/Rizz404/trading-bot), branch `main`. Riwayat lokal sudah di-push melalui SSH; kredensial di `.env` dan konfigurasi lokal tetap di-ignore. Varian `.env.*` juga di-ignore, kecuali `.env.example`.

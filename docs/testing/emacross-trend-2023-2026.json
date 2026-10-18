@@ -1,0 +1,113 @@
+{
+ "purpose": "emacross with the trend_ema filter vs without; same data, split and assumptions as emacross-grid-2023-2026.json",
+ "grid": [
+  {
+   "tf": "4h",
+   "ema": "20/50",
+   "trend_ema": "100",
+   "is_avg_return_pct": 0.4,
+   "oos_avg_return_pct": 0.6,
+   "oos_winning_symbols": 3,
+   "oos_worst_mdd_pct": 13.1
+  },
+  {
+   "tf": "4h",
+   "ema": "20/50",
+   "trend_ema": "200",
+   "is_avg_return_pct": 1.4,
+   "oos_avg_return_pct": 1.2,
+   "oos_winning_symbols": 2,
+   "oos_worst_mdd_pct": 10.6
+  },
+  {
+   "tf": "4h",
+   "ema": "20/50",
+   "trend_ema": "none",
+   "is_avg_return_pct": 0.9,
+   "oos_avg_return_pct": 0.5,
+   "oos_winning_symbols": 3,
+   "oos_worst_mdd_pct": 16.7
+  },
+  {
+   "tf": "4h",
+   "ema": "9/21",
+   "trend_ema": "100",
+   "is_avg_return_pct": 5.4,
+   "oos_avg_return_pct": -3.4,
+   "oos_winning_symbols": 2,
+   "oos_worst_mdd_pct": 10.9
+  },
+  {
+   "tf": "4h",
+   "ema": "9/21",
+   "trend_ema": "200",
+   "is_avg_return_pct": 5.5,
+   "oos_avg_return_pct": 0.3,
+   "oos_winning_symbols": 2,
+   "oos_worst_mdd_pct": 9.7
+  },
+  {
+   "tf": "4h",
+   "ema": "9/21",
+   "trend_ema": "none",
+   "is_avg_return_pct": 7.9,
+   "oos_avg_return_pct": -7.1,
+   "oos_winning_symbols": 1,
+   "oos_worst_mdd_pct": 20.0
+  },
+  {
+   "tf": "1h",
+   "ema": "20/50",
+   "trend_ema": "100",
+   "is_avg_return_pct": -10.2,
+   "oos_avg_return_pct": -16.2,
+   "oos_winning_symbols": 0,
+   "oos_worst_mdd_pct": 20.1
+  },
+  {
+   "tf": "1h",
+   "ema": "20/50",
+   "trend_ema": "200",
+   "is_avg_return_pct": -7.9,
+   "oos_avg_return_pct": -15.5,
+   "oos_winning_symbols": 0,
+   "oos_worst_mdd_pct": 20.0
+  },
+  {
+   "tf": "1h",
+   "ema": "20/50",
+   "trend_ema": "none",
+   "is_avg_return_pct": -10.3,
+   "oos_avg_return_pct": -17.2,
+   "oos_winning_symbols": 0,
+   "oos_worst_mdd_pct": 20.1
+  },
+  {
+   "tf": "1h",
+   "ema": "9/21",
+   "trend_ema": "100",
+   "is_avg_return_pct": -10.2,
+   "oos_avg_return_pct": -11.8,
+   "oos_winning_symbols": 0,
+   "oos_worst_mdd_pct": 20.2
+  },
+  {
+   "tf": "1h",
+   "ema": "9/21",
+   "trend_ema": "200",
+   "is_avg_return_pct": -11.9,
+   "oos_avg_return_pct": -12.7,
+   "oos_winning_symbols": 0,
+   "oos_worst_mdd_pct": 20.3
+  },
+  {
+   "tf": "1h",
+   "ema": "9/21",
+   "trend_ema": "none",
+   "is_avg_return_pct": -12.9,
+   "oos_avg_return_pct": -14.2,
+   "oos_winning_symbols": 0,
+   "oos_worst_mdd_pct": 20.7
+  }
+ ]
+}
