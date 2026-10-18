@@ -283,7 +283,7 @@ Data dan asumsi sama dengan grid emacross; futures dipakai sebagai proksi spot. 
 
 ## Pertanyaan terbuka (belum diputuskan)
 
-- Timeframe dan parameter default strategi `emacross`: grid 2026-10-17 tidak menemukan edge konsisten (lihat "Validasi emacross lebih luas"). Perlu keputusan user: strategi/parameter apa yang dibawa ke Fase 11.
+- Strategi untuk Fase 11: emacross, DCA, dan grid belum menunjukkan edge (lihat bagian validasi). **Keputusan user 2026-10-18: riset lebih lanjut dulu**; paper VPS tetap memakai emacross 1m sebagai uji operasional, Fase 11 belum dimulai.
 - Saham ter-tokenisasi di Binance spot (base berakhiran `B`: `NVDAB`, `TSLAB`, `SPYB`, `SNDKB`, `SPCXB`, dan lain-lain) lolos ke universe spot karena tidak punya penanda di `exchangeInfo`. Perlu keputusan user: dikecualikan (lewat `universe.exclude_bases` atau aturan baru) atau dibiarkan. Universe futures tidak terpengaruh, karena kontrak `TRADIFI_PERPETUAL` sudah disaring.
 - Batas risk konkret untuk live (max drawdown %, rugi harian %, leverage maksimum). Usulkan nilai konservatif, lalu minta persetujuan user.
 
