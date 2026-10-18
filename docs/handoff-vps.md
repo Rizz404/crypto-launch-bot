@@ -1,212 +1,194 @@
-# Handoff VPS untuk Claude — 2026-10-17
+# Handoff VPS
 
-User meminta pekerjaan dihentikan dan dokumentasi disiapkan untuk take over.
-Checkpoint terakhir: **2026-10-17 14:16:57 UTC / 21:16:57 WIB**. Bot paper tetap
-berjalan di VPS; tidak ada langkah deployment baru setelah permintaan berhenti.
-Fase 9 belum selesai dan uji 24 jam belum dinyatakan dimulai/lulus secara formal.
-Baca [plan](plan.md) untuk cakupan lengkap dan [runbook](deployment.md) untuk operasi.
+Panduan operasional server untuk sesi/agent berikutnya. Status per **2026-10-18
+16:50 UTC (23:50 WIB)**. Cakupan dan keputusan proyek ada di [plan](plan.md);
+prosedur umum ada di [panduan deployment](deployment.md).
 
-## Status terbaru (Claude, 2026-10-18 16:45 UTC / 23:45 WIB)
+## Status sekarang
 
-- **Stack berjalan dalam mode testnet** (uji multi-strategi 3 hari, lihat plan "Fase 10"). Source `7cc70966c0d093f0db61eca1bbacd4db3e2bae77`, image
+- **Uji multi-strategi Binance Spot Testnet 3 hari sedang berjalan**, mulai
+  2026-10-18 16:43 UTC. **Analisis setelah 2026-10-21 16:43 UTC (23:43 WIB)**
+  dengan langkah di [Analisis uji testnet](#analisis-uji-testnet).
+- Source `7cc70966c0d093f0db61eca1bbacd4db3e2bae77` (detached), image
   `ghcr.io/rizz404/trading-bot@sha256:0070bdc06e384868963a3c4a3392101a84ba66df4d634a63cf6b6e7f27ece3eb`.
-- `.env.vps` berisi kredensial Spot Testnet dan `TB_APP__MODE=testnet`. Config paper disimpan di `configs/config.paper.yaml`;
-  untuk kembali ke paper: salin balik, set `TB_APP__MODE=paper`, recreate bot.
-- Nama direktori/project tetap `trading-bot-paper` agar unit systemd, backup, dan observasi tidak berubah.
-
-## Status sebelumnya (Claude, 2026-10-18 15:50 UTC / 22:50 WIB)
-
-- **Observasi paper 24 jam lulus** (lihat plan, "Hasil observasi 24 jam").
-- Berjalan: source `eb4c11ba8a836f22006f52e9ea8c2fb5130bd14b`, image
-  `ghcr.io/rizz404/trading-bot@sha256:6d051bdacec5a433469ea1f64bf20863b152fc91b3a50938c611278a6c30e3c0`.
-- Telegram aktif (token di `.env.vps`, chat ID di `configs/config.yaml` server). `dns` limit 128 MiB.
-- Bagian di bawah ini adalah status 2026-10-17; ikuti bagian ini bila bertentangan.
-
-## Status sebelumnya (Claude, 2026-10-17 15:05 UTC / 22:05 WIB)
-
-Bagian setelah ini adalah catatan handoff awal; jika bertentangan, ikuti bagian ini.
-
-- Berjalan: source `1e8e78e2987fdf0d835b036db0e0dfe3c44f45a2`, image
-  `ghcr.io/rizz404/trading-bot@sha256:fea8a18b4bcf5f2508c33ca3ea962dae467a074af4c6b0ea4b5ed98115903a7a`
-  (CI [39042941107](https://github.com/Rizz404/trading-bot/actions/runs/39042941107)
-  sukses). Rilis `cedbfdc`/`e34b989` sudah tercakup. Limit total kini
-  ±2,56 GiB RAM / 2,75 CPU (dns 64 MiB / 0,25 CPU).
-- Lima container: bot, db, prometheus, grafana, dan **dns** (CoreDNS 1.14.7).
-  Bot memakai resolver DNS-over-TLS di network `trading-bot-paper_resolver`
-  (172.31.253.0/29) karena resolver host kadang mengembalikan halaman blokir
-  Trust Positif untuk `stream.binance.com`. DNS host/Tailscale tidak diubah.
-- Restart graceful dengan posisi paper terbuka lolos dua kali (run 1 → 2 → 3).
-- Backup: `backups/pre-update-20261017T142721Z` dan `backups/backup-20261017T150314Z`.
-  Restore ke DB sementara lolos dan DB uji dihapus. Belum ada salinan di luar VPS.
-- Unit `trading-bot-paper-{backup,observe}.{service,timer}` terpasang; kedua timer
-  aktif. Sampel ada di `evidence/samples-YYYYMMDD.jsonl`.
-- Host reboot tak terduga 15:18–15:42 UTC (bukan dari user maupun sesi ini; pemicu tidak diketahui). Stack pulih otomatis.
-- **Observasi 24 jam dihitung ulang dari 15:42:27 UTC** (keputusan user); nilai setelah 2026-10-18 15:43 UTC.
-- Baseline 28 container dan 5 service lama tetap tidak berubah setelah semua langkah.
-- Izin Claude untuk `ssh -o BatchMode=yes plesk ...` diberikan user lewat
-  `.claude/settings.local.json` (lokal, tidak di-commit), terbatas pada project ini.
+- `TB_APP__MODE=testnet`, kredensial Spot Testnet dan token Telegram ada di
+  `.env.vps`. Telegram mengirim ke chat user (chat ID di `configs/config.yaml`
+  server). Strategi: `ema-trend-btc`, `ema-fast-eth`, `grid-sol`, `dca-xrp`,
+  `mm-doge` ([config](../configs/config.testnet.example.yaml)).
+- Riwayat: paper 2026-10-17 14:09 → 2026-10-18 16:43 UTC (observasi 24 jam lulus,
+  data tetap di DB); host reboot tak terduga 2026-10-17 15:18–15:42 UTC (bukan dari
+  user, pulih otomatis). Detail dan bukti ada di plan.
+- Mainnet tidak diizinkan sampai user menyetujui Fase 11. `TB_APP__ALLOW_LIVE` dipaksa
+  `false` oleh manifest.
 
 ## Batas yang wajib dipertahankan
 
-- Server `ssh plesk` sudah memiliki Plesk dan banyak proyek produksi. Jangan
-  mengubah domain, web server, firewall, Docker daemon, atau resource proyek lain.
-  Jangan restart Docker/host, upgrade global, prune, atau `down -v`.
-- Semua perubahan hanya untuk project `trading-bot-paper` dalam
-  `/opt/trading-bot-paper`. Bandingkan baseline layanan lama sebelum/sesudah
-  perubahan berikutnya. Pemeriksaan terakhir: **28 container lama dan 5 service
-  tidak berubah**, termasuk waktu mulai/restart/PID yang dicatat.
-- Source harus dari GitHub, image dari CI/GHCR berdasarkan digest. Jangan salin
-  folder source laptop. Rahasia tidak boleh dicetak, di-commit, atau masuk chat.
-- Mainnet order belum diizinkan. VPS hanya paper tanpa kredensial exchange.
-  Telegram masih disabled; belum ada pesan sungguhan dikirim.
-- Commit Conventional Commits satu baris, satu logical scope per commit,
-  tanpa body/footer/Co-Authored-By. User meminta preferensi ini berlaku global.
+- `ssh plesk` adalah server Plesk bersama dengan banyak proyek produksi. Hanya sentuh
+  project Compose `trading-bot-paper` di `/opt/trading-bot-paper`. Jangan mengubah
+  Plesk, domain, web server, firewall, atau Docker daemon. Jangan restart Docker/host,
+  upgrade global, `docker system prune`, atau `down -v`.
+- Sebelum dan sesudah setiap perubahan jalankan
+  `python3 /opt/trading-bot-paper/repo/deploy/vps-baseline-check.py` (exit 0 = tidak ada
+  perubahan selain restart akibat boot host). Baseline: 28 container dan 5 service.
+- Source dari GitHub (deploy key read-only), image dari CI/GHCR berdasarkan digest
+  dengan pasangan commit yang sama. Jangan menyalin folder laptop.
+- Secret hanya lewat `deploy/vps-set-env.py` (stdin SSH). Jangan mencetak isi
+  `.env.vps`, menaruh secret di repo, chat, atau memori bersama.
+- Nama project/direktori tetap `trading-bot-paper` walau mode testnet, supaya unit
+  systemd, backup, dan observasi tidak perlu diubah.
 
-## Yang sudah benar-benar dikerjakan
+## Akses dan susunan server
 
-Repo private: https://github.com/Rizz404/trading-bot. GHCR login dilakukan sendiri
-oleh user di VPS dan akses image sudah diverifikasi. Source di-clone langsung dari
-GitHub melalui deploy key read-only khusus repo (GitHub key ID `166765923`).
-Host key GitHub diambil melalui API HTTPS GitHub dan disimpan khusus proyek.
-Konfigurasi SSH global dan kunci proyek lain tidak diubah.
-
-Susunan direktori server:
+Claude mengakses lewat `ssh -o BatchMode=yes plesk ...` (root). Izin lokal ada di
+`.claude/settings.local.json` laptop user (tidak di-commit), dibatasi pada project ini.
+Server AlmaLinux 9, amd64, 8 vCPU, RAM sekitar 32 GB, disk sekitar 52 GB kosong
+(sekitar 88% terisi), Docker 29 + Compose 5.
 
 ```text
-/opt/trading-bot-paper/             # mode 700
-  access/                         # mode 700
-    github-deploy                 # private key tetap di VPS, jangan tampilkan
-    github-deploy.pub
-    known_hosts                   # khusus proyek, bukan ~/.ssh global
-  repo/                           # clone GitHub
-    .env.vps                      # mode 600, secret dibuat di VPS
-    configs/config.yaml           # contoh config.vps: paper BTC/ETH spot 1m
-  evidence/                       # baseline dan pemeriksaan awal
-  backups/                        # dibuat, belum ada backup yang dijalankan
+/opt/trading-bot-paper/                 # mode 700
+  access/                               # deploy key read-only + known_hosts khusus proyek
+  repo/                                 # clone GitHub (detached pada commit rilis)
+    .env.vps                            # mode 600: password DB/Grafana/web, BOT_IMAGE, mode, kredensial
+    configs/config.yaml                 # config aktif (saat ini salinan config.testnet.example + chat ID)
+    configs/config.paper.yaml           # config paper lama, untuk kembali ke paper
+  evidence/
+    baseline.json                       # baseline proyek lain (2026-10-17)
+    samples-YYYYMMDD.jsonl              # sampel observasi tiap 5 menit, disimpan 14 hari
+  backups/backup-YYYYMMDDThhmmssZ/      # dump DB + config, 7 terakhir disimpan
 ```
 
-`repo/.git/config` memiliki `core.sshCommand` khusus deploy key, `IdentitiesOnly`,
-`UserKnownHostsFile`, `StrictHostKeyChecking=yes`, dan `BatchMode=yes`.
-Server bekerja sebagai root melalui alias SSH tersebut. Tidak perlu mengirim
-private key, PAT, atau password ke chat. `.env.vps` berisi tiga password berbeda
-untuk DB/Grafana/web; API key Binance dan token Telegram kosong.
+Unit systemd: `trading-bot-paper-observe.timer` (5 menit) dan
+`trading-bot-paper-backup.timer` (harian sekitar 03:15 UTC), keduanya aktif.
 
-Rilis yang **sedang berjalan**:
+## Stack
 
-- Source: `d5a52e2b2f1aa1c5c78f2bbee7c55cb48468643f` (detached HEAD).
-- Image: `ghcr.io/rizz404/trading-bot@sha256:7818595501fa20eaa94a4a9ff0de74ad9a19678cd99de11f7e578fe969fec063`.
-- CI sukses: https://github.com/Rizz404/trading-bot/actions/runs/39037824371.
-- Migrasi 1, 2, 3 berhasil pada DB baru; run paper ID 1 mulai 14:09:38 UTC.
+| Container | Limit | Catatan |
+|---|---|---|
+| bot | 512 MiB, 0,5 CPU | read-only, cap drop all, stop grace 30 s |
+| db (TimescaleDB 2.30 pg17) | 1 GiB, 1 CPU | tanpa port host |
+| dns (CoreDNS 1.14.7) | 128 MiB, 0,25 CPU | DNS-over-TLS ke Cloudflare khusus bot; network `resolver` 172.31.253.0/29 |
+| prometheus | 512 MiB, 0,5 CPU | retensi 7 hari / 1 GB |
+| grafana | 512 MiB, 0,5 CPU | biasanya 380–470 MiB, pantau |
 
-Stack baru terdiri atas bot, TimescaleDB, Prometheus, Grafana. Keempatnya running,
-restart count 0 dan OOM false saat checkpoint. Docker host sudah aktif/enabled;
-restart policy `unless-stopped` terpasang, tetapi reboot host tidak diuji.
-Limit total container 2,5 GiB RAM/2,5 CPU, log 3 × 10 MB per container,
-Prometheus retention 7 hari/1 GB blok. Tidak ada hard quota disk total; host disk
-sekitar 86% terisi, sekitar 56 GB kosong sebelum pull. Grafana sempat mendekati
-limit 512 MiB (sekitar 506 MiB), kemudian turun sekitar 468 MiB tanpa OOM;
-pemakaian memori tetap perlu dipantau.
+Port host hanya loopback: dashboard 18080, metrics/health 19100, Prometheus 19090,
+Grafana 13000. Tunnel dari laptop:
+`ssh -N -L 18080:127.0.0.1:18080 -L 13000:127.0.0.1:13000 plesk`. Password dashboard
+dan Grafana dibaca user sendiri dari `.env.vps`.
 
-Port host hanya loopback:
+DNS ISP/Tailscale server memblokir domain Binance (Trust Positif), sehingga bot
+memakai container `dns`. Error WS mencatat tahap dial (`stage dns|connect|tls|upgrade`).
 
-| Layanan | Port |
-|---|---:|
-| Dashboard bot | 18080 |
-| Metrics/health bot | 19100 |
-| Prometheus | 19090 |
-| Grafana | 13000 |
-
-DB tidak punya port host. Web auth sudah diuji 401 tanpa password dan 200 dengan
-password. Grafana dashboard UID `tradingbot`, datasource Prometheus/TimescaleDB
-keduanya `OK`; keenam alert rules valid/sehat. Belum ada Alertmanager atau
-notifikasi eksternal. `/healthz` hanya memeriksa DB, sehingga tidak cukup untuk
-membuktikan feed hidup.
-
-## Uji koneksi dan temuan
-
-Backfill awal memuat 2.000 candle. Network hanya container
-`trading-bot-paper-bot-1` dilepas dari `trading-bot-paper_default` pada 14:10:45 UTC,
-lalu disambungkan kembali dengan alias `bot` dan nama container pada 14:12:10 UTC.
-Script uji **sudah selesai**; tidak ada network yang masih sengaja diputus.
-
-Bot mendeteksi idle timeout, mencoba reconnect dengan backoff, kemudian berhasil
-sendiri pada **14:15:01 UTC**, sekitar 2 menit 52 detik setelah network dipulihkan.
-Backfill 10 candle selesai 14:15:03 UTC. Tidak perlu restart untuk pemulihan ini.
-Saat penelusuran, DNS embedded Docker untuk `db`/Binance sudah menjawab, REST
-Binance bisa diakses dari network namespace bot, dan handshake WS 9443 berhasil.
-Penyebab jeda pemulihan belum dipastikan; jangan menganggap itu bug DNS permanen.
-
-Isolasi network juga memutus DB. Log 14:11:48 UTC memuat
-`recorder write failed`, `what=account`, `insert equity: context deadline exceeded`.
-Equity berikutnya kembali ditulis. **Audit retry/durabilitas recorder masih
-tersisa**, terutama jika kegagalan serupa terjadi pada order/fill. Belum ada
-order/fill/trade selama tes ini sehingga ketahanan write order tidak terbukti.
-
-Checkpoint DB: BTCUSDT/ETHUSDT masing-masing 1007 candle, **gap 1m = 0** pada data
-yang tersimpan, candle terakhir open 14:15 UTC, equity terbaru 14:16:38 UTC.
-Metrics stream connects = 2 dan backfilled candles = 2010 setelah pemulihan.
-Bukti read-only tersanitasi: [vps-handoff-2026-10-17.json](testing/vps-handoff-2026-10-17.json).
-Di VPS terdapat `evidence/baseline.json`, `existing-services-after.json`,
-`deployment-check.json`, `monitoring-check.json`, dan script uji koneksi yang sudah
-selesai. File `existing-services-after.json` berasal dari pemeriksaan awal;
-JSON handoff di repo memuat pembandingan terakhir.
-
-## Rilis yang sudah siap tetapi BELUM dipasang
-
-- `cedbfdc68389bacd2285239b0fe0a12eb03a7b7b`
-  `feat(deploy): schedule isolated paper backups and health samples`.
-- `e34b989` `docs(deployment): explain paper backup and observation timers`.
-- CI semua job sukses: https://github.com/Rizz404/trading-bot/actions/runs/39039542901.
-- Image baru: `ghcr.io/rizz404/trading-bot@sha256:239c7ac671be4337c0927f9346043e369214d2e4676cd33e01dc0466729df837`.
-
-Commit ini menambah `deploy/vps-backup.sh`, `deploy/vps-observe.py`, dan empat unit
-di `deploy/systemd/`. Bash/Python lolos pemeriksaan sintaks; belum dijalankan pada
-VPS, belum ada backup/dump/restore, dan belum ada unit/timer terpasang. Server
-sudah `git fetch origin main` sampai `e34b989`, tetapi checkout tetap `d5a52e2`.
-Jangan menyimpulkan CI Go membuktikan script operasi tersebut bekerja; perlu
-validasi runtime dan unit systemd pada server sebelum diaktifkan.
-
-## Urutan lanjut yang disarankan
-
-1. Periksa status dan baseline kembali. Tinjau timeout recorder dan jeda reconnect;
-   catat temuan di plan. Lakukan tindakan hanya pada stack bot.
-2. Buat backup awal DB/config secara privat sebelum update. Untuk deploy rilis
-   operasi, checkout commit `cedbfdc...` dari GitHub dan pasang digest baru pada
-   `.env.vps` tanpa menimpa password/config. Pertahankan pasangan source/image.
-3. Validasi dan jalankan script backup/observasi secara manual. Setelah lolos,
-   pasang hanya keempat unit baru yang namanya belum digunakan. Aktifkan dua
-   timer sesuai runbook. Tidak perlu restart Docker/Plesk.
-4. Uji restart graceful **container bot saja** dan pastikan resume, DB, feed,
-   metrics, serta layanan lama tetap benar. Uji posisi/order di VPS belum pernah
-   dilakukan; pengujian restart lokal sebelumnya tidak menggantikannya.
-5. Catat waktu awal observasi 24 jam setelah kondisi stabil. Periksa candle/gap,
-   restart/OOM, error recorder, equity, dan resource. Waktu proses hidup belum
-   membuktikan 24 jam sehat. Selesaikan backup di luar server dan uji restore
-   terpisah; backup lokal tidak melindungi kehilangan VPS.
-6. Lanjutkan sisa Fase 9 di plan: Spot Testnet, Futures Demo (key belum ada),
-   Telegram whitelist/ujicoba nyata, audit lanjutan dan validasi strategi. Bybit
-   dan xspread ditunda karena regulatory restriction; OKX sudah dihapus.
-
-Perintah baca status dari server:
+## Operasi harian
 
 ```sh
 cd /opt/trading-bot-paper/repo
-dc() { docker compose --env-file .env.vps -f deploy/compose.vps.yml "$@"; }
+dc() { docker compose --env-file .env.vps -f deploy/compose.vps.yml "$@" </dev/null; }
 dc ps
-dc logs --tail 50 bot
-curl --fail http://127.0.0.1:19100/healthz
-curl --silent http://127.0.0.1:19100/metrics | grep '^tradingbot_marketdata'
+dc logs --tail 100 bot                                   # log JSON
+python3 deploy/vps-observe.py                            # satu sampel; problems: [] berarti sehat
+curl -s http://127.0.0.1:19100/metrics | grep -E '^tradingbot_(build_info|kill_switch|paused)'
+python3 deploy/vps-baseline-check.py                     # proyek lain tidak berubah
 ```
 
-Untuk one-off CLI gunakan `dc run --interactive=false --rm --no-deps bot ...`.
-Default interactive dapat menghabiskan stdin bila perintah dijalankan di dalam
-script yang dialirkan melalui `ssh ... 'bash -s'`; itu sempat membuat langkah
-setelah perintah version tidak terbaca. Migrasi/start kemudian dijalankan secara
-terpisah dan berhasil. Gunakan script file atau non-interactive untuk melanjutkan.
+Selalu `</dev/null` atau `--interactive=false` untuk perintah Compose di dalam
+skrip yang dialirkan lewat `ssh ... 'bash -s'`, karena stdin bisa tertelan.
 
-Tunnel dari laptop: `ssh -N -L 18080:127.0.0.1:18080 -L 13000:127.0.0.1:13000 plesk`.
-Password dibaca sendiri melalui terminal SSH dari `.env.vps`, jangan dicetak oleh
-agent. Menutup laptop tidak mematikan container VPS.
+## Analisis uji testnet
 
-Hindsight MCP pada sesi ini masih gagal `Transport closed`; dokumen repo menjadi
-handoff yang dapat diandalkan. Jangan menyimpan kredensial dalam shared memory.
+Jendela: 2026-10-18 16:43 UTC sampai 2026-10-21 16:43 UTC. Jalankan dari
+`/opt/trading-bot-paper/repo` dengan fungsi `dc` di atas.
+
+```sh
+# 1. Kesehatan: sampel bermasalah, restart, OOM
+python3 - <<'PY'
+import json, glob
+rows = [json.loads(l) for f in sorted(glob.glob("../evidence/samples-*.jsonl")) for l in open(f)]
+w = [r for r in rows if "2026-10-18T16:43" <= r["time"] < "2026-10-21T16:44"]
+print(len(w), "samples;", sum(1 for r in w if r["problems"]), "with problems")
+print({r["time"][:16]: r["problems"] for r in w if r["problems"]})
+last = w[-1]["containers"]["data"]
+print([(c["service"], c["restarts"], c["oom_killed"]) for c in last])
+PY
+# 2. WARN/ERROR selama jendela, dikelompokkan
+dc logs --no-log-prefix --since 2026-10-18T16:43:00Z bot 2>&1 | python3 -c '
+import sys, json, collections
+c = collections.Counter(json.loads(l)["msg"] for l in sys.stdin if l.startswith("{") and json.loads(l)["level"] in ("WARN","ERROR"))
+print(c.most_common(30))'
+# 3. Order dan trade per strategi
+dc exec -T db psql -U bot -d tradingbot -c "
+SELECT strategy, side, status, count(*) FROM orders WHERE exchange='binance-testnet' GROUP BY 1,2,3 ORDER BY 1,2,3;
+SELECT strategy, count(*) trades, count(*) FILTER (WHERE net_pnl>0) wins, round(sum(net_pnl),2) net, round(sum(fees),2) fees
+  FROM trades WHERE exchange='binance-testnet' GROUP BY 1 ORDER BY 1;
+SELECT id, started_at, stopped_at, stop_reason FROM strategy_runs WHERE mode='testnet' ORDER BY id;"
+```
+
+Periksa juga:
+
+- Grid: setiap buy terisi diikuti sell satu level di atas, dan sebaliknya; tidak
+  ada order ganda setelah restart.
+- DCA: tepat satu pembelian per jam sampai maksimal 24, take profit 3% memulai
+  siklus baru.
+- MM: frekuensi requote wajar (tidak ada `-1003`/rate limit di log), inventori di
+  bawah `max_inventory_quote`, tidak menjual tanpa inventori.
+- Emacross: entry disertai OCO SL/TP, exit sekali saja.
+- Saldo bot vs exchange: posisi bot tidak boleh melebihi saldo, saldo bawaan
+  testnet tidak tersentuh.
+- Telegram: ringkasan harian 07:00 WIB terkirim, tidak ada `telegram send failed`.
+
+Testnet tanpa fee: angka untung/rugi bukan dasar keputusan live.
+
+## Rilis, deploy, dan mengganti mode
+
+1. Push ke `main`, tunggu CI sukses, ambil digest dari langkah "Record immutable image
+   reference" di log job container.
+2. `python3 deploy/vps-baseline-check.py`, lalu `bash deploy/vps-backup.sh`.
+3. `git fetch origin main && git checkout --detach <sha>`; set
+   `BOT_IMAGE=<image@digest>` (contoh: `echo BOT_IMAGE=... | python3 deploy/vps-set-env.py`).
+4. `dc run --interactive=false --rm --no-deps bot migrate status` (jalankan
+   `migrate up` bila ada migrasi baru).
+5. Gerbang DNS: `dc up -d --no-deps dns`, lalu cek jawabannya:
+   `nsenter -t "$(docker inspect -f '{{.State.Pid}}' trading-bot-paper-dns-1)" -n dig +short @127.0.0.1 A stream.binance.com`
+   (bukan `139.255.196.196`/`182.23.79.195`). Baru setelah itu `dc up -d --no-deps bot`.
+6. Verifikasi log startup, `vps-observe.py`, metrics `build_info`, lalu baseline lagi.
+
+Mengganti mode:
+
+- **Ke paper:** `cp configs/config.paper.yaml configs/config.yaml`,
+  `echo TB_APP__MODE=paper | python3 deploy/vps-set-env.py`, recreate bot. Paper
+  melanjutkan sesi paper terakhir di DB.
+- **Ke testnet:** salin `configs/config.testnet.example.yaml` ke `configs/config.yaml`,
+  isi `telegram.chat_ids`, sesuaikan rentang grid dengan harga saat itu, set
+  `TB_APP__MODE=testnet` dan kredensial Spot Testnet lewat `vps-set-env.py`.
+- **Live:** belum boleh. Butuh persetujuan Fase 11, `allow_live` di manifest,
+  kredensial mainnet terpisah, dan batas risk dari user.
+
+Secret dari laptop:
+
+```sh
+# di laptop, dari root repo; nilai tidak pernah tampil
+grep -E '^TB_EXCHANGES__BINANCE__API_(KEY|SECRET)=' .env | ssh -o BatchMode=yes plesk 'python3 /opt/trading-bot-paper/repo/deploy/vps-set-env.py'
+```
+
+Rollback: kembalikan commit dan digest sebelumnya (tercatat di plan), periksa
+kompatibilitas migrasi, recreate bot. Rollback image tidak membatalkan migrasi DB.
+
+## Backup dan restore
+
+`deploy/vps-backup.sh` membuat dump custom PostgreSQL dan arsip config di
+`../backups`; timer harian menyimpan 7 terakhir. Uji restore 2026-10-17 lolos
+(prosedur di panduan deployment). Backup masih di disk yang sama; salinan di luar
+server ditunda sampai live (keputusan user).
+
+## Catatan teknis yang perlu diingat
+
+- Reconnect WS proaktif tiap 23 jam menghasilkan dua WARN normal.
+- Host shutdown menghentikan semua container bersamaan; run yang tertinggal ditutup
+  `interrupted` saat start berikutnya, dan bot menunggu DB hingga 60 detik saat start.
+- `/healthz` hanya memeriksa DB; kesehatan feed dinilai dari `vps-observe.py`.
+- Belum ada Alertmanager; peringatan penting datang lewat Telegram (notice level warn).
+- `deploy/vps-baseline-check.py` dan `deploy/vps-set-env.py` baru tersedia di server
+  setelah rilis berikutnya di-checkout (commit sesudah `7cc7096`). Sampai saat itu,
+  jalankan dari laptop: `ssh plesk 'python3 - /opt/trading-bot-paper/evidence/baseline.json' < deploy/vps-baseline-check.py`.
+  Untuk `vps-set-env.py`, salin dulu dengan `scp deploy/vps-set-env.py plesk:/opt/trading-bot-paper/`
+  lalu jalankan dengan path env eksplisit (`... vps-set-env.py /opt/trading-bot-paper/repo/.env.vps`)
+  dan hapus salinannya setelah dipakai.

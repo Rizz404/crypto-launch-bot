@@ -1,20 +1,62 @@
 # Handoff: Bot Trading Crypto (Go)
 
-> Dokumen ini adalah sumber kebenaran untuk perencanaan. Agent/developer yang melanjutkan: baca seluruh file ini sebelum menulis kode.
+> Sumber kebenaran proyek. Agent/developer yang melanjutkan: baca bagian **Status saat ini** dan **Panduan melanjutkan** dulu, lalu [handoff VPS](handoff-vps.md) sebelum menyentuh server. Bagian setelahnya adalah riwayat dan bukti; yang lebih baru menimpa yang lebih lama.
 
-## Status saat ini (2026-10-17)
+## Status saat ini (2026-10-18 23:50 WIB)
 
-- **Fase 0–9 selesai** (Fase 9 ditutup 2026-10-18 untuk cakupan aktif: Binance Spot, paper VPS, Telegram, dashboard, monitoring, backtest/riset). Semua temuan Fase 9 sudah diperbaiki dengan regression test saat ditemukan. Item yang tertunda karena faktor luar (futures, Bybit/xspread, strategi) **tidak** dinyatakan lolos; daftarnya ada di "Penutupan Fase 9" dan menjadi pintu masuk Fase 10/11.
-- **Perubahan scope (2026-10-17):** atas permintaan user, dukungan OKX dihapus karena user tidak memiliki dan tidak ingin membuat akunnya. Setelah penghapusan ini, adapter yang tersisa adalah **Binance dan Bybit**; akun/API key OKX tidak lagi diperlukan.
-- Adapter, wiring, konfigurasi/passphrase, helper order yang hanya dipakai adapter yang dihapus, serta test terkait sudah dibersihkan. Contoh konfigurasi, `.env` lokal, dan `configs/config.yaml` sudah disesuaikan. Setelah perubahan ini, `make build`, `go test -race ./...`, `go vet -tags integration ./...`, dan `golangci-lint run` lolos. Fase 9 tetap berjalan sesuai daftar sisa pengujian di bawah.
-- **Kendala akses terbaru (2026-10-17):** user melaporkan Bybit terkena regulatory restriction dan saat ini hanya menyiapkan Binance Spot Testnet (login GitHub) serta Telegram. Fokus pengujian aktif adalah **Binance**. Adapter Bybit tetap ada dan dinonaktifkan di konfigurasi lokal; pengujian exchange nyata Bybit serta arbitrase lintas exchange (`xspread`) **ditunda**, bukan dinyatakan lolos. Penyelesaian Fase 9 pada cakupan aktif tidak membuktikan kesiapan fitur yang ditunda. Pengujian Futures Binance tetap menunggu kredensial Futures Demo yang terpisah.
-- Preflight terbaru: autentikasi baca akun Binance Spot Testnet berhasil dan `canTrade=true`. Tidak ada order dikirim. Token Telegram terverifikasi melalui `getMe` setelah satu retry (permintaan pertama timeout). Bagian Telegram belum ada di konfigurasi lokal sehingga integrasi bot masih nonaktif dan whitelist chat belum dikonfigurasi. Tidak ada pesan Telegram dikirim.
-- **Alur deploy (keputusan user, 2026-10-17):** laptop tidak dapat dipakai untuk pengujian 24 jam. Hosting paper/testnet dipindahkan lebih awal ke VPS pada Fase 9. Kode/rilis harus melalui GitHub terlebih dahulu; jangan menyalin folder kerja laptop ke VPS. Repo private → GitHub Actions (test/build) → GHCR → VPS menarik image berdasarkan digest. Target SSH adalah `plesk`; stack paper berjalan terpisah di VPS. Claude melanjutkan dari handoff pada malam yang sama: rilis `1e8e78e` terpasang, uji restart graceful, backup, dan restore lolos, timer backup/observasi aktif, serta feed WS dipulihkan melalui resolver DNS-over-TLS khusus bot. **Observasi paper 24 jam LULUS** (2026-10-17 15:42 → 2026-10-18 15:43 UTC). Rilis `eb4c11b` dengan Telegram aktif dipasang 2026-10-18 15:48 UTC. Lihat "Lanjutan operasi VPS" di bawah, [handoff VPS](handoff-vps.md), dan [panduan deployment](deployment.md). Trading mainnet tetap menunggu persetujuan Fase 11.
-- Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
-- **Fase 10 berjalan: uji multi-strategi Spot Testnet 3 hari di VPS** (mulai 2026-10-18 16:43 UTC / 23:43 WIB, analisis setelah 2026-10-21 23:43 WIB; keputusan user). Tujuannya validasi operasional, bukan profitabilitas: testnet tanpa fee. Fokus Binance; Bybit menunggu kabar user. Mainnet tetap menunggu persetujuan Fase 11.
-- **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
-- Cara menjalankan: lihat [README.md](../README.md).
-- Tandai fase yang selesai di bagian "Progres" di bawah setiap kali satu fase beres.
+- **Fase 0–9 selesai.** Fase 9 ditutup 2026-10-18 untuk cakupan aktif (Binance Spot, VPS, Telegram, dashboard, monitoring, backtest/riset); item yang tertunda faktor luar tercatat di "Penutupan Fase 9" dan **tidak** dianggap lolos.
+- **Fase 10 berjalan:** uji multi-strategi **Binance Spot Testnet 3 hari** di VPS, mulai **2026-10-18 16:43 UTC (23:43 WIB)**. **Analisis setelah 2026-10-21 16:43 UTC (23:43 WIB).** Lima strategi, satu per pair: `ema-trend-btc` (BTC), `ema-fast-eth` (ETH), `grid-sol` (SOL), `dca-xrp` (XRP), `mm-doge` (DOGE). Rincian: bagian "Fase 10".
+- **VPS** (`ssh plesk`, server Plesk bersama): source `7cc7096`, image `ghcr.io/rizz404/trading-bot@sha256:0070bdc06e384868963a3c4a3392101a84ba66df4d634a63cf6b6e7f27ece3eb`, mode testnet, Telegram aktif ke chat user. Data paper lama tetap di DB. Observasi 5 menit dan backup harian aktif.
+- **Strategi: belum ada yang layak live.** Emacross (berbagai parameter dan filter tren), DCA, dan grid diuji 3 tahun × 5 pair secara walk-forward; tidak ada edge konsisten. Di paper, fee = 84% kerugian emacross 1m. Testnet tanpa fee, jadi hasil untung/rugi testnet **bukan** dasar go live.
+- **Mainnet (Fase 11) belum disetujui.** Prasyarat: strategi dengan edge (atau keputusan sadar user untuk uji kecil), batas risk dari user, futures diuji bila dipakai.
+- Exchange aktif hanya **Binance**. Bybit menunggu kabar user (regulatory restriction); OKX sudah dihapus. Futures Binance menunggu kredensial Futures Demo.
+
+## Panduan melanjutkan (untuk sesi/AI berikutnya)
+
+### Langkah berikutnya
+
+1. **Setelah 2026-10-21 23:43 WIB: analisis uji testnet** (perintah di bawah). Nilai crash/restart/OOM, WARN/ERROR, perilaku tiap strategi (grid: fill dan order balasan; DCA: siklus dan take profit; MM: requote dan inventori; emacross: sinyal + OCO), kill switch/risk limit, rate limit, notifikasi dan ringkasan harian Telegram (07:00 WIB), konsistensi saldo bot vs exchange. Catat hasil di bagian "Fase 10", perbaiki temuan dengan regression test.
+2. Diskusikan dengan user: strategi apa (kalau ada) dan batas risk untuk Fase 11. Opsi yang sudah dibahas: riset strategi yang jarang trading (timeframe harian, momentum lintas pair) agar fee tidak dominan, atau live mini modal kecil (50–100 USDT) sebagai uji sistem, bukan untuk profit.
+3. Bila user menyiapkan Futures Demo key atau Bybit bisa dipakai: uji seperti Spot (adapter testnet test, bot penuh, rekam fixture).
+4. Sebelum live: audit ulang menyeluruh, salinan backup di luar server (keputusan user: setelah live), dan pertimbangan hukum/pajak (Binance diblokir Trust Positif di Indonesia; user sudah diberi tahu).
+
+### Keputusan user (jangan ditanyakan ulang tanpa alasan kuat)
+
+| Tanggal | Keputusan |
+|---|---|
+| 2026-10-17 | Bangun dulu (Fase 2–8), test di Fase 9, perbaiki di Fase 10, live di Fase 11 dengan persetujuan eksplisit. |
+| 2026-10-17 | OKX dihapus. Bybit ditunda (restriction). Fokus Binance. |
+| 2026-10-17 | Hosting paper/testnet di VPS `ssh plesk`; rilis lewat GitHub → Actions → GHCR → VPS (digest). Jangan salin folder laptop. Lindungi proyek lain di server. |
+| 2026-10-17 | VPS memakai resolver DNS-over-TLS khusus bot (DNS ISP memblokir Binance). |
+| 2026-10-17 | Spot live/testnet: bot hanya mengelola koin yang dibelinya sendiri; saldo lain diabaikan dan tidak pernah dijual. |
+| 2026-10-17 | Backup di luar server ditunda sampai semua fase selesai dan benar-benar live. |
+| 2026-10-18 | Observasi 24 jam dihitung ulang setelah reboot host tak terduga; reboot bukan dari user. |
+| 2026-10-18 | Telegram aktif di VPS; chat ID user hanya di config server, bukan repo. Pesan Telegram berbahasa Indonesia dan ramah pemula. |
+| 2026-10-18 | Riset strategi dilanjutkan sebelum Fase 11 (belum ada edge). |
+| 2026-10-18 | Saham ter-tokenisasi (`bStocks`) dikecualikan dari universe. Futures ditunda sampai ada Futures Demo key. |
+| 2026-10-18 | Uji semua strategi spot 3 hari di testnet VPS, lalu analisis sebelum memutuskan go live. |
+
+### Cek cepat
+
+```sh
+# Status stack dan bot (dari laptop; izin SSH Claude terbatas pada project ini)
+ssh -o BatchMode=yes plesk 'cd /opt/trading-bot-paper/repo && docker compose --env-file .env.vps -f deploy/compose.vps.yml ps'
+ssh -o BatchMode=yes plesk 'cd /opt/trading-bot-paper/repo && python3 deploy/vps-observe.py'
+# Order per strategi selama uji testnet
+ssh -o BatchMode=yes plesk "cd /opt/trading-bot-paper/repo && docker compose --env-file .env.vps -f deploy/compose.vps.yml exec -T db psql -U bot -d tradingbot -c \"SELECT strategy, side, status, count(*) FROM orders WHERE exchange='binance-testnet' GROUP BY 1,2,3 ORDER BY 1,2,3\""
+```
+
+Query analisis lengkap ada di [handoff VPS](handoff-vps.md#analisis-uji-testnet).
+
+### Jebakan kerja yang sudah terjadi (hindari)
+
+- **Format:** `echo "$(gofmt -l .)"` tidak menghentikan rantai `&&`. Gunakan `[ -z "$(gofmt -l .)" ]`; dua kali commit tak terformat lolos ke CI karena ini.
+- **Test integrasi** (`-tags integration`, DB `tradingbot_phase9_test` di container lokal `trading-bot_db_1`) wajib dijalankan setelah mengubah strategi/sesi: test paper restart pernah bergantung pada bug DCA.
+- **Scratchpad `/tmp` dan container lokal hilang setelah laptop dimatikan.** Nyalakan DB lokal dengan `podman start trading-bot_db_1`.
+- **Testnet:** komisi 0 (jalur fee base asset hanya teruji unit/fixture), riwayat candle hanya sekitar 2 minggu (di-reset berkala), akun berisi saldo bawaan (1 BTC, 1 ETH, SOL/XRP/DOGE, 10.000 USDT) yang tidak boleh dianggap posisi bot.
+- **Order di bawah minimum exchange** ditolak engine hanya dengan WARN di log: strategi bisa diam-diam tidak trading (contoh: BTC futures 50 USDT minimum).
+- **Server Plesk bersama:** hanya sentuh project `trading-bot-paper`; bandingkan baseline 28 container + 5 service sebelum/sesudah perubahan (skrip di handoff VPS). Deploy memakai gerbang DNS: nyalakan `dns` dan cek jawabannya sebelum me-recreate bot.
+- **Shared memory Hindsight** sering putus (`Broken pipe`); docs repo adalah handoff yang dapat diandalkan.
 
 ## Aturan kerja dari user
 
@@ -24,6 +66,10 @@
 - Jangan pernah menaruh API key/secret di repo. Secret hanya lewat env/secret file.
 - Jangan menjalankan order ke mainnet sebelum user secara eksplisit menyetujui Fase 11 (live).
 - **Batas deployment VPS (user, 2026-10-17):** alias `ssh plesk` adalah server Plesk yang sudah berisi proyek lain. Lindungi proyek-proyek tersebut: deployment bot harus memakai direktori/project/network/volume tersendiri dan resource limit. Jangan mengubah Plesk/domain/web server/firewall, me-restart Docker, melakukan upgrade global, atau membersihkan resource Docker proyek lain. Audit awal hanya read-only; validasi keadaan layanan lama sebelum/sesudah perubahan.
+- **Akses VPS untuk Claude** (user, 2026-10-17): `.claude/settings.local.json` lokal (tidak di-commit) mengizinkan `ssh -o BatchMode=yes plesk ...` dan membatasi classifier auto-mode pada project `trading-bot-paper`. Server diakses sebagai root: tetap hati-hati.
+- **Secret ke VPS** hanya disalin lewat stdin SSH ke `.env.vps` (mode 600), tidak pernah dicetak, di-commit, atau ditulis ke chat/memori. Chat ID Telegram user hanya di `configs/config.yaml` server.
+- **Pesan Telegram** berbahasa Indonesia dan ramah pemula (user, 2026-10-18): setiap angka dijelaskan, istilah (stop loss, equity) diberi penjelasan singkat. Teks ada di `cmd/bot/messages.go`.
+- **Satu strategi per pair** dalam satu akun: strategi pada pair yang sama berbagi satu posisi dan saling mengganggu.
 
 ## Aturan fase build (Fase 2–8)
 
@@ -338,9 +384,10 @@ Keputusan user 2026-10-18: fokus Binance, jalankan semua strategi spot selama 3 
 
 ## Pertanyaan terbuka (belum diputuskan)
 
-- Strategi untuk Fase 11: emacross, DCA, dan grid belum menunjukkan edge (lihat bagian validasi). **Keputusan user 2026-10-18: riset lebih lanjut dulu**; paper VPS tetap memakai emacross 1m sebagai uji operasional, Fase 11 belum dimulai.
-- Saham ter-tokenisasi di Binance spot (base berakhiran `B`: `NVDAB`, `TSLAB`, `SPYB`, `SNDKB`, `SPCXB`, dan lain-lain) lolos ke universe spot karena tidak punya penanda di `exchangeInfo`. Perlu keputusan user: dikecualikan (lewat `universe.exclude_bases` atau aturan baru) atau dibiarkan. Universe futures tidak terpengaruh, karena kontrak `TRADIFI_PERPETUAL` sudah disaring.
-- Batas risk konkret untuk live (max drawdown %, rugi harian %, leverage maksimum). Usulkan nilai konservatif, lalu minta persetujuan user.
+- **Strategi untuk Fase 11:** emacross, emacross + filter tren, DCA, dan grid belum menunjukkan edge (lihat bagian validasi). Keputusan user 2026-10-18: riset lanjut dulu. Analisis uji testnet 3 hari menjadi masukan operasional, bukan bukti profit.
+- **Batas risk live** (max drawdown %, rugi harian %, leverage, modal awal). Usulkan nilai konservatif lalu minta persetujuan user. Risk default (kill switch drawdown 20%) terbukti merusak DCA karena menjual di titik terendah; risk perlu disesuaikan per strategi.
+- **Bybit**: menunggu kabar user. **Futures Binance**: menunggu Futures Demo key.
+- (Diputuskan 2026-10-18) Saham ter-tokenisasi dikecualikan lewat tag `bStocks` (`universe.exclude_tags`).
 
 ## Catatan implementasi (penyimpangan dari plan rinci di bawah)
 

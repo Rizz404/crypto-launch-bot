@@ -1,14 +1,13 @@
-# Rilis melalui GitHub dan deploy paper di VPS
+# Rilis melalui GitHub dan deploy ke VPS
 
 Kode dan manifest berasal dari repo private `Rizz404/trading-bot`. GitHub Actions
 menguji kode, membangun image, lalu menerbitkannya ke GHCR. VPS menarik image hasil
-CI; folder kerja laptop tidak disalin ke server. Deploy pertama adalah paper Spot.
-Fase 9 tetap berjalan dan mainnet tetap memerlukan persetujuan Fase 11.
+CI; folder kerja laptop tidak disalin ke server. Stack VPS bisa berjalan dalam mode
+`paper` atau `testnet` (lihat "Mode dan Telegram"); mainnet memerlukan persetujuan
+Fase 11.
 
-**Checkpoint 2026-10-17:** deployment awal paper sudah berjalan, tetapi langkah
-backup/timer di panduan ini belum dipasang pada VPS. Lihat [handoff VPS](handoff-vps.md)
-untuk commit/image yang benar-benar aktif, hasil uji koneksi, dan pekerjaan tersisa.
-Panduan ini menjelaskan prosedur; bukan pernyataan bahwa semua langkah sudah dilakukan.
+Panduan ini menjelaskan prosedur. Keadaan server saat ini (commit, digest, mode,
+uji yang berjalan) ada di [handoff VPS](handoff-vps.md).
 
 ## Pipeline
 
@@ -117,6 +116,35 @@ Binary CoreDNS memakai file capability port 53, sehingga service berjalan sebaga
 UID 0 dengan `cap_drop: ALL`, hanya `NET_BIND_SERVICE`, read-only, dan
 `no-new-privileges`. Saat update, nyalakan `dns` dan periksa jawabannya sebelum
 me-recreate bot.
+
+## Mode dan Telegram
+
+Mode dipilih lewat `TB_APP__MODE` di `.env.vps` (manifest meneruskannya; default
+`paper`) dan harus cocok dengan `configs/config.yaml`:
+
+- `paper`: [config.vps.example.yaml](../configs/config.vps.example.yaml). Tanpa
+  kredensial exchange; order disimulasikan dengan harga mainnet.
+- `testnet`: [config.testnet.example.yaml](../configs/config.testnet.example.yaml)
+  (lima strategi spot, satu per pair) plus kredensial Binance Spot Testnet di
+  `TB_EXCHANGES__BINANCE__API_KEY`/`_SECRET`. Data disimpan dengan nama exchange
+  `binance-testnet`, terpisah dari data paper/mainnet. Testnet tanpa fee dan riwayat
+  candle-nya hanya sekitar dua minggu.
+
+Telegram: `TB_TELEGRAM__TOKEN` di `.env.vps`, lalu `telegram.enabled: true` dan
+`telegram.chat_ids` di `configs/config.yaml` server (chat ID tidak masuk repo).
+Pesan berbahasa Indonesia; daftar perintah lewat `/help`.
+
+Semua variabel di atas dipasang dengan
+[`deploy/vps-set-env.py`](../deploy/vps-set-env.py), yang membaca `KEY=VALUE` dari
+stdin SSH dan tidak pernah mencetak nilainya:
+
+```sh
+grep -E '^TB_TELEGRAM__TOKEN=' .env | ssh plesk 'python3 /opt/trading-bot-paper/repo/deploy/vps-set-env.py'
+```
+
+Perubahan mode, config, atau `.env.vps` berlaku setelah container bot di-recreate
+(`dc up -d --no-deps bot`). Sebelum dan sesudahnya, jalankan
+[`deploy/vps-baseline-check.py`](../deploy/vps-baseline-check.py) di server bersama.
 
 ## Start dan pemeriksaan
 
