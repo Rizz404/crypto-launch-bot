@@ -18,6 +18,7 @@ import (
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/engine"
 	"github.com/rizz404/trading-bot/internal/exchange"
+	"github.com/rizz404/trading-bot/internal/fx"
 	"github.com/rizz404/trading-bot/internal/metrics"
 	"github.com/rizz404/trading-bot/internal/notify/telegram"
 	"github.com/rizz404/trading-bot/internal/portfolio"
@@ -35,6 +36,7 @@ const (
 // session is one trading run of the bot: engine, accounts, brokers and the
 // recorder that persists them.
 type session struct {
+	fx             *fx.Service // optional: USD/IDR value of USDT in messages
 	cfg            *config.Config
 	log            *slog.Logger
 	store          *storage.Store
@@ -457,15 +459,24 @@ func (s *session) onTrade(t domain.Trade) {
 	s.metrics.RealizedPnL.WithLabelValues(t.Strategy).Set(pnl)
 
 	if s.tg != nil {
-		s.tg.Notify(msgTradeClosed(t, s.base(t.PositionKey)))
+		s.tg.Notify(msgTradeClosed(t, s.base(t.PositionKey), s.money()))
 	}
 }
 
 // onEntry runs under the engine lock: no engine calls here.
 func (s *session) onEntry(o domain.Order, stop, target decimal.Decimal) {
 	if s.tg != nil {
-		s.tg.Notify(msgEntry(o, s.base(domain.PositionKey{Exchange: o.Exchange, Market: o.Market, Symbol: o.Symbol}), o.Strategy, stop, target))
+		s.tg.Notify(msgEntry(o, s.base(domain.PositionKey{Exchange: o.Exchange, Market: o.Market, Symbol: o.Symbol}), o.Strategy, stop, target, s.money()))
 	}
+}
+
+// money formats amounts in messages with the current exchange rates.
+func (s *session) money() money {
+	if s.fx == nil {
+		return money{}
+	}
+	r, ok := s.fx.Rates()
+	return money{rates: r, ok: ok}
 }
 
 // base is the base asset of a traded symbol, for messages.
@@ -503,7 +514,7 @@ func (s *session) onFill(f domain.Fill, o domain.Order) {
 	// Market making fills are too frequent and only appear in the summaries.
 	if s.tg != nil && o.Tag == domain.TagStrategy && o.Status == domain.OrderFilled {
 		if name := s.strategyName(o.Strategy); name == "dca" || name == "grid" {
-			s.tg.Notify(msgStrategyFill(o, s.base(domain.PositionKey{Exchange: o.Exchange, Market: o.Market, Symbol: o.Symbol})))
+			s.tg.Notify(msgStrategyFill(o, s.base(domain.PositionKey{Exchange: o.Exchange, Market: o.Market, Symbol: o.Symbol}), s.money()))
 		}
 	}
 }
@@ -560,7 +571,7 @@ func (s *session) dailySummary(ctx context.Context, now time.Time) {
 		return
 	}
 	total := s.book.Total()
-	s.tg.Notify(msgDaily(prev, st, by, s.strategyIDs(), total.Equity, total.OpenPositions, s.cfg.App.Mode))
+	s.tg.Notify(msgDaily(prev, st, by, s.strategyIDs(), total.Equity, total.OpenPositions, s.cfg.App.Mode, s.money()))
 }
 
 func (s *session) strategyIDs() []string {

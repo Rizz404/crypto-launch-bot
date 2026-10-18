@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/rizz404/trading-bot/internal/config"
+	"github.com/rizz404/trading-bot/internal/fx"
 	"github.com/rizz404/trading-bot/internal/logging"
 	"github.com/rizz404/trading-bot/internal/marketdata"
 	"github.com/rizz404/trading-bot/internal/metrics"
@@ -154,6 +155,7 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 
 	// Telegram outlives ctx briefly so the shutdown message is delivered.
 	var tg *telegram.Bot
+	var fxs *fx.Service
 	tgCtx, tgCancel := context.WithCancel(context.Background())
 	tgDone := make(chan struct{})
 	defer func() {
@@ -163,6 +165,10 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 	if cfg.Telegram.Enabled {
 		tg = telegram.New(cfg.Telegram.Token.Reveal(), cfg.Telegram.ChatIDs, log)
 		go func() { defer close(tgDone); tg.Run(tgCtx) }()
+		if cfg.Telegram.FX {
+			fxs = fx.New(log.With("component", "fx"))
+			go fxs.Run(tgCtx)
+		}
 	} else {
 		close(tgDone)
 	}
@@ -182,6 +188,7 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 		if sess, err = newSession(ctx, cfg, store, strategies, metrics.NewTrading(reg), tg, log); err != nil {
 			return err
 		}
+		sess.fx = fxs
 		if tg != nil {
 			sess.registerCommands(tg, stopBot)
 		}

@@ -33,9 +33,10 @@ func (s *session) registerCommands(bot *telegram.Bot, stop context.CancelFunc) {
 			state = "⏸ Dijeda: tidak membuka posisi baru (posisi yang ada tetap dijaga). Lanjutkan dengan /resume."
 		}
 		today, _ := s.store.TradeStats(ctx, s.runID, time.Now().UTC().Truncate(24*time.Hour))
-		return fmt.Sprintf("<b>Status</b>\n%s\nMode: %s\n\nModal (equity): <b>%s USDT</b>\n• untung/rugi posisi yang masih terbuka: %s USDT\nPosisi terbuka: %d · nilai %s USDT\n\n<b>Hari ini (sejak 07:00 WIB)</b>\n%s\n\nDetail: /positions · /pnl",
-			state, modeText(s.cfg.App.Mode), usdt(total.Equity), signed(total.UnrealizedPnL),
-			total.OpenPositions, usdt(total.Exposure), statsLines(today))
+		m := s.money()
+		return fmt.Sprintf("<b>Status</b>\n%s\nMode: %s\n\nModal (equity): <b>%s</b>\n• untung/rugi posisi yang masih terbuka: %s\nPosisi terbuka: %d · nilai %s USDT\n\n<b>Hari ini (sejak 07:00 WIB)</b>\n%s\n\n<i>%s</i>\nDetail: /positions · /pnl",
+			state, modeText(s.cfg.App.Mode), m.amount(total.Equity), m.change(total.UnrealizedPnL),
+			total.OpenPositions, usdt(total.Exposure), statsLines(today, m), m.rateLine())
 	})
 
 	bot.Handle("positions", "posisi terbuka beserta stop loss, take profit, dan untung/rugi berjalan", func(context.Context, []string) string {
@@ -45,6 +46,7 @@ func (s *session) registerCommands(bot *telegram.Bot, stop context.CancelFunc) {
 				protect[o.Symbol] = append(protect[o.Symbol], o)
 			}
 		}
+		m := s.money()
 		var sb strings.Builder
 		sb.WriteString("<b>Posisi terbuka</b>\n")
 		n := 0
@@ -57,9 +59,9 @@ func (s *session) registerCommands(bot *telegram.Bot, stop context.CancelFunc) {
 				if p.Side == domain.Short {
 					side = "Short (untung kalau harga turun)"
 				}
-				fmt.Fprintf(&sb, "\n<b>%s</b> · %s · %s\nJumlah %s %s · masuk %s · sekarang %s\nUntung/rugi berjalan: <b>%s USDT</b> (%s)\n",
+				fmt.Fprintf(&sb, "\n<b>%s</b> · %s · %s\nJumlah %s %s · masuk %s · sekarang %s\nUntung/rugi berjalan: <b>%s</b> (%s)\n",
 					esc(p.Symbol), side, esc(p.Strategy), p.Quantity, esc(s.base(p.PositionKey)),
-					price(p.EntryPrice), price(mark), signed(upnl), pct(upnl, p.Quantity.Mul(p.EntryPrice)))
+					price(p.EntryPrice), price(mark), m.change(upnl), pct(upnl, p.Quantity.Mul(p.EntryPrice)))
 				guarded := false
 				for _, o := range protect[p.Symbol] {
 					label := "🛡 Stop loss"
@@ -100,17 +102,19 @@ func (s *session) registerCommands(bot *telegram.Bot, stop context.CancelFunc) {
 	})
 
 	bot.Handle("balance", "saldo dan modal per akun", func(context.Context, []string) string {
+		m := s.money()
 		var sb strings.Builder
 		sb.WriteString("<b>Saldo</b>\n")
 		for _, acct := range s.book.Accounts() {
 			snap := acct.Snapshot()
-			fmt.Fprintf(&sb, "\n<b>%s</b>\nSaldo: %s USDT\nModal (equity): %s USDT\nBebas dipakai: %s USDT\n",
-				esc(acct.Key.String()), usdt(snap.Balance), usdt(snap.Equity), usdt(snap.FreeMargin()))
+			fmt.Fprintf(&sb, "\n<b>%s</b>\nSaldo: %s USDT\nModal (equity): %s\nBebas dipakai: %s USDT\n",
+				esc(acct.Key.String()), usdt(snap.Balance), m.amount(snap.Equity), usdt(snap.FreeMargin()))
 		}
 		sb.WriteString("\n<i>Saldo = uang tunai ditambah modal di posisi bot. Equity = saldo ditambah untung/rugi posisi yang masih terbuka.</i>")
 		if s.cfg.App.Mode != config.ModePaper {
 			sb.WriteString("\n<i>Koin yang tidak dibeli bot tidak dihitung dan tidak akan dijual.</i>")
 		}
+		sb.WriteString("\n<i>" + m.rateLine() + "</i>")
 		return sb.String()
 	})
 
@@ -125,12 +129,13 @@ func (s *session) registerCommands(bot *telegram.Bot, stop context.CancelFunc) {
 			return "Gagal membaca data: " + esc(err.Error())
 		}
 		by, _ := s.store.TradeStatsByStrategy(ctx, s.runID, time.Time{}, time.Now().Add(time.Hour))
+		m := s.money()
 		var sb strings.Builder
-		fmt.Fprintf(&sb, "<b>Hari ini</b>\n%s\n\n<b>Sejak bot dinyalakan</b>\n%s\n", statsLines(today), statsLines(session))
-		if per := perStrategyLines(by, s.strategyIDs()); per != "" {
+		fmt.Fprintf(&sb, "<b>Hari ini</b>\n%s\n\n<b>Sejak bot dinyalakan</b>\n%s\n", statsLines(today, m), statsLines(session, m))
+		if per := perStrategyLines(by, s.strategyIDs(), m); per != "" {
 			sb.WriteString("\n<b>Per strategi (sejak dinyalakan)</b>\n" + per)
 		}
-		sb.WriteString("\n<i>Win rate = persentase trade yang untung. Fee sudah dipotong dari hasil bersih.</i>")
+		sb.WriteString("\n<i>Win rate = persentase trade yang untung. Fee sudah dipotong dari hasil bersih.\n" + m.rateLine() + "</i>")
 		return sb.String()
 	})
 

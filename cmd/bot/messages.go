@@ -15,6 +15,7 @@ import (
 
 	"github.com/rizz404/trading-bot/internal/config"
 	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/trading-bot/internal/fx"
 	"github.com/rizz404/trading-bot/internal/notify/telegram"
 	"github.com/rizz404/trading-bot/internal/storage"
 	"github.com/rizz404/trading-bot/internal/strategy"
@@ -55,6 +56,70 @@ func strategyText(name string) string {
 }
 
 func usdt(d decimal.Decimal) string { return d.StringFixed(2) }
+
+// money writes USDT amounts with their US dollar and rupiah value when
+// exchange rates are known (see internal/fx), e.g.
+// "+4.80 USDT (≈ +$4.80 · +Rp 86.570)".
+type money struct {
+	rates fx.Rates
+	ok    bool
+}
+
+// amount is a size or balance (no sign).
+func (m money) amount(d decimal.Decimal) string {
+	if !m.ok {
+		return usdt(d) + " USDT"
+	}
+	return fmt.Sprintf("%s USDT (≈ $%s · %s)", usdt(d), d.Mul(m.rates.USD).StringFixed(2), rupiah(d.Mul(m.rates.IDR), false))
+}
+
+// change is a profit or loss (always signed).
+func (m money) change(d decimal.Decimal) string {
+	if !m.ok {
+		return signed(d) + " USDT"
+	}
+	usd := d.Mul(m.rates.USD)
+	sign := ""
+	switch {
+	case usd.IsPositive():
+		sign = "+"
+	case usd.IsNegative():
+		sign, usd = "-", usd.Neg()
+	}
+	return fmt.Sprintf("%s USDT (≈ %s$%s · %s)", signed(d), sign, usd.StringFixed(2), rupiah(d.Mul(m.rates.IDR), true))
+}
+
+// rateLine names the rate used, so the conversion can be judged.
+func (m money) rateLine() string {
+	if !m.ok {
+		return "Kurs rupiah belum tersedia: nilai hanya dalam USDT."
+	}
+	return fmt.Sprintf("Kurs: 1 USDT ≈ $%s ≈ %s (%s, %s)", m.rates.USD.StringFixed(4), rupiah(m.rates.IDR, false),
+		esc(m.rates.Source), m.rates.At.In(wib).Format("02 Jan 15:04 WIB"))
+}
+
+var wib = time.FixedZone("WIB", 7*3600)
+
+// rupiah formats whole rupiah with Indonesian thousand separators: Rp 1.234.567.
+func rupiah(d decimal.Decimal, withSign bool) string {
+	v := d.Round(0)
+	sign := ""
+	switch {
+	case v.IsNegative():
+		sign, v = "-", v.Neg()
+	case withSign && v.IsPositive():
+		sign = "+"
+	}
+	digits := v.String()
+	var b strings.Builder
+	for i, c := range digits {
+		if i > 0 && (len(digits)-i)%3 == 0 {
+			b.WriteByte('.')
+		}
+		b.WriteRune(c)
+	}
+	return sign + "Rp " + b.String()
+}
 
 func signed(d decimal.Decimal) string {
 	if d.IsPositive() {
@@ -188,24 +253,24 @@ func msgStopped(m config.Mode, err error) string {
 }
 
 // msgEntry announces a filled entry with its protection.
-func msgEntry(o domain.Order, base, stratID string, stop, target decimal.Decimal) string {
+func msgEntry(o domain.Order, base, stratID string, stop, target decimal.Decimal, m money) string {
 	notional := o.FilledQty.Mul(o.AvgPrice)
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "🔵 <b>Posisi dibuka: %s %s</b>\nStrategi: %s\n\n", sideText(o.Side), esc(o.Symbol), esc(stratID))
-	fmt.Fprintf(&sb, "Jumlah: %s %s (≈ %s USDT)\nHarga masuk: %s\n", o.FilledQty, esc(base), usdt(notional), price(o.AvgPrice))
+	fmt.Fprintf(&sb, "Jumlah: %s %s · %s\nHarga masuk: %s\n", o.FilledQty, esc(base), m.amount(notional), price(o.AvgPrice))
 	sign := decimal.NewFromInt(1)
 	if o.Side == domain.Sell {
 		sign = sign.Neg()
 	}
 	if stop.IsPositive() {
 		loss := stop.Sub(o.AvgPrice).Mul(o.FilledQty).Mul(sign)
-		fmt.Fprintf(&sb, "🛡 Stop loss: %s (%s) → rugi maks ≈ %s USDT\n", price(stop), pct(stop.Sub(o.AvgPrice), o.AvgPrice), signed(loss))
+		fmt.Fprintf(&sb, "🛡 Stop loss: %s (%s)\n   rugi maks ≈ %s\n", price(stop), pct(stop.Sub(o.AvgPrice), o.AvgPrice), m.change(loss))
 	} else {
 		sb.WriteString("⚠️ Tanpa stop loss\n")
 	}
 	if target.IsPositive() {
 		gain := target.Sub(o.AvgPrice).Mul(o.FilledQty).Mul(sign)
-		fmt.Fprintf(&sb, "🎯 Take profit: %s (%s) → untung ≈ %s USDT\n", price(target), pct(target.Sub(o.AvgPrice), o.AvgPrice), signed(gain))
+		fmt.Fprintf(&sb, "🎯 Take profit: %s (%s)\n   untung ≈ %s\n", price(target), pct(target.Sub(o.AvgPrice), o.AvgPrice), m.change(gain))
 	}
 	fmt.Fprintf(&sb, "\nAlasan: %s", reasonText(o.Reason))
 	return sb.String()
@@ -213,30 +278,30 @@ func msgEntry(o domain.Order, base, stratID string, stop, target decimal.Decimal
 
 // msgStrategyFill announces a completed raw strategy order (DCA buys, grid
 // levels): they open or reduce inventory without a stop loss of their own.
-func msgStrategyFill(o domain.Order, base string) string {
+func msgStrategyFill(o domain.Order, base string, m money) string {
 	icon := "🟦"
 	if o.Side == domain.Sell {
 		icon = "🟪"
 	}
-	return fmt.Sprintf("%s <b>%s %s terisi</b> · %s\nJumlah: %s %s (≈ %s USDT) @ %s\n%s",
-		icon, sideText(o.Side), esc(o.Symbol), esc(o.Strategy), o.FilledQty, esc(base),
-		usdt(o.FilledQty.Mul(o.AvgPrice)), price(o.AvgPrice), reasonText(o.Reason))
+	return fmt.Sprintf("%s <b>%s %s terisi</b> · %s\nJumlah: %s %s @ %s\nNilai: %s\n%s",
+		icon, sideText(o.Side), esc(o.Symbol), esc(o.Strategy), o.FilledQty, esc(base), price(o.AvgPrice),
+		m.amount(o.FilledQty.Mul(o.AvgPrice)), reasonText(o.Reason))
 }
 
-func msgTradeClosed(t domain.Trade, base string) string {
+func msgTradeClosed(t domain.Trade, base string, m money) string {
 	net := t.NetPnL()
 	cost := t.Quantity.Mul(t.EntryPrice)
-	head := "🔴 <b>Posisi ditutup: RUGI " + signed(net) + " USDT</b>"
+	head := "🔴 <b>Posisi ditutup: RUGI</b>"
 	if net.IsPositive() {
-		head = "🟢 <b>Posisi ditutup: UNTUNG " + signed(net) + " USDT</b>"
+		head = "🟢 <b>Posisi ditutup: UNTUNG</b>"
 	}
 	side := "Long (beli dulu)"
 	if t.Side == domain.Short {
 		side = "Short (jual dulu)"
 	}
-	return fmt.Sprintf("%s (%s)\n%s · %s · %s\n\nMasuk %s → Keluar %s\nJumlah: %s %s (≈ %s USDT) · lama %s\nKotor %s USDT · fee %s USDT\n\n%s",
-		head, pct(net, cost), esc(t.Symbol), side, esc(t.Strategy),
-		price(t.EntryPrice), price(t.ExitPrice), t.Quantity, esc(base), usdt(cost), duration(t.ClosedAt.Sub(t.OpenedAt)),
+	return fmt.Sprintf("%s\n<b>%s</b> (%s)\n%s · %s · %s\n\nMasuk %s → Keluar %s\nJumlah: %s %s · modal %s · lama %s\nKotor %s USDT · fee %s USDT\n\n%s",
+		head, m.change(net), pct(net, cost), esc(t.Symbol), side, esc(t.Strategy),
+		price(t.EntryPrice), price(t.ExitPrice), t.Quantity, esc(base), m.amount(cost), duration(t.ClosedAt.Sub(t.OpenedAt)),
 		signed(t.GrossPnL), usdt(t.Fees), exitText(t.ExitReason))
 }
 
@@ -291,34 +356,34 @@ func winRate(st storage.TradeStats) string {
 }
 
 // statsLines describes trade statistics of a period.
-func statsLines(st storage.TradeStats) string {
+func statsLines(st storage.TradeStats, m money) string {
 	if st.Trades == 0 {
 		return "Belum ada trade yang selesai."
 	}
-	return fmt.Sprintf("Trade: %d (untung %d · rugi %d · win rate %s)\nHasil bersih: <b>%s USDT</b> (sudah dipotong fee %s)\nTerbaik %s · terburuk %s USDT",
-		st.Trades, st.Wins, st.Trades-st.Wins, winRate(st), signed(st.NetPnL), usdt(st.Fees), signed(st.Best), signed(st.Worst))
+	return fmt.Sprintf("Trade: %d (untung %d · rugi %d · win rate %s)\nHasil bersih: <b>%s</b>\nFee (sudah dipotong): %s\nTerbaik %s · terburuk %s USDT",
+		st.Trades, st.Wins, st.Trades-st.Wins, winRate(st), m.change(st.NetPnL), m.amount(st.Fees), signed(st.Best), signed(st.Worst))
 }
 
-func perStrategyLines(by map[string]storage.TradeStats, ids []string) string {
+func perStrategyLines(by map[string]storage.TradeStats, ids []string, m money) string {
 	var sb strings.Builder
 	for _, id := range ids {
 		st, ok := by[id]
 		if !ok {
 			continue
 		}
-		fmt.Fprintf(&sb, "• %s: %d trade, %s USDT (win %s)\n", esc(id), st.Trades, signed(st.NetPnL), winRate(st))
+		fmt.Fprintf(&sb, "• %s: %d trade, win %s\n   %s\n", esc(id), st.Trades, winRate(st), m.change(st.NetPnL))
 	}
 	return sb.String()
 }
 
 func msgDaily(day time.Time, st storage.TradeStats, by map[string]storage.TradeStats, ids []string,
-	equity decimal.Decimal, open int, m config.Mode) string {
+	equity decimal.Decimal, open int, mode config.Mode, m money) string {
 	var sb strings.Builder
-	fmt.Fprintf(&sb, "📊 <b>Ringkasan harian %s</b>\n%s\n\n%s\n", day.Format("02 Jan 2006"), modeText(m), statsLines(st))
-	if per := perStrategyLines(by, ids); per != "" {
+	fmt.Fprintf(&sb, "📊 <b>Ringkasan harian %s</b>\n%s\n\n%s\n", day.Format("02 Jan 2006"), modeText(mode), statsLines(st, m))
+	if per := perStrategyLines(by, ids, m); per != "" {
 		sb.WriteString("\n<b>Per strategi</b>\n" + per)
 	}
-	fmt.Fprintf(&sb, "\nModal (equity): %s USDT · posisi terbuka: %d", usdt(equity), open)
+	fmt.Fprintf(&sb, "\nModal (equity): %s\nPosisi terbuka: %d\n\n<i>%s</i>", m.amount(equity), open, m.rateLine())
 	return sb.String()
 }
 
