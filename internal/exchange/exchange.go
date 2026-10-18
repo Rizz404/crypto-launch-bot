@@ -28,6 +28,12 @@ type MarketData interface {
 	StreamKlines(ctx context.Context, m domain.Market, subs []KlineSub) (<-chan StreamEvent, error)
 }
 
+// AssetTagger is implemented by sources that publish category tags per base
+// asset (e.g. Binance marks tokenized stocks "bStocks").
+type AssetTagger interface {
+	AssetTags(ctx context.Context) (map[string][]string, error)
+}
+
 type KlineRequest struct {
 	Market    domain.Market
 	Symbol    string
