@@ -91,6 +91,39 @@ func TestTradingPersistenceAndSessionRecovery(t *testing.T) {
 
 // Rollbacks are opt-in and only allowed on a dedicated database ending
 // in _test; normal integration runs never roll back an existing database.
+func TestTradeStatsTotalsAndPerStrategy(t *testing.T) {
+	s, ex := testStore(t)
+	ctx := context.Background()
+	id, err := s.CreateRun(ctx, Run{InstanceID: "session", Strategy: "engine", Mode: "testnet", Exchange: ex})
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_, _ = s.pool.Exec(ctx, "DELETE FROM trades WHERE run_id=$1", id)
+		_, _ = s.pool.Exec(ctx, "DELETE FROM strategy_runs WHERE id=$1", id)
+	})
+	day := time.Date(2026, 10, 18, 0, 0, 0, 0, time.UTC)
+	trade := func(strategy, gross string, at time.Time) domain.Trade {
+		return domain.Trade{PositionKey: domain.PositionKey{Exchange: ex, Market: domain.Spot, Symbol: "BTCUSDT"}, Strategy: strategy,
+			Side: domain.Long, Quantity: decimal.NewFromInt(1), EntryPrice: decimal.NewFromInt(100), ExitPrice: decimal.NewFromInt(100),
+			OpenedAt: at, ClosedAt: at, GrossPnL: decimal.RequireFromString(gross), Fees: decimal.RequireFromString("0.5"), ExitReason: "exit"}
+	}
+	require.NoError(t, s.InsertTrades(ctx, id, []domain.Trade{
+		trade("grid", "3", day.Add(time.Hour)), trade("grid", "-1", day.Add(2*time.Hour)),
+		trade("ema", "-2", day.Add(3*time.Hour)), trade("ema", "9", day.Add(-time.Hour)), // the day before
+	}))
+	st, err := s.TradeStatsBetween(ctx, id, day, day.Add(24*time.Hour))
+	require.NoError(t, err)
+	assert.Equal(t, 3, st.Trades)
+	assert.Equal(t, 1, st.Wins)
+	assert.Equal(t, "-1.5", st.NetPnL.String())
+	assert.Equal(t, "2.5", st.Best.String())
+	assert.Equal(t, "-2.5", st.Worst.String())
+	by, err := s.TradeStatsByStrategy(ctx, id, day, day.Add(24*time.Hour))
+	require.NoError(t, err)
+	assert.Equal(t, 2, by["grid"].Trades)
+	assert.Equal(t, "1", by["grid"].NetPnL.String())
+	assert.Equal(t, 1, by["ema"].Trades)
+}
+
 // A host shutdown can stop the database before the bot finishes its run.
 func TestCloseInterruptedRuns(t *testing.T) {
 	s, ex := testStore(t)

@@ -153,6 +153,8 @@ type TradeStats struct {
 	Wins   int
 	NetPnL decimal.Decimal
 	Fees   decimal.Decimal
+	Best   decimal.Decimal // best and worst net result of one trade
+	Worst  decimal.Decimal
 }
 
 func (s *Store) TradeStats(ctx context.Context, runID int64, since time.Time) (TradeStats, error) {
@@ -163,11 +165,34 @@ func (s *Store) TradeStats(ctx context.Context, runID int64, since time.Time) (T
 func (s *Store) TradeStatsBetween(ctx context.Context, runID int64, from, to time.Time) (TradeStats, error) {
 	var st TradeStats
 	err := s.pool.QueryRow(ctx, `
-		SELECT count(*), count(*) FILTER (WHERE net_pnl > 0), coalesce(sum(net_pnl), 0), coalesce(sum(fees), 0)
+		SELECT count(*), count(*) FILTER (WHERE net_pnl > 0), coalesce(sum(net_pnl), 0), coalesce(sum(fees), 0),
+			coalesce(max(net_pnl), 0), coalesce(min(net_pnl), 0)
 		FROM trades WHERE run_id = $1 AND closed_at >= $2 AND closed_at < $3`, runID, from, to).
-		Scan(&st.Trades, &st.Wins, &st.NetPnL, &st.Fees)
+		Scan(&st.Trades, &st.Wins, &st.NetPnL, &st.Fees, &st.Best, &st.Worst)
 	if err != nil {
 		return st, fmt.Errorf("trade stats: %w", err)
 	}
 	return st, nil
+}
+
+// TradeStatsByStrategy is TradeStatsBetween per strategy instance.
+func (s *Store) TradeStatsByStrategy(ctx context.Context, runID int64, from, to time.Time) (map[string]TradeStats, error) {
+	rows, err := s.pool.Query(ctx, `
+		SELECT strategy, count(*), count(*) FILTER (WHERE net_pnl > 0), coalesce(sum(net_pnl), 0), coalesce(sum(fees), 0),
+			coalesce(max(net_pnl), 0), coalesce(min(net_pnl), 0)
+		FROM trades WHERE run_id = $1 AND closed_at >= $2 AND closed_at < $3 GROUP BY strategy`, runID, from, to)
+	if err != nil {
+		return nil, fmt.Errorf("trade stats by strategy: %w", err)
+	}
+	defer rows.Close()
+	out := map[string]TradeStats{}
+	for rows.Next() {
+		var name string
+		var st TradeStats
+		if err := rows.Scan(&name, &st.Trades, &st.Wins, &st.NetPnL, &st.Fees, &st.Best, &st.Worst); err != nil {
+			return nil, err
+		}
+		out[name] = st
+	}
+	return out, rows.Err()
 }
