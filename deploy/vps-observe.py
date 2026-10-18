@@ -44,17 +44,22 @@ def containers():
              "oom_killed": v["State"]["OOMKilled"], "image": v["Image"]} for v in rows]
 
 
-def database():
-    # The deployed config has exactly two 1m series. Count gaps inside the last day.
+def database(exchange):
+    # Series of the active exchange recorded within the last day; gaps and
+    # age are judged against each series' own timeframe.
     sql = """
-    WITH recent AS (
-      SELECT exchange, market, symbol, timeframe, open_time,
-        lag(open_time) OVER (PARTITION BY exchange,market,symbol,timeframe ORDER BY open_time) AS previous
-      FROM candles WHERE open_time >= now() - interval '24 hours'
+    WITH tf(timeframe, seconds) AS (VALUES ('1m',60),('3m',180),('5m',300),('15m',900),('30m',1800),
+        ('1h',3600),('2h',7200),('4h',14400),('6h',21600),('12h',43200),('1d',86400)),
+    recent AS (
+      SELECT c.exchange, c.market, c.symbol, c.timeframe, c.open_time, tf.seconds,
+        lag(c.open_time) OVER (PARTITION BY c.exchange,c.market,c.symbol,c.timeframe ORDER BY c.open_time) AS previous
+      FROM candles c JOIN tf USING (timeframe)
+      WHERE c.exchange = '%s' AND c.open_time >= now() - interval '48 hours'
     ), series AS (
-      SELECT exchange,market,symbol,timeframe,count(*) AS bars,max(open_time) AS last_open,
+      SELECT exchange,market,symbol,timeframe,max(seconds) AS tf_seconds,count(*) AS bars,max(open_time) AS last_open,
         extract(epoch FROM now()-max(open_time))::int AS age_seconds,
-        count(*) FILTER (WHERE open_time-previous > interval '1 minute') AS gaps
+        count(*) FILTER (WHERE open_time >= now() - interval '24 hours'
+          AND extract(epoch FROM open_time-previous) > seconds) AS gaps
       FROM recent GROUP BY exchange,market,symbol,timeframe
     )
     SELECT json_build_object(
@@ -67,18 +72,24 @@ def database():
       'database_bytes',pg_database_size(current_database()));
     """
     return json.loads(command(DC + ["exec", "-T", "db", "psql", "-U", "bot", "-d",
-                                  "tradingbot", "-v", "ON_ERROR_STOP=1", "-At", "-c", sql]))
+                                  "tradingbot", "-v", "ON_ERROR_STOP=1", "-At", "-c", sql % exchange]))
 
 
-def port(name, default):
-    # Read only numeric port fields; never execute or expose the private env file.
+def env_value(name, default):
+    # Read only non-secret fields; never execute or expose the private env file.
     for line in (REPO / ".env.vps").read_text().splitlines():
         if line.startswith(name + "="):
-            return int(line.split("=", 1)[1])
+            return line.split("=", 1)[1].strip() or default
     return default
 
 
+def port(name, default):
+    return int(env_value(name, default))
+
+
 now = dt.datetime.now(dt.timezone.utc)
+mode = env_value("TB_APP__MODE", "paper")
+exchange = "binance-testnet" if mode == "testnet" else "binance"
 metrics_port = port("BOT_METRICS_PORT", 19100)
 prometheus_port = port("PROMETHEUS_PORT", 19090)
 grafana_port = port("GRAFANA_PORT", 13000)
@@ -89,7 +100,8 @@ sample = {
     "health": attempt(lambda: http("http://127.0.0.1:%d/healthz" % metrics_port).strip()),
     "grafana": attempt(lambda: json.loads(http("http://127.0.0.1:%d/api/health" % grafana_port))),
     "prometheus": attempt(lambda: json.loads(http("http://127.0.0.1:%d/api/v1/targets" % prometheus_port))),
-    "database": attempt(database),
+    "mode": mode,
+    "database": attempt(lambda: database(exchange)),
     "metrics": attempt(lambda: [line for line in http("http://127.0.0.1:%d/metrics" % metrics_port).splitlines()
                                 if line.startswith(("tradingbot_", "process_start_time_seconds "))]),
     "disk_free_bytes": disk.free,
@@ -104,16 +116,17 @@ if sample["containers"]["ok"]:
         problems.append("container_state")
 if sample["database"]["ok"]:
     series = sample["database"]["data"]["series"]
-    if len(series) != 2 or any(r["age_seconds"] > 180 or r["gaps"] for r in series):
+    # A closed candle is stored once its period ends: allow two periods plus a margin.
+    if not series or any(r["age_seconds"] > 2 * r["tf_seconds"] + 120 or r["gaps"] for r in series):
         problems.append("candle_freshness_or_gap")
 if sample["prometheus"]["ok"]:
     targets = sample["prometheus"]["data"]["data"]["activeTargets"]
     if not targets or any(t["health"] != "up" for t in targets):
         problems.append("prometheus_target")
 if sample["metrics"]["ok"] and not any(
-        line.startswith("tradingbot_build_info{") and 'mode="paper"' in line
+        line.startswith("tradingbot_build_info{") and 'mode="%s"' % mode in line
         for line in sample["metrics"]["data"]):
-    problems.append("paper_mode")
+    problems.append("unexpected_mode")
 if disk.free < 5 * 1024 ** 3:
     problems.append("low_disk")
 sample["problems"] = problems
