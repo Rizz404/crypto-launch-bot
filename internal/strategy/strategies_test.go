@@ -55,6 +55,7 @@ func makeStrategy(t *testing.T, c *testContext, cfg strategy.Config) strategy.St
 	require.NoError(t, s.Init(c, cfg))
 	return s
 }
+
 // fresh is a bar that closed just now on c's clock (not a warmup candle).
 func fresh(c *testContext, px int64) domain.Candle {
 	b := bar(px)
