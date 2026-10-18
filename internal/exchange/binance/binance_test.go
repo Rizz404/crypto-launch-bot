@@ -258,3 +258,32 @@ func TestStreamKlinesReconnects(t *testing.T) {
 	assert.GreaterOrEqual(t, connected, 2, "reconnected after the server closed")
 	assert.GreaterOrEqual(t, int(conns.Load()), 2)
 }
+
+func TestAssetTagsFromProductListingAndSnapshotFallback(t *testing.T) {
+	listing, err := os.ReadFile("testdata/products.json")
+	require.NoError(t, err)
+	fail := false
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "/bapi/asset/v2/public/asset-service/product/get-products", r.URL.Path)
+		if fail {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+		_, _ = w.Write(listing)
+	}))
+	defer srv.Close()
+	c := New(Options{Endpoints: &Endpoints{Web: srv.URL}})
+	tags, err := c.AssetTags(context.Background())
+	require.NoError(t, err)
+	assert.Equal(t, []string{"bStocks"}, tags["NVDAB"])
+	assert.Equal(t, []string{"bStocks"}, tags["GSB"], "Goldman Sachs, despite the crypto-like name")
+	assert.NotContains(t, tags["BNB"], "bStocks")
+	assert.NotContains(t, tags["YB"], "bStocks", "Yield Basis is a DeFi token")
+
+	fail = true
+	tags, err = c.AssetTags(context.Background())
+	require.NoError(t, err, "a missing listing must not stop the bot")
+	assert.Equal(t, []string{"bStocks"}, tags["NVDAB"])
+	assert.Equal(t, []string{"bStocks"}, tags["TSLAB"])
+	assert.NotContains(t, tags, "BNB")
+}

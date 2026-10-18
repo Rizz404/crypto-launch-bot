@@ -30,6 +30,8 @@ type Endpoints struct {
 	SpotWSAPI string
 	// FuturesPrivateWS serves user data streams at "/stream?streams=<listenKey>".
 	FuturesPrivateWS string
+	// Web serves the public product listing with asset tags (mainnet only).
+	Web string
 }
 
 var (
@@ -42,6 +44,7 @@ var (
 		FuturesWS:        "wss://fstream.binance.com/market",
 		SpotWSAPI:        "wss://ws-api.binance.com:443/ws-api/v3",
 		FuturesPrivateWS: "wss://fstream.binance.com/private",
+		Web:              "https://www.binance.com",
 	}
 	Testnet = Endpoints{
 		SpotREST:         "https://testnet.binance.vision",
@@ -50,6 +53,7 @@ var (
 		FuturesWS:        "wss://fstream.binancefuture.com",
 		SpotWSAPI:        "wss://ws-api.testnet.binance.vision/ws-api/v3",
 		FuturesPrivateWS: "wss://fstream.binancefuture.com",
+		Web:              "https://www.binance.com", // testnet assets mirror mainnet
 	}
 )
 

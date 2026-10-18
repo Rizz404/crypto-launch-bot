@@ -1,0 +1,55 @@
+{
+ "code": "000000",
+ "data": [
+  {
+   "s": "PAXGUSDT",
+   "b": "PAXG",
+   "q": "USDT",
+   "an": "PAX Gold",
+   "tags": [
+    "tCommodities"
+   ]
+  },
+  {
+   "s": "BNBUSDT",
+   "b": "BNB",
+   "q": "USDT",
+   "an": "BNB",
+   "tags": [
+    "Layer1_Layer2",
+    "pos",
+    "BSC"
+   ]
+  },
+  {
+   "s": "YBUSDT",
+   "b": "YB",
+   "q": "USDT",
+   "an": "Yield Basis",
+   "tags": [
+    "defi",
+    "HODLer",
+    "Seed"
+   ]
+  },
+  {
+   "s": "NVDABUSDT",
+   "b": "NVDAB",
+   "q": "USDT",
+   "an": "NVIDIA (bStocks)",
+   "tags": [
+    "bStocks"
+   ]
+  },
+  {
+   "s": "GSBUSDT",
+   "b": "GSB",
+   "q": "USDT",
+   "an": "Goldman Sachs (bStocks)",
+   "tags": [
+    "bStocks"
+   ]
+  }
+ ],
+ "success": true
+}
