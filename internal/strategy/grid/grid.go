@@ -75,6 +75,12 @@ func (s *Strategy) OnCandle(c domain.Candle) []strategy.Intent {
 	if c.Symbol != s.symbol || c.Timeframe != s.tf || s.stopped {
 		return nil
 	}
+	// Warmup and gap backfill replay old candles. The engine drops intents
+	// they produce, so the grid must not start (and consider itself
+	// started) on one: it would never place its orders.
+	if s.ctx.Now().Sub(c.CloseTime()) > s.tf.Duration() {
+		return nil
+	}
 	if s.p.StopBelow > 0 && c.Close.LessThan(decimal.NewFromFloat(s.p.StopBelow)) {
 		s.stopped = true
 		s.ctx.Log().Warn("grid stop hit: cancelling orders and closing inventory", "price", c.Close)

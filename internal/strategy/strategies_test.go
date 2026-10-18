@@ -55,6 +55,13 @@ func makeStrategy(t *testing.T, c *testContext, cfg strategy.Config) strategy.St
 	require.NoError(t, s.Init(c, cfg))
 	return s
 }
+// fresh is a bar that closed just now on c's clock (not a warmup candle).
+func fresh(c *testContext, px int64) domain.Candle {
+	b := bar(px)
+	b.OpenTime = c.now.Add(-time.Minute)
+	return b
+}
+
 func bar(px int64) domain.Candle {
 	return domain.Candle{Exchange: "sim", Market: domain.Spot, Symbol: "BTCUSDT", Timeframe: "1m", Close: decimal.NewFromInt(px)}
 }
@@ -63,12 +70,12 @@ func TestGridLevelsFillRestartAndStop(t *testing.T) {
 	c := ctx()
 	conf := cfg("grid", domain.Spot, map[string]any{"lower": 90, "upper": 110, "levels": 4, "quote_per_level": 10, "stop_below": 85})
 	s := makeStrategy(t, c, conf)
-	orders := s.OnCandle(bar(101))
+	orders := s.OnCandle(fresh(c, 101))
 	require.Len(t, orders, 3)
 	assert.Equal(t, "90", orders[0].Order.Price.String())
 	assert.Equal(t, "95", orders[1].Order.Price.String())
 	assert.Equal(t, "100", orders[2].Order.Price.String())
-	assert.Empty(t, s.OnCandle(bar(101)), "startup grid placed once")
+	assert.Empty(t, s.OnCandle(fresh(c, 101)), "startup grid placed once")
 	fh := s.(strategy.FillHandler)
 	o := domain.Order{Symbol: "BTCUSDT", Market: domain.Spot, Side: domain.Buy, Price: decimal.RequireFromString("94.99"),
 		Status: domain.OrderPartiallyFilled, Tag: domain.TagStrategy, FilledQty: decimal.NewFromInt(1)}
@@ -81,20 +88,31 @@ func TestGridLevelsFillRestartAndStop(t *testing.T) {
 	assert.True(t, response[0].Order.Quantity.Equal(o.FilledQty))
 	c.orders = []domain.Order{o}
 	s = makeStrategy(t, c, conf)
-	assert.Empty(t, s.OnCandle(bar(101)), "restart must preserve existing orders")
-	stop := s.OnCandle(bar(80))
+	assert.Empty(t, s.OnCandle(fresh(c, 101)), "restart must preserve existing orders")
+	stop := s.OnCandle(fresh(c, 80))
 	require.Len(t, stop, 2)
 	assert.Equal(t, strategy.CancelAll, stop[0].Kind)
 	assert.Equal(t, strategy.Exit, stop[1].Kind)
-	assert.Empty(t, s.OnCandle(bar(101)), "stopped grid stays stopped")
+	assert.Empty(t, s.OnCandle(fresh(c, 101)), "stopped grid stays stopped")
 }
 
 // Spot buys on Binance/Bybit pay the commission in the base coin: the sell
 // leg must not ask for more than arrived (rejected as insufficient balance).
+// The first candles after a start come from warmup or backfill; intents on
+// them are dropped by the engine, so the grid must wait for a live candle.
+func TestGridStartsOnTheFirstLiveCandle(t *testing.T) {
+	c := ctx()
+	s := makeStrategy(t, c, cfg("grid", domain.Spot, map[string]any{"lower": 90, "upper": 110, "levels": 4, "quote_per_level": 10}))
+	old := bar(101)
+	old.OpenTime = c.now.Add(-time.Hour)
+	assert.Empty(t, s.OnCandle(old), "warmup candle")
+	assert.Len(t, s.OnCandle(fresh(c, 101)), 3, "the live candle still starts the grid")
+}
+
 func TestGridSellsWhatTheBuyDelivered(t *testing.T) {
 	c := ctx()
 	s := makeStrategy(t, c, cfg("grid", domain.Spot, map[string]any{"lower": 90, "upper": 110, "levels": 4, "quote_per_level": 10}))
-	require.Len(t, s.OnCandle(bar(101)), 3)
+	require.Len(t, s.OnCandle(fresh(c, 101)), 3)
 	fh := s.(strategy.FillHandler)
 	o := domain.Order{ClientID: "tbg1", Symbol: "BTCUSDT", Market: domain.Spot, Side: domain.Buy, Price: decimal.NewFromInt(95),
 		Status: domain.OrderPartiallyFilled, Tag: domain.TagStrategy, FilledQty: decimal.RequireFromString("0.06")}
