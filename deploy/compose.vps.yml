@@ -81,7 +81,8 @@ services:
   dns:
     image: docker.io/coredns/coredns:1.14.7
     command: ["-conf", "/etc/coredns/Corefile"]
-    mem_limit: 64m
+    # Grew from 11 to 46 MiB within a day (cache, DoT connections).
+    mem_limit: 128m
     cpus: 0.25
     pids_limit: 64
     volumes:
