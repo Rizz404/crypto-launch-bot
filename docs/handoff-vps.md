@@ -6,7 +6,15 @@ berjalan di VPS; tidak ada langkah deployment baru setelah permintaan berhenti.
 Fase 9 belum selesai dan uji 24 jam belum dinyatakan dimulai/lulus secara formal.
 Baca [plan](plan.md) untuk cakupan lengkap dan [runbook](deployment.md) untuk operasi.
 
-## Status terbaru (Claude, 2026-10-17 15:05 UTC / 22:05 WIB)
+## Status terbaru (Claude, 2026-10-18 15:50 UTC / 22:50 WIB)
+
+- **Observasi paper 24 jam lulus** (lihat plan, "Hasil observasi 24 jam").
+- Berjalan: source `eb4c11ba8a836f22006f52e9ea8c2fb5130bd14b`, image
+  `ghcr.io/rizz404/trading-bot@sha256:6d051bdacec5a433469ea1f64bf20863b152fc91b3a50938c611278a6c30e3c0`.
+- Telegram aktif (token di `.env.vps`, chat ID di `configs/config.yaml` server). `dns` limit 128 MiB.
+- Bagian di bawah ini adalah status 2026-10-17; ikuti bagian ini bila bertentangan.
+
+## Status sebelumnya (Claude, 2026-10-17 15:05 UTC / 22:05 WIB)
 
 Bagian setelah ini adalah catatan handoff awal; jika bertentangan, ikuti bagian ini.
 
