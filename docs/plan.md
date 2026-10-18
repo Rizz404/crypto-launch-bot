@@ -4,14 +4,14 @@
 
 ## Status saat ini (2026-10-17)
 
-- **Fase 0–8 selesai dibangun** (2026-10-17). Engine strategi/risk/order, broker, adapter, monitoring, dan dashboard sudah ada. **Fase 9 sedang berjalan**: unit/contract test, partial fill/replay/pending risk, paper restart, backtest historis dengan split/CSV/DB, browser, dan monitoring lokal sudah diuji. Uji trading dengan exchange sungguhan masih tersisa.
+- **Fase 0–9 selesai** (Fase 9 ditutup 2026-10-18 untuk cakupan aktif: Binance Spot, paper VPS, Telegram, dashboard, monitoring, backtest/riset). Semua temuan Fase 9 sudah diperbaiki dengan regression test saat ditemukan. Item yang tertunda karena faktor luar (futures, Bybit/xspread, strategi) **tidak** dinyatakan lolos; daftarnya ada di "Penutupan Fase 9" dan menjadi pintu masuk Fase 10/11.
 - **Perubahan scope (2026-10-17):** atas permintaan user, dukungan OKX dihapus karena user tidak memiliki dan tidak ingin membuat akunnya. Setelah penghapusan ini, adapter yang tersisa adalah **Binance dan Bybit**; akun/API key OKX tidak lagi diperlukan.
 - Adapter, wiring, konfigurasi/passphrase, helper order yang hanya dipakai adapter yang dihapus, serta test terkait sudah dibersihkan. Contoh konfigurasi, `.env` lokal, dan `configs/config.yaml` sudah disesuaikan. Setelah perubahan ini, `make build`, `go test -race ./...`, `go vet -tags integration ./...`, dan `golangci-lint run` lolos. Fase 9 tetap berjalan sesuai daftar sisa pengujian di bawah.
 - **Kendala akses terbaru (2026-10-17):** user melaporkan Bybit terkena regulatory restriction dan saat ini hanya menyiapkan Binance Spot Testnet (login GitHub) serta Telegram. Fokus pengujian aktif adalah **Binance**. Adapter Bybit tetap ada dan dinonaktifkan di konfigurasi lokal; pengujian exchange nyata Bybit serta arbitrase lintas exchange (`xspread`) **ditunda**, bukan dinyatakan lolos. Penyelesaian Fase 9 pada cakupan aktif tidak membuktikan kesiapan fitur yang ditunda. Pengujian Futures Binance tetap menunggu kredensial Futures Demo yang terpisah.
 - Preflight terbaru: autentikasi baca akun Binance Spot Testnet berhasil dan `canTrade=true`. Tidak ada order dikirim. Token Telegram terverifikasi melalui `getMe` setelah satu retry (permintaan pertama timeout). Bagian Telegram belum ada di konfigurasi lokal sehingga integrasi bot masih nonaktif dan whitelist chat belum dikonfigurasi. Tidak ada pesan Telegram dikirim.
 - **Alur deploy (keputusan user, 2026-10-17):** laptop tidak dapat dipakai untuk pengujian 24 jam. Hosting paper/testnet dipindahkan lebih awal ke VPS pada Fase 9. Kode/rilis harus melalui GitHub terlebih dahulu; jangan menyalin folder kerja laptop ke VPS. Repo private → GitHub Actions (test/build) → GHCR → VPS menarik image berdasarkan digest. Target SSH adalah `plesk`; stack paper berjalan terpisah di VPS. Claude melanjutkan dari handoff pada malam yang sama: rilis `1e8e78e` terpasang, uji restart graceful, backup, dan restore lolos, timer backup/observasi aktif, serta feed WS dipulihkan melalui resolver DNS-over-TLS khusus bot. **Observasi paper 24 jam LULUS** (2026-10-17 15:42 → 2026-10-18 15:43 UTC). Rilis `eb4c11b` dengan Telegram aktif dipasang 2026-10-18 15:48 UTC. Lihat "Lanjutan operasi VPS" di bawah, [handoff VPS](handoff-vps.md), dan [panduan deployment](deployment.md). Trading mainnet tetap menunggu persetujuan Fase 11.
 - Seluruh keputusan di tabel "Keputusan yang sudah diambil" di bawah sudah disetujui user lewat tanya-jawab. Jangan ditanyakan ulang kecuali ada alasan teknis kuat.
-- **Langkah berikutnya: lanjutkan sisa Fase 9** dari bagian "Hasil testing" dan "Backlog testing" di bawah. Temuan yang menghalangi pengujian lokal sudah diperbaiki dengan regression test; Fase 9 dan audit Fase 10 belum selesai.
+- **Langkah berikutnya: Fase 10** (lihat "Penutupan Fase 9"): verifikasi ringkasan harian Telegram, audit ulang menyeluruh, lanjut riset strategi; futures menunggu kredensial Futures Demo. Mainnet tetap menunggu persetujuan Fase 11.
 - **Mode kerja sejak 2026-10-17 (keputusan user): bangun dulu, test belakangan.** Fase 2–8 fokus membangun fitur. Testing untuk semua fitur dilakukan di Fase 9, lalu semua temuannya diperbaiki di Fase 10. Lihat "Aturan fase build" di bawah.
 - Cara menjalankan: lihat [README.md](../README.md).
 - Tandai fase yang selesai di bagian "Progres" di bawah setiap kali satu fase beres.
@@ -43,8 +43,8 @@
 - [x] Fase 6: Web dashboard (2026-10-17, belum dites)
 - [x] Fase 7: Bybit (2026-10-17, belum dites)
 - [x] Fase 8: Strategi lanjutan (grid/DCA, arbitrase, market making) (2026-10-17, belum dites)
-- [ ] Fase 9: Testing (sedang berjalan; hasil lokal di bawah)
-- [ ] Fase 10: Fixing (semua temuan Fase 9)
+- [x] Fase 9: Testing (2026-10-18, cakupan aktif; lihat "Penutupan Fase 9")
+- [ ] Fase 10: Fixing dan audit (temuan Fase 9 sudah diperbaiki saat ditemukan; sisa di "Penutupan Fase 9")
 - [ ] Fase 11: Live mini (hosting VPS paper/testnet dimajukan ke Fase 9)
 
 ## Hasil testing (2026-10-17)
@@ -248,6 +248,30 @@ Filter tren terutama memangkas drawdown (sekitar setengahnya di 4h) dan mengubah
 - [ ] Telegram: **diuji nyata 2026-10-17** dengan bot testnet di laptop dan whitelist chat user. Notifikasi start/entry terkirim; 12 perintah (`/status`, `/positions`, `/balance`, `/pnl`, `/orders`, `/strategies`, `/pause`, `/resume`, `/killswitch` + `confirm`, `/reset confirm`, `/stop confirm`) diterima dan bekerja. Pesan "Bot stopped" gagal (`context canceled`) karena shutdown memotong pesan yang sedang dikirim; diperbaiki (`fix(telegram): finish sending a message when shutdown begins`), belum diuji ulang dengan bot nyata. Tersisa: daily summary (00:00 UTC), uji whitelist dengan chat lain, dan Telegram di VPS (chat ID dimasukkan ke config server, bukan repo).
 - [x] Browser desktop light + mobile dark: HTMX/CSP, konfirmasi kontrol, chart candle/marker/equity dan halaman backtest dengan database test. Variasi tampilan lainnya dapat diperluas.
 - [ ] Putuskan universe saham ter-tokenisasi bersama user. Risk live dan persetujuan Fase 11 tetap belum diputuskan.
+
+### Penutupan Fase 9 (2026-10-18)
+
+Fase 9 ditutup untuk cakupan aktif atas permintaan user. Status akhir per area:
+
+| Area | Status | Bukti |
+|---|---|---|
+| Unit/contract/integration test, race, lint | Lolos; CI menjalankan semuanya per push | GitHub Actions |
+| Paper live 24 jam di VPS, restart, reboot host | **Lolos** | "Hasil observasi 24 jam" |
+| Binance Spot Testnet: adapter + bot penuh (OCO, restart, kill switch, saldo non-bot) | **Lolos** | "Order nyata di Binance Spot Testnet", "Bot penuh mode testnet" |
+| Telegram (notifikasi, 12 perintah) | **Lolos** di testnet; aktif di VPS | "Sisa Fase 9" item Telegram |
+| Dashboard browser, monitoring/alert | Lolos | browser/monitoring JSON |
+| Backtest dan riset strategi (emacross, tren, DCA, grid) | Selesai; **tidak ada edge** | JSON riset di `docs/testing/` |
+| Universe: saham ter-tokenisasi | **Dikecualikan** (keputusan user) via tag `bStocks`; uji nyata: SNDKB/SOXLB tidak lagi terpilih | `feat(config): exclude tokenized stocks…` |
+| Audit: order ambigu, DCA restart, komisi base asset, replay setelah reconcile, grid/mm restart | Selesai; bug diperbaiki dengan test | "Sisa Fase 9" item audit |
+
+**Dipindahkan ke Fase 10/11 (bukan lolos):**
+- **Futures Binance**: ditunda (keputusan user 2026-10-18) sampai kredensial Futures Demo tersedia; wajib diuji (order, algo SL/TP, listenKey, reconciliation, rekaman fixture) sebelum futures dipakai.
+- **Bybit dan `xspread`**: ditunda karena regulatory restriction.
+- **Strategi**: belum ada yang layak live; riset lanjut (keputusan user). Fase 11 tidak boleh dimulai dengan strategi tanpa edge.
+- **Verifikasi tertunda waktu**: ringkasan harian Telegram pertama dari VPS (07:00 WIB 2026-10-19), konfirmasi user atas pesan "Bot stopped"/"Bot started" dari VPS, uji whitelist dengan chat lain.
+- **Fee non-nol nyata**: testnet berkomisi 0; jalur komisi base asset hanya teruji unit/fixture. Uji di Fase 11 dengan nominal kecil.
+- **Risk live dan persetujuan Fase 11**: batas risk konkret masih harus diputuskan user; risk default (kill switch drawdown 20%) terbukti tidak cocok untuk DCA.
+- Backup di luar server: setelah live (keputusan user).
 
 ## Backlog testing (diisi selama Fase 2–8, dikerjakan di Fase 9)
 
