@@ -2,11 +2,11 @@
 
 > Sumber kebenaran proyek. Agent/developer yang melanjutkan: baca bagian **Status saat ini** dan **Panduan melanjutkan** dulu, lalu [handoff VPS](handoff-vps.md) sebelum menyentuh server. Bagian setelahnya adalah riwayat dan bukti; yang lebih baru menimpa yang lebih lama.
 
-## Status saat ini (2026-10-18 23:50 WIB)
+## Status saat ini (2026-10-19 00:30 WIB)
 
 - **Fase 0–9 selesai.** Fase 9 ditutup 2026-10-18 untuk cakupan aktif (Binance Spot, VPS, Telegram, dashboard, monitoring, backtest/riset); item yang tertunda faktor luar tercatat di "Penutupan Fase 9" dan **tidak** dianggap lolos.
 - **Fase 10 berjalan:** uji multi-strategi **Binance Spot Testnet 3 hari** di VPS, mulai **2026-10-18 16:43 UTC (23:43 WIB)**. **Analisis setelah 2026-10-21 16:43 UTC (23:43 WIB).** Lima strategi, satu per pair: `ema-trend-btc` (BTC), `ema-fast-eth` (ETH), `grid-sol` (SOL), `dca-xrp` (XRP), `mm-doge` (DOGE). Rincian: bagian "Fase 10".
-- **VPS** (`ssh plesk`, server Plesk bersama): source `7cc7096`, image `ghcr.io/rizz404/trading-bot@sha256:0070bdc06e384868963a3c4a3392101a84ba66df4d634a63cf6b6e7f27ece3eb`, mode testnet, Telegram aktif ke chat user. Data paper lama tetap di DB. Observasi 5 menit dan backup harian aktif.
+- **VPS** (`ssh plesk`, server Plesk bersama): source `f709429`, image `ghcr.io/rizz404/trading-bot@sha256:e5b8710bc76da2cd5d581511e19fb7bf9e6a472e0eb61b14fb3c099054fd0438`, mode testnet, Telegram aktif ke chat user dan setiap nominal USDT disertai perkiraan **USD dan rupiah**. Data paper lama tetap di DB. Observasi 5 menit dan backup harian aktif.
 - **Strategi: belum ada yang layak live.** Emacross (berbagai parameter dan filter tren), DCA, dan grid diuji 3 tahun × 5 pair secara walk-forward; tidak ada edge konsisten. Di paper, fee = 84% kerugian emacross 1m. Testnet tanpa fee, jadi hasil untung/rugi testnet **bukan** dasar go live.
 - **Mainnet (Fase 11) belum disetujui.** Prasyarat: strategi dengan edge (atau keputusan sadar user untuk uji kecil), batas risk dari user, futures diuji bila dipakai.
 - Exchange aktif hanya **Binance**. Bybit menunggu kabar user (regulatory restriction); OKX sudah dihapus. Futures Binance menunggu kredensial Futures Demo.
@@ -15,7 +15,7 @@
 
 ### Langkah berikutnya
 
-1. **Setelah 2026-10-21 23:43 WIB: analisis uji testnet** (perintah di bawah). Nilai crash/restart/OOM, WARN/ERROR, perilaku tiap strategi (grid: fill dan order balasan; DCA: siklus dan take profit; MM: requote dan inventori; emacross: sinyal + OCO), kill switch/risk limit, rate limit, notifikasi dan ringkasan harian Telegram (07:00 WIB), konsistensi saldo bot vs exchange. Catat hasil di bagian "Fase 10", perbaiki temuan dengan regression test.
+1. **Setelah 2026-10-21 23:43 WIB: analisis uji testnet** (perintah di bawah). Dua restart terencana pada 2026-10-18 (17:10 dan 17:23 UTC, rilis `69d8dcb` dan `f709429`; run testnet 7 → 8 → 9) bukan crash. Nilai crash/restart/OOM, WARN/ERROR, perilaku tiap strategi (grid: fill dan order balasan; DCA: siklus dan take profit; MM: requote dan inventori; emacross: sinyal + OCO), kill switch/risk limit, rate limit, notifikasi dan ringkasan harian Telegram (07:00 WIB), konsistensi saldo bot vs exchange. Catat hasil di bagian "Fase 10", perbaiki temuan dengan regression test.
 2. Diskusikan dengan user: strategi apa (kalau ada) dan batas risk untuk Fase 11. Opsi yang sudah dibahas: riset strategi yang jarang trading (timeframe harian, momentum lintas pair) agar fee tidak dominan, atau live mini modal kecil (50–100 USDT) sebagai uji sistem, bukan untuk profit.
 3. Bila user menyiapkan Futures Demo key atau Bybit bisa dipakai: uji seperti Spot (adapter testnet test, bot penuh, rekam fixture).
 4. Sebelum live: audit ulang menyeluruh, salinan backup di luar server (keputusan user: setelah live), dan pertimbangan hukum/pajak (Binance diblokir Trust Positif di Indonesia; user sudah diberi tahu).
@@ -35,6 +35,7 @@
 | 2026-10-18 | Riset strategi dilanjutkan sebelum Fase 11 (belum ada edge). |
 | 2026-10-18 | Saham ter-tokenisasi (`bStocks`) dikecualikan dari universe. Futures ditunda sampai ada Futures Demo key. |
 | 2026-10-18 | Uji semua strategi spot 3 hari di testnet VPS, lalu analisis sebelum memutuskan go live. |
+| 2026-10-19 | Pesan Telegram menampilkan setiap nominal USDT juga dalam USD dan rupiah (kurs publik), agar untung/rugi langsung terbaca. |
 
 ### Cek cepat
 
@@ -56,6 +57,7 @@ Query analisis lengkap ada di [handoff VPS](handoff-vps.md#analisis-uji-testnet)
 - **Testnet:** komisi 0 (jalur fee base asset hanya teruji unit/fixture), riwayat candle hanya sekitar 2 minggu (di-reset berkala), akun berisi saldo bawaan (1 BTC, 1 ETH, SOL/XRP/DOGE, 10.000 USDT) yang tidak boleh dianggap posisi bot.
 - **Order di bawah minimum exchange** ditolak engine hanya dengan WARN di log: strategi bisa diam-diam tidak trading (contoh: BTC futures 50 USDT minimum).
 - **Server Plesk bersama:** hanya sentuh project `trading-bot-paper`; bandingkan baseline 28 container + 5 service sebelum/sesudah perubahan (skrip di handoff VPS). Deploy memakai gerbang DNS: nyalakan `dns` dan cek jawabannya sebelum me-recreate bot.
+- **`deploy/vps-set-env.py`** hanya menerima `TB_*` dan `BOT_IMAGE` (yang terakhir sejak `f709429`; sebelumnya ditolak dan deploy `69d8dcb` memakai `sed`).
 - **Shared memory Hindsight** sering putus (`Broken pipe`); docs repo adalah handoff yang dapat diandalkan.
 
 ## Aturan kerja dari user
@@ -68,7 +70,7 @@ Query analisis lengkap ada di [handoff VPS](handoff-vps.md#analisis-uji-testnet)
 - **Batas deployment VPS (user, 2026-10-17):** alias `ssh plesk` adalah server Plesk yang sudah berisi proyek lain. Lindungi proyek-proyek tersebut: deployment bot harus memakai direktori/project/network/volume tersendiri dan resource limit. Jangan mengubah Plesk/domain/web server/firewall, me-restart Docker, melakukan upgrade global, atau membersihkan resource Docker proyek lain. Audit awal hanya read-only; validasi keadaan layanan lama sebelum/sesudah perubahan.
 - **Akses VPS untuk Claude** (user, 2026-10-17): `.claude/settings.local.json` lokal (tidak di-commit) mengizinkan `ssh -o BatchMode=yes plesk ...` dan membatasi classifier auto-mode pada project `trading-bot-paper`. Server diakses sebagai root: tetap hati-hati.
 - **Secret ke VPS** hanya disalin lewat stdin SSH ke `.env.vps` (mode 600), tidak pernah dicetak, di-commit, atau ditulis ke chat/memori. Chat ID Telegram user hanya di `configs/config.yaml` server.
-- **Pesan Telegram** berbahasa Indonesia dan ramah pemula (user, 2026-10-18): setiap angka dijelaskan, istilah (stop loss, equity) diberi penjelasan singkat. Teks ada di `cmd/bot/messages.go`.
+- **Pesan Telegram** berbahasa Indonesia dan ramah pemula (user, 2026-10-18): setiap angka dijelaskan, istilah (stop loss, equity) diberi penjelasan singkat. Setiap nominal USDT disertai perkiraan USD dan rupiah (user, 2026-10-19), contoh `+4.80 USDT (≈ +$4.80 · +Rp 86.400)`. Teks ada di `cmd/bot/messages.go`.
 - **Satu strategi per pair** dalam satu akun: strategi pada pair yang sama berbagi satu posisi dan saling mengganggu.
 
 ## Aturan fase build (Fase 2–8)
@@ -328,6 +330,9 @@ Keputusan user 2026-10-18: fokus Binance, jalankan semua strategi spot selama 3 
 - Uji lokal sebelum deploy menemukan **grid tidak pernah memasang order pada start live/testnet**: grid memulai diri pada candle warmup/backfill pertama, engine membuang intent dari candle lama, dan grid tidak mencoba lagi. Diperbaiki (`fix(strategy): start the grid on a live candle…`); di VPS grid langsung memasang 11 order beli. Backtest grid tidak berubah (71 trade, −0,14% pada kuartal uji).
 - Pesan Telegram ditulis ulang dalam bahasa Indonesia untuk pemula: mode dijelaskan (uang asli/uji), entry menampilkan SL/TP beserta jarak % dan perkiraan rugi maksimal/target untung, fill DCA/grid diumumkan, hasil trade dengan % dan lama posisi, alasan dalam kalimat, ringkasan harian per strategi, `/help` berkelompok. Konfirmasi user: pesan "Bot stopped" dari VPS terkirim (perbaikan 2026-10-17 terbukti).
 - Script observasi kini membaca mode dari `.env.vps` dan menilai gap/umur candle per timeframe untuk exchange aktif; sampel pertama `problems: []`. Baseline 28 container dan 5 service lain tidak berubah.
+- **USD/IDR di Telegram** (permintaan user 2026-10-19 00:00 WIB, rilis `69d8dcb`, image `sha256:166ffc59c471e97717ba361a990e180836fc658a5d792175083294c3f20a1836`): entry, fill, trade selesai, ringkasan harian, `/status`, `/positions`, `/balance`, dan `/pnl` menampilkan nominal USDT beserta `≈ $… · Rp …` dan baris kurs (sumber dan jam WIB). Kurs dari [internal/fx](../internal/fx/fx.go): CoinGecko (harga USDT dalam USD dan IDR), cadangan Frankfurter/ECB (USD→IDR, dengan asumsi 1 USDT ≈ 1 USD), diperbarui tiap jam, kurs terakhir yang berhasil tetap dipakai bila sumber gagal (log WARN `exchange rates unavailable`). Bila belum ada kurs sama sekali, pesan menulis bahwa nilai hanya dalam USDT. Kurs hanya untuk pesan, tidak memengaruhi trading. Matikan dengan `telegram.fx: false`. Deploy 2026-10-18 17:10 UTC (restart di dalam jendela uji, run 7 → 8).
+- **Temuan saat deploy itu:** restart dalam satu bar membuat candle warmup terakhir masih "segar", sehingga strategi bertindak **sebelum** rekonsiliasi pertama (ledger kosong, order sesi lama belum diadopsi). Grid mencoba memasang tangga kedua (11 order); kebetulan semuanya ditolak risk limit karena ekuitas ledger kosong hanya 0,55, jadi tidak ada order ganda di exchange. Diperbaiki di `f709429` (`fix(bot): act on fresh warmup candles only after the first reconcile`): warmup menahan candle segar dan menjalankannya setelah rekonsiliasi; regression test `TestFreshWarmupCandleRunsAfterReconcile`. Deploy 17:23 UTC (run 8 → 9): log `strategies warmed up held=10`, 14 order diadopsi, grid tetap 11 order, tanpa WARN, `problems: []`, baseline tidak berubah.
+- Catatan untuk analisis: setiap start mengirim ERROR `open position without stop loss` untuk posisi DCA XRP. DCA memang tanpa stop loss, jadi peringatan ini wajar tetapi berisik di Telegram; pertimbangkan pengecualian untuk strategi tanpa stop.
 - Yang dinilai saat analisis: crash/restart/OOM, error dan WARN, perilaku tiap strategi (fill grid dan order balasan, siklus DCA dan take profit, requote dan inventori MM, sinyal emacross dengan OCO), kill switch/risk limit, rate limit, notifikasi Telegram dan ringkasan harian, konsistensi saldo bot vs exchange.
 
 ## Backlog testing (diisi selama Fase 2–8, dikerjakan di Fase 9)
@@ -447,6 +452,7 @@ Bagian ini lebih baru daripada plan rinci. Kalau ada konflik, ikuti bagian ini.
 ### Fase 5 (Telegram dan observability)
 
 - Telegram memakai HTTP Bot API langsung ([internal/notify/telegram](../internal/notify/telegram/)). Token hanya dari `TB_TELEGRAM__TOKEN`; `chat_ids` di YAML. Perintah berbahaya butuh argumen `confirm`. Perintah didaftarkan di [cmd/bot/commands.go](../cmd/bot/commands.go).
+- Konversi USD/IDR di pesan (2026-10-19): `fx.Service` ([internal/fx](../internal/fx/fx.go)) berjalan hanya bila Telegram aktif dan `telegram.fx: true` (default). Tipe `money` di [cmd/bot/messages.go](../cmd/bot/messages.go) memformat `amount`/`change`/`rateLine`; rupiah memakai titik ribuan tanpa desimal.
 - Metrics trading ada di [internal/metrics/trading.go](../internal/metrics/trading.go); sesi memperbarui gauge setiap 10 detik. Engine punya hook `OnPlaced` untuk latensi broker.
 - Dashboard `deploy/grafana/dashboards/trading-bot.json` (uid `tradingbot`) dan alert `deploy/prometheus/alerts.yml`. Belum ada Alertmanager: alert terlihat di UI Prometheus, sedangkan notifikasi real-time dikirim bot lewat Telegram.
 

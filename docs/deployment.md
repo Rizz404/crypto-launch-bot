@@ -134,9 +134,18 @@ Telegram: `TB_TELEGRAM__TOKEN` di `.env.vps`, lalu `telegram.enabled: true` dan
 `telegram.chat_ids` di `configs/config.yaml` server (chat ID tidak masuk repo).
 Pesan berbahasa Indonesia; daftar perintah lewat `/help`.
 
-Semua variabel di atas dipasang dengan
+Setiap nominal USDT di pesan disertai perkiraan USD dan rupiah, misalnya
+`+4.80 USDT (≈ +$4.80 · +Rp 86.400)`, beserta baris kurs (sumber dan jam WIB). Bot
+mengambil kurs tiap jam dari CoinGecko (`api.coingecko.com`), dengan cadangan
+Frankfurter (`api.frankfurter.dev`, kurs ECB, asumsi 1 USDT ≈ 1 USD). Keduanya tanpa
+API key, tetapi container bot harus bisa menjangkaunya. Bila gagal, kurs terakhir
+tetap dipakai; tanpa kurs sama sekali, pesan hanya memakai USDT. Kurs tidak
+memengaruhi trading. Matikan dengan `telegram.fx: false`.
+
+Semua variabel di atas, juga `BOT_IMAGE`, dipasang dengan
 [`deploy/vps-set-env.py`](../deploy/vps-set-env.py), yang membaca `KEY=VALUE` dari
-stdin SSH dan tidak pernah mencetak nilainya:
+stdin SSH dan tidak pernah mencetak nilainya. Skrip ini hanya menerima `TB_*` dan
+`BOT_IMAGE`:
 
 ```sh
 grep -E '^TB_TELEGRAM__TOKEN=' .env | ssh plesk 'python3 /opt/trading-bot-paper/repo/deploy/vps-set-env.py'

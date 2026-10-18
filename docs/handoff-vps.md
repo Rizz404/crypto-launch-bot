@@ -1,7 +1,7 @@
 # Handoff VPS
 
 Panduan operasional server untuk sesi/agent berikutnya. Status per **2026-10-18
-16:50 UTC (23:50 WIB)**. Cakupan dan keputusan proyek ada di [plan](plan.md);
+17:30 UTC (2026-10-19 00:30 WIB)**. Cakupan dan keputusan proyek ada di [plan](plan.md);
 prosedur umum ada di [panduan deployment](deployment.md).
 
 ## Status sekarang
@@ -9,12 +9,21 @@ prosedur umum ada di [panduan deployment](deployment.md).
 - **Uji multi-strategi Binance Spot Testnet 3 hari sedang berjalan**, mulai
   2026-10-18 16:43 UTC. **Analisis setelah 2026-10-21 16:43 UTC (23:43 WIB)**
   dengan langkah di [Analisis uji testnet](#analisis-uji-testnet).
-- Source `7cc70966c0d093f0db61eca1bbacd4db3e2bae77` (detached), image
-  `ghcr.io/rizz404/trading-bot@sha256:0070bdc06e384868963a3c4a3392101a84ba66df4d634a63cf6b6e7f27ece3eb`.
+- Source `f709429f5f7c697f7d7073dbaa35994ab628f85c` (detached), image
+  `ghcr.io/rizz404/trading-bot@sha256:e5b8710bc76da2cd5d581511e19fb7bf9e6a472e0eb61b14fb3c099054fd0438`.
+  Rilis sebelumnya, untuk rollback: `69d8dcb` /
+  `sha256:166ffc59c471e97717ba361a990e180836fc658a5d792175083294c3f20a1836` (USD/IDR),
+  lalu `7cc7096` /
+  `sha256:0070bdc06e384868963a3c4a3392101a84ba66df4d634a63cf6b6e7f27ece3eb` (awal uji).
 - `TB_APP__MODE=testnet`, kredensial Spot Testnet dan token Telegram ada di
   `.env.vps`. Telegram mengirim ke chat user (chat ID di `configs/config.yaml`
   server). Strategi: `ema-trend-btc`, `ema-fast-eth`, `grid-sol`, `dca-xrp`,
   `mm-doge` ([config](../configs/config.testnet.example.yaml)).
+- Pesan Telegram menampilkan nominal USDT beserta perkiraan USD dan rupiah. Kurs
+  diambil bot tiap jam dari CoinGecko, dengan cadangan Frankfurter (ECB). Lihat
+  [Kurs USD/IDR](#kurs-usdidr-di-telegram).
+- Restart terencana di dalam jendela uji: 2026-10-18 17:10 UTC (rilis `69d8dcb`) dan
+  17:23 UTC (rilis `f709429`). Run testnet 7 → 8 → 9; ini bukan crash.
 - Riwayat: paper 2026-10-17 14:09 → 2026-10-18 16:43 UTC (observasi 24 jam lulus,
   data tetap di DB); host reboot tak terduga 2026-10-17 15:18–15:42 UTC (bukan dari
   user, pulih otomatis). Detail dan bukti ada di plan.
@@ -133,7 +142,11 @@ Periksa juga:
 - Emacross: entry disertai OCO SL/TP, exit sekali saja.
 - Saldo bot vs exchange: posisi bot tidak boleh melebihi saldo, saldo bawaan
   testnet tidak tersentuh.
-- Telegram: ringkasan harian 07:00 WIB terkirim, tidak ada `telegram send failed`.
+- Telegram: ringkasan harian 07:00 WIB terkirim, tidak ada `telegram send failed`,
+  nominal disertai USD/Rp, dan tidak ada WARN `exchange rates unavailable` yang
+  berulang.
+- ERROR `open position without stop loss` untuk XRP muncul di setiap start karena
+  DCA memang tanpa stop loss. Ini wajar; nilai apakah perlu dikecualikan.
 
 Testnet tanpa fee: angka untung/rugi bukan dasar keputusan live.
 
@@ -143,7 +156,8 @@ Testnet tanpa fee: angka untung/rugi bukan dasar keputusan live.
    reference" di log job container.
 2. `python3 deploy/vps-baseline-check.py`, lalu `bash deploy/vps-backup.sh`.
 3. `git fetch origin main && git checkout --detach <sha>`; set
-   `BOT_IMAGE=<image@digest>` (contoh: `echo BOT_IMAGE=... | python3 deploy/vps-set-env.py`).
+   `BOT_IMAGE=<image@digest>` dengan `echo BOT_IMAGE=... | python3 deploy/vps-set-env.py`
+   (diterima sejak `f709429`; skrip menolak nama selain `TB_*` dan `BOT_IMAGE`).
 4. `dc run --interactive=false --rm --no-deps bot migrate status` (jalankan
    `migrate up` bila ada migrasi baru).
 5. Gerbang DNS: `dc up -d --no-deps dns`, lalu cek jawabannya:
@@ -172,6 +186,18 @@ grep -E '^TB_EXCHANGES__BINANCE__API_(KEY|SECRET)=' .env | ssh -o BatchMode=yes 
 Rollback: kembalikan commit dan digest sebelumnya (tercatat di plan), periksa
 kompatibilitas migrasi, recreate bot. Rollback image tidak membatalkan migrasi DB.
 
+## Kurs USD/IDR di Telegram
+
+- Sumber: CoinGecko `simple/price?ids=tether&vs_currencies=usd,idr` (harga USDT),
+  cadangan Frankfurter `v1/latest?base=USD&symbols=IDR` (kurs ECB, asumsi
+  1 USDT ≈ 1 USD). Tanpa API key. Bot menghubungi keduanya lewat resolver `dns`.
+- Diperbarui saat start lalu tiap jam. Bila keduanya gagal, kurs terakhir tetap dipakai
+  dan log mencatat WARN `exchange rates unavailable, keeping the last ones`. Bila belum
+  pernah berhasil, pesan menulis "Kurs rupiah belum tersedia: nilai hanya dalam USDT."
+- Hanya untuk tampilan; trading tidak bergantung pada kurs.
+- Untuk mematikan, set `telegram.fx: false` di `configs/config.yaml` server lalu
+  recreate bot.
+
 ## Backup dan restore
 
 `deploy/vps-backup.sh` membuat dump custom PostgreSQL dan arsip config di
@@ -186,9 +212,8 @@ server ditunda sampai live (keputusan user).
   `interrupted` saat start berikutnya, dan bot menunggu DB hingga 60 detik saat start.
 - `/healthz` hanya memeriksa DB; kesehatan feed dinilai dari `vps-observe.py`.
 - Belum ada Alertmanager; peringatan penting datang lewat Telegram (notice level warn).
-- `deploy/vps-baseline-check.py` dan `deploy/vps-set-env.py` baru tersedia di server
-  setelah rilis berikutnya di-checkout (commit sesudah `7cc7096`). Sampai saat itu,
-  jalankan dari laptop: `ssh plesk 'python3 - /opt/trading-bot-paper/evidence/baseline.json' < deploy/vps-baseline-check.py`.
-  Untuk `vps-set-env.py`, salin dulu dengan `scp deploy/vps-set-env.py plesk:/opt/trading-bot-paper/`
-  lalu jalankan dengan path env eksplisit (`... vps-set-env.py /opt/trading-bot-paper/repo/.env.vps`)
-  dan hapus salinannya setelah dipakai.
+- `deploy/vps-baseline-check.py` dan `deploy/vps-set-env.py` sudah ada di checkout
+  server (sejak `69d8dcb`).
+- Sejak `f709429`, restart cepat aman: candle warmup yang masih segar baru dijalankan
+  setelah rekonsiliasi pertama (log `strategies warmed up ... held=N`), jadi strategi
+  melihat saldo dan order sesi sebelumnya sebelum bertindak.
