@@ -123,8 +123,11 @@ type Fill struct {
 	Quantity      decimal.Decimal
 	Fee           decimal.Decimal // in quote currency
 	FeeAsset      string
-	Maker         bool
-	Time          time.Time
+	// BaseFee is the commission paid in the base asset (spot buys), so the
+	// account received Quantity - BaseFee. Fee holds its quote value.
+	BaseFee decimal.Decimal
+	Maker   bool
+	Time    time.Time
 }
 
 // PositionKey identifies a position in one-way mode.
