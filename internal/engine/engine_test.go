@@ -395,6 +395,22 @@ func TestLateExecutionAfterSyncedFillIsNotCountedTwice(t *testing.T) {
 	assert.Equal(t, "1", p.Quantity.String())
 }
 
+func TestEntryHookCarriesTheProtectionPlan(t *testing.T) {
+	h := setup(t)
+	var stop, target decimal.Decimal
+	calls := 0
+	h.e.cfg.Hooks.OnEntry = func(o domain.Order, sl, tp decimal.Decimal) {
+		calls++
+		stop, target = sl, tp
+		assert.Equal(t, domain.OrderFilled, o.Status)
+	}
+	h.intent(strategy.Intent{Kind: strategy.Enter, Side: domain.Long, StopLoss: decimal.NewFromInt(95), TakeProfit: decimal.NewFromInt(105)})
+	h.s.OnCandle(h.bar(100, 100, 100, 100))
+	assert.Equal(t, 1, calls)
+	assert.Equal(t, "95", stop.String())
+	assert.Equal(t, "105", target.String())
+}
+
 func TestPartialBracketFailureCancelsAcceptedLeg(t *testing.T) {
 	h := setup(t)
 	h.e.AddBroker(bracketBroker{Sim: h.s, failTarget: true})

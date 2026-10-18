@@ -407,6 +407,9 @@ func (e *Engine) onFill(ctx context.Context, f domain.Fill, upd domain.Order) {
 		if plan := e.entries[key]; plan != nil && plan.orderID == order.ClientID {
 			if done {
 				delete(e.entries, key)
+				if e.cfg.Hooks.OnEntry != nil {
+					e.cfg.Hooks.OnEntry(order, plan.stopLoss, plan.takeProfit)
+				}
 			}
 			e.protect(ctx, key, plan)
 		}
