@@ -88,8 +88,12 @@ func (a *Account) applyFill(f domain.Fill, meta FillMeta) []domain.Trade {
 			}
 			a.positions[f.Symbol] = pos
 		}
-		total := pos.Quantity.Add(f.Quantity)
-		pos.EntryPrice = pos.EntryPrice.Mul(pos.Quantity).Add(f.Price.Mul(f.Quantity)).Div(total)
+		// A commission paid in the base asset never reaches the account.
+		// Its value is already charged through Fee, so the entry price stays
+		// the fill price (equity = cash - fee + held × (mark - entry)).
+		held := f.Quantity.Sub(f.BaseFee)
+		total := pos.Quantity.Add(held)
+		pos.EntryPrice = pos.EntryPrice.Mul(pos.Quantity).Add(f.Price.Mul(held)).Div(total)
 		pos.Quantity = total
 		pos.Fees = pos.Fees.Add(f.Fee)
 		return nil

@@ -76,3 +76,26 @@ func TestBookAndPositionCopies(t *testing.T) {
 	a.SetPosition(copyPos)
 	assert.Empty(t, a.Positions())
 }
+
+// A spot buy whose commission is paid in the base coin delivers less than
+// the fill quantity; the position must match the wallet while equity counts
+// the commission exactly once.
+func TestBaseAssetCommissionReducesSpotPosition(t *testing.T) {
+	d := decimal.RequireFromString
+	a := NewAccount(AccountKey{Exchange: "binance", Market: domain.Spot}, d("1000"), nil)
+	key := domain.PositionKey{Exchange: "binance", Market: domain.Spot, Symbol: "BTCUSDT"}
+	a.ApplyFill(domain.Fill{Exchange: key.Exchange, Market: key.Market, Symbol: key.Symbol, Side: domain.Buy,
+		Price: d("100"), Quantity: d("1"), Fee: d("0.1"), BaseFee: d("0.001"), Time: time.Now()}, FillMeta{Strategy: "s"})
+	p, ok := a.Position(key.Symbol)
+	require.True(t, ok)
+	assert.Equal(t, "0.999", p.Quantity.String(), "what the wallet received")
+	assert.Equal(t, "100", p.EntryPrice.String())
+	assert.Equal(t, "999.9", a.Snapshot().Equity.String(), "1000 minus the commission, counted once")
+	a.Mark(key.Symbol, d("110"))
+	// Real wealth: 1000 - 100 paid + 0.999 BTC × 110 = 1009.89.
+	assert.Equal(t, "1009.89", a.Snapshot().Equity.String())
+	a.ApplyFill(domain.Fill{Exchange: key.Exchange, Market: key.Market, Symbol: key.Symbol, Side: domain.Sell,
+		Price: d("110"), Quantity: d("0.999"), Time: time.Now()}, FillMeta{Tag: domain.TagExit})
+	assert.Empty(t, a.Positions(), "selling what arrived closes the position")
+	assert.Equal(t, "1009.89", a.Snapshot().Balance.String())
+}
