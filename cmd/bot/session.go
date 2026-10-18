@@ -112,6 +112,7 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 		Hooks: engine.Hooks{
 			OnOrder:  s.onOrder,
 			OnFill:   s.onFill,
+			OnEntry:  s.onEntry,
 			OnNotice: s.onNotice,
 			OnPlaced: m.ObservePlace,
 		},
@@ -456,14 +457,33 @@ func (s *session) onTrade(t domain.Trade) {
 	s.metrics.RealizedPnL.WithLabelValues(t.Strategy).Set(pnl)
 
 	if s.tg != nil {
-		icon := "🔴"
-		if net.IsPositive() {
-			icon = "🟢"
-		}
-		s.tg.Notify(fmt.Sprintf("%s <b>Closed %s %s</b> (%s)\nqty %s · %s → %s\nnet PnL <b>%s</b> · fees %s\nexit: %s",
-			icon, t.Side, telegram.Escape(t.Symbol), telegram.Escape(t.Strategy), t.Quantity, t.EntryPrice, t.ExitPrice,
-			net.StringFixed(2), t.Fees.StringFixed(2), telegram.Escape(t.ExitReason)))
+		s.tg.Notify(msgTradeClosed(t, s.base(t.PositionKey)))
 	}
+}
+
+// onEntry runs under the engine lock: no engine calls here.
+func (s *session) onEntry(o domain.Order, stop, target decimal.Decimal) {
+	if s.tg != nil {
+		s.tg.Notify(msgEntry(o, s.base(domain.PositionKey{Exchange: o.Exchange, Market: o.Market, Symbol: o.Symbol}), o.Strategy, stop, target))
+	}
+}
+
+// base is the base asset of a traded symbol, for messages.
+func (s *session) base(k domain.PositionKey) string {
+	if in, ok := s.instrument[k]; ok && in.Base != "" {
+		return in.Base
+	}
+	return ""
+}
+
+// strategyName is the strategy type of an instance id ("emacross", "dca", ...).
+func (s *session) strategyName(id string) string {
+	for _, sc := range s.strategies {
+		if sc.ID == id {
+			return sc.Name
+		}
+	}
+	return ""
 }
 
 func (s *session) onOrder(o domain.Order) {
@@ -479,10 +499,12 @@ func (s *session) onFill(f domain.Fill, o domain.Order) {
 		s.rec.Account(acct, time.Now())
 	}
 	s.metrics.Fills.WithLabelValues(f.Exchange+":"+string(f.Market), o.Tag).Inc()
-	if s.tg != nil && o.Tag == domain.TagEntry && o.Status == domain.OrderFilled {
-		s.tg.Notify(fmt.Sprintf("🔵 <b>Opened %s %s</b> (%s)\nqty %s @ %s\n%s",
-			strings.ToUpper(string(o.Side)), telegram.Escape(o.Symbol), telegram.Escape(o.Strategy),
-			o.FilledQty, o.AvgPrice.StringFixed(4), telegram.Escape(o.Reason)))
+	// DCA buys and grid levels have no entry plan, so announce them here.
+	// Market making fills are too frequent and only appear in the summaries.
+	if s.tg != nil && o.Tag == domain.TagStrategy && o.Status == domain.OrderFilled {
+		if name := s.strategyName(o.Strategy); name == "dca" || name == "grid" {
+			s.tg.Notify(msgStrategyFill(o, s.base(domain.PositionKey{Exchange: o.Exchange, Market: o.Market, Symbol: o.Symbol})))
+		}
 	}
 }
 
@@ -498,19 +520,7 @@ func (s *session) onNotice(level slog.Level, msg string, attrs ...any) {
 	if s.tg == nil || level < s.notifyMin {
 		return
 	}
-	icon := "ℹ️"
-	switch {
-	case level >= slog.LevelError:
-		icon = "🚨"
-	case level >= slog.LevelWarn:
-		icon = "⚠️"
-	}
-	var sb strings.Builder
-	fmt.Fprintf(&sb, "%s <b>%s</b>", icon, telegram.Escape(msg))
-	for i := 0; i+1 < len(attrs); i += 2 {
-		fmt.Fprintf(&sb, "\n%v: %s", attrs[i], telegram.Escape(fmt.Sprint(attrs[i+1])))
-	}
-	s.tg.Notify(sb.String())
+	s.tg.Notify(msgNotice(level, msg, attrs...))
 }
 
 func (s *session) updateGauges() {
@@ -544,8 +554,19 @@ func (s *session) dailySummary(ctx context.Context, now time.Time) {
 		s.log.Error("daily summary", "err", err)
 		return
 	}
+	by, err := s.store.TradeStatsByStrategy(ctx, s.runID, prev, day)
+	if err != nil {
+		s.log.Error("daily summary", "err", err)
+		return
+	}
 	total := s.book.Total()
-	s.tg.Notify(fmt.Sprintf("📊 <b>Daily summary %s</b>\ntrades %d (wins %d) · net PnL <b>%s</b> · fees %s\nequity %s · open positions %d",
-		prev.Format(time.DateOnly), st.Trades, st.Wins, st.NetPnL.StringFixed(2), st.Fees.StringFixed(2),
-		total.Equity.StringFixed(2), total.OpenPositions))
+	s.tg.Notify(msgDaily(prev, st, by, s.strategyIDs(), total.Equity, total.OpenPositions, s.cfg.App.Mode))
+}
+
+func (s *session) strategyIDs() []string {
+	ids := make([]string, len(s.strategies))
+	for i, sc := range s.strategies {
+		ids[i] = sc.ID
+	}
+	return ids
 }

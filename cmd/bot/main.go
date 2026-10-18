@@ -208,8 +208,7 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 	stopWeb := startWeb(cfg, store, sess, log, errc)
 	log.Info("bot ready", "trading", sess != nil, "strategies", len(strategies))
 	if tg != nil {
-		tg.Notify(fmt.Sprintf("🤖 <b>Bot started</b> · mode %s · %d strategies · version %s",
-			cfg.App.Mode, len(strategies), telegram.Escape(version)))
+		tg.Notify(msgStarted(cfg.App.Mode, strategies, version))
 	}
 
 	var runErr error
@@ -241,11 +240,7 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 	}
 	log.Info("bot stopped")
 	if tg != nil {
-		msg := "🛑 <b>Bot stopped</b>"
-		if runErr != nil {
-			msg += "\nerror: " + telegram.Escape(runErr.Error())
-		}
-		tg.Notify(msg)
+		tg.Notify(msgStopped(cfg.App.Mode, runErr))
 	}
 	return runErr
 }
