@@ -40,6 +40,7 @@ func UniverseRules(u config.UniverseConfig) marketdata.UniverseRules {
 		MinQuoteVolume: decimal.NewFromFloat(u.MinQuoteVolume),
 		MaxSpreadBps:   u.MaxSpreadBps,
 		ExcludeBases:   u.ExcludeBases,
+		ExcludeTags:    u.ExcludeTags,
 	}
 }
 
@@ -74,6 +75,13 @@ func ResolveSymbols(ctx context.Context, src exchange.MarketData, store *storage
 		return fixed, nil
 	}
 
+	if tagger, ok := src.(exchange.AssetTagger); ok && len(rules.ExcludeTags) > 0 {
+		tags, err := tagger.AssetTags(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("asset tags: %w", err)
+		}
+		rules = rules.WithTagged(tags)
+	}
 	tickers, err := src.Tickers(ctx, m)
 	if err != nil {
 		return nil, fmt.Errorf("tickers: %w", err)
