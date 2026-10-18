@@ -18,6 +18,21 @@ type UniverseRules struct {
 	MinQuoteVolume decimal.Decimal // 24h volume in quote currency
 	MaxSpreadBps   float64         // 0 disables the spread filter
 	ExcludeBases   []string        // stablecoins, fiat, wrapped tokens, ...
+	ExcludeTags    []string        // asset categories, e.g. "bStocks" (tokenized stocks)
+}
+
+// WithTagged returns r with every base asset carrying one of r.ExcludeTags
+// added to ExcludeBases.
+func (r UniverseRules) WithTagged(tags map[string][]string) UniverseRules {
+	r.ExcludeBases = slices.Clone(r.ExcludeBases)
+	for base, ts := range tags {
+		if slices.ContainsFunc(ts, func(t string) bool {
+			return slices.ContainsFunc(r.ExcludeTags, func(x string) bool { return strings.EqualFold(x, t) })
+		}) {
+			r.ExcludeBases = append(r.ExcludeBases, base)
+		}
+	}
+	return r
 }
 
 // Pick is one selected symbol.

@@ -153,6 +153,26 @@ func (s *memStore) times(k domain.SeriesKey) []time.Time {
 	return ts
 }
 
+// Tokenized stocks (decision of the user, 2026-10-18) are excluded by tag;
+// a "B" suffix alone would also hit BNB.
+func TestUniverseExcludesTaggedAssets(t *testing.T) {
+	ins := []domain.Instrument{
+		{Symbol: "NVDABUSDT", Base: "NVDAB", Quote: "USDT", Tradable: true},
+		{Symbol: "GSBUSDT", Base: "GSB", Quote: "USDT", Tradable: true},
+		{Symbol: "BNBUSDT", Base: "BNB", Quote: "USDT", Tradable: true},
+		{Symbol: "YBUSDT", Base: "YB", Quote: "USDT", Tradable: true},
+	}
+	var tickers []domain.Ticker
+	for _, in := range ins {
+		tickers = append(tickers, domain.Ticker{Symbol: in.Symbol, QuoteVolume: dec("50000000"), Bid: dec("10"), Ask: dec("10.001")})
+	}
+	rules := UniverseRules{Quote: "USDT", MinQuoteVolume: dec("1"), ExcludeTags: []string{"bstocks"}}
+	tags := map[string][]string{"NVDAB": {"bStocks"}, "GSB": {"bStocks", "newListing"}, "BNB": {"Layer1_Layer2", "BSC"}, "YB": {"defi"}}
+	got := Symbols(SelectUniverse(ins, tickers, rules.WithTagged(tags)))
+	assert.ElementsMatch(t, []string{"BNBUSDT", "YBUSDT"}, got)
+	assert.Empty(t, rules.ExcludeBases, "the rules passed in are not modified")
+}
+
 func TestFetchRangePaginates(t *testing.T) {
 	src := &fakeSource{limit: 4}
 	key := domain.SeriesKey{Exchange: "fake", Market: domain.Futures, Symbol: "BTCUSDT", Timeframe: "1m"}
