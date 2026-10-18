@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/rizz404/trading-bot/internal/broker"
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -42,4 +43,14 @@ func TestKlineWebsocketConfirmAndTriggerDirection(t *testing.T) {
 	}
 	assert.Equal(t, domain.OrderCanceled, status("Deactivated"))
 	assert.Equal(t, domain.OrderCanceled, status("PartiallyFilledCanceled"))
+}
+
+func TestSpotBuyCommissionIsPaidInTheBaseCoin(t *testing.T) {
+	tr := NewTrader(New(Options{Testnet: true}), "fake-key", "fake-secret", []domain.Market{domain.Spot})
+	var fills []domain.Fill
+	tr.SetHandler(func(ev broker.Event) { fills = append(fills, ev.Fill) })
+	tr.handlePrivate([]byte(`{"topic":"execution","data":[{"category":"spot","symbol":"BTCUSDT","orderLinkId":"tb1","side":"Buy","execId":"e1","execPrice":"100","execQty":"1","execFee":"0.001","execTime":"1767225600000","execType":"Trade","isMaker":false}]}`))
+	require.Len(t, fills, 1)
+	assert.Equal(t, "0.1", fills[0].Fee.String(), "quote value of the commission")
+	assert.Equal(t, "0.001", fills[0].BaseFee.String(), "the wallet received 0.999 BTC")
 }

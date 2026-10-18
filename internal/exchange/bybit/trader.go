@@ -338,9 +338,10 @@ func (t *Trader) onExecution(e wsExecution) {
 		return
 	}
 	m := market(e.Category)
-	fee := e.ExecFee
+	fee, baseFee := e.ExecFee, decimal.Zero
 	if m == domain.Spot && e.Side == "Buy" {
-		fee = fee.Mul(e.ExecPrice) // spot buys pay the fee in the base coin
+		// Spot buys pay the fee in the base coin: less arrives in the wallet.
+		fee, baseFee = fee.Mul(e.ExecPrice), e.ExecFee
 	}
 	t.mu.Lock()
 	o := t.open[e.OrderLinkID]
@@ -348,7 +349,7 @@ func (t *Trader) onExecution(e wsExecution) {
 	o.ClientID, o.Market, o.Symbol = e.OrderLinkID, m, e.Symbol
 	t.emit(broker.Event{Kind: broker.EventFill, Order: o, Fill: domain.Fill{
 		OrderClientID: e.OrderLinkID, TradeID: e.ExecID, Exchange: t.c.name, Market: m, Symbol: e.Symbol,
-		Side: side(e.Side), Price: e.ExecPrice, Quantity: e.ExecQty, Fee: fee, FeeAsset: "QUOTE", Maker: e.IsMaker,
+		Side: side(e.Side), Price: e.ExecPrice, Quantity: e.ExecQty, Fee: fee, FeeAsset: "QUOTE", BaseFee: baseFee, Maker: e.IsMaker,
 		Time: ms(e.ExecTime),
 	}})
 }
