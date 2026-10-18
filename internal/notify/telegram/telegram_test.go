@@ -122,3 +122,14 @@ func TestPollingIgnoresUnlistedChats(t *testing.T) {
 	assert.Equal(t, 1, handled)
 	assert.Equal(t, 1, sent)
 }
+
+func TestHelpKeepsRegistrationOrderAndIntro(t *testing.T) {
+	b := newBot()
+	noop := func(context.Context, []string) string { return "" }
+	b.Handle("status", "keadaan bot", noop)
+	b.Handle("balance", "saldo", noop)
+	b.SetHelpIntro("<b>Perintah</b>")
+	help := b.dispatch(context.Background(), "/help")
+	assert.True(t, strings.HasPrefix(help, "<b>Perintah</b>\n\n"))
+	assert.Less(t, strings.Index(help, "/status"), strings.Index(help, "/balance"), "registration order, not alphabetical")
+}

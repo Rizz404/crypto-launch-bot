@@ -14,7 +14,6 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
-	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -47,6 +46,8 @@ type Bot struct {
 
 	mu       sync.Mutex
 	commands map[string]command
+	order    []string // registration order, as shown by /help
+	intro    string   // HTML shown above the command list
 	queue    chan string
 }
 
@@ -63,7 +64,17 @@ func New(token string, chatIDs []int64, log *slog.Logger) *Bot {
 func (b *Bot) Handle(name, help string, fn CommandFunc) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
+	if _, ok := b.commands[name]; !ok {
+		b.order = append(b.order, name)
+	}
 	b.commands[name] = command{help: help, fn: fn}
+}
+
+// SetHelpIntro sets the HTML shown above the command list of /help.
+func (b *Bot) SetHelpIntro(html string) {
+	b.mu.Lock()
+	b.intro = html
+	b.mu.Unlock()
 }
 
 // Notify queues a message (HTML) for every whitelisted chat. It never
@@ -204,14 +215,13 @@ func (b *Bot) dispatch(ctx context.Context, text string) string {
 func (b *Bot) help() string {
 	b.mu.Lock()
 	defer b.mu.Unlock()
-	names := make([]string, 0, len(b.commands))
-	for n := range b.commands {
-		names = append(names, n)
-	}
-	sort.Strings(names)
 	var sb strings.Builder
-	sb.WriteString("<b>Commands</b>\n")
-	for _, n := range names {
+	if b.intro != "" {
+		sb.WriteString(b.intro + "\n\n")
+	} else {
+		sb.WriteString("<b>Commands</b>\n")
+	}
+	for _, n := range b.order {
 		fmt.Fprintf(&sb, "/%s — %s\n", n, html.EscapeString(b.commands[n].help))
 	}
 	return sb.String()
