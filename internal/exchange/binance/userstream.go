@@ -232,6 +232,9 @@ func (t *Trader) onSpotExecution(r spotExecutionReport) {
 			Fee: t.feeInQuote(r.Symbol, r.Commission, asset, r.LastPrice), FeeAsset: asset, Maker: r.Maker,
 			Time: msTime(r.TradeTime),
 		}
+		if o.Side == domain.Buy && asset != "" && strings.HasPrefix(r.Symbol, asset) {
+			f.BaseFee = r.Commission // the account received less than the fill
+		}
 		t.emit(broker.Event{Kind: broker.EventFill, Order: o, Fill: f})
 	case "CANCELED", "EXPIRED", "REJECTED", "TRADE_PREVENTION":
 		t.emit(broker.Event{Kind: broker.EventOrder, Order: o})

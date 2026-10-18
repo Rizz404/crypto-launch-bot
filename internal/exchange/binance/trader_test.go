@@ -24,6 +24,7 @@ func TestSpotExecutionCaseSensitiveFieldsAndBaseFee(t *testing.T) {
 	assert.Equal(t, "100", events[0].Fill.Price.String())
 	assert.Equal(t, "321", events[0].Fill.TradeID)
 	assert.Equal(t, "0.2", events[0].Fill.Fee.String())
+	assert.Equal(t, "0.002", events[0].Fill.BaseFee.String(), "the account received 1.998 BTC")
 	assert.Equal(t, "2", events[0].Order.Quantity.String())
 	assert.Equal(t, domain.OrderFilled, events[0].Order.Status)
 	assert.Equal(t, int64(1767225600001), events[0].Fill.Time.UnixMilli())
