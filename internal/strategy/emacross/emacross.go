@@ -23,11 +23,14 @@ type Params struct {
 	RSILongMax  float64 `mapstructure:"rsi_long_max"`  // skip longs when RSI is above (overbought)
 	RSIShortMin float64 `mapstructure:"rsi_short_min"` // skip shorts when RSI is below (oversold)
 	ATRPeriod   int     `mapstructure:"atr_period"`
-	StopATR     float64 `mapstructure:"stop_atr"`      // stop distance in ATRs
-	TargetATR   float64 `mapstructure:"target_atr"`    // take-profit distance in ATRs, 0 = none
-	TrailATR    float64 `mapstructure:"trail_atr"`     // trailing distance in ATRs, 0 = none
-	AllowShort  bool    `mapstructure:"allow_short"`   // ignored on spot
-	ExitOnCross bool    `mapstructure:"exit_on_cross"` // close on the opposite cross even without a new entry
+	StopATR     float64 `mapstructure:"stop_atr"`    // stop distance in ATRs
+	TargetATR   float64 `mapstructure:"target_atr"`  // take-profit distance in ATRs, 0 = none
+	TrailATR    float64 `mapstructure:"trail_atr"`   // trailing distance in ATRs, 0 = none
+	AllowShort  bool    `mapstructure:"allow_short"` // ignored on spot
+	// TrendEMA, if > 0, only trades with the trend: longs above the EMA of
+	// this period, shorts below it (exits are not filtered).
+	TrendEMA    int  `mapstructure:"trend_ema"`
+	ExitOnCross bool `mapstructure:"exit_on_cross"` // close on the opposite cross even without a new entry
 }
 
 func defaultParams() Params {
@@ -41,6 +44,7 @@ func defaultParams() Params {
 
 type series struct {
 	fast, slow *indicator.EMA
+	trend      *indicator.EMA // nil without a trend filter
 	rsi        *indicator.RSI
 	atr        *indicator.ATR
 	cross      indicator.Cross
@@ -69,6 +73,9 @@ func (s *Strategy) Init(ctx strategy.Context, cfg strategy.Config) error {
 	if s.p.StopATR <= 0 {
 		return fmt.Errorf("emacross: stop_atr must be > 0")
 	}
+	if s.p.TrendEMA < 0 {
+		return fmt.Errorf("emacross: trend_ema must be >= 0")
+	}
 	s.tf = tf
 	s.series = map[string]*series{}
 	for _, sym := range cfg.Symbols {
@@ -77,6 +84,9 @@ func (s *Strategy) Init(ctx strategy.Context, cfg strategy.Config) error {
 			slow: indicator.NewEMA(s.p.Slow),
 			rsi:  indicator.NewRSI(s.p.RSIPeriod),
 			atr:  indicator.NewATR(s.p.ATRPeriod),
+		}
+		if s.p.TrendEMA > 0 {
+			s.series[sym].trend = indicator.NewEMA(s.p.TrendEMA)
 		}
 	}
 	return nil
@@ -95,7 +105,12 @@ func (s *Strategy) OnCandle(c domain.Candle) []strategy.Intent {
 	fast, slow := st.fast.Update(closeF), st.slow.Update(closeF)
 	rsi := st.rsi.Update(closeF)
 	atr := st.atr.Update(highF, lowF, closeF)
-	if !st.slow.Ready() || !st.rsi.Ready() || !st.atr.Ready() {
+	trendUp, trendDown := true, true
+	if st.trend != nil {
+		t := st.trend.Update(closeF)
+		trendUp, trendDown = closeF > t, closeF < t
+	}
+	if !st.slow.Ready() || !st.rsi.Ready() || !st.atr.Ready() || (st.trend != nil && !st.trend.Ready()) {
 		st.cross.Update(fast, slow) // keep the cross state warm
 		return nil
 	}
@@ -109,11 +124,11 @@ func (s *Strategy) OnCandle(c domain.Candle) []strategy.Intent {
 	var out []strategy.Intent
 
 	switch {
-	case cross > 0 && rsi <= s.p.RSILongMax:
+	case cross > 0 && rsi <= s.p.RSILongMax && trendUp:
 		if !hasPos || pos.Side != domain.Long {
 			out = append(out, s.enter(c, domain.Long, atr, fmt.Sprintf("ema cross up, rsi %.1f", rsi)))
 		}
-	case cross < 0 && canShort && rsi >= s.p.RSIShortMin:
+	case cross < 0 && canShort && rsi >= s.p.RSIShortMin && trendDown:
 		if !hasPos || pos.Side != domain.Short {
 			out = append(out, s.enter(c, domain.Short, atr, fmt.Sprintf("ema cross down, rsi %.1f", rsi)))
 		}

@@ -216,6 +216,38 @@ func TestMarketMakerSpotInventoryAndRequote(t *testing.T) {
 	assert.Equal(t, domain.Sell, orders[1].Order.Side)
 }
 
+func TestEMACrossTrendFilterSkipsCountertrendEntries(t *testing.T) {
+	var prices []int64
+	for p := int64(200); p >= 100; p -= 5 {
+		prices = append(prices, p) // downtrend
+	}
+	bounce := len(prices)
+	prices = append(prices, 101, 103, 110) // cross up, still below the trend
+	recovery := len(prices)
+	prices = append(prices, 130, 150, 170, 190, 170, 150, 200, 230) // above the trend, dip, cross up again
+	entries := func(params map[string]any) []int {
+		s := makeStrategy(t, ctx(), cfg("emacross", domain.Spot, params))
+		var at []int
+		for i, px := range prices {
+			for _, in := range s.OnCandle(bar(px)) {
+				if in.Kind == strategy.Enter {
+					at = append(at, i)
+				}
+			}
+		}
+		return at
+	}
+	base := map[string]any{"timeframe": "1m", "fast": 2, "slow": 4, "rsi_period": 2, "rsi_long_max": 100, "atr_period": 2}
+	without := entries(base)
+	require.NotEmpty(t, without)
+	assert.Less(t, without[0], recovery, "without the filter the bounce is bought")
+	assert.GreaterOrEqual(t, without[0], bounce)
+	base["trend_ema"] = 10
+	with := entries(base)
+	require.Len(t, with, 1, "only the cross above the trend")
+	assert.Greater(t, with[0], recovery)
+}
+
 func TestStrategyUnknownParametersRejected(t *testing.T) {
 	s, err := strategy.New("emacross")
 	require.NoError(t, err)
