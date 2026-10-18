@@ -1,0 +1,100 @@
+{
+ "purpose": "DCA (walk-forward split) and quarterly grid validation; not evidence of future returns",
+ "dataset": "Binance USDT-M futures 1h, 2023-10-01..2026-10-01, BTC/ETH/SOL/BNB/XRP (same data as emacross-grid-2023-2026.json); futures used as a proxy for spot",
+ "excluded": "BTCUSDT: DCA 50 USDT and grid 40 USDT per level are below the futures minimum (step 0.001 BTC, min notional 50), so no orders were placed",
+ "assumptions": {
+  "initial_balance": 1000,
+  "risk": "risk.DefaultConfig (kill switch 5% daily loss / 20% drawdown, close on kill)",
+  "fees": "maker 0.02%, taker 0.05%",
+  "slippage_bps": 2,
+  "fills": "1h OHLC; grid limit fills without queue position (optimistic)"
+ },
+ "dca": {
+  "params": "buy 50 USDT every 24h, max 10 buys, leverage 1, split 50%: IS 2023-10..2025-04, OOS 2025-04..2026-10",
+  "grid": [
+   {
+    "take_profit": "0.1",
+    "dip_pct": "0",
+    "is_avg_return_pct": 28.6,
+    "oos_avg_return_pct": 10.9
+   },
+   {
+    "take_profit": "0.06",
+    "dip_pct": "0",
+    "is_avg_return_pct": 21.0,
+    "oos_avg_return_pct": 4.6
+   },
+   {
+    "take_profit": "0.03",
+    "dip_pct": "0",
+    "is_avg_return_pct": 11.9,
+    "oos_avg_return_pct": 1.0
+   },
+   {
+    "take_profit": "0.1",
+    "dip_pct": "0.03",
+    "is_avg_return_pct": 11.8,
+    "oos_avg_return_pct": -5.0
+   },
+   {
+    "take_profit": "0.06",
+    "dip_pct": "0.03",
+    "is_avg_return_pct": 9.5,
+    "oos_avg_return_pct": -6.0
+   },
+   {
+    "take_profit": "0.03",
+    "dip_pct": "0.03",
+    "is_avg_return_pct": 5.4,
+    "oos_avg_return_pct": -9.9
+   }
+  ],
+  "tp10_vs_buy_and_hold_pct": {
+   "in_sample": {
+    "BNB": "44.5 vs 181.6",
+    "ETH": "8.3 vs 9.1",
+    "SOL": "60.2 vs 483.1",
+    "XRP": "1.2 vs 305.8"
+   },
+   "out_of_sample": {
+    "BNB": "17.9 vs 27.3",
+    "ETH": "-6.3 vs 47.4",
+    "SOL": "23.8 vs -5.2",
+    "XRP": "8.0 vs -28.7"
+   }
+  }
+ },
+ "grid": {
+  "params": "re-armed each quarter: geometric 20 levels within \u00b115% of the quarter open, 40 USDT per level, stop 3% below the range",
+  "per_symbol": [
+   {
+    "symbol": "BNBUSDT",
+    "quarters": 12,
+    "avg_quarter_return_pct": 0.91,
+    "winning_quarters": 9,
+    "worst_quarter_pct": -4.9
+   },
+   {
+    "symbol": "ETHUSDT",
+    "quarters": 12,
+    "avg_quarter_return_pct": -1.24,
+    "winning_quarters": 6,
+    "worst_quarter_pct": -6.3
+   },
+   {
+    "symbol": "SOLUSDT",
+    "quarters": 12,
+    "avg_quarter_return_pct": -0.17,
+    "winning_quarters": 6,
+    "worst_quarter_pct": -4.4
+   },
+   {
+    "symbol": "XRPUSDT",
+    "quarters": 12,
+    "avg_quarter_return_pct": -0.79,
+    "winning_quarters": 6,
+    "worst_quarter_pct": -5.6
+   }
+  ]
+ }
+}
