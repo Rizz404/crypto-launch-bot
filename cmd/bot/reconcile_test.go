@@ -19,6 +19,7 @@ import (
 	"github.com/rizz404/trading-bot/internal/metrics"
 	"github.com/rizz404/trading-bot/internal/portfolio"
 	"github.com/rizz404/trading-bot/internal/risk"
+	"github.com/rizz404/trading-bot/internal/strategy"
 )
 
 // The testnet account starts with 1 BTC that the bot never bought; a spot
@@ -109,6 +110,48 @@ func TestLiveStartDoesNotTripKillSwitch(t *testing.T) {
 	halted, reason := rm.Halted()
 	assert.False(t, halted, reason)
 	assert.Equal(t, "10000", book.Total().Equity.String())
+}
+
+// A restart within one bar warms up on a candle recent enough to act on.
+// Acting before the first reconcile meant an empty ledger and no orders of
+// the previous session: on the testnet the grid laid a second ladder, held
+// back only by the exposure limit of the empty ledger.
+func TestFreshWarmupCandleRunsAfterReconcile(t *testing.T) {
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	key := portfolio.AccountKey{Exchange: "binance-testnet", Market: domain.Spot}
+	book := portfolio.NewBook()
+	book.Add(portfolio.NewAccount(key, decimal.Zero, nil))
+	rm := risk.NewManager(risk.DefaultConfig(), log)
+	live := &fakeLive{Sim: broker.NewSim(broker.SimConfig{Exchange: key.Exchange, Clock: time.Now}), resync: make(chan struct{}),
+		state: &broker.AccountState{Market: domain.Spot, Balances: map[string]broker.Balance{"USDT": {Asset: "USDT", Wallet: decimal.NewFromInt(10000)}}}}
+	eng := engine.New(engine.Config{Book: book, Risk: rm, Log: log, HoldRisk: true})
+	eng.AddBroker(live)
+	eng.SetInstruments([]domain.Instrument{{Exchange: key.Exchange, Market: key.Market, Symbol: "SOLUSDT", Base: "SOL", Quote: "USDT",
+		TickSize: decimal.RequireFromString("0.01"), StepSize: decimal.RequireFromString("0.001"),
+		MinQty: decimal.RequireFromString("0.001"), MinNotional: decimal.NewFromInt(5)}})
+	require.NoError(t, eng.AddStrategy(strategy.Config{ID: "grid-sol", Name: "grid", Exchange: key.Exchange, Market: key.Market,
+		Symbols: []string{"SOLUSDT"}, Leverage: 1,
+		Params: map[string]any{"timeframe": "1m", "lower": 90, "upper": 110, "levels": 4, "quote_per_level": 20}}))
+	s := &session{log: log, book: book, risk: rm, eng: eng, lives: map[string]broker.Live{key.Exchange: live},
+		resync: make(chan struct{}, 1), mismatch: map[domain.PositionKey]int{}, leverages: map[domain.PositionKey]int{},
+		quotes: map[portfolio.AccountKey]string{key: "USDT"}, instrument: map[domain.PositionKey]domain.Instrument{},
+		metrics: metrics.NewTrading(prometheus.NewRegistry())}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer func() { cancel(); s.liveWG.Wait() }()
+
+	now := time.Now()
+	candle := func(age time.Duration) domain.Candle {
+		px := decimal.NewFromInt(100)
+		return domain.Candle{Exchange: key.Exchange, Market: key.Market, Symbol: "SOLUSDT", Timeframe: "1m",
+			OpenTime: now.Add(-age - time.Minute), Open: px, High: px, Low: px, Close: px, Volume: decimal.NewFromInt(1)}
+	}
+	s.replayWarmup(ctx, []domain.Candle{candle(10 * time.Minute), candle(10 * time.Second)}, now)
+	assert.Empty(t, eng.OpenOrders(), "nothing is placed before the exchange state is loaded")
+	assert.Len(t, s.fresh, 1)
+
+	require.NoError(t, s.start(ctx))
+	assert.Len(t, eng.OpenOrders(), 2, "the grid starts with the reconciled balance")
+	assert.Empty(t, s.fresh)
 }
 
 // A stop/take-profit pair left from a position closed before adoption

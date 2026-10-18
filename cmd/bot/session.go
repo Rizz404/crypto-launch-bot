@@ -62,6 +62,7 @@ type session struct {
 	fundingSources map[string]exchange.FundingSource
 	realized       map[string]decimal.Decimal // net realized PnL per strategy, this session
 	day            time.Time                  // UTC day of the last daily summary
+	fresh          []domain.Candle            // recent warmup candles, run after the first reconcile
 }
 
 // newSession builds the trading side of the bot for the configured mode.
@@ -345,7 +346,10 @@ func (s *session) pollFunding(ctx context.Context) {
 }
 
 // warmup replays recent stored candles so indicators are ready. The engine
-// drops intents from these stale candles.
+// drops intents from stale candles; candles recent enough to act on (a
+// restart within one bar) are held until start has loaded the exchange
+// state, or strategies would trade on an empty ledger and miss the orders
+// of the previous session (the grid laid a second ladder on the testnet).
 func (s *session) warmup(ctx context.Context) error {
 	var all []domain.Candle
 	for _, series := range s.Subscriptions() {
@@ -360,11 +364,20 @@ func (s *session) warmup(ctx context.Context) error {
 	slices.SortFunc(all, func(a, b domain.Candle) int {
 		return cmp.Or(a.CloseTime().Compare(b.CloseTime()), cmp.Compare(a.Timeframe.Duration(), b.Timeframe.Duration()))
 	})
+	s.replayWarmup(ctx, all, time.Now())
+	return nil
+}
+
+func (s *session) replayWarmup(ctx context.Context, all []domain.Candle, now time.Time) {
+	s.fresh = nil
 	for _, c := range all {
+		if now.Sub(c.CloseTime()) <= c.Timeframe.Duration() {
+			s.fresh = append(s.fresh, c)
+			continue
+		}
 		s.eng.OnCandle(ctx, c)
 	}
-	s.log.Info("strategies warmed up", "candles", len(all))
-	return nil
+	s.log.Info("strategies warmed up", "candles", len(all), "held", len(s.fresh))
 }
 
 func (s *session) onCandle(ctx context.Context, c domain.Candle) {

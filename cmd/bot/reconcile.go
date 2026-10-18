@@ -13,8 +13,20 @@ import (
 )
 
 // start starts the live brokers and loads the exchange state (after
-// warmup, so last prices are known), then arms the kill switch baseline.
+// warmup, so last prices are known), arms the kill switch baseline and then
+// runs the strategies on the candles warmup held back.
 func (s *session) start(ctx context.Context) error {
+	if err := s.startLive(ctx); err != nil {
+		return err
+	}
+	for _, c := range s.fresh {
+		s.eng.OnCandle(ctx, c)
+	}
+	s.fresh = nil
+	return nil
+}
+
+func (s *session) startLive(ctx context.Context) error {
 	// The engine holds kill switch observations until the ledger has been
 	// reconciled: before that, equity is 0 or a restored position alone.
 	defer func() { s.eng.ArmRisk(ctx) }()
