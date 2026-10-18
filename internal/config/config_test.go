@@ -43,6 +43,7 @@ func TestLoadDefaultsAndEnvOverride(t *testing.T) {
 	assert.Equal(t, "json", cfg.App.LogFormat, "default kept")
 	assert.Equal(t, int32(10), cfg.Database.MaxConns, "default kept")
 	assert.Equal(t, "127.0.0.1:9100", cfg.Metrics.Listen, "default kept")
+	assert.Equal(t, []string{"bStocks"}, cfg.Universe.ExcludeTags, "tokenized stocks are excluded by default")
 	assert.True(t, cfg.Exchanges["binance"].Testnet)
 	assert.Equal(t, "key123", cfg.Exchanges["binance"].APIKey.Reveal())
 	assert.Equal(t, []string{"binance"}, cfg.EnabledExchanges())

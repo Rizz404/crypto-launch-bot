@@ -184,6 +184,9 @@ type UniverseConfig struct {
 	MinQuoteVolume float64  `koanf:"min_quote_volume"`
 	MaxSpreadBps   float64  `koanf:"max_spread_bps"`
 	ExcludeBases   []string `koanf:"exclude_bases"`
+	// ExcludeTags drops assets by exchange category; "bStocks" are Binance's
+	// tokenized stocks and ETFs (excluded by decision of the user, 2026-10-18).
+	ExcludeTags []string `koanf:"exclude_tags"`
 }
 
 // secretKeys may only be set through the environment.
@@ -231,6 +234,7 @@ func defaults() Config {
 			MinQuoteVolume: 20_000_000,
 			MaxSpreadBps:   10,
 			ExcludeBases:   slices.Clone(DefaultExcludeBases),
+			ExcludeTags:    []string{"bStocks"},
 		},
 	}
 }

@@ -41,6 +41,9 @@ universe:
   # Defaults to stablecoins, fiat, gold and wrapped tokens; setting this list
   # replaces the defaults (see config.DefaultExcludeBases).
   # exclude_bases: [USDC, FDUSD, ...]
+  # Exchange categories to skip. Binance tags tokenized stocks and ETFs
+  # (NVDAB, GSB, QQQB, ...) "bStocks"; they are excluded by default.
+  # exclude_tags: [bStocks]
 
 # Strategy instances. `bot run` starts the enabled ones; `backtest -strategy <id>`
 # can run any of them.
