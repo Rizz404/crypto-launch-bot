@@ -1,18 +1,27 @@
 {
   "subject": "Plan 2 P2-9: managed ETH paper trial start on VPS (trading-bot-paper)",
   "recorded_by": "Claude Code session, 2026-10-20",
-  "trial_start_utc": "2026-10-20T15:37:00Z",
-  "trial_start_note": "First run started ~15:37 UTC on c3b4bad; restarted 15:46 UTC on db18c0e (observer fix) as the first restart/persistence check. The trial window counts from 15:37 UTC.",
+  "trial_start_utc": "2026-10-20T16:24:45Z",
+  "trial_start_note": "Counted from the first stable release 607e7ce (2026-10-20 16:24:45 UTC). The first runs from 15:37 UTC (c3b4bad, db18c0e) crash-looped from ~16:00 UTC on a warmup window bug and do not count. Later restarts were planned deploys with ledger persistence verified.",
   "release": {
-    "source_commit": "db18c0e8c73aad752c44c2749ed92e7218a9a4a6",
-    "image": "ghcr.io/rizz404/trading-bot@sha256:d0ffe0e3e75cfb50b268c966e15c913cb88540b206e9c19a53c9b6c77a4ad561",
+    "source_commit": "c14aa087141583a9f185c5b8b5f595009988c41c",
+    "image": "ghcr.io/rizz404/trading-bot@sha256:5a50dd484438c0739093b6417622bfea35c11f96fd9fb815ad3e6976c3333424",
     "first_trial_commit": "c3b4bad8f3958299309769e40c70c3e6d13f4d89",
     "first_trial_image": "ghcr.io/rizz404/trading-bot@sha256:b09b675678acbf53306b2a4c9e7578fa2246f4cb181c65fd1d82555e874c55eb",
-    "rollback": {"source_commit": "f709429f5f7c697f7d7073dbaa35994ab628f85c", "image": "ghcr.io/rizz404/trading-bot@sha256:e5b8710bc76da2cd5d581511e19fb7bf9e6a472e0eb61b14fb3c099054fd0438", "db": "tradingbot", "config": "configs/config.testnet.yaml"}
+    "rollback": {
+      "source_commit": "f709429f5f7c697f7d7073dbaa35994ab628f85c",
+      "image": "ghcr.io/rizz404/trading-bot@sha256:e5b8710bc76da2cd5d581511e19fb7bf9e6a472e0eb61b14fb3c099054fd0438",
+      "db": "tradingbot",
+      "config": "configs/config.testnet.yaml"
+    }
   },
   "configuration": {
     "server_config": "configs/config.yaml = configs/managed.eth-paper.yaml at the release plus telegram.enabled true and the chat id of the testnet config",
-    "env": {"TB_APP__MODE": "paper", "BOT_DB_NAME": "tradingbot_eth", "TB_APP__ALLOW_LIVE": "false (manifest)"},
+    "env": {
+      "TB_APP__MODE": "paper",
+      "BOT_DB_NAME": "tradingbot_eth",
+      "TB_APP__ALLOW_LIVE": "false (manifest)"
+    },
     "wallet": "paper:eth-research",
     "capital_usdt": "110.79104808331486",
     "instance": "momentum / binding eth4h (trendspot momentum 4h, ETHUSDT)",
@@ -26,37 +35,86 @@
   },
   "migration_rehearsal_on_copy": {
     "copy": "tradingbot_migcopy restored from backup-20261020T151936Z with timescaledb pre/post restore",
-    "legacy_rows_candles_orders_fills_trades_runs": [24698, 1381, 509, 249, 9],
+    "legacy_rows_candles_orders_fills_trades_runs": [
+      24698,
+      1381,
+      509,
+      249,
+      9
+    ],
     "up": "3 -> 5 (00004 managed_wallets, 00005 managed_archive), rows unchanged",
     "down_down_up": "5 -> 3 -> 5, rows unchanged, managed tables removed and recreated",
     "original_db_version": 3,
     "copy_dropped": true
   },
-  "trial_database": {"name": "tradingbot_eth", "migrations": "1-5 applied", "legacy_imports": 0},
+  "trial_database": {
+    "name": "tradingbot_eth",
+    "migrations": "1-5 applied",
+    "legacy_imports": 0
+  },
   "verification_after_start": {
     "build_info": "mode=paper version=db18c0e",
-    "warmup_candles": {"ETHUSDT 4h": 301, "ETHUSDT 1m": 302},
+    "warmup_candles": {
+      "ETHUSDT 4h": 301,
+      "ETHUSDT 1m": 302
+    },
     "ledger": "cash 110.79104808331486, attention empty, halted false, pending 0, orders 0",
     "restart": "runs stopped,running; cash and attention unchanged across recreate",
     "health": "ok",
     "dashboard": "401 without auth, 200 with auth, rate line shown",
     "warn_error_logs": "none",
     "observer": "problems [] after the db18c0e fix; managed state 8.5 KB",
-    "write_rate": "~7 ledger updates/s from price ticks, ~1.4 MB WAL/min, all HOT updates, autovacuum keeping up; bot CPU 0.6%, 39 MiB",
+    "write_rate": "after c14aa08: 11 ledger revisions per 120 s, ~95 kB WAL/min (was ~7 updates/s, 1.4 MB/min). Causes fixed: JSONB-normalized bytes never equalled Go encoding (every no-op update rewrote the row) and engine checkpoints compared by bytes",
     "backup_after": "backup-20261020T154824Z contains database.dump and database-tradingbot_eth.dump, sha256 OK",
     "timers": "observe enabled (5 min), backup active (daily ~03:15 UTC)",
-    "baseline_after": "differences: []"
+    "baseline_after": "differences: []",
+    "restore_drill": "backup-20261020T154824Z database-tradingbot_eth.dump restored into a scratch DB: version 5, wallet, cash and journal present; scratch dropped"
   },
   "findings": [
     "vps-observe managed query failed on JSON null Pending (coalesce does not catch JSON null); fixed in db18c0e",
     "The old vps-backup.sh swallowed the rest of an ssh 'bash -s' heredoc; the new script redirects stdin",
     "Managed path sends no 'Bot started' message; Telegram is verified through /status and the 07:00 WIB digest",
-    "Ledger is rewritten on every price update; acceptable now, candidate for throttling before long runs"
+    "Ledger is rewritten on every price update; acceptable now, candidate for throttling before long runs",
+    "Crash loop from the warmup window (see incident)",
+    "Sim filled simultaneous orders in random order, making TestRestartReplaysDurableInbox flaky since 53bb180 and backtests not fully reproducible; fixed in c14aa08"
   ],
   "open": [
-    "Telegram /status from the user's chat and daily digest 2026-10-21 07:00 WIB",
-    "Operational review after seven actual days (from 2026-10-20T15:37Z, earliest 2026-10-27T15:37Z)",
-    "Restore drill of database-tradingbot_eth.dump",
+    "Telegram /status, the command menu after typing '/', and daily digest 2026-10-21 07:00 WIB",
+    "4h boundary 2026-10-20 20:00 UTC without restarts (observer flags container_restarted)",
+    "Operational review after seven actual days: earliest 2026-10-27T16:25Z (23:25 WIB)",
     "No live trading: P2-10 not approved"
-  ]
+  ],
+  "releases_2026_10_20": [
+    {
+      "commit": "c3b4bad",
+      "use": "first start 15:37 UTC"
+    },
+    {
+      "commit": "db18c0e",
+      "use": "observer null fix, 15:46 UTC; crash loop began ~16:00 UTC"
+    },
+    {
+      "commit": "84f521a",
+      "use": "telegram menu, start/stop messages, /resolve, mark throttle; still crash-looping, stopped 16:21 UTC"
+    },
+    {
+      "commit": "607e7ce",
+      "use": "warmup window fix, 16:24:45 UTC; stable across closed candles and a forced restart"
+    },
+    {
+      "commit": "4f9401c",
+      "use": "skip no-op ledger writes, observer restart detection"
+    },
+    {
+      "commit": "c14aa08",
+      "use": "value-compare engine checkpoints, deterministic Sim fills; running since 16:59:23 UTC"
+    }
+  ],
+  "incident": {
+    "what": "Managed warmup requested 300 bars starting 302 bars back, so the two newest closed bars were missing. On restart the feed resumed after the newest stored candle and the runtime saw a gap: 'managed candle gap ... restart with complete warmup'. Docker restarted the bot repeatedly (runs marked interrupted).",
+    "first_seen": "4h boundary 2026-10-20 16:00 UTC; observer restart counts 0 -> 4 -> 9 while status stayed running",
+    "impact": "paper only, no orders or positions; ledger cash unchanged; repeated Telegram start/stop messages during 84f521a",
+    "fix": "607e7ce warmupRequest reaches the still-forming candle (test for 1m/4h/1d); c5830bd observer flags container_restarted",
+    "verified": "1m path: stable >3 min after start and after a forced restart. 4h path: pending the 2026-10-20 20:00 UTC boundary"
+  }
 }

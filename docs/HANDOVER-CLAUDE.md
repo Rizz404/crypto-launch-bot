@@ -109,9 +109,9 @@ ETH prospektif di laptop. Jangan menjalankan `bot run` untuk mencoba dashboard.
 3. Jika ada perubahan, jalankan regression yang relevan dan lint/vet/race;
    DB test harus terpisah dengan nama `_test`. Jangan memakai database trial.
 4. ~~Persiapkan P2-9~~: trial ETH paper managed berjalan di VPS sejak
-   2026-10-20 15:37 UTC ([bukti](testing/p2-9-vps-start-2026-10-20.json),
+   2026-10-20 16:24:45 UTC ([bukti](testing/p2-9-vps-start-2026-10-20.json),
    [handoff VPS](handoff-vps.md)). Sisa P2-9: verifikasi Telegram/digest,
-   restore drill DB trial, review tujuh hari.
+   batas candle 4h tanpa restart, review tujuh hari (≥ 2026-10-27 16:25 UTC).
 
 Perintah, format input CLI dan prosedur recovery ada di
 [managed-runtime.md](managed-runtime.md). Jangan mengandalkan ringkasan chat
