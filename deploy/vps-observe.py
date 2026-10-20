@@ -131,6 +131,18 @@ if sample["containers"]["ok"]:
     if {r["service"] for r in rows} != {"bot", "db", "dns", "prometheus", "grafana"} or any(
             r["status"] != "running" or r["oom_killed"] for r in rows):
         problems.append("container_state")
+    # A crash loop keeps the container "running" between restarts; compare
+    # restart counts of the same container with the previous sample.
+    previous = {}
+    for path in sorted(EVIDENCE.glob("samples-????????.jsonl"))[-2:]:
+        for line in path.read_text().splitlines()[-1:]:
+            try:
+                last = json.loads(line)
+                previous = {c["id"]: c["restarts"] for c in last["containers"]["data"]} if last["containers"]["ok"] else {}
+            except (ValueError, KeyError):
+                pass
+    if any(r["restarts"] > previous.get(r["id"], r["restarts"]) for r in rows):
+        problems.append("container_restarted")
 if sample["database"]["ok"]:
     series = sample["database"]["data"]["series"]
     # A closed candle is stored once its period ends: allow two periods plus a margin.
