@@ -278,6 +278,16 @@ func (t *Trader) SyncOrders(ctx context.Context, tracked []domain.Order, exchang
 	}
 }
 
+// QueryOrder implements broker.OrderQuerier. Binance -2013 ("Order does not
+// exist") is reported as broker.ErrOrderNotFound.
+func (t *Trader) QueryOrder(ctx context.Context, o domain.Order) (domain.Order, error) {
+	final, err := t.queryOrder(ctx, o)
+	if apiCode(err) == -2013 {
+		return o, fmt.Errorf("%w: %w", broker.ErrOrderNotFound, err)
+	}
+	return final, err
+}
+
 func (t *Trader) queryOrder(ctx context.Context, o domain.Order) (domain.Order, error) {
 	q := url.Values{"symbol": {o.Symbol}}
 	switch {

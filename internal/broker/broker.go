@@ -5,9 +5,20 @@ package broker
 
 import (
 	"context"
+	"errors"
 
 	"github.com/rizz404/trading-bot/internal/domain"
 )
+
+// ErrOrderNotFound is returned by OrderQuerier when the exchange states that
+// it has no order with the given client ID (it was never accepted).
+var ErrOrderNotFound = errors.New("exchange has no such order")
+
+// OrderQuerier reads one order's current state from the exchange. It lets an
+// operator settle an uncertain submission from evidence instead of guessing.
+type OrderQuerier interface {
+	QueryOrder(ctx context.Context, o domain.Order) (domain.Order, error)
+}
 
 // EventKind tells what an Event carries.
 type EventKind int

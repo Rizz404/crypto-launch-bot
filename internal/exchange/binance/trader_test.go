@@ -78,3 +78,26 @@ func TestAmbiguousPlaceFailureIsResolvedByQuery(t *testing.T) {
 		})
 	}
 }
+
+func TestQueryOrderReportsMissingOrderAsNotFound(t *testing.T) {
+	missing := true
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "tbx2", r.URL.Query().Get("origClientOrderId"))
+		if missing {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte(`{"code":-2013,"msg":"Order does not exist."}`))
+			return
+		}
+		_, _ = w.Write([]byte(`{"symbol":"BTCUSDT","orderId":43,"clientOrderId":"tbx2","price":"80000","origQty":"0.001","executedQty":"0","cummulativeQuoteQty":"0","status":"NEW","type":"LIMIT","side":"BUY","stopPrice":"0","time":1,"updateTime":2}`))
+	}))
+	defer srv.Close()
+	tr := NewTrader(testClient(srv), "key", "secret", []domain.Market{domain.Spot})
+	o := domain.Order{ClientID: "tbx2", Market: domain.Spot, Symbol: "BTCUSDT", Side: domain.Buy, Type: domain.OrderLimit}
+	_, err := tr.QueryOrder(context.Background(), o)
+	require.ErrorIs(t, err, broker.ErrOrderNotFound)
+	missing = false
+	got, err := tr.QueryOrder(context.Background(), o)
+	require.NoError(t, err)
+	assert.Equal(t, domain.OrderNew, got.Status)
+	assert.Equal(t, "43", got.ExchangeID)
+}
