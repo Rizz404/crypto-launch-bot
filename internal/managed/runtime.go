@@ -21,6 +21,10 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+// DefaultMarkInterval keeps intrabar price writes to one per symbol every
+// ten seconds; the entry freshness check allows two minutes.
+const DefaultMarkInterval = 10 * time.Second
+
 func nonce() string {
 	var b [16]byte
 	if _, err := rand.Read(b[:]); err != nil {
@@ -33,29 +37,36 @@ type Runtime struct {
 	AllowGaps bool
 	// Retention is how long settled detail stays in the hot state before it
 	// moves to the archive; zero means DefaultRetention.
-	Retention   time.Duration
-	compacted   time.Time
-	lastClosed  map[domain.SeriesKey]time.Time
-	runID       string
-	revisions   map[string]string
-	warmMarks   map[string]domain.Candle
-	CheckLease  func(context.Context) error
-	initial     map[string][]byte
-	mu          sync.Mutex
-	qmu         sync.Mutex
-	events      []broker.Event
-	repo        Repository
-	physical    broker.Broker
-	engines     map[string]*engine.Engine
-	accounts    map[string]*portfolio.Account
-	routes      map[string]func(broker.Event)
-	instruments map[string]domain.Instrument
-	log         *slog.Logger
-	fee         decimal.Decimal
-	clock       func() time.Time
-	failure     error
-	ready       bool
-	OnNotice    func(string, slog.Level, string)
+	Retention time.Duration
+	// MarkInterval bounds how often a still-forming candle's price is written
+	// to the ledger; zero means DefaultMarkInterval. Closed candles, fills,
+	// orders and controls are always written immediately. Engines see every
+	// price through the in-memory marks regardless.
+	MarkInterval time.Duration
+	marks        map[string]decimal.Decimal
+	markedAt     map[string]time.Time
+	compacted    time.Time
+	lastClosed   map[domain.SeriesKey]time.Time
+	runID        string
+	revisions    map[string]string
+	warmMarks    map[string]domain.Candle
+	CheckLease   func(context.Context) error
+	initial      map[string][]byte
+	mu           sync.Mutex
+	qmu          sync.Mutex
+	events       []broker.Event
+	repo         Repository
+	physical     broker.Broker
+	engines      map[string]*engine.Engine
+	accounts     map[string]*portfolio.Account
+	routes       map[string]func(broker.Event)
+	instruments  map[string]domain.Instrument
+	log          *slog.Logger
+	fee          decimal.Decimal
+	clock        func() time.Time
+	failure      error
+	ready        bool
+	OnNotice     func(string, slog.Level, string)
 }
 
 func NewRuntime(ctx context.Context, repo Repository, physical broker.Broker, ins []domain.Instrument, fee decimal.Decimal, clock func() time.Time, log *slog.Logger) (*Runtime, error) {
@@ -69,7 +80,7 @@ func NewRuntime(ctx context.Context, repo Repository, physical broker.Broker, in
 	if err != nil {
 		return nil, err
 	}
-	r := &Runtime{lastClosed: map[domain.SeriesKey]time.Time{}, revisions: map[string]string{}, warmMarks: map[string]domain.Candle{}, initial: map[string][]byte{}, repo: repo, physical: physical, engines: map[string]*engine.Engine{}, accounts: map[string]*portfolio.Account{}, routes: map[string]func(broker.Event){}, instruments: map[string]domain.Instrument{}, log: log, fee: fee, clock: clock}
+	r := &Runtime{marks: map[string]decimal.Decimal{}, markedAt: map[string]time.Time{}, lastClosed: map[domain.SeriesKey]time.Time{}, revisions: map[string]string{}, warmMarks: map[string]domain.Candle{}, initial: map[string][]byte{}, repo: repo, physical: physical, engines: map[string]*engine.Engine{}, accounts: map[string]*portfolio.Account{}, routes: map[string]func(broker.Event){}, instruments: map[string]domain.Instrument{}, log: log, fee: fee, clock: clock}
 	for _, in := range ins {
 		r.instruments[in.Symbol] = in
 	}
@@ -272,8 +283,18 @@ func (r *Runtime) syncView(ctx context.Context, owner string) error {
 	b := s.Bindings[owner]
 	i := s.Instances[b.InstanceID]
 	a := r.accounts[owner]
-	for symbol, price := range s.Prices {
-		r.engines[owner].SetPrice(r.physical.Exchange(), domain.Spot, symbol, price)
+	price := func(symbol string) decimal.Decimal {
+		if p, ok := r.marks[symbol]; ok {
+			return p
+		}
+		return s.Prices[symbol]
+	}
+	for symbol, p := range s.Prices {
+		r.engines[owner].SetPrice(r.physical.Exchange(), domain.Spot, symbol, p)
+	}
+	// In-memory marks are newer than throttled ledger marks.
+	for symbol, p := range r.marks {
+		r.engines[owner].SetPrice(r.physical.Exchange(), domain.Spot, symbol, p)
 	}
 	for _, p := range a.Positions() {
 		p.Quantity = decimal.Zero
@@ -286,7 +307,7 @@ func (r *Runtime) syncView(ctx context.Context, owner string) error {
 		}
 		cost = cost.Add(p.Cost)
 		a.SetPosition(domain.Position{PositionKey: domain.PositionKey{Exchange: r.physical.Exchange(), Market: domain.Spot, Symbol: p.Symbol}, Side: domain.Long, Quantity: p.Quantity, EntryPrice: p.Cost.Div(p.Quantity), Leverage: 1, Strategy: owner})
-		a.Mark(p.Symbol, s.Prices[p.Symbol])
+		a.Mark(p.Symbol, price(p.Symbol))
 	}
 	pending, _ := s.Reserved("", owner, "")
 	a.SetBalance(s.FreeCash(i.ID).Add(pending).Add(cost))
@@ -319,13 +340,24 @@ func (r *Runtime) Record(ctx context.Context, c domain.Candle, closed bool) erro
 	if r.failure != nil {
 		return r.failure
 	}
-	if err := r.repo.Update(ctx, nonce(), "mark", c, func(s *State) error {
-		s.Mark(c.Symbol, c.Close)
-		s.PriceAt[c.Symbol] = c.CloseTime()
-		s.Observe(r.clock())
-		return nil
-	}); err != nil {
-		return err
+	if c.Close.IsPositive() {
+		r.marks[c.Symbol] = c.Close
+	}
+	interval := r.MarkInterval
+	if interval <= 0 {
+		interval = DefaultMarkInterval
+	}
+	persist := closed || r.clock().Sub(r.markedAt[c.Symbol]) >= interval
+	if persist {
+		if err := r.repo.Update(ctx, nonce(), "mark", c, func(s *State) error {
+			s.Mark(c.Symbol, c.Close)
+			s.PriceAt[c.Symbol] = c.CloseTime()
+			s.Observe(r.clock())
+			return nil
+		}); err != nil {
+			return err
+		}
+		r.markedAt[c.Symbol] = r.clock()
 	}
 	if sim, ok := r.physical.(*broker.Sim); ok && c.Timeframe == "1m" {
 		if err := sim.MatchCandle(c, func() error { return r.drain(ctx) }); err != nil {
@@ -335,8 +367,10 @@ func (r *Runtime) Record(ctx context.Context, c domain.Candle, closed bool) erro
 	if err := r.drain(ctx); err != nil {
 		return err
 	}
-	if err := r.repo.Update(ctx, nonce(), "mark", nil, func(s *State) error { s.Observe(r.clock()); return nil }); err != nil {
-		return err
+	if persist {
+		if err := r.repo.Update(ctx, nonce(), "mark", nil, func(s *State) error { s.Observe(r.clock()); return nil }); err != nil {
+			return err
+		}
 	}
 	s, err := r.repo.Load(ctx)
 	if err != nil {

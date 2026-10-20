@@ -532,3 +532,46 @@ func TestCompactArchivesSettledDetailOnly(t *testing.T) {
 	// A pruned idempotency key is still rejected through the journal.
 	require.NoError(t, repo.Update(t.Context(), "seed", "seed", nil, func(*State) error { panic("replayed") }))
 }
+
+// A storeOps wrapper counts ledger writes so throttling is observable.
+type countingRepo struct {
+	Repository
+	ops map[string]int
+}
+
+func (c *countingRepo) Update(ctx context.Context, id, op string, payload any, fn func(*State) error) error {
+	c.ops[op]++
+	return c.Repository.Update(ctx, id, op, payload, fn)
+}
+
+func TestIntrabarPricesAreThrottledInTheLedger(t *testing.T) {
+	mem, _ := NewMemory(spec())
+	repo := &countingRepo{Repository: mem, ops: map[string]int{}}
+	now := time.Date(2026, 10, 20, 12, 0, 30, 0, time.UTC)
+	rt, err := NewRuntime(t.Context(), repo, broker.NewSim(broker.SimConfig{Exchange: "sim"}), testInstruments(), d("0.001"), func() time.Time { return now }, nil)
+	require.NoError(t, err)
+	require.NoError(t, rt.Start(t.Context()))
+	tick := func(price string, closed bool) {
+		c := domain.Candle{Exchange: "sim", Market: domain.Spot, Symbol: "ETHUSDT", Timeframe: "1m", OpenTime: now.Truncate(time.Minute), Open: d(price), High: d(price), Low: d(price), Close: d(price), Closed: closed}
+		if closed {
+			c.OpenTime = c.OpenTime.Add(-time.Minute)
+		}
+		require.NoError(t, rt.Record(t.Context(), c, closed))
+	}
+	tick("100", false)
+	before := repo.ops["mark"]
+	for _, p := range []string{"101", "102", "103"} {
+		now = now.Add(time.Second)
+		tick(p, false)
+	}
+	s, _ := mem.Load(t.Context())
+	require.True(t, s.Prices["ETHUSDT"].Equal(d("100")), "intrabar ticks inside the interval are not written")
+	require.Equal(t, before, repo.ops["mark"], "no ledger transaction for throttled ticks")
+	now = now.Add(DefaultMarkInterval)
+	tick("104", false)
+	s, _ = mem.Load(t.Context())
+	require.True(t, s.Prices["ETHUSDT"].Equal(d("104")), "written again after the interval")
+	tick("105", true)
+	s, _ = mem.Load(t.Context())
+	require.True(t, s.Prices["ETHUSDT"].Equal(d("105")), "closed candles are always written")
+}
