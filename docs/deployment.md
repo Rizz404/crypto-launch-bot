@@ -4,10 +4,20 @@ Kode dan manifest berasal dari repo private `Rizz404/trading-bot`. GitHub Action
 menguji kode, membangun image, lalu menerbitkannya ke GHCR. VPS menarik image hasil
 CI; folder kerja laptop tidak disalin ke server. Stack VPS bisa berjalan dalam mode
 `paper` atau `testnet` (lihat "Mode dan Telegram"); mainnet memerlukan persetujuan
-Fase 11.
+P2-10 pada [Plan 2](plan-2.md), kelanjutan Fase 11 Plan 1.
 
 Panduan ini menjelaskan prosedur. Keadaan server saat ini (commit, digest, mode,
 uji yang berjalan) ada di [handoff VPS](handoff-vps.md).
+
+## Hubungan dengan Plan 2
+
+[Plan 1](plan.md) ditutup; pengembangan berikutnya mengikuti
+[Plan 2](plan-2.md). [Multi-instance](multi-instance.md) berarti pembagian
+portofolio virtual oleh satu koordinator akun, bukan menjalankan beberapa
+`bot run` independen pada wallet/database yang sama. Manifest dan CLI pada
+panduan ini masih milik implementasi sekarang; dukungan multi-instance belum
+tersedia. Migrasi baru diuji pada salinan DB sebelum P2-9; rencana ini tidak
+mengizinkan memulai ulang testnet atau live.
 
 ## Pipeline
 

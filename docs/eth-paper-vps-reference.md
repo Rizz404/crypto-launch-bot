@@ -5,6 +5,24 @@ dan belum disetujui untuk live**. User meminta tidak menjalankan eksperimen ini
 di laptop; VPS boleh dipakai bila tidak mengganggu instance yang sudah berjalan.
 Jika belum siap, simpan referensi untuk sesudah pengujian VPS selesai.
 
+## Hubungan dengan Plan 2
+
+[Plan 2](plan-2.md) adalah rencana aktif; [Plan 1](plan.md) menjadi arsip.
+Audit dan kesiapan trial diteruskan lewat P2-0 sampai P2-9. Istilah project
+Compose/instance kedua pada runbook ini menjelaskan isolasi deployment
+eksperimen, berbeda dari [instance virtual dalam satu akun](multi-instance.md).
+Jangan membuat beberapa proses trading pada wallet yang sama untuk meniru
+fitur multi-instance yang belum tersedia.
+
+## Pembaruan keputusan 20 Oktober 2026
+
+Rekomendasi setelah analisis adalah ETH momentum 4h untuk kandidat paper utama,
+dengan BTC momentum harian sebagai pembanding. Baca
+[keputusan strategi](strategy-decision-2026-10-20.md) untuk alasan dan syaratnya.
+Belum ada trial baru dijalankan. Catatan 19 Oktober di bawah adalah riwayat
+persiapan; status bot testnet sudah berhenti dan source lokal sudah di-commit,
+belum menjadi rilis VPS.
+
 ## Keputusan saat ini
 
 Uji lokal dihentikan atas permintaan user, termasuk container database khususnya.
@@ -52,9 +70,9 @@ prospektif yang selesai. Timestamp penghentian ada di
 Uji testnet VPS **dihentikan lebih awal pada 20 Oktober 2026 pukul 18.52 WIB**
 atas permintaan user; target 21 Oktober pukul 23.43 WIB dibatalkan.
 [Analisis penutupan](testing/testnet-stop-2026-10-20/analysis.md) sudah tersedia.
-User ingin mencari strategi lain dan mengembangkan aplikasi. Referensi ETH ini
-belum dipilih untuk dijalankan. Nilai kembali hasil dan keandalan aplikasi
-sebelum menyiapkan deployment berikutnya.
+User ingin mencari strategi lain dan mengembangkan aplikasi. ETH kini direkomendasikan sebagai kandidat paper utama sesuai
+[keputusan 20 Oktober](strategy-decision-2026-10-20.md), tetapi trial belum dimulai.
+Nilai kembali hasil dan keandalan aplikasi sebelum menyiapkan deployment berikutnya.
 Tidak ada jadwal otomatis untuk memulai ETH, dan tidak ada polling AI.
 
 Tanggal review 26 Oktober untuk trial lokal sebelumnya **dibatalkan**. Trial VPS

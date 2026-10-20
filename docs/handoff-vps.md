@@ -1,14 +1,30 @@
 # Handoff VPS
 
 Panduan operasional server untuk sesi/agent berikutnya. Status per **2026-10-20
-11.55 UTC (18.55 WIB)**. Cakupan dan keputusan proyek ada di [plan](plan.md);
+11.55 UTC (18.55 WIB)**. Cakupan dan pekerjaan aktif ada di [Plan 2](plan-2.md);
+[Plan 1](plan.md) sudah ditutup sebagai arsip;
 prosedur umum ada di [panduan deployment](deployment.md).
 
 ## Status sekarang
 
+- **Plan 2 aktif:** fitur banyak instance dengan beberapa strategi dan pembagian
+  modal dijadwalkan di [plan baru](plan-2.md). Ini instance virtual aplikasi,
+  bukan izin menggandakan container dengan wallet/DB yang sama. Baca
+  [rancangan ownership](multi-instance.md). Kode fitur ini belum diterapkan.
+  Status server tetap checkpoint 20 Oktober; penyusunan Plan 2 tidak mengakses
+  atau mengubah VPS.
+
+
+- **Keputusan strategi 20 Oktober:** ETHUSDT momentum 4h adalah kandidat paper
+  utama, BTC momentum harian sebagai pembanding. Baca
+  [dokumen keputusan](strategy-decision-2026-10-20.md) sebelum melanjutkan;
+  belum ada trial baru atau live dijalankan.
+
+
 - **Tambahan 2026-10-19:** ETH momentum 4h adalah calon paper terpisah,
   **belum di-deploy di VPS**. User melarang menjalankannya di laptop; trial lokal
-  sudah dihentikan. Opsi dokumentasi dipakai sambil menunggu testnet selesai.
+  sudah dihentikan. Testnet kemudian ditutup 20 Oktober; persiapan ETH
+  diteruskan lewat P2-9 setelah audit/implementasi yang diperlukan.
   Baca [referensi ETH](eth-paper-vps-reference.md) sebelum menyiapkan rilis atau
   instance kedua. Belum ada izin memulai trial baru.
 
@@ -41,7 +57,7 @@ prosedur umum ada di [panduan deployment](deployment.md).
 - Riwayat: paper 2026-10-17 14:09 → 2026-10-18 16:43 UTC (observasi 24 jam lulus,
   data tetap di DB); host reboot tak terduga 2026-10-17 15:18–15:42 UTC (bukan dari
   user, pulih otomatis). Detail dan bukti ada di plan.
-- Mainnet tidak diizinkan sampai user menyetujui Fase 11. `TB_APP__ALLOW_LIVE` dipaksa
+- Mainnet tidak diizinkan sampai user menyetujui P2-10 (kelanjutan Fase 11 lama). `TB_APP__ALLOW_LIVE` dipaksa
   `false` oleh manifest.
 
 ## Batas yang wajib dipertahankan
@@ -190,7 +206,7 @@ Mengganti mode:
 - **Ke testnet:** salin `configs/config.testnet.example.yaml` ke `configs/config.yaml`,
   isi `telegram.chat_ids`, sesuaikan rentang grid dengan harga saat itu, set
   `TB_APP__MODE=testnet` dan kredensial Spot Testnet lewat `vps-set-env.py`.
-- **Live:** belum boleh. Butuh persetujuan Fase 11, `allow_live` di manifest,
+- **Live:** belum boleh. Butuh persetujuan P2-10 Plan 2, `allow_live` di manifest,
   kredensial mainnet terpisah, dan batas risk dari user.
 
 Secret dari laptop:

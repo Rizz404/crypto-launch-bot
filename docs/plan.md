@@ -1,12 +1,49 @@
-# Handoff: Bot Trading Crypto (Go)
+# Plan 1 — Selesai dan diarsipkan
 
-> Sumber kebenaran proyek. Agent/developer yang melanjutkan: baca bagian **Status saat ini** dan **Panduan melanjutkan** dulu, lalu [handoff VPS](handoff-vps.md) sebelum menyentuh server. Bagian setelahnya adalah riwayat dan bukti; yang lebih baru menimpa yang lebih lama.
+**Ditutup 20 Oktober 2026 atas permintaan user. Rencana aktif sekarang adalah
+[Plan 2](plan-2.md).** Semua pekerjaan yang belum selesai diteruskan melalui
+[daftar pemindahan C-01–C-19](plan-2.md#pemindahan-pekerjaan-dari-plan-1).
+Penutupan siklus ini tidak menyatakan seluruh checklist lulus, target profit
+tercapai, atau mainnet diizinkan.
 
-## Status saat ini (2026-10-19 00:30 WIB)
+## Ringkasan akhir Plan 1
+
+| Area | Hasil akhir |
+|---|---|
+| Fondasi dan fitur Fase 0–8 | Dibangun; hasil validasi dan keterbatasan tetap pada arsip di bawah |
+| Fase 9 | Ditutup untuk cakupan aktif Binance Spot pada 18 Oktober; pengujian tertunda tidak dianggap lulus |
+| Fase 10 | Testnet dihentikan user 20 Oktober 18.52 WIB setelah sekitar 43 jam 9 menit; hasil dianalisis, target 72 jam dibatalkan |
+| Perbaikan/temuan tersisa | Proteksi OCO, ledger/dust, stop terminal dan validasi lanjutan diteruskan ke Plan 2 |
+| Fase 11 live mini | Tidak dijalankan; dipindahkan ke P2-10 dan tetap memerlukan persetujuan eksplisit |
+| Futures/Bybit/funding/xspread | Ditunda sesuai dependensi, dipindahkan ke D-01/D-02/D-03 |
+| Kandidat strategi | ETH momentum 4h untuk paper, BTC momentum harian sebagai pembanding; belum ada trial baru |
+| Kondisi VPS terakhir | Bot mati; observasi nonaktif, DB/DNS/monitoring/backup aktif; detail di handoff |
+
+Dokumen utama berikutnya: [Plan 2](plan-2.md),
+[rancangan multi-instance](multi-instance.md),
+[keputusan strategi](strategy-decision-2026-10-20.md),
+[handoff VPS](handoff-vps.md), dan
+[laporan testnet final](testing/testnet-stop-2026-10-20/analysis.md).
+
+## Batas pembacaan arsip
+
+Bagian berikut dipertahankan untuk sumber bukti, keputusan bertanggal, tautan
+lama dan konteks implementasi. Checkbox kosong adalah catatan historis, bukan
+antrean aktif kedua. Tugas yang sudah diselesaikan belakangan tidak dibuka ulang
+hanya karena checkbox lama kosong; lihat C-17 pada Plan 2. Instruksi menunggu
+21 Oktober, resume worker riset, trial lokal ETH dan Fase 11 di bagian lama
+sudah digantikan status penutupan serta Plan 2.
+
+## Handoff siklus pertama — arsip
+
+> Arsip Plan 1. Status, instruksi fase, jadwal dan checklist di bawah merekam kondisi pada waktunya. Untuk pekerjaan selanjutnya gunakan [Plan 2](plan-2.md); jadwal lama tidak mengaktifkan worker, trial, atau live.
+
+## Status saat ini (2026-10-20)
 
 - **Fase 0–9 selesai.** Fase 9 ditutup 2026-10-18 untuk cakupan aktif (Binance Spot, VPS, Telegram, dashboard, monitoring, backtest/riset); item yang tertunda faktor luar tercatat di "Penutupan Fase 9" dan **tidak** dianggap lolos.
-- **Fase 10 berjalan:** uji multi-strategi **Binance Spot Testnet 3 hari** di VPS, mulai **2026-10-18 16:43 UTC (23:43 WIB)**. **Analisis setelah 2026-10-21 16:43 UTC (23:43 WIB).** Lima strategi, satu per pair: `ema-trend-btc` (BTC), `ema-fast-eth` (ETH), `grid-sol` (SOL), `dca-xrp` (XRP), `mm-doge` (DOGE). Rincian: bagian "Fase 10".
-- **VPS** (`ssh plesk`, server Plesk bersama): source `f709429`, image `ghcr.io/rizz404/trading-bot@sha256:e5b8710bc76da2cd5d581511e19fb7bf9e6a472e0eb61b14fb3c099054fd0438`, mode testnet, Telegram aktif ke chat user dan setiap nominal USDT disertai perkiraan **USD dan rupiah**. Data paper lama tetap di DB. Observasi 5 menit dan backup harian aktif.
+- **Fase 10 dihentikan lebih awal:** testnet VPS 18 Oktober 23.43 WIB–20 Oktober 18.52 WIB, sekitar 43 jam 9 menit; target 21 Oktober dibatalkan. Bot exit 0, tujuh order tersisa dibatalkan, inventori dan backup dipertahankan. [Analisis penutupan](testing/testnet-stop-2026-10-20/analysis.md).
+- **VPS:** bot testnet mati, timer observasi disabled/inactive; DB, DNS, monitoring dan timer backup tetap aktif. Source terakhir yang diverifikasi di VPS `f709429`, image `sha256:e5b8710bc76da2cd5d581511e19fb7bf9e6a472e0eb61b14fb3c099054fd0438`. Source lokal baru belum dirilis ke VPS. Baca [handoff](handoff-vps.md).
+- **Keputusan strategi berikutnya:** kandidat utama paper **ETHUSDT momentum 4h**, pembanding **BTCUSDT momentum harian**. Aturan, modal, risiko, biaya, alasan dan prasyarat lengkap di [keputusan 20 Oktober](strategy-decision-2026-10-20.md). Belum ada trial baru dimulai; dokumentasi bukan izin live.
 - **Strategi: belum ada yang layak live.** Emacross (berbagai parameter dan filter tren), DCA, dan grid diuji 3 tahun × 5 pair secara walk-forward; tidak ada edge konsisten. Di paper, fee = 84% kerugian emacross 1m. Testnet tanpa fee, jadi hasil untung/rugi testnet **bukan** dasar go live.
 - **Riset lokal 2026-10-19:** backtest Spot asli 1 menit, 2025-10-19–2026-10-19 UTC, BTC/ETH/BNB/XRP/SOL, modal **Rp2 juta per kombinasi**. Baseline empat strategi: 20 kasus semuanya rugi. Atas permintaan user, **maksimal lima kandidat** dikunci sebelum diuji (tanpa tuning ulang): EMA 4h, EMA harian, breakout harian, momentum harian, pullback 4h. Sebanyak 25 kasus selesai; rata-rata pullback **+1,05%**, positif pada 3/5 koin, negatif pada BNB/SOL; EMA harian tidak trading. Ini eksplorasi pada tahun yang sudah dilihat, **bukan bukti out-of-sample** dan belum layak live. Implementasi baru `trendspot` terdaftar tetapi tidak diaktifkan; konfigurasi aktif/VPS tidak diubah. [Ringkasan dan reproduksi](testing/candidates-2026-10-19/summary.txt), [hasil lengkap](testing/candidates-2026-10-19/results.json), [spesifikasi lima kandidat](testing/candidates-2026-10-19/candidate-spec.json). Langkah riset berikutnya memerlukan periode terpisah yang belum dipakai memilih kandidat, bukan menambah percobaan melewati batas lima tanpa instruksi user.
 - **Antrean riset lanjutan 2026-10-19:** user kemudian mengizinkan **banyak strategi/variasi**, target riset **+50% setahun atau lebih**, tetap **Rp2 juta per kombinasi**, dan meminta pekerjaan dijalankan lalu ditinggalkan dengan notifikasi, tanpa pemantauan AI berkala. Ini menggantikan batas lima untuk batch baru. [Plan yang dikunci](testing/research-queue-2026-10-19.json): 216 konfigurasi (72 sinyal × 3 profil risk Spot tanpa leverage), maksimum 2.340 pekerjaan. Training dua periode tahunan 2022-10-19–2024-10-19 dengan fill 1h; pilih maksimal 3 per keluarga hanya dari training, validasi tahun berikutnya, konfirmasi tahun 2025–2026 dengan fill 1m dan stress biaya. Konfirmasi sudah pernah dilihat; jangan mengklaim holdout murni atau keuntungan terjamin. Satu worker systemd user `trading-bot-research-20261019t133722z.service`, CPU 150%, RAM 3 GiB, nice 10; code/binary/plan dibekukan. Run dan data besar tersimpan di `var/backtest-research/` (gitignored), run aktif `var/backtest-research/latest` → `run-20261019T133722Z`. Cek **hanya bila user meminta/melaporkan selesai**: `python scripts/backtest-queue/queue.py status --run-dir var/backtest-research/latest`. Hasil akhir `report.txt`, `report.json`, `DONE.txt`; kegagalan `FAILED.txt`; bukti pengiriman notif desktop `notification.json`. Tutup chat aman; suspend menunda komputasi, reboot memerlukan resume lewat `python scripts/backtest-queue/queue.py launch --run-dir var/backtest-research/latest`; checkpoint per pekerjaan dipakai ulang. Jangan menyalakan worker kedua atau men-deploy hasil otomatis. Lint, vet, race test helper, tes seleksi tanpa kebocoran data validasi, dan smoke end-to-end dengan data sintetis lolos sebelum launch.

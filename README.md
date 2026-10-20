@@ -1,11 +1,17 @@
 # trading-bot
 
 Bot trading crypto otomatis dalam Go (Binance dan Bybit; spot + futures).
-Plan, keputusan, dan progres ada di [docs/plan.md](docs/plan.md).
+Rencana aktif dan progres ada di [Plan 2](docs/plan-2.md): multi-instance dengan
+modal terpisah dalam satu akun dan beberapa strategi per instance.
+Fitur tersebut masih direncanakan, belum tersedia di runtime.
+[Plan 1](docs/plan.md) sudah selesai sebagai siklus pertama dan menjadi arsip;
+pekerjaan tertunda dipindahkan ke Plan 2. [Indeks dokumentasi](docs/README.md).
 
 Rilis dan deploy VPS mengikuti alur GitHub Actions → GHCR → image dengan digest
 tetap. Panduan: [docs/deployment.md](docs/deployment.md). Konfigurasi VPS memakai
-mode paper secara default; pengujian 24 jam tetap bagian Fase 9.
+mode paper secara default. Observasi paper 24 jam Plan 1 sudah lulus;
+uji multi-strategi testnet berikutnya dihentikan lebih awal pada 20 Oktober.
+Belum ada trial baru atau transaksi mainnet yang disetujui.
 
 ## Prasyarat
 
@@ -57,7 +63,9 @@ podman compose -f deploy/compose.yml --profile bot up -d --build
 | `mm` | market making sederhana (quote post-only) |
 | `trendspot` | eksperimen Spot: breakout, momentum, atau pullback dalam tren naik |
 
-Contoh konfigurasi ada di [configs/config.example.yaml](configs/config.example.yaml). Unit/contract test lokal dan integration paper dengan restart sudah berjalan. Validasi data live/testnet masih berlanjut; bukti dan sisa pengujian ada di [docs/plan.md](docs/plan.md#hasil-testing-2026-10-17).
+Contoh konfigurasi ada di [configs/config.example.yaml](configs/config.example.yaml). Unit/contract test lokal dan integration paper dengan restart sudah berjalan. Bukti siklus pertama ada di [Plan 1](docs/plan.md#hasil-testing-2026-10-17);
+pekerjaan lanjutan ada di [Plan 2](docs/plan-2.md). Pilihan kandidat pengujian
+berikutnya tercatat di [keputusan strategi](docs/strategy-decision-2026-10-20.md).
 
 Riset lima kandidat Spot (belum diaktifkan untuk trading) ada di
 [ringkasan pengujian](docs/testing/candidates-2026-10-19/summary.txt).

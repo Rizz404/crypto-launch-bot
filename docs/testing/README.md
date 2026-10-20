@@ -1,7 +1,10 @@
 # Bukti pengujian
 
-Ringkasan bukti yang dirujuk dari [plan](../plan.md). File JSON berisi angka dan
-asumsi yang dipakai; tidak ada kredensial.
+Bukti siklus pertama dirujuk dari [Plan 1 yang sudah ditutup](../plan.md).
+Pengujian lanjutan dan pemindahan pekerjaan direncanakan di
+[Plan 2](../plan-2.md#p2-7--testing-menyeluruh). File JSON berisi angka dan
+asumsi yang dipakai; tidak ada kredensial. Bukti lama dipertahankan, bukan
+hasil kelulusan otomatis fitur multi-instance baru.
 
 | File | Isi |
 |---|---|
