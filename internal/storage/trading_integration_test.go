@@ -185,7 +185,7 @@ func TestMigrationCycle(t *testing.T) {
 	log := slog.New(slog.NewTextHandler(io.Discard, nil))
 	ctx := context.Background()
 	require.NoError(t, m.Up(ctx, log))
-	for want := 1; want <= 3; want++ {
+	for want := 1; want <= 4; want++ {
 		require.NoError(t, m.Down(ctx, log))
 		n, err := m.Pending(ctx)
 		require.NoError(t, err)
