@@ -14,13 +14,17 @@ import (
 	"log/slog"
 	"net"
 	"os"
+	"reflect"
 	"slices"
 	"strings"
 
+	"github.com/go-viper/mapstructure/v2"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env/v2"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/v2"
+	"github.com/rizz404/trading-bot/internal/managed"
+	"github.com/shopspring/decimal"
 
 	"github.com/rizz404/trading-bot/internal/broker"
 	"github.com/rizz404/trading-bot/internal/domain"
@@ -67,6 +71,7 @@ func (s Secret) LogValue() slog.Value { return slog.StringValue(s.String()) }
 func (s Secret) Reveal() string { return string(s) }
 
 type Config struct {
+	Wallets    []managed.Spec            `koanf:"wallets"`
 	App        AppConfig                 `koanf:"app"`
 	Database   DatabaseConfig            `koanf:"database"`
 	Metrics    MetricsConfig             `koanf:"metrics"`
@@ -283,7 +288,15 @@ func load(path string, environ []string) (*Config, error) {
 		return nil, fmt.Errorf("load env: %w", err)
 	}
 
-	if err := k.Unmarshal("", &cfg); err != nil {
+	if err := k.UnmarshalWithConf("", &cfg, koanf.UnmarshalConf{DecoderConfig: &mapstructure.DecoderConfig{
+		Result: &cfg, TagName: "koanf", WeaklyTypedInput: true,
+		DecodeHook: func(_ reflect.Type, to reflect.Type, data any) (any, error) {
+			if to == reflect.TypeFor[decimal.Decimal]() {
+				return decimal.NewFromString(fmt.Sprint(data))
+			}
+			return data, nil
+		},
+	}}); err != nil {
 		return nil, fmt.Errorf("decode config: %w", err)
 	}
 	if err := cfg.Validate(); err != nil {
@@ -392,6 +405,29 @@ func (c *Config) Validate() error {
 		errs = append(errs, errors.New("universe.quote and universe.top_n are required when marketdata.symbols is empty"))
 	}
 
+	walletIDs, walletExchanges := map[string]bool{}, map[string]bool{}
+	for idx := range c.Wallets {
+		w := &c.Wallets[idx]
+		w.Mode = string(c.App.Mode)
+		if err := w.Validate(); err != nil {
+			errs = append(errs, fmt.Errorf("wallets[%d]: %w", idx, err))
+		}
+		if walletIDs[w.ID] || walletExchanges[w.Exchange] {
+			errs = append(errs, errors.New("duplicate managed wallet id or physical exchange wallet"))
+		}
+		walletIDs[w.ID], walletExchanges[w.Exchange] = true, true
+		if !c.Exchanges[w.Exchange].Enabled {
+			errs = append(errs, fmt.Errorf("managed exchange %s is not enabled", w.Exchange))
+		}
+	}
+	if len(c.Wallets) > 0 {
+		for _, sc := range c.Strategies {
+			if sc.Enabled {
+				errs = append(errs, errors.New("managed wallets cannot run alongside enabled legacy strategies"))
+				break
+			}
+		}
+	}
 	ids := map[string]bool{}
 	for i, sc := range c.Strategies {
 		switch {
