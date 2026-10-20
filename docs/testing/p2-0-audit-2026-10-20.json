@@ -1,0 +1,102 @@
+{
+  "source_sha256": {
+    "evidence.json": "743e94768d03646ec276933c810d5f9d6a3c90ef69e2ae48020418241b48e613",
+    "supplement.json": "fcf538c4dee5dde9c2e9c34746ee9a731dbac5b9c5f620da6de9076c9d4f09ab",
+    "p2-0-exchange-errors-2026-10-20.json": "5b654f0eb77a33d7e276adf6acf1c98073a42aef34072e9dd80d4d6867168967"
+  },
+  "latest_run_id": 9,
+  "strategies": [
+    {
+      "strategy": "dca-xrp",
+      "symbol": "XRPUSDT",
+      "fill_net_quantity": "368.1",
+      "latest_run_quantity": "368.1",
+      "quantity_gap": "0.0",
+      "closed_trade_net": "0",
+      "fill_cashflow": "-478.41715",
+      "cashflow_plus_recorded_inventory_at_last_close": "-0.66016"
+    },
+    {
+      "strategy": "ema-fast-eth",
+      "symbol": "ETHUSDT",
+      "fill_net_quantity": "0.000",
+      "latest_run_quantity": "0",
+      "quantity_gap": "0.000",
+      "closed_trade_net": "-6.297651",
+      "fill_cashflow": "-6.297651",
+      "cashflow_plus_recorded_inventory_at_last_close": "-6.297651"
+    },
+    {
+      "strategy": "ema-trend-btc",
+      "symbol": "BTCUSDT",
+      "fill_net_quantity": "0.00000",
+      "latest_run_quantity": "0",
+      "quantity_gap": "0.00000",
+      "closed_trade_net": "0.9037548",
+      "fill_cashflow": "0.9037548",
+      "cashflow_plus_recorded_inventory_at_last_close": "0.9037548"
+    },
+    {
+      "strategy": "grid-sol",
+      "symbol": "SOLUSDT",
+      "fill_net_quantity": "0.468",
+      "latest_run_quantity": "0.468",
+      "quantity_gap": "0.000",
+      "closed_trade_net": "84.91057303481325",
+      "fill_cashflow": "39.68662",
+      "cashflow_plus_recorded_inventory_at_last_close": "88.38202"
+    },
+    {
+      "strategy": "mm-doge",
+      "symbol": "DOGEUSDT",
+      "fill_net_quantity": "88.0",
+      "latest_run_quantity": "83.0",
+      "quantity_gap": "5.0",
+      "closed_trade_net": "0.3876071518621551",
+      "fill_cashflow": "-6.57323",
+      "cashflow_plus_recorded_inventory_at_last_close": "-0.011250"
+    }
+  ],
+  "external_close_notice_quantities": {
+    "DOGEUSDT": "5"
+  },
+  "first_recorded_balance": "10000.042202",
+  "final_reported_balance": "10079.5518598139792050792",
+  "closed_trade_net_total": "79.9042839866754051",
+  "reported_balance_change_since_first_snapshot": "79.5096578139792050792",
+  "trade_net_minus_reported_balance_change": "0.3946261726962000208",
+  "terminal_cleanup": {
+    "owned_orders_before": 7,
+    "cancelled_orders": 7,
+    "remaining_owned_orders": 0,
+    "inventory_liquidated": false
+  },
+  "limitations": [
+    "Amounts are exact decimal arithmetic over saved aggregates, not a re-fetch of exchange trades.",
+    "Aggregate fee fields are not grouped by fee asset; this evidence records zero testnet fees.",
+    "Net fill quantity is before any base-asset fee or external transfer; neither may be assumed zero on live.",
+    "Last candle closes differ from intra-minute marks in the final engine snapshot.",
+    "Original aggregate errors were redacted; optional code-only log evidence can supplement classification.",
+    "Historical snapshots are not rewritten; this report is an audit, not corrected financial statements."
+  ],
+  "exchange_error_classes": [
+    {
+      "message": "cancel failed",
+      "api_code": -2011,
+      "reason_class": "unknown order",
+      "count": 23
+    },
+    {
+      "message": "protective orders failed, closing position",
+      "api_code": -2010,
+      "reason_class": "relationship of the prices",
+      "count": 2
+    },
+    {
+      "message": "take profit ended unfilled after its linked stop expired, closing position",
+      "api_code": null,
+      "reason_class": "not classified",
+      "count": 1
+    }
+  ]
+}

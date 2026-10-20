@@ -1,0 +1,214 @@
+{
+  "source": "read-only Docker logs of stopped VPS container; codes/classes only",
+  "events": [
+    {
+      "time": "2026-10-18T19:23:21.772149044Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T01:25:40.758374422Z",
+      "msg": "take profit ended unfilled after its linked stop expired, closing position",
+      "symbol": "BTCUSDT",
+      "status": "expired",
+      "http_status": null,
+      "api_code": null,
+      "reason_class": "not classified"
+    },
+    {
+      "time": "2026-10-19T03:25:31.343656517Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T03:40:11.223560183Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T06:40:06.059418247Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T08:57:41.877705948Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T11:00:43.333807759Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T11:48:15.478181145Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T13:08:48.398659014Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T17:24:34.539884109Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T17:30:11.37055333Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T18:15:02.431641574Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T19:27:17.530992888Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T19:49:22.365662995Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-19T22:05:03.567665927Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-20T01:02:04.405235045Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-20T02:20:14.511542446Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-20T02:37:44.368559523Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-20T04:40:31.104871967Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-20T06:37:46.364643045Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-20T08:30:15.370074477Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-20T08:30:15.462532873Z",
+      "msg": "protective orders failed, closing position",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2010,
+      "reason_class": "relationship of the prices"
+    },
+    {
+      "time": "2026-10-20T08:49:23.365683246Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-20T09:32:26.126235575Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    },
+    {
+      "time": "2026-10-20T09:32:26.225867337Z",
+      "msg": "protective orders failed, closing position",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2010,
+      "reason_class": "relationship of the prices"
+    },
+    {
+      "time": "2026-10-20T11:44:33.37112921Z",
+      "msg": "cancel failed",
+      "symbol": "ETHUSDT",
+      "http_status": 400,
+      "api_code": -2011,
+      "reason_class": "unknown order"
+    }
+  ]
+}
