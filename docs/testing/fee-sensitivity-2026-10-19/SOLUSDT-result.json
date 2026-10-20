@@ -1,0 +1,71 @@
+{
+  "Job": {
+    "ID": "fee-discount-momentum-028-aggressive-SOLUSDT",
+    "Candidate": "momentum-028-aggressive",
+    "Family": "momentum",
+    "Stage": "fee_discount",
+    "Symbol": "SOLUSDT",
+    "From": "2025-10-19",
+    "To": "2026-10-19",
+    "InputTF": "1m",
+    "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/SOLUSDT.csv",
+    "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+    "Name": "trendspot",
+    "Params": {
+      "atr_period": 14,
+      "entry_period": 84,
+      "exit_period": 20,
+      "mode": "momentum",
+      "momentum_min": 0.05,
+      "stop_atr": 3,
+      "target_atr": 0,
+      "timeframe": "4h",
+      "trail_atr": 3,
+      "trend_period": 100
+    },
+    "Risk": {
+      "RiskPerTrade": 0.05,
+      "PositionPct": 0.95,
+      "MaxPositionPct": 0.95,
+      "MaxLeverage": 1,
+      "MaxOpenPositions": 1,
+      "MaxExposurePct": 1,
+      "DailyLossLimit": 0.1,
+      "MaxDrawdown": 0.35,
+      "CloseOnKill": true
+    },
+    "Fee": 0.00075,
+    "SlippageBps": 2
+  },
+  "Metrics": {
+    "Start": "2025-10-19T00:01:00Z",
+    "End": "2026-10-19T00:00:00Z",
+    "InitialEquity": 110.79104808331486,
+    "FinalEquity": 106.36509568836186,
+    "TotalReturn": -0.039948646316845804,
+    "CAGR": -0.03994872078398626,
+    "MaxDrawdown": 0.3251411235842354,
+    "Sharpe": -0.04261462421624019,
+    "Sortino": -0.07057416513356947,
+    "Trades": 45,
+    "WinRate": 0.3111111111111111,
+    "AvgTrade": -0.09835449766562239,
+    "AvgWin": 3.3058857778494293,
+    "AvgLoss": -1.6357533317691941,
+    "TotalFees": 5.441788654953,
+    "TotalFunding": 0,
+    "AvgHoldingTime": 194394000000000,
+    "ProfitFactor": 0.912717489166114
+  },
+  "ConservativeFinalUSDT": 106.36509568836186,
+  "ConservativeFinalIDR": 1920102.7073663084,
+  "ConservativeReturn": -0.039948646316845804,
+  "TerminalExitCostUSDT": 0,
+  "OpenPositions": 0,
+  "Candles": 527790,
+  "Seconds": 6.237492552,
+  "Issues": {
+    "Counts": {},
+    "Samples": null
+  }
+}

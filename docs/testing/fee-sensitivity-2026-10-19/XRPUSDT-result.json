@@ -1,0 +1,71 @@
+{
+  "Job": {
+    "ID": "fee-discount-momentum-028-aggressive-XRPUSDT",
+    "Candidate": "momentum-028-aggressive",
+    "Family": "momentum",
+    "Stage": "fee_discount",
+    "Symbol": "XRPUSDT",
+    "From": "2025-10-19",
+    "To": "2026-10-19",
+    "InputTF": "1m",
+    "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/XRPUSDT.csv",
+    "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+    "Name": "trendspot",
+    "Params": {
+      "atr_period": 14,
+      "entry_period": 84,
+      "exit_period": 20,
+      "mode": "momentum",
+      "momentum_min": 0.05,
+      "stop_atr": 3,
+      "target_atr": 0,
+      "timeframe": "4h",
+      "trail_atr": 3,
+      "trend_period": 100
+    },
+    "Risk": {
+      "RiskPerTrade": 0.05,
+      "PositionPct": 0.95,
+      "MaxPositionPct": 0.95,
+      "MaxLeverage": 1,
+      "MaxOpenPositions": 1,
+      "MaxExposurePct": 1,
+      "DailyLossLimit": 0.1,
+      "MaxDrawdown": 0.35,
+      "CloseOnKill": true
+    },
+    "Fee": 0.00075,
+    "SlippageBps": 2
+  },
+  "Metrics": {
+    "Start": "2025-10-19T00:01:00Z",
+    "End": "2026-10-19T00:00:00Z",
+    "InitialEquity": 110.79104808331486,
+    "FinalEquity": 108.46141977230687,
+    "TotalReturn": -0.0210272251351582,
+    "CAGR": -0.02102726471778038,
+    "MaxDrawdown": 0.3325933498767873,
+    "Sharpe": 0.06144821718619764,
+    "Sortino": 0.12745915415630787,
+    "Trades": 35,
+    "WinRate": 0.2857142857142857,
+    "AvgTrade": -0.0665608088859431,
+    "AvgWin": 6.0267955943499505,
+    "AvgLoss": -2.503903370180301,
+    "TotalFees": 4.660190659008002,
+    "TotalFunding": 0,
+    "AvgHoldingTime": 158744000000000,
+    "ProfitFactor": 0.9627840540693029
+  },
+  "ConservativeFinalUSDT": 108.46141977230687,
+  "ConservativeFinalIDR": 1957945.5497296837,
+  "ConservativeReturn": -0.0210272251351582,
+  "TerminalExitCostUSDT": 0,
+  "OpenPositions": 0,
+  "Candles": 527790,
+  "Seconds": 6.053822194,
+  "Issues": {
+    "Counts": {},
+    "Samples": null
+  }
+}

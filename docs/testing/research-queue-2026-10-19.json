@@ -1,0 +1,6657 @@
+{
+  "version": 2,
+  "created_utc": "2026-10-19T13:37:22.777819+00:00",
+  "project": "/home/rizz404/kodingan/trading-bot",
+  "run_dir": "/home/rizz404/kodingan/trading-bot/var/backtest-research/run-20261019T133722Z",
+  "data_dir": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data",
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "BNBUSDT",
+    "XRPUSDT",
+    "SOLUSDT"
+  ],
+  "capital_idr_per_case": 2000000,
+  "usd_idr_fixed": 18052,
+  "target_return": 0.5,
+  "configs": [
+    {
+      "id": "ema-001-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-001-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-001-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-002-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-002-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-002-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-003-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-003-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-003-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-004-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-004-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-004-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-005-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-005-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-005-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-006-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-006-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-006-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-007-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-007-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-007-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-008-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-008-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-008-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-009-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-009-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-009-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-010-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-010-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-010-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-011-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-011-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-011-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-012-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-012-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-012-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-013-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-013-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-013-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-014-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-014-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-014-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-015-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-015-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-015-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-016-baseline",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-016-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-016-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 20,
+        "slow": 50,
+        "trend_ema": 100,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-017-baseline",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-017-larger",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-017-aggressive",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-018-baseline",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-018-larger",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-018-aggressive",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-019-baseline",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-019-larger",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-019-aggressive",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-020-baseline",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-020-larger",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-020-aggressive",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-021-baseline",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-021-larger",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-021-aggressive",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-022-baseline",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-022-larger",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-022-aggressive",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 20,
+        "exit_period": 10,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-023-baseline",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-023-larger",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-023-aggressive",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-024-baseline",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-024-larger",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "breakout-024-aggressive",
+      "family": "breakout",
+      "name": "trendspot",
+      "params": {
+        "mode": "breakout",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-025-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-025-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-025-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-026-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-026-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-026-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-027-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-027-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-027-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-028-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-028-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-028-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-029-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-029-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-029-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-030-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-030-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-030-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-031-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-031-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-031-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-032-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-032-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-032-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 180,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-033-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-033-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-033-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-034-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-034-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-034-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-035-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-035-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-035-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-036-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-036-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-036-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 540,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-037-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-037-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-037-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-038-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-038-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-038-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-039-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-039-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-039-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-040-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-040-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-040-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-041-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-041-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-041-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-042-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-042-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-042-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-043-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-043-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-043-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-044-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-044-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-044-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-045-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-045-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-045-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-046-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-046-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-046-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-047-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-047-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-047-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-048-baseline",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-048-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-048-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 100,
+        "entry_period": 90,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-049-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-049-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-049-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-050-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-050-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-050-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-051-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-051-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-051-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-052-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-052-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-052-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-053-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-053-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-053-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-054-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-054-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-054-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-055-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-055-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-055-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-056-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-056-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-056-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-057-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-057-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-057-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-058-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-058-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-058-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-059-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-059-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-059-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-060-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-060-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-060-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "1h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-061-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-061-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-061-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-062-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-062-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-062-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-063-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-063-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-063-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-064-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-064-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-064-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-065-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-065-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-065-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-066-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-066-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-066-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-067-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-067-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-067-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-068-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-068-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-068-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 35,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-069-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-069-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-069-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-070-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-070-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-070-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 40,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-071-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-071-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-071-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 60,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-072-baseline",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "baseline",
+      "risk": {
+        "RiskPerTrade": 0.01,
+        "PositionPct": 0.25,
+        "MaxPositionPct": 0.25,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.05,
+        "MaxDrawdown": 0.2,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-072-larger",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "pullback-072-aggressive",
+      "family": "pullback",
+      "name": "trendspot",
+      "params": {
+        "mode": "pullback",
+        "timeframe": "4h",
+        "trend_period": 200,
+        "entry_period": 55,
+        "exit_period": 20,
+        "atr_period": 14,
+        "rsi_period": 14,
+        "rsi_entry": 45,
+        "rsi_exit": 65,
+        "stop_atr": 2.5,
+        "target_atr": 5,
+        "trail_atr": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    }
+  ],
+  "training_periods": [
+    [
+      "2022-10-19",
+      "2023-10-19"
+    ],
+    [
+      "2023-10-19",
+      "2024-10-19"
+    ]
+  ],
+  "validation_period": [
+    "2024-10-19",
+    "2025-10-19"
+  ],
+  "confirmation_period": [
+    "2025-10-19",
+    "2026-10-19"
+  ],
+  "selection": {
+    "top_per_family": 3,
+    "score": "mean annual return across 10 training cases - 0.5 * worst max drawdown - 0.25 * standard deviation of returns",
+    "minimum_closed_trades_training_total": 10,
+    "requires_all_10_training_jobs": true,
+    "validation_or_confirmation_used_for_selection": false
+  },
+  "costs": {
+    "normal_fee": 0.001,
+    "normal_slippage_bps": 2,
+    "stress_fee": 0.002,
+    "stress_slippage_bps": 5
+  },
+  "resources": {
+    "workers": 1,
+    "cpu_quota": "150%",
+    "memory_max": "3G",
+    "go_soft_memory_limit": "1536MiB",
+    "nice": 10
+  },
+  "limits": {
+    "training_jobs": 2160,
+    "max_validation_confirmation_stress_jobs": 180,
+    "max_jobs": 2340,
+    "per_job_timeout_seconds": 240,
+    "max_network_downloads": 2
+  },
+  "limitations": [
+    "Spot only, no leverage, no short selling; this is not a search across all possible strategies",
+    "Current instrument rules approximate past rules; currency conversion is fixed and excludes IDR FX changes and taxes",
+    "Training/validation fills use 1h OHLC; selected configurations get full 1m confirmation and increased-cost stress test",
+    "Annual runs cold-start indicators within each period; idle warmup and risk-triggered halts count in annual return",
+    "2025-2026 confirmation year was inspected previously; this is not a pristine holdout or proof of future profit",
+    "Five current large coins were selected with hindsight; survivorship/universe selection bias remains",
+    "216 variants create multiple-testing risk; all results and failures are retained, not just target hits",
+    "Aggressive profiles can lose substantial capital; a high historical return alone does not pass live approval",
+    "Final ranking is descriptive; configurations are frozen before validation and no automatic retuning occurs",
+    "Conservative terminal equity deducts estimated sale costs on remaining inventory; drawdown is the original intraperiod engine metric",
+    "One documented missing hourly bar at 2023-03-24 13:00 UTC is retained as a non-trading halt; no prices or fills fabricated. All other gaps fail validation."
+  ],
+  "sources": [
+    {
+      "url": "https://www.nber.org/papers/w24877",
+      "reason": "Historical crypto time-series momentum motivates momentum and trend hypotheses, not a promised return."
+    },
+    {
+      "url": "https://www.aqr.com/Insights/Research/Journal-Article/Time-Series-Momentum",
+      "reason": "Trend-following hypothesis; evidence across other markets is not validation of these crypto implementations."
+    },
+    {
+      "url": "https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf",
+      "reason": "Multiple testing and backtest overfitting motivate fixed selection and separate periods."
+    },
+    {
+      "url": "https://data.binance.vision/",
+      "reason": "Official public spot candle archives with SHA256 checksums."
+    },
+    {
+      "url": "https://www.binance.com/en/support/announcement/detail/813a31506e9f478ea8c1058b425df87a",
+      "reason": "Official Binance notice of spot trading resumption after the 2023-03-24 halt."
+    }
+  ],
+  "minute_input_sha256": {
+    "BTCUSDT.csv": "b5e1e343df1e61fb5e1a15761f8a1f2c5bded4b37f69861b8ef9efc9bd4a8c51",
+    "ETHUSDT.csv": "2ec72356c1444d9e7806f6800f5bf89eabcee345a0f7b7308fef636be8a73c20",
+    "BNBUSDT.csv": "318cbd7c59263119b53cdc237cfe92db2fd00380cec8c74282aa04e5a948da09",
+    "XRPUSDT.csv": "633acfd357d78d41c61610b4d78b58ba8cde411c3921fd358f456c811eeaddb2",
+    "SOLUSDT.csv": "33c729c0ad4907f59c3426f235c4b75c2d9edb74dd97e4d11960c66505ec9f10",
+    "instruments.json": "7e2c51539807dca2c06c98fa32abf930318b63114974ac3d6023ad1e6908eab8",
+    "manifest.json": "0471e53c7fee81af3fbe28557c180fbd81088ee379c4935da64c1fc4a1b7f3aa"
+  },
+  "binary_sha256": "002e8946cd91e30cb3956c569d2ec42e50b8d71fec98a1e5f72b96dbd371818a",
+  "source_revision": "010ad227e95198c78b52284b5360c4cb2df905c3",
+  "code_sha256": {
+    "scripts/backtest-year/job.go": "16f09acb7992ad8915d00f071795fd0704ac60899e5e36720fe6588ffe4c84f3",
+    "scripts/backtest-year/main.go": "70675b1230fef2b06ecd5a5175aaac92116d5daa3b74ffc328d2390226111a87",
+    "internal/strategy/trendspot/trendspot.go": "83540dcfc6ce4736acf994386d06d2bcf1e34c2c630abdc7fc55624ef6ad1d52",
+    "scripts/backtest-queue/queue.py": "154e994dad307c3344191ae9240c24dce38d3f9038834f768cb55162b6c2d1da"
+  },
+  "data_halt_policy": {
+    "hour_utc": "2023-03-24T13:00:00Z",
+    "source": "https://www.binance.com/en/support/announcement/detail/813a31506e9f478ea8c1058b425df87a",
+    "policy": "Retain absent hourly candle; no synthetic prices or executable bars; higher candles group by UTC clock; all other unexplained gaps fail."
+  },
+  "amendments": [
+    {
+      "at_utc": "2026-10-19T13:47:33.917491+00:00",
+      "reason": "Handle documented Binance spot halt; zero backtests had started. Signal/risk/cost/selection definitions unchanged.",
+      "previous_plan_sha256": "214e2ba9e2afcfb5c4d51b960e125836840ec5e6685f3689bfb40f623128efd7",
+      "backup": "revisions/001-before-halt-fix"
+    }
+  ]
+}

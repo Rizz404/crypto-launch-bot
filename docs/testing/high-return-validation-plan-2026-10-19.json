@@ -1,0 +1,828 @@
+{
+  "version": 1,
+  "kind": "fixed_high_return_validation",
+  "created_utc": "2026-10-19T14:15:36.303248+00:00",
+  "project": "/home/rizz404/kodingan/trading-bot",
+  "run_dir": "/home/rizz404/kodingan/trading-bot/var/backtest-research/validation-20261019T141536Z",
+  "parent_run": "/home/rizz404/kodingan/trading-bot/var/backtest-research/run-20261019T133722Z",
+  "parent_plan_sha256": "09a699ba60d9836cb81424cd382a1d60fb0f3743ee0a4b986f28d558f46eadda",
+  "data_dir": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data",
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "BNBUSDT",
+    "XRPUSDT",
+    "SOLUSDT"
+  ],
+  "capital_idr_per_case": 2000000,
+  "usd_idr_fixed": 18052,
+  "configs": [
+    {
+      "id": "momentum-028-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-028-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-027-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-027-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-037-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-037-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-041-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-041-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-039-larger",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "momentum-039-aggressive",
+      "family": "momentum",
+      "name": "trendspot",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-009-larger",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "larger",
+      "risk": {
+        "RiskPerTrade": 0.03,
+        "PositionPct": 0.75,
+        "MaxPositionPct": 0.75,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.08,
+        "MaxDrawdown": 0.3,
+        "CloseOnKill": true
+      }
+    },
+    {
+      "id": "ema-009-aggressive",
+      "family": "ema",
+      "name": "emacross",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "profile": "aggressive",
+      "risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1.0,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      }
+    }
+  ],
+  "ranking_from_training_only": [
+    {
+      "signal": "momentum-028",
+      "training_mean_return": 0.07839990051614674,
+      "training_worst_drawdown": 0.3539678753498236
+    },
+    {
+      "signal": "momentum-027",
+      "training_mean_return": 0.07183523336577809,
+      "training_worst_drawdown": 0.3525850380184665
+    },
+    {
+      "signal": "momentum-037",
+      "training_mean_return": 0.050475852548285884,
+      "training_worst_drawdown": 0.2088747699098115
+    },
+    {
+      "signal": "momentum-041",
+      "training_mean_return": 0.046153679326564015,
+      "training_worst_drawdown": 0.2018116280298972
+    },
+    {
+      "signal": "momentum-039",
+      "training_mean_return": 0.04330390603282991,
+      "training_worst_drawdown": 0.20095645422166497
+    },
+    {
+      "signal": "ema-009",
+      "training_mean_return": 0.04282631105268416,
+      "training_worst_drawdown": 0.19065569319407094
+    },
+    {
+      "signal": "ema-011",
+      "training_mean_return": 0.03688411100643235,
+      "training_worst_drawdown": 0.19042327797441144
+    },
+    {
+      "signal": "momentum-043",
+      "training_mean_return": 0.03009213691268132,
+      "training_worst_drawdown": 0.21036625647935575
+    },
+    {
+      "signal": "momentum-042",
+      "training_mean_return": 0.02871605545297352,
+      "training_worst_drawdown": 0.17855291216235217
+    },
+    {
+      "signal": "breakout-019",
+      "training_mean_return": 0.025327784081871463,
+      "training_worst_drawdown": 0.340589480774529
+    },
+    {
+      "signal": "breakout-021",
+      "training_mean_return": 0.023804469391625994,
+      "training_worst_drawdown": 0.18009214103320023
+    },
+    {
+      "signal": "breakout-017",
+      "training_mean_return": 0.02215810536971462,
+      "training_worst_drawdown": 0.34229761925737373
+    },
+    {
+      "signal": "ema-010",
+      "training_mean_return": 0.020508928950547477,
+      "training_worst_drawdown": 0.18478343978262965
+    },
+    {
+      "signal": "momentum-032",
+      "training_mean_return": 0.019192007558753797,
+      "training_worst_drawdown": 0.34239066720904526
+    },
+    {
+      "signal": "pullback-050",
+      "training_mean_return": 0.014837658003968556,
+      "training_worst_drawdown": 0.1371811400419373
+    },
+    {
+      "signal": "breakout-020",
+      "training_mean_return": 0.014369158998930775,
+      "training_worst_drawdown": 0.3393330523533224
+    },
+    {
+      "signal": "momentum-026",
+      "training_mean_return": 0.013486041302745532,
+      "training_worst_drawdown": 0.35307199170187753
+    },
+    {
+      "signal": "pullback-049",
+      "training_mean_return": 0.01283313189132269,
+      "training_worst_drawdown": 0.14361675256700876
+    },
+    {
+      "signal": "ema-012",
+      "training_mean_return": 0.01031934092172494,
+      "training_worst_drawdown": 0.1777163497749915
+    },
+    {
+      "signal": "momentum-030",
+      "training_mean_return": 0.010275102969634242,
+      "training_worst_drawdown": 0.3534241015348004
+    },
+    {
+      "signal": "momentum-040",
+      "training_mean_return": 0.009615339670212508,
+      "training_worst_drawdown": 0.17875240224847297
+    },
+    {
+      "signal": "momentum-044",
+      "training_mean_return": 0.00754314061488427,
+      "training_worst_drawdown": 0.1934423906315076
+    },
+    {
+      "signal": "breakout-023",
+      "training_mean_return": 0.006718706471045744,
+      "training_worst_drawdown": 0.13124554475040415
+    },
+    {
+      "signal": "momentum-038",
+      "training_mean_return": 0.005290442153975128,
+      "training_worst_drawdown": 0.19560129026364798
+    },
+    {
+      "signal": "pullback-064",
+      "training_mean_return": 0.0013800058544954253,
+      "training_worst_drawdown": 0.17763351732149557
+    },
+    {
+      "signal": "momentum-025",
+      "training_mean_return": 0.00021320025993574188,
+      "training_worst_drawdown": 0.35277856270642477
+    },
+    {
+      "signal": "pullback-062",
+      "training_mean_return": -8.582562780469205e-05,
+      "training_worst_drawdown": 0.1448013233750802
+    },
+    {
+      "signal": "ema-002",
+      "training_mean_return": -0.008407109117691648,
+      "training_worst_drawdown": 0.3452870549847613
+    },
+    {
+      "signal": "pullback-061",
+      "training_mean_return": -0.011318586582999801,
+      "training_worst_drawdown": 0.14567130798557587
+    },
+    {
+      "signal": "breakout-018",
+      "training_mean_return": -0.013239948495515453,
+      "training_worst_drawdown": 0.3559844446395203
+    },
+    {
+      "signal": "ema-004",
+      "training_mean_return": -0.013879997572403668,
+      "training_worst_drawdown": 0.2882714264740858
+    },
+    {
+      "signal": "pullback-070",
+      "training_mean_return": -0.01393283993228207,
+      "training_worst_drawdown": 0.2670170185221044
+    },
+    {
+      "signal": "momentum-047",
+      "training_mean_return": -0.01417573166856062,
+      "training_worst_drawdown": 0.20006653587904996
+    },
+    {
+      "signal": "breakout-022",
+      "training_mean_return": -0.014581214785100726,
+      "training_worst_drawdown": 0.1665398033101884
+    },
+    {
+      "signal": "breakout-024",
+      "training_mean_return": -0.014581277758166377,
+      "training_worst_drawdown": 0.13096767731340153
+    },
+    {
+      "signal": "pullback-066",
+      "training_mean_return": -0.01699823775494965,
+      "training_worst_drawdown": 0.3481617317841157
+    },
+    {
+      "signal": "momentum-048",
+      "training_mean_return": -0.01767261512349331,
+      "training_worst_drawdown": 0.19441905524460906
+    },
+    {
+      "signal": "momentum-034",
+      "training_mean_return": -0.018804293640851455,
+      "training_worst_drawdown": 0.31263148002023405
+    },
+    {
+      "signal": "momentum-045",
+      "training_mean_return": -0.01979107804485728,
+      "training_worst_drawdown": 0.20661350806434714
+    },
+    {
+      "signal": "pullback-063",
+      "training_mean_return": -0.020778994903064528,
+      "training_worst_drawdown": 0.1996254417314257
+    },
+    {
+      "signal": "ema-015",
+      "training_mean_return": -0.02352635803245836,
+      "training_worst_drawdown": 0.10057623174472659
+    },
+    {
+      "signal": "momentum-046",
+      "training_mean_return": -0.028259014531135607,
+      "training_worst_drawdown": 0.1927181678362938
+    },
+    {
+      "signal": "pullback-072",
+      "training_mean_return": -0.028280277850340187,
+      "training_worst_drawdown": 0.2829403893433289
+    },
+    {
+      "signal": "momentum-031",
+      "training_mean_return": -0.028599434555082293,
+      "training_worst_drawdown": 0.32944370407999224
+    },
+    {
+      "signal": "ema-014",
+      "training_mean_return": -0.02886161523832146,
+      "training_worst_drawdown": 0.10990721207226974
+    },
+    {
+      "signal": "ema-013",
+      "training_mean_return": -0.03013747465990574,
+      "training_worst_drawdown": 0.10057623174472659
+    },
+    {
+      "signal": "pullback-065",
+      "training_mean_return": -0.03218653816343977,
+      "training_worst_drawdown": 0.2553733067750326
+    },
+    {
+      "signal": "ema-016",
+      "training_mean_return": -0.03613019391032318,
+      "training_worst_drawdown": 0.10990721207226974
+    },
+    {
+      "signal": "ema-005",
+      "training_mean_return": -0.03641000797846931,
+      "training_worst_drawdown": 0.25677251931496203
+    },
+    {
+      "signal": "momentum-036",
+      "training_mean_return": -0.04312538105242434,
+      "training_worst_drawdown": 0.29954108501983095
+    },
+    {
+      "signal": "pullback-068",
+      "training_mean_return": -0.04325282191858591,
+      "training_worst_drawdown": 0.2200639266375122
+    },
+    {
+      "signal": "momentum-029",
+      "training_mean_return": -0.0451446032039061,
+      "training_worst_drawdown": 0.3545242069376022
+    },
+    {
+      "signal": "ema-007",
+      "training_mean_return": -0.04699869954709648,
+      "training_worst_drawdown": 0.23833680881904656
+    },
+    {
+      "signal": "pullback-069",
+      "training_mean_return": -0.04722327515195698,
+      "training_worst_drawdown": 0.2857561696632434
+    },
+    {
+      "signal": "momentum-033",
+      "training_mean_return": -0.0477438510784694,
+      "training_worst_drawdown": 0.3412739037424076
+    },
+    {
+      "signal": "ema-003",
+      "training_mean_return": -0.0501307429259462,
+      "training_worst_drawdown": 0.24165823603226408
+    },
+    {
+      "signal": "pullback-056",
+      "training_mean_return": -0.05192334617385066,
+      "training_worst_drawdown": 0.35207828053016715
+    },
+    {
+      "signal": "pullback-067",
+      "training_mean_return": -0.052917694357272206,
+      "training_worst_drawdown": 0.22171839545869892
+    },
+    {
+      "signal": "momentum-035",
+      "training_mean_return": -0.05338924262686541,
+      "training_worst_drawdown": 0.3337275407187541
+    },
+    {
+      "signal": "ema-001",
+      "training_mean_return": -0.05417691745571165,
+      "training_worst_drawdown": 0.32244512027008404
+    },
+    {
+      "signal": "pullback-055",
+      "training_mean_return": -0.05435042832967095,
+      "training_worst_drawdown": 0.35093808193758624
+    },
+    {
+      "signal": "pullback-071",
+      "training_mean_return": -0.05752563027733578,
+      "training_worst_drawdown": 0.2724912504134326
+    },
+    {
+      "signal": "ema-008",
+      "training_mean_return": -0.07125793361941504,
+      "training_worst_drawdown": 0.3123617830242625
+    },
+    {
+      "signal": "ema-006",
+      "training_mean_return": -0.08161102349048237,
+      "training_worst_drawdown": 0.3168855375344179
+    },
+    {
+      "signal": "pullback-051",
+      "training_mean_return": -0.08759259192226697,
+      "training_worst_drawdown": 0.3319610469071204
+    },
+    {
+      "signal": "pullback-052",
+      "training_mean_return": -0.08960293538882913,
+      "training_worst_drawdown": 0.36097284474436186
+    },
+    {
+      "signal": "pullback-057",
+      "training_mean_return": -0.10830383461824852,
+      "training_worst_drawdown": 0.354145161851884
+    },
+    {
+      "signal": "pullback-058",
+      "training_mean_return": -0.11323528741858664,
+      "training_worst_drawdown": 0.3558591319580767
+    },
+    {
+      "signal": "pullback-060",
+      "training_mean_return": -0.1449648457277244,
+      "training_worst_drawdown": 0.358582004048295
+    },
+    {
+      "signal": "pullback-054",
+      "training_mean_return": -0.1606567261964741,
+      "training_worst_drawdown": 0.354000207241442
+    },
+    {
+      "signal": "pullback-059",
+      "training_mean_return": -0.1619052151553389,
+      "training_worst_drawdown": 0.35933257665596613
+    },
+    {
+      "signal": "pullback-053",
+      "training_mean_return": -0.17433292203497636,
+      "training_worst_drawdown": 0.35586255760232405
+    }
+  ],
+  "selection_rule": "Six distinct signals with highest mean return across 10 prior aggressive training cases; both larger/aggressive profiles, without parameter changes. No validation/confirmation results used for selection.",
+  "periods": [
+    {
+      "id": "training_replay",
+      "from": "2023-10-19",
+      "to": "2024-10-19",
+      "role": "Training-year execution-model check; does not provide independent validation."
+    },
+    {
+      "id": "validation",
+      "from": "2024-10-19",
+      "to": "2025-10-19",
+      "role": "Later validation of the fixed aggressive candidates; overall market period previously seen."
+    },
+    {
+      "id": "confirmation",
+      "from": "2025-10-19",
+      "to": "2026-10-19",
+      "role": "Retest on previously inspected recent year; not pristine holdout."
+    }
+  ],
+  "costs": {
+    "normal_fee": 0.001,
+    "normal_slippage_bps": 2,
+    "stress_fee": 0.002,
+    "stress_slippage_bps": 5
+  },
+  "resources": {
+    "workers": 1,
+    "cpu_quota": "150%",
+    "memory_max": "3G",
+    "go_soft_memory_limit": "1536MiB",
+    "nice": 10
+  },
+  "max_jobs": 360,
+  "minute_input_sha256": {
+    "BTCUSDT.csv": "b5e1e343df1e61fb5e1a15761f8a1f2c5bded4b37f69861b8ef9efc9bd4a8c51",
+    "ETHUSDT.csv": "2ec72356c1444d9e7806f6800f5bf89eabcee345a0f7b7308fef636be8a73c20",
+    "BNBUSDT.csv": "318cbd7c59263119b53cdc237cfe92db2fd00380cec8c74282aa04e5a948da09",
+    "XRPUSDT.csv": "633acfd357d78d41c61610b4d78b58ba8cde411c3921fd358f456c811eeaddb2",
+    "SOLUSDT.csv": "33c729c0ad4907f59c3426f235c4b75c2d9edb74dd97e4d11960c66505ec9f10",
+    "instruments.json": "7e2c51539807dca2c06c98fa32abf930318b63114974ac3d6023ad1e6908eab8",
+    "manifest.json": "0471e53c7fee81af3fbe28557c180fbd81088ee379c4935da64c1fc4a1b7f3aa"
+  },
+  "binary_sha256": "002e8946cd91e30cb3956c569d2ec42e50b8d71fec98a1e5f72b96dbd371818a",
+  "worker_sha256": "f139fe70a5db7d025b387b61c2281e472e616f69bec9e1b8bf531be7c466940c",
+  "core_sha256": "154e994dad307c3344191ae9240c24dce38d3f9038834f768cb55162b6c2d1da",
+  "gates": {
+    "research_only": true,
+    "minimum_total_closed_trades_on_two_validation_years": 50,
+    "minimum_positive_coin_years_out_of_10": 7,
+    "minimum_normal_mean_return_each_validation_year": 0,
+    "minimum_stress_mean_return_each_validation_year": 0,
+    "maximum_individual_validation_drawdown": 0.25,
+    "maximum_individual_validation_loss": 0.2,
+    "target_gate_requires_mean_each_validation_year_at_least": 0.5,
+    "live_authorized": false,
+    "prospective_paper_required": true
+  },
+  "limitations": [
+    "This follows a 216-configuration search; no statistical certainty from selecting the historical winner.",
+    "Three yearly replays include a training year and two already-inspected market periods; no claim of pristine holdout.",
+    "Five correlated coins are not ten independent experiments; averages are across independently funded Rp2m cases, not one jointly funded portfolio.",
+    "Current instrument filters, fixed USD/IDR conversion and no tax, latency or order-book queue model.",
+    "Risk profiles can hold 75%/95% of equity and risk 3%/5% per trade; simulated risk is not user approval for live risk.",
+    "Cold-start warmup is inside each year; risk halts remain active with no automatic reset.",
+    "Terminal inventory estimated exit costs are deducted; drawdown metrics remain original engine intraperiod values.",
+    "Research gates are explicit screening rules, not proof or a guarantee; live approval cannot be granted by this worker."
+  ],
+  "sources": [
+    {
+      "url": "https://www.nber.org/papers/w24877",
+      "reason": "Historical crypto time-series momentum motivates momentum and trend hypotheses, not a promised return."
+    },
+    {
+      "url": "https://www.aqr.com/Insights/Research/Journal-Article/Time-Series-Momentum",
+      "reason": "Trend-following hypothesis; evidence across other markets is not validation of these crypto implementations."
+    },
+    {
+      "url": "https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf",
+      "reason": "Multiple testing and backtest overfitting motivate fixed selection and separate periods."
+    },
+    {
+      "url": "https://data.binance.vision/",
+      "reason": "Official public spot candle archives with SHA256 checksums."
+    },
+    {
+      "url": "https://www.binance.com/en/support/announcement/detail/813a31506e9f478ea8c1058b425df87a",
+      "reason": "Official Binance notice of spot trading resumption after the 2023-03-24 halt."
+    }
+  ]
+}

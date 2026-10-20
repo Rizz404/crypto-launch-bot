@@ -1,0 +1,2724 @@
+{
+  "created_utc": "2026-10-19T14:06:03.318847+00:00",
+  "capital_idr_per_independent_case": 2000000,
+  "successful_jobs": 2340,
+  "failed_jobs": 0,
+  "configurations_screened": 216,
+  "selected_configurations": 12,
+  "selected_results": [
+    {
+      "candidate": "ema-009-baseline",
+      "family": "ema",
+      "risk_profile": "baseline",
+      "training_score": -0.01622196925543242,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": 0.9513670910855189,
+          "target_50pct_cases": 0,
+          "positive_cases": 7,
+          "worst_max_drawdown_pct": 4.195959837220464,
+          "closed_trades": 47,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": 1.5510803908324045,
+              "final_idr": 2031021.6078166482,
+              "drawdown_pct": 1.4758423746858957,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": 1.7192578746366038,
+              "final_idr": 2034385.157492732,
+              "drawdown_pct": 4.195959837220464,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": 1.2417094582781507,
+              "final_idr": 2024834.1891655626,
+              "drawdown_pct": 1.659244670519821,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": -1.3473364716501846,
+              "final_idr": 1973053.2705669962,
+              "drawdown_pct": 2.047220426397808,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": 2.3549587838829433,
+              "final_idr": 2047099.175677659,
+              "drawdown_pct": 2.2953458512127605,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": 4.5526907055837285,
+              "final_idr": 2091053.8141116744,
+              "drawdown_pct": 1.9694627163955876,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": 1.9745891563152984,
+              "final_idr": 2039491.783126306,
+              "drawdown_pct": 3.993412928590963,
+              "closed_trades": 5,
+              "open_positions": 1
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": -1.7692951670805646,
+              "final_idr": 1964614.0966583886,
+              "drawdown_pct": 3.5030192226992067,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": -1.5917249473819006,
+              "final_idr": 1968165.501052362,
+              "drawdown_pct": 2.456106094786942,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": 0.8277411274387081,
+              "final_idr": 2016554.8225487743,
+              "drawdown_pct": 1.6643004226900908,
+              "closed_trades": 4,
+              "open_positions": 1
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": 1.2934984968832097,
+          "target_50pct_cases": 0,
+          "positive_cases": 5,
+          "worst_max_drawdown_pct": 2.045221046749213,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.7520667808427417,
+              "final_idr": 2015041.335616855,
+              "drawdown_pct": 1.7482313153651157,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 2.2017487642951306,
+              "final_idr": 2044034.9752859024,
+              "drawdown_pct": 1.704254131820977,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 1.7827685463474463,
+              "final_idr": 2035655.3709269487,
+              "drawdown_pct": 2.045221046749213,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0.48007978464110757,
+              "final_idr": 2009601.595692822,
+              "drawdown_pct": 1.8206990354236137,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.2508286082896225,
+              "final_idr": 2025016.572165792,
+              "drawdown_pct": 1.9883408204106527,
+              "closed_trades": 4,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": 1.6300261074604316,
+          "target_50pct_cases": 0,
+          "positive_cases": 4,
+          "worst_max_drawdown_pct": 3.2888157526738593,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 2.0203677619535343,
+              "final_idr": 2040407.3552390707,
+              "drawdown_pct": 1.2896709139342728,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -1.3648627495998156,
+              "final_idr": 1972702.7450080034,
+              "drawdown_pct": 2.322525459861567,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 4.548871574291913,
+              "final_idr": 2090977.4314858383,
+              "drawdown_pct": 1.5859212452592637,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0.8046850099202807,
+              "final_idr": 2016093.7001984054,
+              "drawdown_pct": 2.8729637749798096,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 2.141068940736246,
+              "final_idr": 2042821.3788147247,
+              "drawdown_pct": 3.2888157526738593,
+              "closed_trades": 6,
+              "open_positions": 0
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": 1.47994456048681,
+          "target_50pct_cases": 0,
+          "positive_cases": 4,
+          "worst_max_drawdown_pct": 3.4218744468527342,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.8767843832608877,
+              "final_idr": 2037535.6876652176,
+              "drawdown_pct": 1.3374160975483516,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -1.4491940717941465,
+              "final_idr": 1971016.118564117,
+              "drawdown_pct": 2.3761308611711067,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 4.386686302448584,
+              "final_idr": 2087733.7260489715,
+              "drawdown_pct": 1.6428676759609198,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0.6386708344593872,
+              "final_idr": 2012773.4166891875,
+              "drawdown_pct": 2.965792934334477,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.946775354059338,
+              "final_idr": 2038935.5070811869,
+              "drawdown_pct": 3.4218744468527342,
+              "closed_trades": 6,
+              "open_positions": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "candidate": "momentum-037-baseline",
+      "family": "momentum",
+      "risk_profile": "baseline",
+      "training_score": -0.019137126408347613,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": 0.9452850288475377,
+          "target_50pct_cases": 0,
+          "positive_cases": 6,
+          "worst_max_drawdown_pct": 4.6177044598903985,
+          "closed_trades": 165,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": 4.410627800588407,
+              "final_idr": 2088212.5560117683,
+              "drawdown_pct": 1.9443518136002158,
+              "closed_trades": 15,
+              "open_positions": 1
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": -1.2811540223881646,
+              "final_idr": 1974376.9195522366,
+              "drawdown_pct": 4.6177044598903985,
+              "closed_trades": 23,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": 0.4162978248289262,
+              "final_idr": 2008325.9564965782,
+              "drawdown_pct": 1.542589721119031,
+              "closed_trades": 10,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": -1.2733966247264528,
+              "final_idr": 1974532.067505471,
+              "drawdown_pct": 2.750604867979043,
+              "closed_trades": 13,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": -0.03482662126003122,
+              "final_idr": 1999303.4675747992,
+              "drawdown_pct": 2.3796701405856133,
+              "closed_trades": 10,
+              "open_positions": 1
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": 1.2104824331545139,
+              "final_idr": 2024209.6486630903,
+              "drawdown_pct": 3.2756842234572425,
+              "closed_trades": 22,
+              "open_positions": 1
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": 1.4840767357568119,
+              "final_idr": 2029681.534715136,
+              "drawdown_pct": 3.0796953449912836,
+              "closed_trades": 17,
+              "open_positions": 1
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": 4.855372041788764,
+              "final_idr": 2097107.440835775,
+              "drawdown_pct": 3.915771026963953,
+              "closed_trades": 25,
+              "open_positions": 1
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": -2.06096351877898,
+              "final_idr": 1958780.7296244202,
+              "drawdown_pct": 3.3508025038504545,
+              "closed_trades": 19,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": 1.7263342395115844,
+              "final_idr": 2034526.6847902315,
+              "drawdown_pct": 2.5791302390972493,
+              "closed_trades": 11,
+              "open_positions": 1
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": 0.7870368712376785,
+          "target_50pct_cases": 0,
+          "positive_cases": 4,
+          "worst_max_drawdown_pct": 3.3243381950857533,
+          "closed_trades": 95,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.49133247354173903,
+              "final_idr": 2009826.6494708348,
+              "drawdown_pct": 1.8723911392597077,
+              "closed_trades": 18,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -0.027111523754352884,
+              "final_idr": 1999457.7695249128,
+              "drawdown_pct": 2.6064559709808197,
+              "closed_trades": 17,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 2.490427505483206,
+              "final_idr": 2049808.5501096642,
+              "drawdown_pct": 2.6836307464589813,
+              "closed_trades": 30,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0.1029567726159808,
+              "final_idr": 2002059.1354523196,
+              "drawdown_pct": 3.3243381950857533,
+              "closed_trades": 16,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 0.8775791283018197,
+              "final_idr": 2017551.5825660361,
+              "drawdown_pct": 2.068767181288052,
+              "closed_trades": 14,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": 1.2409939032394424,
+          "target_50pct_cases": 0,
+          "positive_cases": 4,
+          "worst_max_drawdown_pct": 3.673430315879179,
+          "closed_trades": 73,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 2.371876139076612,
+              "final_idr": 2047437.522781532,
+              "drawdown_pct": 1.6113120110951111,
+              "closed_trades": 12,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 1.055745993783197,
+              "final_idr": 2021114.9198756637,
+              "drawdown_pct": 2.492619935831361,
+              "closed_trades": 19,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.28800977698851815,
+              "final_idr": 1994239.8044602296,
+              "drawdown_pct": 3.673430315879179,
+              "closed_trades": 17,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 1.296772904781629,
+              "final_idr": 2025935.4580956325,
+              "drawdown_pct": 3.157078066339383,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.768584255544292,
+              "final_idr": 2035371.6851108856,
+              "drawdown_pct": 1.8910283476152079,
+              "closed_trades": 14,
+              "open_positions": 0
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": 0.8760056276939676,
+          "target_50pct_cases": 0,
+          "positive_cases": 4,
+          "worst_max_drawdown_pct": 3.9860099776671474,
+          "closed_trades": 73,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.9937595231834138,
+              "final_idr": 2039875.1904636682,
+              "drawdown_pct": 1.875217713500352,
+              "closed_trades": 12,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 0.6108996357359509,
+              "final_idr": 2012217.992714719,
+              "drawdown_pct": 2.7944094525363132,
+              "closed_trades": 19,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.7694339841689657,
+              "final_idr": 1984611.3203166206,
+              "drawdown_pct": 3.9860099776671474,
+              "closed_trades": 17,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 1.076147335878086,
+              "final_idr": 2021522.9467175617,
+              "drawdown_pct": 3.300359467932832,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.4686556278413532,
+              "final_idr": 2029373.1125568268,
+              "drawdown_pct": 2.037002283917124,
+              "closed_trades": 14,
+              "open_positions": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "candidate": "ema-011-baseline",
+      "family": "ema",
+      "risk_profile": "baseline",
+      "training_score": -0.017561603851011163,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": 0.8127790644696108,
+          "target_50pct_cases": 0,
+          "positive_cases": 7,
+          "worst_max_drawdown_pct": 4.205609942504866,
+          "closed_trades": 38,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": 1.3302610042400298,
+              "final_idr": 2026605.2200848004,
+              "drawdown_pct": 1.440991497658345,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": -1.4467107520658828,
+              "final_idr": 1971065.7849586823,
+              "drawdown_pct": 4.205609942504866,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": 0.12618719465751216,
+              "final_idr": 2002523.7438931502,
+              "drawdown_pct": 1.1153277857990587,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": -0.9519140062461684,
+              "final_idr": 1980961.7198750766,
+              "drawdown_pct": 2.0493227446275455,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": 2.3549587838829433,
+              "final_idr": 2047099.175677659,
+              "drawdown_pct": 2.2953458512127605,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": 4.5526907055837285,
+              "final_idr": 2091053.8141116744,
+              "drawdown_pct": 1.9694627163955876,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": 2.5695958971074573,
+              "final_idr": 2051391.9179421489,
+              "drawdown_pct": 3.2020926053695025,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": -1.6812404063415665,
+              "final_idr": 1966375.1918731686,
+              "drawdown_pct": 3.1808252285349696,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": 0.4462210964393476,
+              "final_idr": 2008924.4219287867,
+              "drawdown_pct": 2.061125318932319,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": 0.8277411274387081,
+              "final_idr": 2016554.8225487743,
+              "drawdown_pct": 1.6643004226900908,
+              "closed_trades": 4,
+              "open_positions": 1
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": 1.3077877953754147,
+          "target_50pct_cases": 0,
+          "positive_cases": 5,
+          "worst_max_drawdown_pct": 2.0905049758598935,
+          "closed_trades": 16,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.0150437144224922,
+              "final_idr": 2020300.8742884498,
+              "drawdown_pct": 1.743739102181294,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 3.169995762869693,
+              "final_idr": 2063399.9152573936,
+              "drawdown_pct": 1.688529832837255,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 0.5081712367109414,
+              "final_idr": 2010163.424734219,
+              "drawdown_pct": 2.0905049758598935,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0.48007978464110757,
+              "final_idr": 2009601.595692822,
+              "drawdown_pct": 1.8206990354236137,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.3656484782328393,
+              "final_idr": 2027312.9695646567,
+              "drawdown_pct": 1.9861333006552753,
+              "closed_trades": 3,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": 0.9861346721296859,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 1.2355394308425878,
+          "closed_trades": 2,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 2.010675878480739,
+              "final_idr": 2040213.5175696146,
+              "drawdown_pct": 1.0666629723079697,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 2.919997482167691,
+              "final_idr": 2058399.949643354,
+              "drawdown_pct": 1.2355394308425878,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": 0.966893525929673,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 1.2551163327021244,
+          "closed_trades": 2,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.9510428604398555,
+              "final_idr": 2039020.8572087972,
+              "drawdown_pct": 1.0971676065516407,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 2.883424769208509,
+              "final_idr": 2057668.49538417,
+              "drawdown_pct": 1.2551163327021244,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "candidate": "pullback-062-baseline",
+      "family": "pullback",
+      "risk_profile": "baseline",
+      "training_score": -0.018461419953628717,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": 0.055400688862722314,
+          "target_50pct_cases": 0,
+          "positive_cases": 4,
+          "worst_max_drawdown_pct": 3.2922353928457193,
+          "closed_trades": 41,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": -0.6703955989147192,
+              "final_idr": 1986592.0880217054,
+              "drawdown_pct": 1.704212032577091,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": 0.629164774307589,
+              "final_idr": 2012583.2954861517,
+              "drawdown_pct": 0.9396197839141758,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": 0.03519006478094333,
+              "final_idr": 2000703.8012956188,
+              "drawdown_pct": 1.1833157856076184,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": 1.1778421046623633,
+              "final_idr": 2023556.8420932472,
+              "drawdown_pct": 0.6019127908889494,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": -0.4294625204251057,
+              "final_idr": 1991410.749591498,
+              "drawdown_pct": 0.4294625204251035,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": 2.262195876220341,
+              "final_idr": 2045243.9175244067,
+              "drawdown_pct": 2.276061262142892,
+              "closed_trades": 10,
+              "open_positions": 0
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": -1.6405795181626437,
+              "final_idr": 1967188.4096367469,
+              "drawdown_pct": 3.2922353928457193,
+              "closed_trades": 8,
+              "open_positions": 0
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": -0.15236557370685855,
+              "final_idr": 1996952.6885258628,
+              "drawdown_pct": 2.0895366830923763,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": -0.3653915694014964,
+              "final_idr": 1992692.1686119698,
+              "drawdown_pct": 0.48761935909455006,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": -0.2921911507331898,
+              "final_idr": 1994156.1769853362,
+              "drawdown_pct": 1.0470057493676517,
+              "closed_trades": 3,
+              "open_positions": 0
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": -0.2522363903045255,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 1.751934223610999,
+          "closed_trades": 11,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.41362558552333617,
+              "final_idr": 2008272.5117104666,
+              "drawdown_pct": 1.751934223610999,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -0.7288466563023732,
+              "final_idr": 1985423.0668739523,
+              "drawdown_pct": 0.830868344028874,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.6702776035492963,
+              "final_idr": 1986594.447929014,
+              "drawdown_pct": 0.8109864287359501,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0.28040168380065733,
+              "final_idr": 2005608.033676013,
+              "drawdown_pct": 1.0633825932550462,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -0.5560849609949514,
+              "final_idr": 1988878.300780101,
+              "drawdown_pct": 0.6343664818046326,
+              "closed_trades": 1,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": 0.5493002315824502,
+          "target_50pct_cases": 0,
+          "positive_cases": 3,
+          "worst_max_drawdown_pct": 1.03224418352932,
+          "closed_trades": 10,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -0.3646448017630921,
+              "final_idr": 1992707.103964738,
+              "drawdown_pct": 0.3852152919904308,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 1.0555710383248318,
+              "final_idr": 2021111.4207664963,
+              "drawdown_pct": 0.844980188334763,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.5430773919058218,
+              "final_idr": 1989138.4521618835,
+              "drawdown_pct": 0.6045516494707016,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 1.5616805256855049,
+              "final_idr": 2031233.6105137102,
+              "drawdown_pct": 0.44782922000502723,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.0369717875708284,
+              "final_idr": 2020739.4357514165,
+              "drawdown_pct": 1.03224418352932,
+              "closed_trades": 2,
+              "open_positions": 0
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": 0.4352325728688244,
+          "target_50pct_cases": 0,
+          "positive_cases": 3,
+          "worst_max_drawdown_pct": 1.0850638821121312,
+          "closed_trades": 10,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -0.49129224755953826,
+              "final_idr": 1990174.155048809,
+              "drawdown_pct": 0.49129224755954076,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 0.9444508840941168,
+              "final_idr": 2018889.0176818823,
+              "drawdown_pct": 0.8995705629612596,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.6699015713091394,
+              "final_idr": 1986601.968573817,
+              "drawdown_pct": 0.6703559008929124,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 1.4635108690195686,
+              "final_idr": 2029270.2173803912,
+              "drawdown_pct": 0.4481599526377719,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 0.9293949300991144,
+              "final_idr": 2018587.8986019823,
+              "drawdown_pct": 1.0850638821121312,
+              "closed_trades": 2,
+              "open_positions": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "candidate": "pullback-050-baseline",
+      "family": "pullback",
+      "risk_profile": "baseline",
+      "training_score": -0.01899510057471785,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": 0.4153461930338798,
+          "target_50pct_cases": 0,
+          "positive_cases": 6,
+          "worst_max_drawdown_pct": 3.612751385987449,
+          "closed_trades": 105,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": 0.04524540858359405,
+              "final_idr": 2000904.9081716717,
+              "drawdown_pct": 1.1389834383422044,
+              "closed_trades": 13,
+              "open_positions": 0
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": 0.03807296065445609,
+              "final_idr": 2000761.459213089,
+              "drawdown_pct": 0.6802498732304634,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": 2.2578745406459655,
+              "final_idr": 2045157.4908129193,
+              "drawdown_pct": 0.8763959959358164,
+              "closed_trades": 10,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": -0.6622318975123775,
+              "final_idr": 1986755.3620497521,
+              "drawdown_pct": 1.3051347897382926,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": 2.6546644421147514,
+              "final_idr": 2053093.2888422946,
+              "drawdown_pct": 2.187972607101073,
+              "closed_trades": 13,
+              "open_positions": 0
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": 3.493923448388947,
+              "final_idr": 2069878.4689677786,
+              "drawdown_pct": 0.7599175355142033,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": -0.17202856928699717,
+              "final_idr": 1996559.42861426,
+              "drawdown_pct": 1.8202008629123343,
+              "closed_trades": 13,
+              "open_positions": 0
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": 1.8477505090939816,
+              "final_idr": 2036955.0101818794,
+              "drawdown_pct": 1.0350861422544226,
+              "closed_trades": 13,
+              "open_positions": 0
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": -2.1530194498929234,
+              "final_idr": 1956939.6110021414,
+              "drawdown_pct": 2.9541552087766916,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": -3.1967894624506,
+              "final_idr": 1936064.2107509878,
+              "drawdown_pct": 3.612751385987449,
+              "closed_trades": 13,
+              "open_positions": 0
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": -1.4048995154980637,
+          "target_50pct_cases": 0,
+          "positive_cases": 0,
+          "worst_max_drawdown_pct": 2.622665959922923,
+          "closed_trades": 51,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -0.9278236749507007,
+              "final_idr": 1981443.5265009857,
+              "drawdown_pct": 1.5670732223828931,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -1.3202460519117332,
+              "final_idr": 1973595.0789617652,
+              "drawdown_pct": 2.1454812381051696,
+              "closed_trades": 12,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -1.6635125342708612,
+              "final_idr": 1966729.7493145827,
+              "drawdown_pct": 1.8993121599032552,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": -2.621310305099789,
+              "final_idr": 1947573.793898004,
+              "drawdown_pct": 2.622665959922923,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -0.49160501125723455,
+              "final_idr": 1990167.8997748552,
+              "drawdown_pct": 1.9458957355376993,
+              "closed_trades": 12,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": 0.26420154774914995,
+          "target_50pct_cases": 0,
+          "positive_cases": 3,
+          "worst_max_drawdown_pct": 3.134311433622685,
+          "closed_trades": 49,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.4802385530401354,
+              "final_idr": 2009604.7710608027,
+              "drawdown_pct": 0.8624997431507982,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 2.0686655878544347,
+              "final_idr": 2041373.3117570889,
+              "drawdown_pct": 0.9789130983767977,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.9923998585997462,
+              "final_idr": 1980152.002828005,
+              "drawdown_pct": 2.096532943868167,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": -2.061275067074597,
+              "final_idr": 1958774.4986585078,
+              "drawdown_pct": 3.134311433622685,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.825778523525523,
+              "final_idr": 2036515.5704705103,
+              "drawdown_pct": 1.0424018368717836,
+              "closed_trades": 9,
+              "open_positions": 0
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": -0.36560193368104565,
+          "target_50pct_cases": 0,
+          "positive_cases": 3,
+          "worst_max_drawdown_pct": 3.692179986991161,
+          "closed_trades": 49,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.03540364274468022,
+              "final_idr": 2000708.0728548935,
+              "drawdown_pct": 1.0548977473739622,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 1.349667277322375,
+              "final_idr": 2026993.3455464474,
+              "drawdown_pct": 1.1214643301294842,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -1.6896552246461805,
+              "final_idr": 1966206.8955070763,
+              "drawdown_pct": 2.5754648250359136,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": -2.7514981589285004,
+              "final_idr": 1944970.0368214299,
+              "drawdown_pct": 3.692179986991161,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.2280727951023973,
+              "final_idr": 2024561.455902048,
+              "drawdown_pct": 1.1056660743435098,
+              "closed_trades": 9,
+              "open_positions": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "candidate": "momentum-042-baseline",
+      "family": "momentum",
+      "risk_profile": "baseline",
+      "training_score": -0.0207501167975878,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": 0.5608397056850822,
+          "target_50pct_cases": 0,
+          "positive_cases": 5,
+          "worst_max_drawdown_pct": 3.9773108019249372,
+          "closed_trades": 120,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": 1.056976927470199,
+              "final_idr": 2021139.538549404,
+              "drawdown_pct": 1.61680872706764,
+              "closed_trades": 8,
+              "open_positions": 1
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": -1.9505135839978038,
+              "final_idr": 1960989.728320044,
+              "drawdown_pct": 3.3866158852922754,
+              "closed_trades": 17,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": -0.7226112621318892,
+              "final_idr": 1985547.7747573622,
+              "drawdown_pct": 1.619675036956435,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": -3.7463354505255175,
+              "final_idr": 1925073.2909894895,
+              "drawdown_pct": 3.9773108019249372,
+              "closed_trades": 15,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": 1.2483020354640662,
+              "final_idr": 2024966.0407092813,
+              "drawdown_pct": 1.6477152551173435,
+              "closed_trades": 7,
+              "open_positions": 1
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": 3.4700140256935796,
+              "final_idr": 2069400.2805138717,
+              "drawdown_pct": 1.8752478627106777,
+              "closed_trades": 14,
+              "open_positions": 1
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": 3.239801204331205,
+              "final_idr": 2064796.024086624,
+              "drawdown_pct": 2.027879063900381,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": 4.834051846326526,
+              "final_idr": 2096681.0369265305,
+              "drawdown_pct": 2.7323907434556505,
+              "closed_trades": 20,
+              "open_positions": 1
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": -1.7944893721421606,
+              "final_idr": 1964110.2125571566,
+              "drawdown_pct": 2.4547512869289285,
+              "closed_trades": 14,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": -0.026799313637382305,
+              "final_idr": 1999464.0137272521,
+              "drawdown_pct": 3.13472573907815,
+              "closed_trades": 10,
+              "open_positions": 1
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": 1.882556852785151,
+          "target_50pct_cases": 0,
+          "positive_cases": 3,
+          "worst_max_drawdown_pct": 2.874347677569738,
+          "closed_trades": 50,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 2.2018353782731426,
+              "final_idr": 2044036.707565463,
+              "drawdown_pct": 1.6821867722404567,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 4.484134411131002,
+              "final_idr": 2089682.6882226197,
+              "drawdown_pct": 1.9104996398672018,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 3.970102791066954,
+              "final_idr": 2079402.055821339,
+              "drawdown_pct": 2.012531829282654,
+              "closed_trades": 14,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": -0.31426484172996094,
+              "final_idr": 1993714.7031654008,
+              "drawdown_pct": 2.874347677569738,
+              "closed_trades": 12,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -0.9290234748153825,
+              "final_idr": 1981419.5305036923,
+              "drawdown_pct": 2.450624959822745,
+              "closed_trades": 8,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": 0.2459078572291262,
+          "target_50pct_cases": 0,
+          "positive_cases": 4,
+          "worst_max_drawdown_pct": 2.552988104981579,
+          "closed_trades": 38,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.5692280082228338,
+              "final_idr": 2031384.5601644567,
+              "drawdown_pct": 1.3481918009605613,
+              "closed_trades": 4,
+              "open_positions": 1
+            },
+            "ETHUSDT": {
+              "return_pct": -1.3721296745681122,
+              "final_idr": 1972557.4065086376,
+              "drawdown_pct": 1.8665133541352277,
+              "closed_trades": 13,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 0.19750027132108272,
+              "final_idr": 2003950.0054264213,
+              "drawdown_pct": 2.3306834748241787,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0.20627210777006688,
+              "final_idr": 2004125.4421554012,
+              "drawdown_pct": 2.552988104981579,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 0.6286685733997599,
+              "final_idr": 2012573.371467995,
+              "drawdown_pct": 1.8446612453289415,
+              "closed_trades": 6,
+              "open_positions": 1
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": 0.055027407188132926,
+          "target_50pct_cases": 0,
+          "positive_cases": 3,
+          "worst_max_drawdown_pct": 2.631649438266754,
+          "closed_trades": 38,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.4178259087807898,
+              "final_idr": 2028356.5181756155,
+              "drawdown_pct": 1.383957288972182,
+              "closed_trades": 4,
+              "open_positions": 1
+            },
+            "ETHUSDT": {
+              "return_pct": -1.6543437089815094,
+              "final_idr": 1966913.1258203697,
+              "drawdown_pct": 1.9661644526571505,
+              "closed_trades": 13,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.08020661300466303,
+              "final_idr": 1998395.8677399068,
+              "drawdown_pct": 2.4538827943307977,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0.10655554537333245,
+              "final_idr": 2002131.1109074664,
+              "drawdown_pct": 2.631649438266754,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 0.48530590377271476,
+              "final_idr": 2009706.1180754544,
+              "drawdown_pct": 1.865218893959206,
+              "closed_trades": 6,
+              "open_positions": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "candidate": "ema-015-baseline",
+      "family": "ema",
+      "risk_profile": "baseline",
+      "training_score": -0.016663429359221864,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": -0.4584911168244221,
+          "target_50pct_cases": 0,
+          "positive_cases": 1,
+          "worst_max_drawdown_pct": 2.1095341281962137,
+          "closed_trades": 22,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": -1.1078681946340874,
+              "final_idr": 1977842.636107318,
+              "drawdown_pct": 1.8987342947112382,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": -1.243518242084829,
+              "final_idr": 1975129.6351583034,
+              "drawdown_pct": 1.5048220118226991,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": -0.4690763440555079,
+              "final_idr": 1990618.4731188896,
+              "drawdown_pct": 1.0232138084378826,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": -0.2939831033939244,
+              "final_idr": 1994120.3379321212,
+              "drawdown_pct": 1.079045789989699,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": 1.0508004856317754,
+              "final_idr": 2021016.0097126355,
+              "drawdown_pct": 1.4588589392000826,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": -0.7813690702983545,
+              "final_idr": 1984372.6185940327,
+              "drawdown_pct": 1.611463109022651,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": -0.46395227001738704,
+              "final_idr": 1990720.9545996522,
+              "drawdown_pct": 0.9524244406293575,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": -0.7571237721852642,
+              "final_idr": 1984857.5245562945,
+              "drawdown_pct": 0.9817774745659419,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": -0.000790218763280226,
+              "final_idr": 1999984.1956247343,
+              "drawdown_pct": 2.1095341281962137,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": -0.518030438443362,
+              "final_idr": 1989639.3912311327,
+              "drawdown_pct": 1.9823519025227256,
+              "closed_trades": 3,
+              "open_positions": 1
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": 0.5512738478837198,
+          "target_50pct_cases": 0,
+          "positive_cases": 3,
+          "worst_max_drawdown_pct": 1.715709894518179,
+          "closed_trades": 9,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.2519232621835297,
+              "final_idr": 2025038.4652436706,
+              "drawdown_pct": 1.715709894518179,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.31555037534720665,
+              "final_idr": 1993688.9924930558,
+              "drawdown_pct": 0.9146892115690152,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0.4438309953618491,
+              "final_idr": 2008876.619907237,
+              "drawdown_pct": 1.5304704572810701,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.3761653572204269,
+              "final_idr": 2027523.3071444083,
+              "drawdown_pct": 1.2060112440687771,
+              "closed_trades": 1,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": 0.24509023855953327,
+          "target_50pct_cases": 0,
+          "positive_cases": 1,
+          "worst_max_drawdown_pct": 1.2803263891580545,
+          "closed_trades": 2,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.2254511927976663,
+              "final_idr": 2024509.023855953,
+              "drawdown_pct": 1.2803263891580545,
+              "closed_trades": 2,
+              "open_positions": 0
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": 0.2287491612674497,
+          "target_50pct_cases": 0,
+          "positive_cases": 1,
+          "worst_max_drawdown_pct": 1.3195552710450575,
+          "closed_trades": 2,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0,
+              "final_idr": 2000000,
+              "drawdown_pct": 0,
+              "closed_trades": 0,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.1437458063372485,
+              "final_idr": 2022874.9161267448,
+              "drawdown_pct": 1.3195552710450575,
+              "closed_trades": 2,
+              "open_positions": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "candidate": "breakout-024-baseline",
+      "family": "breakout",
+      "risk_profile": "baseline",
+      "training_score": -0.02048890990961525,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": -0.31576307865899933,
+          "target_50pct_cases": 0,
+          "positive_cases": 3,
+          "worst_max_drawdown_pct": 2.823441269145462,
+          "closed_trades": 25,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": -1.148013471125453,
+              "final_idr": 1977039.7305774908,
+              "drawdown_pct": 1.4676337765793883,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": -0.7301882671979398,
+              "final_idr": 1985396.2346560413,
+              "drawdown_pct": 2.0109405471332913,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": -1.8001099399296505,
+              "final_idr": 1963997.8012014069,
+              "drawdown_pct": 1.9449222963085826,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": -0.7647139929724878,
+              "final_idr": 1984705.72014055,
+              "drawdown_pct": 2.0396592299720147,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": -0.008582237706455942,
+              "final_idr": 1999828.3552458708,
+              "drawdown_pct": 0.6830306342319805,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": 2.0612711835837683,
+              "final_idr": 2041225.4236716751,
+              "drawdown_pct": 2.1409776677235635,
+              "closed_trades": 2,
+              "open_positions": 1
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": 0.7716557302394067,
+              "final_idr": 2015433.1146047881,
+              "drawdown_pct": 2.823441269145462,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": 1.3487828053655226,
+              "final_idr": 2026975.6561073104,
+              "drawdown_pct": 2.5506593120256897,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": -2.156646860716749,
+              "final_idr": 1956867.0627856648,
+              "drawdown_pct": 2.361809402602157,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": -0.731085736129955,
+              "final_idr": 1985378.2852774009,
+              "drawdown_pct": 1.9474209289705908,
+              "closed_trades": 3,
+              "open_positions": 0
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": 0.23709045823406605,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 2.4926287622657184,
+          "closed_trades": 17,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -0.5724260086058752,
+              "final_idr": 1988551.4798278825,
+              "drawdown_pct": 2.180239510217678,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -0.05162519967297774,
+              "final_idr": 1998967.4960065405,
+              "drawdown_pct": 2.028756733303178,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 0.7918509655746586,
+              "final_idr": 2015837.019311493,
+              "drawdown_pct": 2.4926287622657184,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 2.088750713802945,
+              "final_idr": 2041775.0142760589,
+              "drawdown_pct": 1.3497727789973542,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -1.0710981799284203,
+              "final_idr": 1978578.0364014315,
+              "drawdown_pct": 2.2019058556102062,
+              "closed_trades": 3,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": 0.16942153978193986,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 2.093893080159811,
+          "closed_trades": 14,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -0.11942191757570164,
+              "final_idr": 1997611.5616484857,
+              "drawdown_pct": 1.975502339190512,
+              "closed_trades": 3,
+              "open_positions": 1
+            },
+            "ETHUSDT": {
+              "return_pct": -0.5423948374947196,
+              "final_idr": 1989152.1032501054,
+              "drawdown_pct": 2.093893080159811,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.13165708261944076,
+              "final_idr": 1997366.8583476113,
+              "drawdown_pct": 1.9775388077784322,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 1.4962264091386013,
+              "final_idr": 2029924.5281827718,
+              "drawdown_pct": 1.2608327405490596,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 0.14435512746096002,
+              "final_idr": 2002887.102549219,
+              "drawdown_pct": 2.017398730522483,
+              "closed_trades": 3,
+              "open_positions": 0
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": 0.08575791154628032,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 2.1296547844907256,
+          "closed_trades": 14,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -0.24061093989844462,
+              "final_idr": 1995187.781202031,
+              "drawdown_pct": 2.0113031480917933,
+              "closed_trades": 3,
+              "open_positions": 1
+            },
+            "ETHUSDT": {
+              "return_pct": -0.6097411895977234,
+              "final_idr": 1987805.1762080453,
+              "drawdown_pct": 2.1296547844907256,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.26592526079222134,
+              "final_idr": 1994681.4947841554,
+              "drawdown_pct": 2.014575115982408,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 1.472529829931002,
+              "final_idr": 2029450.5965986198,
+              "drawdown_pct": 1.2734466976405678,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 0.07253711808878904,
+              "final_idr": 2001450.7423617756,
+              "drawdown_pct": 2.042027597989083,
+              "closed_trades": 3,
+              "open_positions": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "candidate": "breakout-023-baseline",
+      "family": "breakout",
+      "risk_profile": "baseline",
+      "training_score": -0.019611587948329033,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": -0.16261995536020923,
+          "target_50pct_cases": 0,
+          "positive_cases": 5,
+          "worst_max_drawdown_pct": 2.8422703448998523,
+          "closed_trades": 34,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": 2.3388527520199487,
+              "final_idr": 2046777.0550403988,
+              "drawdown_pct": 2.1130619845906606,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": 0.6442254678618697,
+              "final_idr": 2012884.5093572373,
+              "drawdown_pct": 1.8707364249792378,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": -1.8001099399296505,
+              "final_idr": 1963997.8012014069,
+              "drawdown_pct": 1.9449222963085826,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": -1.427584136583493,
+              "final_idr": 1971448.31726833,
+              "drawdown_pct": 2.0325539383513407,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": -0.6401378929736801,
+              "final_idr": 1987197.2421405262,
+              "drawdown_pct": 1.0360535191369697,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": 0.37281213993936024,
+              "final_idr": 2007456.2427987868,
+              "drawdown_pct": 2.1202340814712026,
+              "closed_trades": 4,
+              "open_positions": 1
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": 0.08526785170237527,
+              "final_idr": 2001705.3570340476,
+              "drawdown_pct": 2.8422703448998523,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": 2.242783304661433,
+              "final_idr": 2044855.6660932284,
+              "drawdown_pct": 2.5289206241214504,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": -2.156646860716749,
+              "final_idr": 1956867.0627856648,
+              "drawdown_pct": 2.361809402602157,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": -1.2856622395835071,
+              "final_idr": 1974286.7552083298,
+              "drawdown_pct": 1.9581472939793645,
+              "closed_trades": 4,
+              "open_positions": 0
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": -0.12831700358108877,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 2.4926287622657184,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -1.2807142705818286,
+              "final_idr": 1974385.7145883634,
+              "drawdown_pct": 2.195538787322381,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -0.05162519967297774,
+              "final_idr": 1998967.4960065405,
+              "drawdown_pct": 2.028756733303178,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 0.7918509655746586,
+              "final_idr": 2015837.019311493,
+              "drawdown_pct": 2.4926287622657184,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 1.4142590253101606,
+              "final_idr": 2028285.1805062033,
+              "drawdown_pct": 1.358627958116637,
+              "closed_trades": 2,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -1.5153555385354567,
+              "final_idr": 1969692.8892292907,
+              "drawdown_pct": 2.211641568811622,
+              "closed_trades": 4,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": 0.08825347720801124,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 2.098524504872238,
+          "closed_trades": 14,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.2944911186471,
+              "final_idr": 2005889.822372942,
+              "drawdown_pct": 1.9674884099605578,
+              "closed_trades": 3,
+              "open_positions": 1
+            },
+            "ETHUSDT": {
+              "return_pct": -0.7665913122413159,
+              "final_idr": 1984668.1737551736,
+              "drawdown_pct": 2.098524504872238,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.39062559790981055,
+              "final_idr": 1992187.4880418037,
+              "drawdown_pct": 1.9653404685071902,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 1.4962264091386013,
+              "final_idr": 2029924.5281827718,
+              "drawdown_pct": 1.2608327405490596,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -0.19223323159451855,
+              "final_idr": 1996155.3353681096,
+              "drawdown_pct": 2.0121926588503816,
+              "closed_trades": 3,
+              "open_positions": 0
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": 0.00725526267930876,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 2.1343606401352204,
+          "closed_trades": 14,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.17140047656574176,
+              "final_idr": 2003428.009531315,
+              "drawdown_pct": 2.0031755234624407,
+              "closed_trades": 3,
+              "open_positions": 1
+            },
+            "ETHUSDT": {
+              "return_pct": -0.8336460383915112,
+              "final_idr": 1983327.0792321695,
+              "drawdown_pct": 2.1343606401352204,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.5106509910480672,
+              "final_idr": 1989786.9801790386,
+              "drawdown_pct": 2.000556488148703,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 1.472529829931002,
+              "final_idr": 2029450.5965986198,
+              "drawdown_pct": 1.2734466976405678,
+              "closed_trades": 1,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -0.26335696366062145,
+              "final_idr": 1994732.8607267875,
+              "drawdown_pct": 2.036766300264339,
+              "closed_trades": 3,
+              "open_positions": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "candidate": "momentum-039-baseline",
+      "family": "momentum",
+      "risk_profile": "baseline",
+      "training_score": -0.018885062332390623,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": 0.7327529637190422,
+          "target_50pct_cases": 0,
+          "positive_cases": 6,
+          "worst_max_drawdown_pct": 4.4435973377926,
+          "closed_trades": 105,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": 1.9456529218162988,
+              "final_idr": 2038913.0584363258,
+              "drawdown_pct": 2.5601025144775127,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": -1.1237751704886056,
+              "final_idr": 1977524.4965902278,
+              "drawdown_pct": 4.4435973377926,
+              "closed_trades": 14,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": -0.20361573256925114,
+              "final_idr": 1995927.685348615,
+              "drawdown_pct": 1.9692129889768373,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": -0.6471774787804141,
+              "final_idr": 1987056.4504243918,
+              "drawdown_pct": 2.391003326940066,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": 0.02547275103199631,
+              "final_idr": 2000509.45502064,
+              "drawdown_pct": 2.459279139123138,
+              "closed_trades": 8,
+              "open_positions": 0
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": 1.6969821081044278,
+              "final_idr": 2033939.6421620883,
+              "drawdown_pct": 2.618325487444277,
+              "closed_trades": 13,
+              "open_positions": 1
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": 1.623448319134435,
+              "final_idr": 2032468.9663826886,
+              "drawdown_pct": 2.2137108892939636,
+              "closed_trades": 10,
+              "open_positions": 1
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": 4.237889823480345,
+              "final_idr": 2084757.7964696067,
+              "drawdown_pct": 3.2142892355958512,
+              "closed_trades": 16,
+              "open_positions": 1
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": -1.0857835041070962,
+              "final_idr": 1978284.329917858,
+              "drawdown_pct": 2.1981862563772308,
+              "closed_trades": 10,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": 0.8584355995682857,
+              "final_idr": 2017168.7119913658,
+              "drawdown_pct": 3.036233086071969,
+              "closed_trades": 11,
+              "open_positions": 1
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": 1.1251199359530206,
+          "target_50pct_cases": 0,
+          "positive_cases": 4,
+          "worst_max_drawdown_pct": 3.1889968930454726,
+          "closed_trades": 57,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.4416246721878023,
+              "final_idr": 2028832.493443756,
+              "drawdown_pct": 1.7394065457064234,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -0.06218644083715308,
+              "final_idr": 1998756.2711832568,
+              "drawdown_pct": 2.412610664727346,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 2.3964759238430444,
+              "final_idr": 2047929.5184768608,
+              "drawdown_pct": 2.5036929245959114,
+              "closed_trades": 17,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 0.7226899675990994,
+              "final_idr": 2014453.7993519818,
+              "drawdown_pct": 3.1889968930454726,
+              "closed_trades": 12,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.12699555697231,
+              "final_idr": 2022539.911139446,
+              "drawdown_pct": 2.047308370448362,
+              "closed_trades": 10,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": -0.18201371428234747,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 3.31212520196974,
+          "closed_trades": 49,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.4548322399319904,
+              "final_idr": 2009096.6447986397,
+              "drawdown_pct": 1.6302883848269685,
+              "closed_trades": 8,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 0.23940164862159552,
+              "final_idr": 2004788.032972432,
+              "drawdown_pct": 1.5799966946586783,
+              "closed_trades": 8,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.4287162808287559,
+              "final_idr": 1991425.6743834247,
+              "drawdown_pct": 3.31212520196974,
+              "closed_trades": 12,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": -0.7165467541466075,
+              "final_idr": 1985669.0649170678,
+              "drawdown_pct": 3.0740757852965284,
+              "closed_trades": 10,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -0.45903942498995987,
+              "final_idr": 1990819.2115002007,
+              "drawdown_pct": 2.085545143908597,
+              "closed_trades": 11,
+              "open_positions": 0
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": -0.4175491891467176,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 3.5108352719347375,
+          "closed_trades": 49,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.19648915789938215,
+              "final_idr": 2003929.7831579875,
+              "drawdown_pct": 1.7222320953677248,
+              "closed_trades": 8,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 0.06749204434077782,
+              "final_idr": 2001349.8408868157,
+              "drawdown_pct": 1.6712312349557157,
+              "closed_trades": 8,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -0.7717434882708374,
+              "final_idr": 1984565.1302345833,
+              "drawdown_pct": 3.5108352719347375,
+              "closed_trades": 12,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": -0.9113669263880242,
+              "final_idr": 1981772.6614722393,
+              "drawdown_pct": 3.2141709136824486,
+              "closed_trades": 10,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -0.6686167333148862,
+              "final_idr": 1986627.665333702,
+              "drawdown_pct": 2.2313070706887808,
+              "closed_trades": 11,
+              "open_positions": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "candidate": "pullback-049-baseline",
+      "family": "pullback",
+      "risk_profile": "baseline",
+      "training_score": -0.019540424256868777,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": 0.3242553331180642,
+          "target_50pct_cases": 0,
+          "positive_cases": 7,
+          "worst_max_drawdown_pct": 3.8077170529959057,
+          "closed_trades": 103,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": -0.18678174627020372,
+              "final_idr": 1996264.365074596,
+              "drawdown_pct": 1.1389834383422044,
+              "closed_trades": 13,
+              "open_positions": 0
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": -0.3212711213724906,
+              "final_idr": 1993574.5775725502,
+              "drawdown_pct": 0.6785621758066505,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": 1.4219995416373976,
+              "final_idr": 2028439.990832748,
+              "drawdown_pct": 0.6337506977600411,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": 0.0020454861897389875,
+              "final_idr": 2000040.9097237946,
+              "drawdown_pct": 0.6451565347500551,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": 1.0525827620342154,
+              "final_idr": 2021051.655240684,
+              "drawdown_pct": 2.1885423741844825,
+              "closed_trades": 13,
+              "open_positions": 0
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": 2.5995294098013266,
+              "final_idr": 2051990.5881960264,
+              "drawdown_pct": 0.7665282670457638,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": 0.20018125014074073,
+              "final_idr": 2004003.6250028145,
+              "drawdown_pct": 1.820193382938913,
+              "closed_trades": 13,
+              "open_positions": 0
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": 1.221638353319121,
+              "final_idr": 2024432.7670663823,
+              "drawdown_pct": 1.0362018752155608,
+              "closed_trades": 13,
+              "open_positions": 0
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": 0.6452259050626852,
+              "final_idr": 2012904.5181012535,
+              "drawdown_pct": 0.9799806174569079,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": -3.3925965093618893,
+              "final_idr": 1932148.069812762,
+              "drawdown_pct": 3.8077170529959057,
+              "closed_trades": 13,
+              "open_positions": 0
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": -1.3035448631315405,
+          "target_50pct_cases": 0,
+          "positive_cases": 1,
+          "worst_max_drawdown_pct": 2.622665959922923,
+          "closed_trades": 51,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -1.024109393234196,
+              "final_idr": 1979517.812135316,
+              "drawdown_pct": 1.6627376703549777,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -1.1178853607098582,
+              "final_idr": 1977642.2927858026,
+              "drawdown_pct": 1.5281295671975579,
+              "closed_trades": 12,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -1.850306869210594,
+              "final_idr": 1962993.862615788,
+              "drawdown_pct": 2.0856585834381414,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": -2.621310305099789,
+              "final_idr": 1947573.793898004,
+              "drawdown_pct": 2.622665959922923,
+              "closed_trades": 9,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 0.0958876125967345,
+              "final_idr": 2001917.7522519347,
+              "drawdown_pct": 1.4488869180034942,
+              "closed_trades": 12,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": -0.2718583164205035,
+          "target_50pct_cases": 0,
+          "positive_cases": 3,
+          "worst_max_drawdown_pct": 3.134311433622685,
+          "closed_trades": 49,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.5287509891008568,
+              "final_idr": 2010575.0197820168,
+              "drawdown_pct": 0.8624997431507982,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": 0.5289122931556145,
+              "final_idr": 2010578.2458631124,
+              "drawdown_pct": 0.9802641295727743,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -1.1517121410066,
+              "final_idr": 1976965.757179868,
+              "drawdown_pct": 2.105692383104876,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": -2.328484723812718,
+              "final_idr": 1953430.3055237455,
+              "drawdown_pct": 3.134311433622685,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 1.0632420004603294,
+              "final_idr": 2021264.8400092064,
+              "drawdown_pct": 0.8675730849541976,
+              "closed_trades": 9,
+              "open_positions": 0
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": -0.9031466259424147,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 3.692179986991161,
+          "closed_trades": 49,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.07922197872656245,
+              "final_idr": 2001584.4395745313,
+              "drawdown_pct": 1.0548977473739622,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -0.1923986765940744,
+              "final_idr": 1996152.0264681184,
+              "drawdown_pct": 1.2595768489035108,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -1.8580736485965366,
+              "final_idr": 1962838.5270280691,
+              "drawdown_pct": 2.619702087931092,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": -3.01699171636719,
+              "final_idr": 1939660.1656726561,
+              "drawdown_pct": 3.692179986991161,
+              "closed_trades": 11,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": 0.47250893311916453,
+              "final_idr": 2009450.1786623832,
+              "drawdown_pct": 0.8657568884872872,
+              "closed_trades": 9,
+              "open_positions": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "candidate": "breakout-021-baseline",
+      "family": "breakout",
+      "risk_profile": "baseline",
+      "training_score": -0.020204166088773727,
+      "stages": {
+        "training": {
+          "cases": 10,
+          "mean_return_pct": 0.4066148344289667,
+          "target_50pct_cases": 0,
+          "positive_cases": 5,
+          "worst_max_drawdown_pct": 3.7545175627246943,
+          "closed_trades": 61,
+          "per_coin": {
+            "BTCUSDT@2022-10-19": {
+              "return_pct": 2.5693737831436803,
+              "final_idr": 2051387.4756628736,
+              "drawdown_pct": 2.1233905378742217,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "ETHUSDT@2022-10-19": {
+              "return_pct": 0.9031302375245742,
+              "final_idr": 2018062.6047504912,
+              "drawdown_pct": 3.0965068484518405,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "BNBUSDT@2022-10-19": {
+              "return_pct": -1.0805937527368692,
+              "final_idr": 1978388.1249452624,
+              "drawdown_pct": 2.4726474623190877,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "XRPUSDT@2022-10-19": {
+              "return_pct": -0.912606436371699,
+              "final_idr": 1981747.871272566,
+              "drawdown_pct": 2.0303256077095786,
+              "closed_trades": 4,
+              "open_positions": 0
+            },
+            "SOLUSDT@2022-10-19": {
+              "return_pct": -0.5525719785497651,
+              "final_idr": 1988948.5604290047,
+              "drawdown_pct": 2.7364893377535835,
+              "closed_trades": 5,
+              "open_positions": 0
+            },
+            "BTCUSDT@2023-10-19": {
+              "return_pct": 1.009393276432835,
+              "final_idr": 2020187.8655286566,
+              "drawdown_pct": 3.2283036227198214,
+              "closed_trades": 8,
+              "open_positions": 1
+            },
+            "ETHUSDT@2023-10-19": {
+              "return_pct": -0.8401510252572297,
+              "final_idr": 1983196.9794948553,
+              "drawdown_pct": 3.443771286056019,
+              "closed_trades": 8,
+              "open_positions": 0
+            },
+            "BNBUSDT@2023-10-19": {
+              "return_pct": 4.967074652204473,
+              "final_idr": 2099341.4930440895,
+              "drawdown_pct": 2.1743803817027185,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "XRPUSDT@2023-10-19": {
+              "return_pct": -3.4376911972002433,
+              "final_idr": 1931246.176055995,
+              "drawdown_pct": 3.7545175627246943,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "SOLUSDT@2023-10-19": {
+              "return_pct": 1.4407907850999102,
+              "final_idr": 2028815.815701998,
+              "drawdown_pct": 2.2235910070691127,
+              "closed_trades": 7,
+              "open_positions": 0
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return_pct": 0.5241630207696812,
+          "target_50pct_cases": 0,
+          "positive_cases": 2,
+          "worst_max_drawdown_pct": 2.8498803839586415,
+          "closed_trades": 28,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -1.497391601431719,
+              "final_idr": 1970052.1679713656,
+              "drawdown_pct": 2.5706343816968658,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -0.16459616481078188,
+              "final_idr": 1996708.0767037843,
+              "drawdown_pct": 2.8498803839586415,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": 2.0703984722150626,
+              "final_idr": 2041407.9694443012,
+              "drawdown_pct": 2.456191688562977,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 2.337666367422009,
+              "final_idr": 2046753.3273484402,
+              "drawdown_pct": 1.8041630184254012,
+              "closed_trades": 3,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -0.1252619695461643,
+              "final_idr": 1997494.7606090766,
+              "drawdown_pct": 2.432519030411164,
+              "closed_trades": 5,
+              "open_positions": 0
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return_pct": -0.5372036983338013,
+          "target_50pct_cases": 0,
+          "positive_cases": 1,
+          "worst_max_drawdown_pct": 3.3527646342021598,
+          "closed_trades": 37,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -0.1196020626189287,
+              "final_idr": 1997607.9587476214,
+              "drawdown_pct": 1.9039127924271968,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -1.831042476091993,
+              "final_idr": 1963379.15047816,
+              "drawdown_pct": 2.214070010059289,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -1.8506548386293065,
+              "final_idr": 1962986.9032274138,
+              "drawdown_pct": 3.3527646342021598,
+              "closed_trades": 8,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 2.547712095171617,
+              "final_idr": 2050954.241903432,
+              "drawdown_pct": 2.519740463262972,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -1.4324312095003955,
+              "final_idr": 1971351.375809992,
+              "drawdown_pct": 2.2941276022226247,
+              "closed_trades": 9,
+              "open_positions": 0
+            }
+          }
+        },
+        "stress": {
+          "cases": 5,
+          "mean_return_pct": -0.718238679070331,
+          "target_50pct_cases": 0,
+          "positive_cases": 1,
+          "worst_max_drawdown_pct": 3.5351785411874697,
+          "closed_trades": 37,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -0.32297271256501725,
+              "final_idr": 1993540.5457486995,
+              "drawdown_pct": 1.9412179164810723,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "ETHUSDT": {
+              "return_pct": -1.9797362801510676,
+              "final_idr": 1960405.2743969786,
+              "drawdown_pct": 2.3033047248720835,
+              "closed_trades": 7,
+              "open_positions": 0
+            },
+            "BNBUSDT": {
+              "return_pct": -2.0948653936955774,
+              "final_idr": 1958102.6921260883,
+              "drawdown_pct": 3.5351785411874697,
+              "closed_trades": 8,
+              "open_positions": 0
+            },
+            "XRPUSDT": {
+              "return_pct": 2.411510571613018,
+              "final_idr": 2048230.2114322605,
+              "drawdown_pct": 2.6100943795087934,
+              "closed_trades": 6,
+              "open_positions": 0
+            },
+            "SOLUSDT": {
+              "return_pct": -1.6051295805530108,
+              "final_idr": 1967897.4083889397,
+              "drawdown_pct": 2.3900556542760674,
+              "closed_trades": 9,
+              "open_positions": 0
+            }
+          }
+        }
+      }
+    }
+  ],
+  "all_target_hits": [],
+  "target_hits_are_not_proof_of_future_returns": true,
+  "failures": [],
+  "limitations": [
+    "Spot only, no leverage, no short selling; this is not a search across all possible strategies",
+    "Current instrument rules approximate past rules; currency conversion is fixed and excludes IDR FX changes and taxes",
+    "Training/validation fills use 1h OHLC; selected configurations get full 1m confirmation and increased-cost stress test",
+    "Annual runs cold-start indicators within each period; idle warmup and risk-triggered halts count in annual return",
+    "2025-2026 confirmation year was inspected previously; this is not a pristine holdout or proof of future profit",
+    "Five current large coins were selected with hindsight; survivorship/universe selection bias remains",
+    "216 variants create multiple-testing risk; all results and failures are retained, not just target hits",
+    "Aggressive profiles can lose substantial capital; a high historical return alone does not pass live approval",
+    "Final ranking is descriptive; configurations are frozen before validation and no automatic retuning occurs",
+    "Conservative terminal equity deducts estimated sale costs on remaining inventory; drawdown is the original intraperiod engine metric",
+    "One documented missing hourly bar at 2023-03-24 13:00 UTC is retained as a non-trading halt; no prices or fills fabricated. All other gaps fail validation."
+  ],
+  "sources": [
+    {
+      "url": "https://www.nber.org/papers/w24877",
+      "reason": "Historical crypto time-series momentum motivates momentum and trend hypotheses, not a promised return."
+    },
+    {
+      "url": "https://www.aqr.com/Insights/Research/Journal-Article/Time-Series-Momentum",
+      "reason": "Trend-following hypothesis; evidence across other markets is not validation of these crypto implementations."
+    },
+    {
+      "url": "https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf",
+      "reason": "Multiple testing and backtest overfitting motivate fixed selection and separate periods."
+    },
+    {
+      "url": "https://data.binance.vision/",
+      "reason": "Official public spot candle archives with SHA256 checksums."
+    },
+    {
+      "url": "https://www.binance.com/en/support/announcement/detail/813a31506e9f478ea8c1058b425df87a",
+      "reason": "Official Binance notice of spot trading resumption after the 2023-03-24 halt."
+    }
+  ]
+}

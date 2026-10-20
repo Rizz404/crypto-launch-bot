@@ -1,0 +1,267 @@
+{
+  "purpose": "Exploratory comparison of exactly five predeclared alternatives on the SAME previously inspected year; not untouched out-of-sample validation",
+  "summary": [
+    {
+      "candidate": "pullback4h",
+      "label": "Koreksi dalam tren naik (4 jam)",
+      "positive_coin_cases": 3,
+      "negative_coin_cases": 2,
+      "zero_trade_coin_cases": 0,
+      "mean_return_pct": 1.050998442605624,
+      "mean_final_idr": 2021019.9688521125,
+      "closed_trades_total": 60,
+      "worst_max_drawdown_pct": 3.0862694128705037,
+      "total_closed_trade_fees_usdt": 3.15074230530958
+    },
+    {
+      "candidate": "breakout1d",
+      "label": "Breakout harian",
+      "positive_coin_cases": 2,
+      "negative_coin_cases": 3,
+      "zero_trade_coin_cases": 0,
+      "mean_return_pct": 0.17191190127569866,
+      "mean_final_idr": 2003438.238025514,
+      "closed_trades_total": 14,
+      "worst_max_drawdown_pct": 2.093893080159811,
+      "total_closed_trade_fees_usdt": 0.33287728922324
+    },
+    {
+      "candidate": "ema4h-trend",
+      "label": "EMA 4 jam + tren",
+      "positive_coin_cases": 1,
+      "negative_coin_cases": 4,
+      "zero_trade_coin_cases": 0,
+      "mean_return_pct": 0.031154334993179766,
+      "mean_final_idr": 2000623.0866998634,
+      "closed_trades_total": 40,
+      "worst_max_drawdown_pct": 4.5598509541858245,
+      "total_closed_trade_fees_usdt": 2.0244807705083803
+    },
+    {
+      "candidate": "ema1d-trend",
+      "label": "EMA harian + tren",
+      "positive_coin_cases": 0,
+      "negative_coin_cases": 0,
+      "zero_trade_coin_cases": 5,
+      "mean_return_pct": 0,
+      "mean_final_idr": 2000000,
+      "closed_trades_total": 0,
+      "worst_max_drawdown_pct": 0,
+      "total_closed_trade_fees_usdt": 0
+    },
+    {
+      "candidate": "momentum1d",
+      "label": "Momentum harian",
+      "positive_coin_cases": 1,
+      "negative_coin_cases": 4,
+      "zero_trade_coin_cases": 0,
+      "mean_return_pct": -0.5818489635242541,
+      "mean_final_idr": 1988363.0207295148,
+      "closed_trades_total": 24,
+      "worst_max_drawdown_pct": 2.1850470804592357,
+      "total_closed_trade_fees_usdt": 0.50828955753134
+    }
+  ],
+  "ledger_checks": [
+    {
+      "symbol": "BTCUSDT",
+      "candidate": "ema4h-trend",
+      "closed_trades": 8,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": 7.674864823670191e-06
+    },
+    {
+      "symbol": "BTCUSDT",
+      "candidate": "ema1d-trend",
+      "closed_trades": 0,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": 0.0
+    },
+    {
+      "symbol": "BTCUSDT",
+      "candidate": "breakout1d",
+      "closed_trades": 3,
+      "open_positions": 1,
+      "note": "Final equity also includes open inventory; closed-trade PnL alone is not a reconciliation."
+    },
+    {
+      "symbol": "BTCUSDT",
+      "candidate": "momentum1d",
+      "closed_trades": 5,
+      "open_positions": 1,
+      "note": "Final equity also includes open inventory; closed-trade PnL alone is not a reconciliation."
+    },
+    {
+      "symbol": "BTCUSDT",
+      "candidate": "pullback4h",
+      "closed_trades": 14,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": -0.00012697480957513108
+    },
+    {
+      "symbol": "ETHUSDT",
+      "candidate": "ema4h-trend",
+      "closed_trades": 11,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": -0.00013008352519650046
+    },
+    {
+      "symbol": "ETHUSDT",
+      "candidate": "ema1d-trend",
+      "closed_trades": 0,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": 0.0
+    },
+    {
+      "symbol": "ETHUSDT",
+      "candidate": "breakout1d",
+      "closed_trades": 3,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": -2.4925210193815772e-05
+    },
+    {
+      "symbol": "ETHUSDT",
+      "candidate": "momentum1d",
+      "closed_trades": 4,
+      "open_positions": 1,
+      "note": "Final equity also includes open inventory; closed-trade PnL alone is not a reconciliation."
+    },
+    {
+      "symbol": "ETHUSDT",
+      "candidate": "pullback4h",
+      "closed_trades": 20,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": 3.6137348005560455e-05
+    },
+    {
+      "symbol": "BNBUSDT",
+      "candidate": "ema4h-trend",
+      "closed_trades": 8,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": 7.778787998513614e-06
+    },
+    {
+      "symbol": "BNBUSDT",
+      "candidate": "ema1d-trend",
+      "closed_trades": 0,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": 0.0
+    },
+    {
+      "symbol": "BNBUSDT",
+      "candidate": "breakout1d",
+      "closed_trades": 4,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": 3.573829001157769e-05
+    },
+    {
+      "symbol": "BNBUSDT",
+      "candidate": "momentum1d",
+      "closed_trades": 7,
+      "open_positions": 1,
+      "note": "Final equity also includes open inventory; closed-trade PnL alone is not a reconciliation."
+    },
+    {
+      "symbol": "BNBUSDT",
+      "candidate": "pullback4h",
+      "closed_trades": 11,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": 5.7772558001434327e-05
+    },
+    {
+      "symbol": "XRPUSDT",
+      "candidate": "ema4h-trend",
+      "closed_trades": 8,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": 4.088147600483927e-05
+    },
+    {
+      "symbol": "XRPUSDT",
+      "candidate": "ema1d-trend",
+      "closed_trades": 0,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": 0.0
+    },
+    {
+      "symbol": "XRPUSDT",
+      "candidate": "breakout1d",
+      "closed_trades": 1,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": -1.5079616000113205e-05
+    },
+    {
+      "symbol": "XRPUSDT",
+      "candidate": "momentum1d",
+      "closed_trades": 4,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": -3.1638151990698304e-05
+    },
+    {
+      "symbol": "XRPUSDT",
+      "candidate": "pullback4h",
+      "closed_trades": 5,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": -4.748198398996095e-05
+    },
+    {
+      "symbol": "SOLUSDT",
+      "candidate": "ema4h-trend",
+      "closed_trades": 5,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": -4.5180291990298826e-05
+    },
+    {
+      "symbol": "SOLUSDT",
+      "candidate": "ema1d-trend",
+      "closed_trades": 0,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": 0.0
+    },
+    {
+      "symbol": "SOLUSDT",
+      "candidate": "breakout1d",
+      "closed_trades": 3,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": -6.744132399547076e-05
+    },
+    {
+      "symbol": "SOLUSDT",
+      "candidate": "momentum1d",
+      "closed_trades": 4,
+      "open_positions": 1,
+      "note": "Final equity also includes open inventory; closed-trade PnL alone is not a reconciliation."
+    },
+    {
+      "symbol": "SOLUSDT",
+      "candidate": "pullback4h",
+      "closed_trades": 10,
+      "open_positions": 0,
+      "equity_vs_exported_trade_pnl_residual_usdt": -5.850360199777249e-05
+    }
+  ],
+  "source_revision": "010ad227e95198c78b52284b5360c4cb2df905c3",
+  "initial_idr_each": 2000000,
+  "baseline_results_sha256": "a7c0361ba668c604a0a51d85f07f49de620ba46273d6791b571d91f83a51a7e9",
+  "candidate_results_sha256": "7db714db699ddbba3217ac782bc76c8fe4e7d1fc91dd6fc4e033247fbaea34fd",
+  "raw_csv_sha256": {
+    "BTCUSDT": "b5e1e343df1e61fb5e1a15761f8a1f2c5bded4b37f69861b8ef9efc9bd4a8c51",
+    "ETHUSDT": "2ec72356c1444d9e7806f6800f5bf89eabcee345a0f7b7308fef636be8a73c20",
+    "BNBUSDT": "318cbd7c59263119b53cdc237cfe92db2fd00380cec8c74282aa04e5a948da09",
+    "XRPUSDT": "633acfd357d78d41c61610b4d78b58ba8cde411c3921fd358f456c811eeaddb2",
+    "SOLUSDT": "33c729c0ad4907f59c3426f235c4b75c2d9edb74dd97e4d11960c66505ec9f10"
+  },
+  "code_sha256": {
+    "scripts/backtest-year/main.go": "2a1ac6044f9b5331e1f960c3ee320fdc30cfaf90a84d9c813b6454de3ee57c74",
+    "internal/strategy/trendspot/trendspot.go": "83540dcfc6ce4736acf994386d06d2bcf1e34c2c630abdc7fc55624ef6ad1d52",
+    "internal/strategy/trendspot_test.go": "2a993f3951afd5621ea1fb121c02e9b43f1d70ec0f16acd0ce8e70da4c72774c",
+    "scripts/backtest-year/main_test.go": "5cddc332f0be34b996b2efb54640ac5dd87914d46791c1dac5b3cd13b6c063f3"
+  },
+  "checks": {
+    "go_test_race_all": "passed",
+    "go_vet_all": "passed",
+    "go_build_all": "passed",
+    "golangci_lint": "0 issues",
+    "paper_restart_integration": "passed on dedicated local tradingbot_phase9_test database"
+  },
+  "deployment": "Local research only; active configs and VPS unchanged"
+}

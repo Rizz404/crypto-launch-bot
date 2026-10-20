@@ -1,0 +1,1057 @@
+{
+  "completed_jobs": 2340,
+  "failures": 0,
+  "target_50pct_hits": 0,
+  "highest_observed_case": {
+    "Job": {
+      "ID": "training-1-momentum-028-aggressive-SOLUSDT",
+      "Candidate": "momentum-028-aggressive",
+      "Family": "momentum",
+      "Stage": "training",
+      "Symbol": "SOLUSDT",
+      "From": "2023-10-19",
+      "To": "2024-10-19",
+      "InputTF": "1h",
+      "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/SOLUSDT-1h.csv",
+      "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+      "Name": "trendspot",
+      "Params": {
+        "atr_period": 14,
+        "entry_period": 84,
+        "exit_period": 20,
+        "mode": "momentum",
+        "momentum_min": 0.05,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "timeframe": "4h",
+        "trail_atr": 3,
+        "trend_period": 100
+      },
+      "Risk": {
+        "RiskPerTrade": 0.05,
+        "PositionPct": 0.95,
+        "MaxPositionPct": 0.95,
+        "MaxLeverage": 1,
+        "MaxOpenPositions": 1,
+        "MaxExposurePct": 1,
+        "DailyLossLimit": 0.1,
+        "MaxDrawdown": 0.35,
+        "CloseOnKill": true
+      },
+      "Fee": 0.001,
+      "SlippageBps": 2
+    },
+    "Metrics": {
+      "Start": "2023-10-19T01:00:00Z",
+      "End": "2024-10-19T00:00:00Z",
+      "InitialEquity": 110.79104808331486,
+      "FinalEquity": 164.71625975569887,
+      "TotalReturn": 0.4867289605549381,
+      "CAGR": 0.48518576737539565,
+      "MaxDrawdown": 0.19628133501069958,
+      "Sharpe": 1.347246952181457,
+      "Sortino": 2.2021317116759302,
+      "Trades": 54,
+      "WinRate": 0.35185185185185186,
+      "AvgTrade": 0.9130816268048887,
+      "AvgWin": 8.09217996787863,
+      "AvgLoss": -2.984143186920857,
+      "TotalFees": 9.442424772535999,
+      "TotalFunding": 0,
+      "AvgHoldingTime": 254000000000000,
+      "ProfitFactor": 1.4720800650927024
+    },
+    "ConservativeFinalUSDT": 164.55636167569887,
+    "ConservativeFinalIDR": 2970571.440969716,
+    "ConservativeReturn": 0.48528572048485796,
+    "TerminalExitCostUSDT": 0.15989808000000003,
+    "OpenPositions": 1,
+    "Candles": 10980,
+    "Seconds": 0.158037612,
+    "Issues": {
+      "Counts": {},
+      "Samples": null
+    }
+  },
+  "same_candidate_all_tested_cases": [
+    {
+      "Job": {
+        "ID": "training-0-momentum-028-aggressive-BTCUSDT",
+        "Candidate": "momentum-028-aggressive",
+        "Family": "momentum",
+        "Stage": "training",
+        "Symbol": "BTCUSDT",
+        "From": "2022-10-19",
+        "To": "2023-10-19",
+        "InputTF": "1h",
+        "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/BTCUSDT-1h.csv",
+        "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+        "Name": "trendspot",
+        "Params": {
+          "atr_period": 14,
+          "entry_period": 84,
+          "exit_period": 20,
+          "mode": "momentum",
+          "momentum_min": 0.05,
+          "stop_atr": 3,
+          "target_atr": 0,
+          "timeframe": "4h",
+          "trail_atr": 3,
+          "trend_period": 100
+        },
+        "Risk": {
+          "RiskPerTrade": 0.05,
+          "PositionPct": 0.95,
+          "MaxPositionPct": 0.95,
+          "MaxLeverage": 1,
+          "MaxOpenPositions": 1,
+          "MaxExposurePct": 1,
+          "DailyLossLimit": 0.1,
+          "MaxDrawdown": 0.35,
+          "CloseOnKill": true
+        },
+        "Fee": 0.001,
+        "SlippageBps": 2
+      },
+      "Metrics": {
+        "Start": "2022-10-19T01:00:00Z",
+        "End": "2023-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 106.67405722949398,
+        "TotalReturn": -0.03715995944658723,
+        "CAGR": -0.037164122106100206,
+        "MaxDrawdown": 0.23704597021816085,
+        "Sharpe": -0.07838998194853644,
+        "Sortino": -0.1258328874037766,
+        "Trades": 35,
+        "WinRate": 0.2857142857142857,
+        "AvgTrade": -0.11762831010916759,
+        "AvgWin": 4.835175789344935,
+        "AvgLoss": -2.0987499498908084,
+        "TotalFees": 7.575571879060878,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 224228000000000,
+        "ProfitFactor": 0.9215344190186151
+      },
+      "ConservativeFinalUSDT": 106.67405722949398,
+      "ConservativeFinalIDR": 1925680.0811068253,
+      "ConservativeReturn": -0.03715995944658723,
+      "TerminalExitCostUSDT": 0,
+      "OpenPositions": 0,
+      "Candles": 10949,
+      "Seconds": 0.141186852,
+      "Issues": {
+        "Counts": {},
+        "Samples": null
+      }
+    },
+    {
+      "Job": {
+        "ID": "training-0-momentum-028-aggressive-ETHUSDT",
+        "Candidate": "momentum-028-aggressive",
+        "Family": "momentum",
+        "Stage": "training",
+        "Symbol": "ETHUSDT",
+        "From": "2022-10-19",
+        "To": "2023-10-19",
+        "InputTF": "1h",
+        "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/ETHUSDT-1h.csv",
+        "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+        "Name": "trendspot",
+        "Params": {
+          "atr_period": 14,
+          "entry_period": 84,
+          "exit_period": 20,
+          "mode": "momentum",
+          "momentum_min": 0.05,
+          "stop_atr": 3,
+          "target_atr": 0,
+          "timeframe": "4h",
+          "trail_atr": 3,
+          "trend_period": 100
+        },
+        "Risk": {
+          "RiskPerTrade": 0.05,
+          "PositionPct": 0.95,
+          "MaxPositionPct": 0.95,
+          "MaxLeverage": 1,
+          "MaxOpenPositions": 1,
+          "MaxExposurePct": 1,
+          "DailyLossLimit": 0.1,
+          "MaxDrawdown": 0.35,
+          "CloseOnKill": true
+        },
+        "Fee": 0.001,
+        "SlippageBps": 2
+      },
+      "Metrics": {
+        "Start": "2022-10-19T01:00:00Z",
+        "End": "2023-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 83.97120210429287,
+        "TotalReturn": -0.2420759298066525,
+        "CAGR": -0.2420999133731937,
+        "MaxDrawdown": 0.32108795610714647,
+        "Sharpe": -1.127811192091581,
+        "Sortino": -1.5442922290350258,
+        "Trades": 38,
+        "WinRate": 0.23684210526315788,
+        "AvgTrade": -0.7057854205005787,
+        "AvgWin": 3.737015853267267,
+        "AvgLoss": -2.084585815807841,
+        "TotalFees": 6.927280599422001,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 218463000000000,
+        "ProfitFactor": 0.5563520253637089
+      },
+      "ConservativeFinalUSDT": 83.97120210429287,
+      "ConservativeFinalIDR": 1515848.1403866948,
+      "ConservativeReturn": -0.2420759298066525,
+      "TerminalExitCostUSDT": 0,
+      "OpenPositions": 0,
+      "Candles": 10949,
+      "Seconds": 0.1524964,
+      "Issues": {
+        "Counts": {},
+        "Samples": null
+      }
+    },
+    {
+      "Job": {
+        "ID": "training-0-momentum-028-aggressive-BNBUSDT",
+        "Candidate": "momentum-028-aggressive",
+        "Family": "momentum",
+        "Stage": "training",
+        "Symbol": "BNBUSDT",
+        "From": "2022-10-19",
+        "To": "2023-10-19",
+        "InputTF": "1h",
+        "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/BNBUSDT-1h.csv",
+        "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+        "Name": "trendspot",
+        "Params": {
+          "atr_period": 14,
+          "entry_period": 84,
+          "exit_period": 20,
+          "mode": "momentum",
+          "momentum_min": 0.05,
+          "stop_atr": 3,
+          "target_atr": 0,
+          "timeframe": "4h",
+          "trail_atr": 3,
+          "trend_period": 100
+        },
+        "Risk": {
+          "RiskPerTrade": 0.05,
+          "PositionPct": 0.95,
+          "MaxPositionPct": 0.95,
+          "MaxLeverage": 1,
+          "MaxOpenPositions": 1,
+          "MaxExposurePct": 1,
+          "DailyLossLimit": 0.1,
+          "MaxDrawdown": 0.35,
+          "CloseOnKill": true
+        },
+        "Fee": 0.001,
+        "SlippageBps": 2
+      },
+      "Metrics": {
+        "Start": "2022-10-19T01:00:00Z",
+        "End": "2023-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 97.39674459979487,
+        "TotalReturn": -0.1208969832422514,
+        "CAGR": -0.12090991558558828,
+        "MaxDrawdown": 0.22621894311120044,
+        "Sharpe": -0.6018442871534262,
+        "Sortino": -0.760787909995544,
+        "Trades": 28,
+        "WinRate": 0.35714285714285715,
+        "AvgTrade": -0.47836798155428567,
+        "AvgWin": 3.1245967174932003,
+        "AvgLoss": -2.480015036580667,
+        "TotalFees": 4.980586483520001,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 200700000000000,
+        "ProfitFactor": 0.699950217909712
+      },
+      "ConservativeFinalUSDT": 97.39674459979487,
+      "ConservativeFinalIDR": 1758206.033515497,
+      "ConservativeReturn": -0.1208969832422514,
+      "TerminalExitCostUSDT": 0,
+      "OpenPositions": 0,
+      "Candles": 10949,
+      "Seconds": 0.155831073,
+      "Issues": {
+        "Counts": {},
+        "Samples": null
+      }
+    },
+    {
+      "Job": {
+        "ID": "training-0-momentum-028-aggressive-XRPUSDT",
+        "Candidate": "momentum-028-aggressive",
+        "Family": "momentum",
+        "Stage": "training",
+        "Symbol": "XRPUSDT",
+        "From": "2022-10-19",
+        "To": "2023-10-19",
+        "InputTF": "1h",
+        "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/XRPUSDT-1h.csv",
+        "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+        "Name": "trendspot",
+        "Params": {
+          "atr_period": 14,
+          "entry_period": 84,
+          "exit_period": 20,
+          "mode": "momentum",
+          "momentum_min": 0.05,
+          "stop_atr": 3,
+          "target_atr": 0,
+          "timeframe": "4h",
+          "trail_atr": 3,
+          "trend_period": 100
+        },
+        "Risk": {
+          "RiskPerTrade": 0.05,
+          "PositionPct": 0.95,
+          "MaxPositionPct": 0.95,
+          "MaxLeverage": 1,
+          "MaxOpenPositions": 1,
+          "MaxExposurePct": 1,
+          "DailyLossLimit": 0.1,
+          "MaxDrawdown": 0.35,
+          "CloseOnKill": true
+        },
+        "Fee": 0.001,
+        "SlippageBps": 2
+      },
+      "Metrics": {
+        "Start": "2022-10-19T01:00:00Z",
+        "End": "2023-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 127.33966568450687,
+        "TotalReturn": 0.149367822468359,
+        "CAGR": 0.14938609020978766,
+        "MaxDrawdown": 0.168839060858464,
+        "Sharpe": 0.6077323138451113,
+        "Sortino": 1.272497479819476,
+        "Trades": 28,
+        "WinRate": 0.35714285714285715,
+        "AvgTrade": 0.5910220571854286,
+        "AvgWin": 6.282571290505801,
+        "AvgLoss": -2.570949739103667,
+        "TotalFees": 4.447784602808001,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 270771000000000,
+        "ProfitFactor": 1.3575984510810366
+      },
+      "ConservativeFinalUSDT": 127.33966568450687,
+      "ConservativeFinalIDR": 2298735.644936718,
+      "ConservativeReturn": 0.149367822468359,
+      "TerminalExitCostUSDT": 0,
+      "OpenPositions": 0,
+      "Candles": 10949,
+      "Seconds": 0.150694807,
+      "Issues": {
+        "Counts": {
+          "stop already crossed, exiting at market": 1
+        },
+        "Samples": [
+          "stop already crossed, exiting at market symbol=XRPUSDT stop=0.8581 price=0.7878"
+        ]
+      }
+    },
+    {
+      "Job": {
+        "ID": "training-0-momentum-028-aggressive-SOLUSDT",
+        "Candidate": "momentum-028-aggressive",
+        "Family": "momentum",
+        "Stage": "training",
+        "Symbol": "SOLUSDT",
+        "From": "2022-10-19",
+        "To": "2023-10-19",
+        "InputTF": "1h",
+        "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/SOLUSDT-1h.csv",
+        "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+        "Name": "trendspot",
+        "Params": {
+          "atr_period": 14,
+          "entry_period": 84,
+          "exit_period": 20,
+          "mode": "momentum",
+          "momentum_min": 0.05,
+          "stop_atr": 3,
+          "target_atr": 0,
+          "timeframe": "4h",
+          "trail_atr": 3,
+          "trend_period": 100
+        },
+        "Risk": {
+          "RiskPerTrade": 0.05,
+          "PositionPct": 0.95,
+          "MaxPositionPct": 0.95,
+          "MaxLeverage": 1,
+          "MaxOpenPositions": 1,
+          "MaxExposurePct": 1,
+          "DailyLossLimit": 0.1,
+          "MaxDrawdown": 0.35,
+          "CloseOnKill": true
+        },
+        "Fee": 0.001,
+        "SlippageBps": 2
+      },
+      "Metrics": {
+        "Start": "2022-10-19T01:00:00Z",
+        "End": "2023-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 118.80956500385687,
+        "TotalReturn": 0.07237513372481219,
+        "CAGR": 0.07238368875609202,
+        "MaxDrawdown": 0.2168345105151875,
+        "Sharpe": 0.37122012637704177,
+        "Sortino": 0.6579263233973671,
+        "Trades": 49,
+        "WinRate": 0.2653061224489796,
+        "AvgTrade": 0.16364320246004077,
+        "AvgWin": 6.912400017100153,
+        "AvgLoss": -2.273407869493333,
+        "TotalFees": 7.170160345457999,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 176987000000000,
+        "ProfitFactor": 1.0979747559226172
+      },
+      "ConservativeFinalUSDT": 118.80956500385687,
+      "ConservativeFinalIDR": 2144750.2674496244,
+      "ConservativeReturn": 0.07237513372481219,
+      "TerminalExitCostUSDT": 0,
+      "OpenPositions": 0,
+      "Candles": 10949,
+      "Seconds": 0.141851641,
+      "Issues": {
+        "Counts": {
+          "stop already crossed, exiting at market": 1
+        },
+        "Samples": [
+          "stop already crossed, exiting at market symbol=SOLUSDT stop=23.13 price=23.11"
+        ]
+      }
+    },
+    {
+      "Job": {
+        "ID": "training-1-momentum-028-aggressive-BTCUSDT",
+        "Candidate": "momentum-028-aggressive",
+        "Family": "momentum",
+        "Stage": "training",
+        "Symbol": "BTCUSDT",
+        "From": "2023-10-19",
+        "To": "2024-10-19",
+        "InputTF": "1h",
+        "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/BTCUSDT-1h.csv",
+        "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+        "Name": "trendspot",
+        "Params": {
+          "atr_period": 14,
+          "entry_period": 84,
+          "exit_period": 20,
+          "mode": "momentum",
+          "momentum_min": 0.05,
+          "stop_atr": 3,
+          "target_atr": 0,
+          "timeframe": "4h",
+          "trail_atr": 3,
+          "trend_period": 100
+        },
+        "Risk": {
+          "RiskPerTrade": 0.05,
+          "PositionPct": 0.95,
+          "MaxPositionPct": 0.95,
+          "MaxLeverage": 1,
+          "MaxOpenPositions": 1,
+          "MaxExposurePct": 1,
+          "DailyLossLimit": 0.1,
+          "MaxDrawdown": 0.35,
+          "CloseOnKill": true
+        },
+        "Fee": 0.001,
+        "SlippageBps": 2
+      },
+      "Metrics": {
+        "Start": "2023-10-19T01:00:00Z",
+        "End": "2024-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 132.29644592479684,
+        "TotalReturn": 0.1941077209172164,
+        "CAGR": 0.19355312161871718,
+        "MaxDrawdown": 0.2333205163368058,
+        "Sharpe": 0.7909584190709252,
+        "Sortino": 1.280855198201686,
+        "Trades": 43,
+        "WinRate": 0.27906976744186046,
+        "AvgTrade": 0.4005622589688749,
+        "AvgWin": 7.86776378926902,
+        "AvgLoss": -2.4899673656634396,
+        "TotalFees": 9.83144158621836,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 280213000000000,
+        "ProfitFactor": 1.223142931486319
+      },
+      "ConservativeFinalUSDT": 132.14535690079686,
+      "ConservativeFinalIDR": 2385487.982773185,
+      "ConservativeReturn": 0.19274399138659248,
+      "TerminalExitCostUSDT": 0.15108902400000002,
+      "OpenPositions": 1,
+      "Candles": 10980,
+      "Seconds": 0.149252835,
+      "Issues": {
+        "Counts": {},
+        "Samples": null
+      }
+    },
+    {
+      "Job": {
+        "ID": "training-1-momentum-028-aggressive-ETHUSDT",
+        "Candidate": "momentum-028-aggressive",
+        "Family": "momentum",
+        "Stage": "training",
+        "Symbol": "ETHUSDT",
+        "From": "2023-10-19",
+        "To": "2024-10-19",
+        "InputTF": "1h",
+        "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/ETHUSDT-1h.csv",
+        "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+        "Name": "trendspot",
+        "Params": {
+          "atr_period": 14,
+          "entry_period": 84,
+          "exit_period": 20,
+          "mode": "momentum",
+          "momentum_min": 0.05,
+          "stop_atr": 3,
+          "target_atr": 0,
+          "timeframe": "4h",
+          "trail_atr": 3,
+          "trend_period": 100
+        },
+        "Risk": {
+          "RiskPerTrade": 0.05,
+          "PositionPct": 0.95,
+          "MaxPositionPct": 0.95,
+          "MaxLeverage": 1,
+          "MaxOpenPositions": 1,
+          "MaxExposurePct": 1,
+          "DailyLossLimit": 0.1,
+          "MaxDrawdown": 0.35,
+          "CloseOnKill": true
+        },
+        "Fee": 0.001,
+        "SlippageBps": 2
+      },
+      "Metrics": {
+        "Start": "2023-10-19T01:00:00Z",
+        "End": "2024-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 163.22004842219886,
+        "TotalReturn": 0.47322415705876697,
+        "CAGR": 0.471730149314211,
+        "MaxDrawdown": 0.15257669222302023,
+        "Sharpe": 1.5147513001039685,
+        "Sortino": 2.5091101444061934,
+        "Trades": 38,
+        "WinRate": 0.42105263157894735,
+        "AvgTrade": 1.3308496029020367,
+        "AvgWin": 6.726088905420149,
+        "AvgLoss": -2.592960798929318,
+        "TotalFees": 9.0642496931226,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 280421000000000,
+        "ProfitFactor": 1.886531035927585
+      },
+      "ConservativeFinalUSDT": 163.03393396739887,
+      "ConservativeFinalIDR": 2943088.5759794842,
+      "ConservativeReturn": 0.47154428798974224,
+      "TerminalExitCostUSDT": 0.18611445480000002,
+      "OpenPositions": 1,
+      "Candles": 10980,
+      "Seconds": 0.145861496,
+      "Issues": {
+        "Counts": {},
+        "Samples": null
+      }
+    },
+    {
+      "Job": {
+        "ID": "training-1-momentum-028-aggressive-BNBUSDT",
+        "Candidate": "momentum-028-aggressive",
+        "Family": "momentum",
+        "Stage": "training",
+        "Symbol": "BNBUSDT",
+        "From": "2023-10-19",
+        "To": "2024-10-19",
+        "InputTF": "1h",
+        "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/BNBUSDT-1h.csv",
+        "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+        "Name": "trendspot",
+        "Params": {
+          "atr_period": 14,
+          "entry_period": 84,
+          "exit_period": 20,
+          "mode": "momentum",
+          "momentum_min": 0.05,
+          "stop_atr": 3,
+          "target_atr": 0,
+          "timeframe": "4h",
+          "trail_atr": 3,
+          "trend_period": 100
+        },
+        "Risk": {
+          "RiskPerTrade": 0.05,
+          "PositionPct": 0.95,
+          "MaxPositionPct": 0.95,
+          "MaxLeverage": 1,
+          "MaxOpenPositions": 1,
+          "MaxExposurePct": 1,
+          "DailyLossLimit": 0.1,
+          "MaxDrawdown": 0.35,
+          "CloseOnKill": true
+        },
+        "Fee": 0.001,
+        "SlippageBps": 2
+      },
+      "Metrics": {
+        "Start": "2023-10-19T01:00:00Z",
+        "End": "2024-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 106.71598783484687,
+        "TotalReturn": -0.03678149380267215,
+        "CAGR": -0.036686963157312236,
+        "MaxDrawdown": 0.3539678753498236,
+        "Sharpe": 0.023003201860380754,
+        "Sortino": 0.03524309766447596,
+        "Trades": 58,
+        "WinRate": 0.3103448275862069,
+        "AvgTrade": -0.07025965945634469,
+        "AvgWin": 5.469943957145,
+        "AvgLoss": -2.5633512869269497,
+        "TotalFees": 11.327266556468004,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 192413000000000,
+        "ProfitFactor": 0.9602565178127288
+      },
+      "ConservativeFinalUSDT": 106.71598783484687,
+      "ConservativeFinalIDR": 1926437.0123946557,
+      "ConservativeReturn": -0.03678149380267215,
+      "TerminalExitCostUSDT": 0,
+      "OpenPositions": 0,
+      "Candles": 10980,
+      "Seconds": 0.142261606,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=drawdown 35.32% reached limit 35.0% equity=106.8376148003068682 peak=165.1868131056688682 day_start=108.9507148003068682",
+          "KILL SWITCH: trading halted reason=drawdown 35.32% reached limit 35.0% close_positions=true"
+        ]
+      }
+    },
+    {
+      "Job": {
+        "ID": "training-1-momentum-028-aggressive-XRPUSDT",
+        "Candidate": "momentum-028-aggressive",
+        "Family": "momentum",
+        "Stage": "training",
+        "Symbol": "XRPUSDT",
+        "From": "2023-10-19",
+        "To": "2024-10-19",
+        "InputTF": "1h",
+        "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/XRPUSDT-1h.csv",
+        "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+        "Name": "trendspot",
+        "Params": {
+          "atr_period": 14,
+          "entry_period": 84,
+          "exit_period": 20,
+          "mode": "momentum",
+          "momentum_min": 0.05,
+          "stop_atr": 3,
+          "target_atr": 0,
+          "timeframe": "4h",
+          "trail_atr": 3,
+          "trend_period": 100
+        },
+        "Risk": {
+          "RiskPerTrade": 0.05,
+          "PositionPct": 0.95,
+          "MaxPositionPct": 0.95,
+          "MaxLeverage": 1,
+          "MaxOpenPositions": 1,
+          "MaxExposurePct": 1,
+          "DailyLossLimit": 0.1,
+          "MaxDrawdown": 0.35,
+          "CloseOnKill": true
+        },
+        "Fee": 0.001,
+        "SlippageBps": 2
+      },
+      "Metrics": {
+        "Start": "2023-10-19T01:00:00Z",
+        "End": "2024-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 94.12767731057687,
+        "TotalReturn": -0.15040358459473313,
+        "CAGR": -0.15004087292796897,
+        "MaxDrawdown": 0.28575395841773443,
+        "Sharpe": -0.5236910967826626,
+        "Sortino": -0.776912381260583,
+        "Trades": 37,
+        "WinRate": 0.2972972972972973,
+        "AvgTrade": -0.4503613722361621,
+        "AvgWin": 3.839949918843818,
+        "AvgLoss": -2.2654930723084616,
+        "TotalFees": 5.849734298737999,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 194302000000000,
+        "ProfitFactor": 0.7171040230895591
+      },
+      "ConservativeFinalUSDT": 94.12767731057687,
+      "ConservativeFinalIDR": 1699192.8308105336,
+      "ConservativeReturn": -0.15040358459473313,
+      "TerminalExitCostUSDT": 0,
+      "OpenPositions": 0,
+      "Candles": 10980,
+      "Seconds": 0.163645224,
+      "Issues": {
+        "Counts": {},
+        "Samples": null
+      }
+    },
+    {
+      "Job": {
+        "ID": "training-1-momentum-028-aggressive-SOLUSDT",
+        "Candidate": "momentum-028-aggressive",
+        "Family": "momentum",
+        "Stage": "training",
+        "Symbol": "SOLUSDT",
+        "From": "2023-10-19",
+        "To": "2024-10-19",
+        "InputTF": "1h",
+        "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/SOLUSDT-1h.csv",
+        "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+        "Name": "trendspot",
+        "Params": {
+          "atr_period": 14,
+          "entry_period": 84,
+          "exit_period": 20,
+          "mode": "momentum",
+          "momentum_min": 0.05,
+          "stop_atr": 3,
+          "target_atr": 0,
+          "timeframe": "4h",
+          "trail_atr": 3,
+          "trend_period": 100
+        },
+        "Risk": {
+          "RiskPerTrade": 0.05,
+          "PositionPct": 0.95,
+          "MaxPositionPct": 0.95,
+          "MaxLeverage": 1,
+          "MaxOpenPositions": 1,
+          "MaxExposurePct": 1,
+          "DailyLossLimit": 0.1,
+          "MaxDrawdown": 0.35,
+          "CloseOnKill": true
+        },
+        "Fee": 0.001,
+        "SlippageBps": 2
+      },
+      "Metrics": {
+        "Start": "2023-10-19T01:00:00Z",
+        "End": "2024-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 164.71625975569887,
+        "TotalReturn": 0.4867289605549381,
+        "CAGR": 0.48518576737539565,
+        "MaxDrawdown": 0.19628133501069958,
+        "Sharpe": 1.347246952181457,
+        "Sortino": 2.2021317116759302,
+        "Trades": 54,
+        "WinRate": 0.35185185185185186,
+        "AvgTrade": 0.9130816268048887,
+        "AvgWin": 8.09217996787863,
+        "AvgLoss": -2.984143186920857,
+        "TotalFees": 9.442424772535999,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 254000000000000,
+        "ProfitFactor": 1.4720800650927024
+      },
+      "ConservativeFinalUSDT": 164.55636167569887,
+      "ConservativeFinalIDR": 2970571.440969716,
+      "ConservativeReturn": 0.48528572048485796,
+      "TerminalExitCostUSDT": 0.15989808000000003,
+      "OpenPositions": 1,
+      "Candles": 10980,
+      "Seconds": 0.158037612,
+      "Issues": {
+        "Counts": {},
+        "Samples": null
+      }
+    }
+  ],
+  "risk_profiles_training_summary": [
+    {
+      "profile": "baseline",
+      "training_cases": 720,
+      "mean_annual_case_return_pct": -0.568822711846415,
+      "best_annual_case_return_pct": 10.559816483524752,
+      "worst_annual_case_return_pct": -17.14980451373802,
+      "maximum_observed_drawdown_pct": 18.426064359063567
+    },
+    {
+      "profile": "larger",
+      "training_cases": 720,
+      "mean_annual_case_return_pct": -1.5763297496222788,
+      "best_annual_case_return_pct": 33.6096063986302,
+      "worst_annual_case_return_pct": -30.34111146503582,
+      "maximum_observed_drawdown_pct": 30.672963831738087
+    },
+    {
+      "profile": "aggressive",
+      "training_cases": 720,
+      "mean_annual_case_return_pct": -2.3131178679428985,
+      "best_annual_case_return_pct": 48.5285720484858,
+      "worst_annual_case_return_pct": -35.189667014526094,
+      "maximum_observed_drawdown_pct": 36.09728447443619
+    }
+  ],
+  "all_selected_profiles": [
+    "baseline"
+  ],
+  "highest_return_case_was_selected_for_validation": false,
+  "important_selection_limit": "Selection explicitly penalized drawdown and variability. All 12 selected configurations use the baseline risk profile; larger/aggressive variants were screened on training only, not comprehensively validated in later years. The highest return was discovered among many training trials and is not a validated recommendation.",
+  "report_sha256": "e0e921b7731cf326638fd8b84f8ec2b888e100c81b8624d924efbbda20c05e39",
+  "most_profitable_selected_confirmation_mean": {
+    "candidate": "ema-009-baseline",
+    "family": "ema",
+    "risk_profile": "baseline",
+    "training_score": -0.01622196925543242,
+    "stages": {
+      "training": {
+        "cases": 10,
+        "mean_return_pct": 0.9513670910855189,
+        "target_50pct_cases": 0,
+        "positive_cases": 7,
+        "worst_max_drawdown_pct": 4.195959837220464,
+        "closed_trades": 47,
+        "per_coin": {
+          "BTCUSDT@2022-10-19": {
+            "return_pct": 1.5510803908324045,
+            "final_idr": 2031021.6078166482,
+            "drawdown_pct": 1.4758423746858957,
+            "closed_trades": 3,
+            "open_positions": 0
+          },
+          "ETHUSDT@2022-10-19": {
+            "return_pct": 1.7192578746366038,
+            "final_idr": 2034385.157492732,
+            "drawdown_pct": 4.195959837220464,
+            "closed_trades": 6,
+            "open_positions": 0
+          },
+          "BNBUSDT@2022-10-19": {
+            "return_pct": 1.2417094582781507,
+            "final_idr": 2024834.1891655626,
+            "drawdown_pct": 1.659244670519821,
+            "closed_trades": 3,
+            "open_positions": 0
+          },
+          "XRPUSDT@2022-10-19": {
+            "return_pct": -1.3473364716501846,
+            "final_idr": 1973053.2705669962,
+            "drawdown_pct": 2.047220426397808,
+            "closed_trades": 4,
+            "open_positions": 0
+          },
+          "SOLUSDT@2022-10-19": {
+            "return_pct": 2.3549587838829433,
+            "final_idr": 2047099.175677659,
+            "drawdown_pct": 2.2953458512127605,
+            "closed_trades": 5,
+            "open_positions": 0
+          },
+          "BTCUSDT@2023-10-19": {
+            "return_pct": 4.5526907055837285,
+            "final_idr": 2091053.8141116744,
+            "drawdown_pct": 1.9694627163955876,
+            "closed_trades": 5,
+            "open_positions": 0
+          },
+          "ETHUSDT@2023-10-19": {
+            "return_pct": 1.9745891563152984,
+            "final_idr": 2039491.783126306,
+            "drawdown_pct": 3.993412928590963,
+            "closed_trades": 5,
+            "open_positions": 1
+          },
+          "BNBUSDT@2023-10-19": {
+            "return_pct": -1.7692951670805646,
+            "final_idr": 1964614.0966583886,
+            "drawdown_pct": 3.5030192226992067,
+            "closed_trades": 6,
+            "open_positions": 0
+          },
+          "XRPUSDT@2023-10-19": {
+            "return_pct": -1.5917249473819006,
+            "final_idr": 1968165.501052362,
+            "drawdown_pct": 2.456106094786942,
+            "closed_trades": 6,
+            "open_positions": 0
+          },
+          "SOLUSDT@2023-10-19": {
+            "return_pct": 0.8277411274387081,
+            "final_idr": 2016554.8225487743,
+            "drawdown_pct": 1.6643004226900908,
+            "closed_trades": 4,
+            "open_positions": 1
+          }
+        }
+      },
+      "validation": {
+        "cases": 5,
+        "mean_return_pct": 1.2934984968832097,
+        "target_50pct_cases": 0,
+        "positive_cases": 5,
+        "worst_max_drawdown_pct": 2.045221046749213,
+        "closed_trades": 20,
+        "per_coin": {
+          "BTCUSDT": {
+            "return_pct": 0.7520667808427417,
+            "final_idr": 2015041.335616855,
+            "drawdown_pct": 1.7482313153651157,
+            "closed_trades": 5,
+            "open_positions": 0
+          },
+          "ETHUSDT": {
+            "return_pct": 2.2017487642951306,
+            "final_idr": 2044034.9752859024,
+            "drawdown_pct": 1.704254131820977,
+            "closed_trades": 3,
+            "open_positions": 0
+          },
+          "BNBUSDT": {
+            "return_pct": 1.7827685463474463,
+            "final_idr": 2035655.3709269487,
+            "drawdown_pct": 2.045221046749213,
+            "closed_trades": 4,
+            "open_positions": 0
+          },
+          "XRPUSDT": {
+            "return_pct": 0.48007978464110757,
+            "final_idr": 2009601.595692822,
+            "drawdown_pct": 1.8206990354236137,
+            "closed_trades": 4,
+            "open_positions": 0
+          },
+          "SOLUSDT": {
+            "return_pct": 1.2508286082896225,
+            "final_idr": 2025016.572165792,
+            "drawdown_pct": 1.9883408204106527,
+            "closed_trades": 4,
+            "open_positions": 0
+          }
+        }
+      },
+      "confirmation": {
+        "cases": 5,
+        "mean_return_pct": 1.6300261074604316,
+        "target_50pct_cases": 0,
+        "positive_cases": 4,
+        "worst_max_drawdown_pct": 3.2888157526738593,
+        "closed_trades": 20,
+        "per_coin": {
+          "BTCUSDT": {
+            "return_pct": 2.0203677619535343,
+            "final_idr": 2040407.3552390707,
+            "drawdown_pct": 1.2896709139342728,
+            "closed_trades": 3,
+            "open_positions": 0
+          },
+          "ETHUSDT": {
+            "return_pct": -1.3648627495998156,
+            "final_idr": 1972702.7450080034,
+            "drawdown_pct": 2.322525459861567,
+            "closed_trades": 3,
+            "open_positions": 0
+          },
+          "BNBUSDT": {
+            "return_pct": 4.548871574291913,
+            "final_idr": 2090977.4314858383,
+            "drawdown_pct": 1.5859212452592637,
+            "closed_trades": 3,
+            "open_positions": 0
+          },
+          "XRPUSDT": {
+            "return_pct": 0.8046850099202807,
+            "final_idr": 2016093.7001984054,
+            "drawdown_pct": 2.8729637749798096,
+            "closed_trades": 5,
+            "open_positions": 0
+          },
+          "SOLUSDT": {
+            "return_pct": 2.141068940736246,
+            "final_idr": 2042821.3788147247,
+            "drawdown_pct": 3.2888157526738593,
+            "closed_trades": 6,
+            "open_positions": 0
+          }
+        }
+      },
+      "stress": {
+        "cases": 5,
+        "mean_return_pct": 1.47994456048681,
+        "target_50pct_cases": 0,
+        "positive_cases": 4,
+        "worst_max_drawdown_pct": 3.4218744468527342,
+        "closed_trades": 20,
+        "per_coin": {
+          "BTCUSDT": {
+            "return_pct": 1.8767843832608877,
+            "final_idr": 2037535.6876652176,
+            "drawdown_pct": 1.3374160975483516,
+            "closed_trades": 3,
+            "open_positions": 0
+          },
+          "ETHUSDT": {
+            "return_pct": -1.4491940717941465,
+            "final_idr": 1971016.118564117,
+            "drawdown_pct": 2.3761308611711067,
+            "closed_trades": 3,
+            "open_positions": 0
+          },
+          "BNBUSDT": {
+            "return_pct": 4.386686302448584,
+            "final_idr": 2087733.7260489715,
+            "drawdown_pct": 1.6428676759609198,
+            "closed_trades": 3,
+            "open_positions": 0
+          },
+          "XRPUSDT": {
+            "return_pct": 0.6386708344593872,
+            "final_idr": 2012773.4166891875,
+            "drawdown_pct": 2.965792934334477,
+            "closed_trades": 5,
+            "open_positions": 0
+          },
+          "SOLUSDT": {
+            "return_pct": 1.946775354059338,
+            "final_idr": 2038935.5070811869,
+            "drawdown_pct": 3.4218744468527342,
+            "closed_trades": 6,
+            "open_positions": 0
+          }
+        }
+      }
+    }
+  }
+}

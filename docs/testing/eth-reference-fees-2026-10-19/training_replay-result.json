@@ -1,0 +1,71 @@
+{
+  "Job": {
+    "ID": "reference-fee-training_replay-momentum-028-larger-ETHUSDT",
+    "Candidate": "momentum-028-larger",
+    "Family": "momentum",
+    "Stage": "reference_fee",
+    "Symbol": "ETHUSDT",
+    "From": "2023-10-19",
+    "To": "2024-10-19",
+    "InputTF": "1m",
+    "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/ETHUSDT-minute-2023-2025.csv",
+    "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+    "Name": "trendspot",
+    "Params": {
+      "atr_period": 14,
+      "entry_period": 84,
+      "exit_period": 20,
+      "mode": "momentum",
+      "momentum_min": 0.05,
+      "stop_atr": 3,
+      "target_atr": 0,
+      "timeframe": "4h",
+      "trail_atr": 3,
+      "trend_period": 100
+    },
+    "Risk": {
+      "RiskPerTrade": 0.03,
+      "PositionPct": 0.75,
+      "MaxPositionPct": 0.75,
+      "MaxLeverage": 1,
+      "MaxOpenPositions": 1,
+      "MaxExposurePct": 1,
+      "DailyLossLimit": 0.08,
+      "MaxDrawdown": 0.3,
+      "CloseOnKill": true
+    },
+    "Fee": 0.00075,
+    "SlippageBps": 2
+  },
+  "Metrics": {
+    "Start": "2023-10-19T00:01:00Z",
+    "End": "2024-10-19T00:00:00Z",
+    "InitialEquity": 110.79104808331486,
+    "FinalEquity": 150.61530357746872,
+    "TotalReturn": 0.35945373009023274,
+    "CAGR": 0.35831438280404226,
+    "MaxDrawdown": 0.1029534082034603,
+    "Sharpe": 1.667864486240621,
+    "Sortino": 3.066849956375537,
+    "Trades": 38,
+    "WinRate": 0.42105263157894735,
+    "AvgTrade": 1.0201417689002905,
+    "AvgWin": 4.4680090486285335,
+    "AvgLoss": -1.487398070902068,
+    "TotalFees": 4.17238264718895,
+    "TotalFunding": 0,
+    "AvgHoldingTime": 281430000000000,
+    "ProfitFactor": 2.1846613827491277
+  },
+  "ConservativeFinalUSDT": 150.53297356026872,
+  "ConservativeFinalIDR": 2717421.238709971,
+  "ConservativeReturn": 0.3587106193549854,
+  "TerminalExitCostUSDT": 0.08233001720000001,
+  "OpenPositions": 1,
+  "Candles": 529236,
+  "Seconds": 6.771673226,
+  "Issues": {
+    "Counts": {},
+    "Samples": null
+  }
+}

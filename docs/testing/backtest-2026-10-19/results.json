@@ -1,0 +1,1124 @@
+{
+  "assumptions": [
+    "USDT = USD; fixed conversion at BI USD midpoint 2026-10-19 (18142.26 + 17961.74)/2; IDR FX fluctuations excluded",
+    "Spot fees maker/taker 0.1%; market/stop slippage 2 bps; no tax or withdrawal fees",
+    "Current public exchange rules, not historical snapshots; no parameter optimization on test period",
+    "EMA 1h signals with 1m execution; grid/DCA/MM 1m; cold-start indicator warmup within tested year",
+    "Default risk: 1% per trade, daily kill 5%, peak drawdown kill 20%, close on kill; no automatic reset",
+    "Grid fixed initial-open +/-15%, 10 levels, 10 USDT/level, stop 3% below lower boundary; does not restart after stop",
+    "OHLC limit fills omit queue position, liquidity and latency; MM/grid results are approximate and potentially optimistic",
+    "Final equity includes open inventory marked at final close; closing fees on remaining inventory not deducted",
+    "Fees metric includes closed trades only; entry fees on open inventory affect equity but may not appear in metric",
+    "Five coins selected from current top ten, not a historical-universe study; selection/survivorship bias applies"
+  ],
+  "buy_and_hold_net_estimate": [
+    {
+      "final_idr": 1528556.3810225034,
+      "return_pct": -23.57218094887483,
+      "symbol": "BTCUSDT"
+    },
+    {
+      "final_idr": 1236517.633717438,
+      "return_pct": -38.1741183141281,
+      "symbol": "ETHUSDT"
+    },
+    {
+      "final_idr": 1321151.236934961,
+      "return_pct": -33.942438153251956,
+      "symbol": "BNBUSDT"
+    },
+    {
+      "final_idr": 1105243.872319022,
+      "return_pct": -44.73780638404891,
+      "symbol": "XRPUSDT"
+    },
+    {
+      "final_idr": 1107549.29914455,
+      "return_pct": -44.622535042772505,
+      "symbol": "SOLUSDT"
+    }
+  ],
+  "elapsed_seconds": 83.554270139,
+  "from": "2025-10-19T00:00:00Z",
+  "initial_idr_each": 2000000,
+  "initial_usdt_each": "110.7910480833148682",
+  "market": "Binance Spot",
+  "results": [
+    {
+      "Symbol": "BTCUSDT",
+      "Strategy": "emacross",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "allow_short": false,
+        "fast": 12,
+        "slow": 26,
+        "timeframe": "1h"
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 100.62918779918459,
+        "TotalReturn": -0.09172095092455979,
+        "CAGR": -0.09172111717245768,
+        "MaxDrawdown": 0.09683334622125715,
+        "Sharpe": -2.2144146749957088,
+        "Sortino": -2.8733333091053153,
+        "Trades": 150,
+        "WinRate": 0.3333333333333333,
+        "AvgTrade": -0.0677457352275352,
+        "AvgWin": 0.38193619485354124,
+        "AvgLoss": -0.29258670026807343,
+        "TotalFees": 7.6826741015302815,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 52680000000000,
+        "ProfitFactor": 0.6526889200766887
+      },
+      "FinalIDR": 1816558.0981508803,
+      "ProfitIDR": -183441.9018491197,
+      "Seconds": 8.495277881,
+      "OpenPositions": 0,
+      "Candles": 534360,
+      "Issues": {
+        "Counts": {},
+        "Samples": null
+      }
+    },
+    {
+      "Symbol": "BTCUSDT",
+      "Strategy": "grid",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "levels": 10,
+        "lower": 91107.25,
+        "quote_per_level": 10,
+        "stop_below": 88374.0325,
+        "timeframe": "1m",
+        "upper": 123262.74999999999
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 106.25936501336929,
+        "TotalReturn": -0.040902971389328746,
+        "CAGR": -0.04090304759723373,
+        "MaxDrawdown": 0.05480430913662697,
+        "Sharpe": -1.358930778078842,
+        "Sortino": -1.4705579853325743,
+        "Trades": 7,
+        "WinRate": 0.7142857142857143,
+        "AvgTrade": -0.6473832957065114,
+        "AvgWin": 0.25085094714,
+        "AvgLoss": -2.89296890282279,
+        "TotalFees": 0.22129259552558,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 435762000000000,
+        "ProfitFactor": 0.21677639439472915
+      },
+      "FinalIDR": 1918194.0572213423,
+      "ProfitIDR": -81805.94277865766,
+      "Seconds": 3.234336245,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "grid stop hit: cancelling orders and closing inventory": 1
+        },
+        "Samples": [
+          "grid stop hit: cancelling orders and closing inventory price=88306.02"
+        ]
+      }
+    },
+    {
+      "Symbol": "BTCUSDT",
+      "Strategy": "dca",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "dip_pct": 0.02,
+        "interval": "24h",
+        "max_buys": 10,
+        "quote_amount": 10,
+        "take_profit": 0.03,
+        "timeframe": "1m"
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 92.38922980816493,
+        "TotalReturn": -0.1660948117515033,
+        "CAGR": -0.16609509993092308,
+        "MaxDrawdown": 0.17730198121666674,
+        "Sharpe": -2.026567881929665,
+        "Sortino": -2.0883407770735096,
+        "Trades": 5,
+        "WinRate": 0.8,
+        "AvgTrade": -3.6803636550299883,
+        "AvgWin": 0.32349432628617003,
+        "AvgLoss": -19.69579558029462,
+        "TotalFees": 0.28622441456993997,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 630444000000000,
+        "ProfitFactor": 0.06569814861600651
+      },
+      "FinalIDR": 1667810.3764969932,
+      "ProfitIDR": -332189.62350300676,
+      "Seconds": 2.335936163,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=daily loss 5.23% reached limit 5.0% equity=92.479779241237068200029 peak=112.300294517296828199993 day_start=97.581963841237068200029",
+          "KILL SWITCH: trading halted reason=daily loss 5.23% reached limit 5.0% close_positions=true"
+        ]
+      }
+    },
+    {
+      "Symbol": "BTCUSDT",
+      "Strategy": "mm",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "max_inventory_quote": 50,
+        "min_requote": "5s",
+        "order_quote": 10,
+        "requote_bps": 5,
+        "skew_bps": 10,
+        "spread_bps": 20
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 88.63093413612118,
+        "TotalReturn": -0.20001718848737016,
+        "CAGR": -0.20001752815345775,
+        "MaxDrawdown": 0.2002437798248714,
+        "Sharpe": -3.307535104589407,
+        "Sortino": -3.263386759250519,
+        "Trades": 1013,
+        "WinRate": 0.08094768015794669,
+        "AvgTrade": -0.021875729464159607,
+        "AvgWin": 0.012892498985540544,
+        "AvgLoss": -0.024938022410320095,
+        "TotalFees": 19.441920620873685,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 710810000000000,
+        "ProfitFactor": 0.0455343631060027
+      },
+      "FinalIDR": 1599965.6230252597,
+      "ProfitIDR": -400034.3769747403,
+      "Seconds": 6.33978536,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=drawdown 20.00% reached limit 20.0% equity=88.653426345014868197874 peak=110.8224380133148682 day_start=89.874867090614868197973",
+          "KILL SWITCH: trading halted reason=drawdown 20.00% reached limit 20.0% close_positions=true"
+        ]
+      }
+    },
+    {
+      "Symbol": "BTCUSDT",
+      "Strategy": "funding",
+      "Status": "unsupported",
+      "Reason": "Historical funding is not supplied to strategy context by backtest.Run; no meaningful funding test is possible with this runner",
+      "FinalIDR": 0,
+      "ProfitIDR": 0,
+      "Seconds": 0,
+      "OpenPositions": 0,
+      "Candles": 0
+    },
+    {
+      "Symbol": "BTCUSDT",
+      "Strategy": "xspread",
+      "Status": "unsupported",
+      "Reason": "Requires synchronized futures history and margin on two exchanges; public Bybit API connection reset in this environment; Binance Spot data cannot substitute",
+      "FinalIDR": 0,
+      "ProfitIDR": 0,
+      "Seconds": 0,
+      "OpenPositions": 0,
+      "Candles": 0
+    },
+    {
+      "Symbol": "ETHUSDT",
+      "Strategy": "emacross",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "allow_short": false,
+        "fast": 12,
+        "slow": 26,
+        "timeframe": "1h"
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 97.73377009987547,
+        "TotalReturn": -0.11785499107852393,
+        "CAGR": -0.11785520154303475,
+        "MaxDrawdown": 0.11797648076670124,
+        "Sharpe": -2.47266430771099,
+        "Sortino": -3.1270222059290202,
+        "Trades": 152,
+        "WinRate": 0.32894736842105265,
+        "AvgTrade": -0.08590314462789066,
+        "AvgWin": 0.4554067829544841,
+        "AvgLoss": -0.351251148344741,
+        "TotalFees": 7.675067614439399,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 43164000000000,
+        "ProfitFactor": 0.6355527096419177
+      },
+      "FinalIDR": 1764290.017842952,
+      "ProfitIDR": -235709.98215704807,
+      "Seconds": 5.016785358,
+      "OpenPositions": 0,
+      "Candles": 534360,
+      "Issues": {
+        "Counts": {},
+        "Samples": null
+      }
+    },
+    {
+      "Symbol": "ETHUSDT",
+      "Strategy": "grid",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "levels": 10,
+        "lower": 3305.8199999999997,
+        "quote_per_level": 10,
+        "stop_below": 3206.6453999999994,
+        "timeframe": "1m",
+        "upper": 4472.579999999999
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 105.88275267012187,
+        "TotalReturn": -0.04430227439947987,
+        "CAGR": -0.04430235679329153,
+        "MaxDrawdown": 0.058812175837388785,
+        "Sharpe": -0.895272958545111,
+        "Sortino": -0.9043433599893492,
+        "Trades": 7,
+        "WinRate": 0.8571428571428571,
+        "AvgTrade": -0.7011850590275716,
+        "AvgWin": 0.2509744586862745,
+        "AvgLoss": -6.414142165310647,
+        "TotalFees": 0.23064960619299998,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 183402000000000,
+        "ProfitFactor": 0.23476978110364605
+      },
+      "FinalIDR": 1911395.45120104,
+      "ProfitIDR": -88604.54879895994,
+      "Seconds": 3.1935863270000002,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "grid stop hit: cancelling orders and closing inventory": 1
+        },
+        "Samples": [
+          "grid stop hit: cancelling orders and closing inventory price=3194.79"
+        ]
+      }
+    },
+    {
+      "Symbol": "ETHUSDT",
+      "Strategy": "dca",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "dip_pct": 0.02,
+        "interval": "24h",
+        "max_buys": 10,
+        "quote_amount": 10,
+        "take_profit": 0.03,
+        "timeframe": "1m"
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 101.59198659788207,
+        "TotalReturn": -0.0830307289675164,
+        "CAGR": -0.083030880193257,
+        "MaxDrawdown": 0.0974824945040051,
+        "Sharpe": -1.2887754640493816,
+        "Sortino": -1.3052577008893496,
+        "Trades": 5,
+        "WinRate": 0.8,
+        "AvgTrade": -1.83981229708656,
+        "AvgWin": 0.42672729962354994,
+        "AvgLoss": -10.905970683927,
+        "TotalFees": 0.2465815346328,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 289812000000000,
+        "ProfitFactor": 0.15651144203145603
+      },
+      "FinalIDR": 1833938.542064967,
+      "ProfitIDR": -166061.4579350329,
+      "Seconds": 2.236178113,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=daily loss 5.07% reached limit 5.0% equity=101.66151356438446819982 peak=112.56511478084886819998 day_start=107.09554912128326819899",
+          "KILL SWITCH: trading halted reason=daily loss 5.07% reached limit 5.0% close_positions=true"
+        ]
+      }
+    },
+    {
+      "Symbol": "ETHUSDT",
+      "Strategy": "mm",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "max_inventory_quote": 50,
+        "min_requote": "5s",
+        "order_quote": 10,
+        "requote_bps": 5,
+        "skew_bps": 10,
+        "spread_bps": 20
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 100.68539744976287,
+        "TotalReturn": -0.09121360261844025,
+        "CAGR": -0.09121376799365544,
+        "MaxDrawdown": 0.09163899137622016,
+        "Sharpe": -1.5688405788054434,
+        "Sortino": -1.5657037493778168,
+        "Trades": 421,
+        "WinRate": 0.1021377672209026,
+        "AvgTrade": -0.024003920744779077,
+        "AvgWin": 0.017577563557996858,
+        "AvgLoss": -0.02873408959403666,
+        "TotalFees": 8.294352185552004,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 150364000000000,
+        "ProfitFactor": 0.06958856663634676
+      },
+      "FinalIDR": 1817572.7947631194,
+      "ProfitIDR": -182427.20523688057,
+      "Seconds": 4.806226033,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "cancel failed": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=daily loss 5.02% reached limit 5.0% equity=100.73029665331486819294 peak=110.8429319333148682 day_start=106.05027984631486819293",
+          "KILL SWITCH: trading halted reason=daily loss 5.02% reached limit 5.0% close_positions=true",
+          "cancel failed client_id=tb1ysxus122p symbol=ETHUSDT err=sim: order tb1ysxus122p is not open"
+        ]
+      }
+    },
+    {
+      "Symbol": "ETHUSDT",
+      "Strategy": "funding",
+      "Status": "unsupported",
+      "Reason": "Historical funding is not supplied to strategy context by backtest.Run; no meaningful funding test is possible with this runner",
+      "FinalIDR": 0,
+      "ProfitIDR": 0,
+      "Seconds": 0,
+      "OpenPositions": 0,
+      "Candles": 0
+    },
+    {
+      "Symbol": "ETHUSDT",
+      "Strategy": "xspread",
+      "Status": "unsupported",
+      "Reason": "Requires synchronized futures history and margin on two exchanges; public Bybit API connection reset in this environment; Binance Spot data cannot substitute",
+      "FinalIDR": 0,
+      "ProfitIDR": 0,
+      "Seconds": 0,
+      "OpenPositions": 0,
+      "Candles": 0
+    },
+    {
+      "Symbol": "BNBUSDT",
+      "Strategy": "emacross",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "allow_short": false,
+        "fast": 12,
+        "slow": 26,
+        "timeframe": "1h"
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 100.70595189376486,
+        "TotalReturn": -0.0910280782068783,
+        "CAGR": -0.09102824326284109,
+        "MaxDrawdown": 0.10018916421161862,
+        "Sharpe": -2.186391568353606,
+        "Sortino": -2.792508447661258,
+        "Trades": 155,
+        "WinRate": 0.38064516129032255,
+        "AvgTrade": -0.06506513670677418,
+        "AvgWin": 0.3480111547602712,
+        "AvgLoss": -0.3189349408375625,
+        "TotalFees": 7.864455179550001,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 43742000000000,
+        "ProfitFactor": 0.6706128057592872
+      },
+      "FinalIDR": 1817943.8435862432,
+      "ProfitIDR": -182056.15641375678,
+      "Seconds": 5.008838091,
+      "OpenPositions": 0,
+      "Candles": 534360,
+      "Issues": {
+        "Counts": {},
+        "Samples": null
+      }
+    },
+    {
+      "Symbol": "BNBUSDT",
+      "Strategy": "grid",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "levels": 10,
+        "lower": 928.557,
+        "quote_per_level": 10,
+        "stop_below": 900.70029,
+        "timeframe": "1m",
+        "upper": 1256.283
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 107.07724395817887,
+        "TotalReturn": -0.03352079603347746,
+        "CAGR": -0.033520858728779634,
+        "MaxDrawdown": 0.038362236247591934,
+        "Sharpe": -1.0035715857431704,
+        "Sortino": -1.0067644011357033,
+        "Trades": 4,
+        "WinRate": 0.5,
+        "AvgTrade": -0.9284510312840001,
+        "AvgWin": 0.27565146,
+        "AvgLoss": -2.132553522568,
+        "TotalFees": 0.149045261136,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 84390000000000,
+        "ProfitFactor": 0.12925887068384723
+      },
+      "FinalIDR": 1932958.407933045,
+      "ProfitIDR": -67041.59206695505,
+      "Seconds": 2.797144821,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "grid stop hit: cancelling orders and closing inventory": 1
+        },
+        "Samples": [
+          "grid stop hit: cancelling orders and closing inventory price=898.84"
+        ]
+      }
+    },
+    {
+      "Symbol": "BNBUSDT",
+      "Strategy": "dca",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "dip_pct": 0.02,
+        "interval": "24h",
+        "max_buys": 10,
+        "quote_amount": 10,
+        "take_profit": 0.03,
+        "timeframe": "1m"
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 102.24350358701086,
+        "TotalReturn": -0.0771501366236399,
+        "CAGR": -0.0771502775950419,
+        "MaxDrawdown": 0.0940944108397384,
+        "Sharpe": -1.2184611984407476,
+        "Sortino": -1.257416237082741,
+        "Trades": 4,
+        "WinRate": 0.75,
+        "AvgTrade": -2.1368861240759998,
+        "AvgWin": 0.63493829634,
+        "AvgLoss": -10.452359385324,
+        "TotalFees": 0.221687356304,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 363870000000000,
+        "ProfitFactor": 0.18223779137316326
+      },
+      "FinalIDR": 1845699.72675272,
+      "ProfitIDR": -154300.27324727993,
+      "Seconds": 1.8552903,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=daily loss 5.07% reached limit 5.0% equity=102.3001668295628681972 peak=112.8633102725268681996 day_start=107.7596919400828681978",
+          "KILL SWITCH: trading halted reason=daily loss 5.07% reached limit 5.0% close_positions=true"
+        ]
+      }
+    },
+    {
+      "Symbol": "BNBUSDT",
+      "Strategy": "mm",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "max_inventory_quote": 50,
+        "min_requote": "5s",
+        "order_quote": 10,
+        "requote_bps": 5,
+        "skew_bps": 10,
+        "spread_bps": 20
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 98.30492880319487,
+        "TotalReturn": -0.11269971262236311,
+        "CAGR": -0.11269991447984462,
+        "MaxDrawdown": 0.11269971262236307,
+        "Sharpe": -1.6866264073461312,
+        "Sortino": -1.6823741281985147,
+        "Trades": 541,
+        "WinRate": 0.06839186691312385,
+        "AvgTrade": -0.023079702920739367,
+        "AvgWin": 0.018228757203564944,
+        "AvgLoss": -0.0261122684457379,
+        "TotalFees": 10.38937940012,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 137813000000000,
+        "ProfitFactor": 0.05124879356247751
+      },
+      "FinalIDR": 1774600.5747552738,
+      "ProfitIDR": -225399.42524472624,
+      "Seconds": 4.659534508,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=daily loss 5.06% reached limit 5.0% equity=98.3389221833148681048 peak=110.7910480833148682 day_start=103.576197823314868134",
+          "KILL SWITCH: trading halted reason=daily loss 5.06% reached limit 5.0% close_positions=true"
+        ]
+      }
+    },
+    {
+      "Symbol": "BNBUSDT",
+      "Strategy": "funding",
+      "Status": "unsupported",
+      "Reason": "Historical funding is not supplied to strategy context by backtest.Run; no meaningful funding test is possible with this runner",
+      "FinalIDR": 0,
+      "ProfitIDR": 0,
+      "Seconds": 0,
+      "OpenPositions": 0,
+      "Candles": 0
+    },
+    {
+      "Symbol": "BNBUSDT",
+      "Strategy": "xspread",
+      "Status": "unsupported",
+      "Reason": "Requires synchronized futures history and margin on two exchanges; public Bybit API connection reset in this environment; Binance Spot data cannot substitute",
+      "FinalIDR": 0,
+      "ProfitIDR": 0,
+      "Seconds": 0,
+      "OpenPositions": 0,
+      "Candles": 0
+    },
+    {
+      "Symbol": "XRPUSDT",
+      "Strategy": "emacross",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "allow_short": false,
+        "fast": 12,
+        "slow": 26,
+        "timeframe": "1h"
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 88.57874218721687,
+        "TotalReturn": -0.2004882730181804,
+        "CAGR": -0.20048861338026625,
+        "MaxDrawdown": 0.20048827301818045,
+        "Sharpe": -4.168172363144425,
+        "Sortino": -4.934092863487187,
+        "Trades": 135,
+        "WinRate": 0.21481481481481482,
+        "AvgTrade": -0.16453559923035535,
+        "AvgWin": 0.5233547845595171,
+        "AvgLoss": -0.35273202498418843,
+        "TotalFees": 6.559847058097999,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 39606000000000,
+        "ProfitFactor": 0.40592279469674153
+      },
+      "FinalIDR": 1599023.453963639,
+      "ProfitIDR": -400976.546036361,
+      "Seconds": 4.668040985,
+      "OpenPositions": 0,
+      "Candles": 534360,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=drawdown 20.02% reached limit 20.0% equity=88.6052855545848682 peak=110.7910480833148682 day_start=88.9864991675728682",
+          "KILL SWITCH: trading halted reason=drawdown 20.02% reached limit 20.0% close_positions=true"
+        ]
+      }
+    },
+    {
+      "Symbol": "XRPUSDT",
+      "Strategy": "grid",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "levels": 10,
+        "lower": 2.0056599999999998,
+        "quote_per_level": 10,
+        "stop_below": 1.9454901999999998,
+        "timeframe": "1m",
+        "upper": 2.7135399999999996
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 108.97656722663487,
+        "TotalReturn": -0.01637750421239359,
+        "CAGR": -0.016377535115523978,
+        "MaxDrawdown": 0.050144463697650875,
+        "Sharpe": -0.41797034261953625,
+        "Sortino": -0.5343833401137777,
+        "Trades": 17,
+        "WinRate": 0.7058823529411765,
+        "AvgTrade": -0.10673416803999981,
+        "AvgWin": 0.339847313882353,
+        "AvgLoss": -1.1785297246536466,
+        "TotalFees": 0.43445753668,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 282970000000000,
+        "ProfitFactor": 0.6920772011561699
+      },
+      "FinalIDR": 1967244.9915752127,
+      "ProfitIDR": -32755.008424787316,
+      "Seconds": 2.954184315,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "grid stop hit: cancelling orders and closing inventory": 1
+        },
+        "Samples": [
+          "grid stop hit: cancelling orders and closing inventory price=1.942"
+        ]
+      }
+    },
+    {
+      "Symbol": "XRPUSDT",
+      "Strategy": "dca",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "dip_pct": 0.02,
+        "interval": "24h",
+        "max_buys": 10,
+        "quote_amount": 10,
+        "take_profit": 0.03,
+        "timeframe": "1m"
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 102.76857101845486,
+        "TotalReturn": -0.0724108779874264,
+        "CAGR": -0.07241101064279798,
+        "MaxDrawdown": 0.09076936285087767,
+        "Sharpe": -1.109137914858356,
+        "Sortino": -1.1450258664529476,
+        "Trades": 6,
+        "WinRate": 0.8333333333333334,
+        "AvgTrade": -1.33707951081,
+        "AvgWin": 0.36044571800759995,
+        "AvgLoss": -9.824705654898,
+        "TotalFees": 0.24848114486,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 257840000000000,
+        "ProfitFactor": 0.1834384309660736
+      },
+      "FinalIDR": 1855178.2440251473,
+      "ProfitIDR": -144821.7559748527,
+      "Seconds": 1.818756997,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=daily loss 5.19% reached limit 5.0% equity=102.82785130076086817 peak=113.02805561049286795 day_start=108.4548067860088675",
+          "KILL SWITCH: trading halted reason=daily loss 5.19% reached limit 5.0% close_positions=true"
+        ]
+      }
+    },
+    {
+      "Symbol": "XRPUSDT",
+      "Strategy": "mm",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "max_inventory_quote": 50,
+        "min_requote": "5s",
+        "order_quote": 10,
+        "requote_bps": 5,
+        "skew_bps": 10,
+        "spread_bps": 20
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 99.43522969638487,
+        "TotalReturn": -0.10249761676043012,
+        "CAGR": -0.10249780141727283,
+        "MaxDrawdown": 0.10249761676043015,
+        "Sharpe": -1.647060787503918,
+        "Sortino": -1.643203692344454,
+        "Trades": 556,
+        "WinRate": 0.07553956834532374,
+        "AvgTrade": -0.020424133789442467,
+        "AvgWin": 0.013664322115684873,
+        "AvgLoss": -0.023209571820600728,
+        "TotalFees": 11.007475316930002,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 148479000000000,
+        "ProfitFactor": 0.048106873665928744
+      },
+      "FinalIDR": 1795004.7664791397,
+      "ProfitIDR": -204995.23352086032,
+      "Seconds": 4.726712546,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "cancel failed": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=daily loss 5.01% reached limit 5.0% equity=99.46008397331486228 peak=110.7910480833148682 day_start=104.702043293314861",
+          "KILL SWITCH: trading halted reason=daily loss 5.01% reached limit 5.0% close_positions=true",
+          "cancel failed client_id=tb15xjd7o2hz symbol=XRPUSDT err=sim: order tb15xjd7o2hz is not open"
+        ]
+      }
+    },
+    {
+      "Symbol": "XRPUSDT",
+      "Strategy": "funding",
+      "Status": "unsupported",
+      "Reason": "Historical funding is not supplied to strategy context by backtest.Run; no meaningful funding test is possible with this runner",
+      "FinalIDR": 0,
+      "ProfitIDR": 0,
+      "Seconds": 0,
+      "OpenPositions": 0,
+      "Candles": 0
+    },
+    {
+      "Symbol": "XRPUSDT",
+      "Strategy": "xspread",
+      "Status": "unsupported",
+      "Reason": "Requires synchronized futures history and margin on two exchanges; public Bybit API connection reset in this environment; Binance Spot data cannot substitute",
+      "FinalIDR": 0,
+      "ProfitIDR": 0,
+      "Seconds": 0,
+      "OpenPositions": 0,
+      "Candles": 0
+    },
+    {
+      "Symbol": "SOLUSDT",
+      "Strategy": "emacross",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "allow_short": false,
+        "fast": 12,
+        "slow": 26,
+        "timeframe": "1h"
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 103.11492249175487,
+        "TotalReturn": -0.06928470958942057,
+        "CAGR": -0.0692848367340374,
+        "MaxDrawdown": 0.12234659801216388,
+        "Sharpe": -1.1125624784556463,
+        "Sortino": -1.5587372642156814,
+        "Trades": 135,
+        "WinRate": 0.35555555555555557,
+        "AvgTrade": -0.05686018956711107,
+        "AvgWin": 0.6292291913034999,
+        "AvgLoss": -0.4353922617715861,
+        "TotalFees": 6.898604639560004,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 48784000000000,
+        "ProfitFactor": 0.7973520974405645
+      },
+      "FinalIDR": 1861430.5808211588,
+      "ProfitIDR": -138569.41917884117,
+      "Seconds": 5.001874485,
+      "OpenPositions": 0,
+      "Candles": 534360,
+      "Issues": {
+        "Counts": {},
+        "Samples": null
+      }
+    },
+    {
+      "Symbol": "SOLUSDT",
+      "Strategy": "grid",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "levels": 10,
+        "lower": 159.41750000000002,
+        "quote_per_level": 10,
+        "stop_below": 154.63497500000003,
+        "timeframe": "1m",
+        "upper": 215.6825
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 106.20710810365686,
+        "TotalReturn": -0.04137464225639309,
+        "CAGR": -0.04137471932399617,
+        "MaxDrawdown": 0.05439788676471904,
+        "Sharpe": -1.0229380242847932,
+        "Sortino": -1.059579299872738,
+        "Trades": 8,
+        "WinRate": 0.625,
+        "AvgTrade": -0.57299249745725,
+        "AvgWin": 0.2500885649719626,
+        "AvgLoss": -1.9447942681726043,
+        "TotalFees": 0.25281763765799997,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 223657000000000,
+        "ProfitFactor": 0.2143230683957764
+      },
+      "FinalIDR": 1917250.7154872138,
+      "ProfitIDR": -82749.2845127862,
+      "Seconds": 2.856025476,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "grid stop hit: cancelling orders and closing inventory": 1
+        },
+        "Samples": [
+          "grid stop hit: cancelling orders and closing inventory price=153.96"
+        ]
+      }
+    },
+    {
+      "Symbol": "SOLUSDT",
+      "Strategy": "dca",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "dip_pct": 0.02,
+        "interval": "24h",
+        "max_buys": 10,
+        "quote_amount": 10,
+        "take_profit": 0.03,
+        "timeframe": "1m"
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 105.37990887285886,
+        "TotalReturn": -0.04884094251357585,
+        "CAGR": -0.048841033130785916,
+        "MaxDrawdown": 0.06846745105412333,
+        "Sharpe": -0.8660023478677108,
+        "Sortino": -0.8912370550333713,
+        "Trades": 5,
+        "WinRate": 0.8,
+        "AvgTrade": -1.0822278420912,
+        "AvgWin": 0.44858553996750006,
+        "AvgLoss": -7.205481370326,
+        "TotalFees": 0.232382846456,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 270324000000000,
+        "ProfitFactor": 0.24902460608108104
+      },
+      "FinalIDR": 1902318.1149728482,
+      "ProfitIDR": -97681.88502715179,
+      "Seconds": 1.826030803,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=daily loss 5.06% reached limit 5.0% equity=105.4456804258588681985 peak=113.1253105348888681955 day_start=111.063706141478868197",
+          "KILL SWITCH: trading halted reason=daily loss 5.06% reached limit 5.0% close_positions=true"
+        ]
+      }
+    },
+    {
+      "Symbol": "SOLUSDT",
+      "Strategy": "mm",
+      "Status": "completed",
+      "Reason": "",
+      "Params": {
+        "max_inventory_quote": 50,
+        "min_requote": "5s",
+        "order_quote": 10,
+        "requote_bps": 5,
+        "skew_bps": 10,
+        "spread_bps": 20
+      },
+      "Metrics": {
+        "Start": "2025-10-19T00:01:00Z",
+        "End": "2026-10-19T00:00:00Z",
+        "InitialEquity": 110.79104808331486,
+        "FinalEquity": 97.53702744280287,
+        "TotalReturn": -0.11963079030126134,
+        "CAGR": -0.11963100371731339,
+        "MaxDrawdown": 0.11963079030126128,
+        "Sharpe": -1.6973393025556127,
+        "Sortino": -1.6929763659610308,
+        "Trades": 640,
+        "WinRate": 0.1,
+        "AvgTrade": -0.020709407250799974,
+        "AvgWin": 0.016351265861793023,
+        "AvgLoss": -0.024827259818865865,
+        "TotalFees": 12.731393152511998,
+        "TotalFunding": 0,
+        "AvgHoldingTime": 140878000000000,
+        "ProfitFactor": 0.07317792342900596
+      },
+      "FinalIDR": 1760738.4193974773,
+      "ProfitIDR": -239261.5806025227,
+      "Seconds": 5.002178421,
+      "OpenPositions": 0,
+      "Candles": 525600,
+      "Issues": {
+        "Counts": {
+          "KILL SWITCH: trading halted": 1,
+          "cancel failed": 1,
+          "kill switch tripped": 1
+        },
+        "Samples": [
+          "kill switch tripped reason=daily loss 5.01% reached limit 5.0% equity=97.5848843933148681709 peak=110.7910480833148682 day_start=102.7320314833148681319",
+          "KILL SWITCH: trading halted reason=daily loss 5.01% reached limit 5.0% close_positions=true",
+          "cancel failed client_id=tb0rlst2w2ql symbol=SOLUSDT err=sim: order tb0rlst2w2ql is not open"
+        ]
+      }
+    },
+    {
+      "Symbol": "SOLUSDT",
+      "Strategy": "funding",
+      "Status": "unsupported",
+      "Reason": "Historical funding is not supplied to strategy context by backtest.Run; no meaningful funding test is possible with this runner",
+      "FinalIDR": 0,
+      "ProfitIDR": 0,
+      "Seconds": 0,
+      "OpenPositions": 0,
+      "Candles": 0
+    },
+    {
+      "Symbol": "SOLUSDT",
+      "Strategy": "xspread",
+      "Status": "unsupported",
+      "Reason": "Requires synchronized futures history and margin on two exchanges; public Bybit API connection reset in this environment; Binance Spot data cannot substitute",
+      "FinalIDR": 0,
+      "ProfitIDR": 0,
+      "Seconds": 0,
+      "OpenPositions": 0,
+      "Candles": 0
+    }
+  ],
+  "sources": {
+    "fx": "https://www.bi.go.id/en/statistik/informasi-kurs/transaksi-bi/transaksi-bi/default.aspx",
+    "instrument_rules": "https://data-api.binance.vision/api/v3/exchangeInfo",
+    "prices": "https://data.binance.vision/",
+    "ranking": "https://coinucation.com/coins"
+  },
+  "to_exclusive": "2026-10-19T00:00:00Z",
+  "usd_idr_fixed": 18052,
+  "code_revision": "010ad227e95198c78b52284b5360c4cb2df905c3",
+  "research_scripts_sha256": {
+    "scripts/backtest-year/download.py": "e120c808e8ff5fab6a6f3c859250252d72dc76249a48f10456f70094f84ddc10",
+    "scripts/backtest-year/main.go": "080fa547a604ff222c027d520c4ea0478eee47c95d92bc0557286a56ed3da8e6",
+    "scripts/backtest-year/summarize.py": "8aabeb4de485ad51fa49356193c4a93729b3131fff7ff2509e5c7163aa3b8912"
+  },
+  "ranking_snapshot": {
+    "as_of": "2026-10-19",
+    "BTC": 1,
+    "ETH": 2,
+    "BNB": 4,
+    "XRP": 5,
+    "SOL": 7,
+    "source": "https://coinucation.com/coins",
+    "selection": "five highest-ranked non-stablecoins in top ten"
+  }
+}

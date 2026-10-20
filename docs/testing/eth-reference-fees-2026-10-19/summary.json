@@ -1,0 +1,51 @@
+{
+  "created_utc": "2026-10-19T15:27:57.019906+00:00",
+  "candidate": "momentum-028-larger",
+  "symbol": "ETHUSDT",
+  "capital_idr_each": 2000000,
+  "purpose": "Reference fee sensitivity only; no change to strategy/risk or live configs",
+  "assumptions": [
+    "Quote-equivalent 0.075% fee, conditional on real BNB eligibility; BNB inventory/acquisition/price not simulated",
+    "Independent annual simulations, same USD/IDR constant; not a continuous 3-year portfolio",
+    "ETH selection follows inspection of prior results; not pristine holdout",
+    "Not approved for live"
+  ],
+  "results": [
+    {
+      "from": "2023-10-19",
+      "to": "2024-10-19",
+      "standard_return_pct": 34.38469313769632,
+      "discount_return_pct": 35.87106193549854,
+      "discount_final_idr": 2717421.238709971,
+      "standard_max_drawdown_pct": 10.499936742375871,
+      "discount_max_drawdown_pct": 10.29534082034603,
+      "standard_closed_trades": 38,
+      "discount_closed_trades": 38,
+      "source_sha256": "8dc36f566279d970669b6ef2ba9c0f5b645d4408dd0f81639679374aa7afdab4"
+    },
+    {
+      "from": "2024-10-19",
+      "to": "2025-10-19",
+      "standard_return_pct": 57.812922605037585,
+      "discount_return_pct": 59.38884094291544,
+      "discount_final_idr": 3187776.8188583083,
+      "standard_max_drawdown_pct": 12.542722675977958,
+      "discount_max_drawdown_pct": 12.243632097968598,
+      "standard_closed_trades": 37,
+      "discount_closed_trades": 37,
+      "source_sha256": "bf4c7d82b6798e2d8696988e0416196f5ba15ccb5873fdb84c946e343a8e4b85"
+    },
+    {
+      "from": "2025-10-19",
+      "to": "2026-10-19",
+      "standard_return_pct": 8.797400475707274,
+      "discount_return_pct": 9.971600866103847,
+      "discount_final_idr": 2199432.017322077,
+      "standard_max_drawdown_pct": 11.369194212961087,
+      "discount_max_drawdown_pct": 10.852385273438662,
+      "standard_closed_trades": 38,
+      "discount_closed_trades": 38,
+      "source_sha256": "086a0f8454a083d554327fe4d97eb1c2cc8c9f8d68497504b812e2175cbf1e42"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "Job": {
+    "ID": "fee-discount-momentum-028-aggressive-BNBUSDT",
+    "Candidate": "momentum-028-aggressive",
+    "Family": "momentum",
+    "Stage": "fee_discount",
+    "Symbol": "BNBUSDT",
+    "From": "2025-10-19",
+    "To": "2026-10-19",
+    "InputTF": "1m",
+    "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/BNBUSDT.csv",
+    "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+    "Name": "trendspot",
+    "Params": {
+      "atr_period": 14,
+      "entry_period": 84,
+      "exit_period": 20,
+      "mode": "momentum",
+      "momentum_min": 0.05,
+      "stop_atr": 3,
+      "target_atr": 0,
+      "timeframe": "4h",
+      "trail_atr": 3,
+      "trend_period": 100
+    },
+    "Risk": {
+      "RiskPerTrade": 0.05,
+      "PositionPct": 0.95,
+      "MaxPositionPct": 0.95,
+      "MaxLeverage": 1,
+      "MaxOpenPositions": 1,
+      "MaxExposurePct": 1,
+      "DailyLossLimit": 0.1,
+      "MaxDrawdown": 0.35,
+      "CloseOnKill": true
+    },
+    "Fee": 0.00075,
+    "SlippageBps": 2
+  },
+  "Metrics": {
+    "Start": "2025-10-19T00:01:00Z",
+    "End": "2026-10-19T00:00:00Z",
+    "InitialEquity": 110.79104808331486,
+    "FinalEquity": 102.44261304292537,
+    "TotalReturn": -0.07535297467455548,
+    "CAGR": -0.07535311249789489,
+    "MaxDrawdown": 0.18175546751694097,
+    "Sharpe": -0.3544985093149647,
+    "Sortino": -0.5501104060996056,
+    "Trades": 40,
+    "WinRate": 0.325,
+    "AvgTrade": -0.2087108760097376,
+    "AvgWin": 3.191549192358962,
+    "AvgLoss": -1.8458731311502223,
+    "TotalFees": 5.8125040103895,
+    "TotalFunding": 0,
+    "AvgHoldingTime": 222387000000000,
+    "ProfitFactor": 0.8324904932119952
+  },
+  "ConservativeFinalUSDT": 102.44261304292537,
+  "ConservativeFinalIDR": 1849294.0506508888,
+  "ConservativeReturn": -0.07535297467455548,
+  "TerminalExitCostUSDT": 0,
+  "OpenPositions": 0,
+  "Candles": 527790,
+  "Seconds": 6.231717269,
+  "Issues": {
+    "Counts": {},
+    "Samples": null
+  }
+}

@@ -1,0 +1,3353 @@
+{
+  "created_utc": "2026-10-19T15:08:14.804436+00:00",
+  "successful_jobs": 360,
+  "failed_jobs": 0,
+  "candidate_count": 12,
+  "capital_idr_per_case": 2000000,
+  "candidates": [
+    {
+      "candidate": "momentum-028-larger",
+      "profile": "larger",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.1594845008778411,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.2577962201743558,
+          "worst_return": -0.07903033567171958,
+          "closed_trades": 234,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 21.003225732502862,
+              "final_idr": 2420064.514650057,
+              "max_drawdown_pct": 17.062986271266205,
+              "closed_trades": 43
+            },
+            "ETHUSDT": {
+              "return_pct": 34.38469313769632,
+              "final_idr": 2687693.8627539263,
+              "max_drawdown_pct": 10.499936742375871,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": 3.542388057593504,
+              "final_idr": 2070847.7611518698,
+              "max_drawdown_pct": 25.779622017435578,
+              "closed_trades": 62
+            },
+            "XRPUSDT": {
+              "return_pct": -7.903033567171958,
+              "final_idr": 1841939.3286565607,
+              "max_drawdown_pct": 18.307826215214206,
+              "closed_trades": 37
+            },
+            "SOLUSDT": {
+              "return_pct": 28.714977078299817,
+              "final_idr": 2574299.5415659966,
+              "max_drawdown_pct": 13.11145247488566,
+              "closed_trades": 54
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.0898620575757922,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.2917656159443922,
+          "worst_return": -0.1205190467875975,
+          "closed_trades": 234,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 12.701579666138475,
+              "final_idr": 2254031.5933227693,
+              "max_drawdown_pct": 18.53000354098791,
+              "closed_trades": 43
+            },
+            "ETHUSDT": {
+              "return_pct": 27.157288831736604,
+              "final_idr": 2543145.7766347323,
+              "max_drawdown_pct": 11.861513667047838,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": -5.464773133319422,
+              "final_idr": 1890704.5373336116,
+              "max_drawdown_pct": 29.17656159443922,
+              "closed_trades": 62
+            },
+            "XRPUSDT": {
+              "return_pct": -12.051904678759751,
+              "final_idr": 1758961.9064248048,
+              "max_drawdown_pct": 21.654477019360613,
+              "closed_trades": 37
+            },
+            "SOLUSDT": {
+              "return_pct": 22.588838102100194,
+              "final_idr": 2451776.7620420037,
+              "max_drawdown_pct": 13.76729749922897,
+              "closed_trades": 54
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.19986475363983888,
+          "positive_cases": 4,
+          "target_hits": 1,
+          "worst_drawdown": 0.21291911507995842,
+          "worst_return": -0.023819512702104584,
+          "closed_trades": 220,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 17.031438757096893,
+              "final_idr": 2340628.775141938,
+              "max_drawdown_pct": 11.096387470557968,
+              "closed_trades": 31
+            },
+            "ETHUSDT": {
+              "return_pct": 57.812922605037585,
+              "final_idr": 3156258.4521007515,
+              "max_drawdown_pct": 12.542722675977958,
+              "closed_trades": 37
+            },
+            "BNBUSDT": {
+              "return_pct": 9.861177829678237,
+              "final_idr": 2197223.556593565,
+              "max_drawdown_pct": 15.994188892418254,
+              "closed_trades": 52
+            },
+            "XRPUSDT": {
+              "return_pct": 17.608788898317187,
+              "final_idr": 2352175.7779663433,
+              "max_drawdown_pct": 21.29191150799584,
+              "closed_trades": 56
+            },
+            "SOLUSDT": {
+              "return_pct": -2.3819512702104584,
+              "final_idr": 1952360.9745957907,
+              "max_drawdown_pct": 13.319634383032023,
+              "closed_trades": 44
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": 0.1342441081388841,
+          "positive_cases": 4,
+          "target_hits": 1,
+          "worst_drawdown": 0.23620482763172557,
+          "worst_return": -0.0676578288703713,
+          "closed_trades": 220,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 10.852301440684563,
+              "final_idr": 2217046.0288136913,
+              "max_drawdown_pct": 13.403934627555127,
+              "closed_trades": 31
+            },
+            "ETHUSDT": {
+              "return_pct": 50.1701441906117,
+              "final_idr": 3003402.883812234,
+              "max_drawdown_pct": 14.008834551565592,
+              "closed_trades": 37
+            },
+            "BNBUSDT": {
+              "return_pct": 2.1062791658990054,
+              "final_idr": 2042125.58331798,
+              "max_drawdown_pct": 18.163458775095677,
+              "closed_trades": 52
+            },
+            "XRPUSDT": {
+              "return_pct": 10.759112159283912,
+              "final_idr": 2215182.243185678,
+              "max_drawdown_pct": 23.620482763172557,
+              "closed_trades": 56
+            },
+            "SOLUSDT": {
+              "return_pct": -6.765782887037131,
+              "final_idr": 1864684.3422592573,
+              "max_drawdown_pct": 16.509832522693593,
+              "closed_trades": 44
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": 0.002623013765947646,
+          "positive_cases": 2,
+          "target_hits": 0,
+          "worst_drawdown": 0.2335237019974776,
+          "worst_return": -0.035483283165907986,
+          "closed_trades": 184,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -2.98891841901604,
+              "final_idr": 1940221.6316196793,
+              "max_drawdown_pct": 12.35922623391005,
+              "closed_trades": 26
+            },
+            "ETHUSDT": {
+              "return_pct": 8.797400475707274,
+              "final_idr": 2175948.009514145,
+              "max_drawdown_pct": 11.369194212961087,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": -3.5483283165907986,
+              "final_idr": 1929033.4336681839,
+              "max_drawdown_pct": 13.623716016947924,
+              "closed_trades": 40
+            },
+            "XRPUSDT": {
+              "return_pct": 0.03036423157645185,
+              "final_idr": 2000607.2846315291,
+              "max_drawdown_pct": 23.35237019974776,
+              "closed_trades": 35
+            },
+            "SOLUSDT": {
+              "return_pct": -0.9790110887030634,
+              "final_idr": 1980419.7782259388,
+              "max_drawdown_pct": 22.53355146247079,
+              "closed_trades": 45
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": -0.05286883589439639,
+          "positive_cases": 1,
+          "target_hits": 0,
+          "worst_drawdown": 0.2610771678057702,
+          "worst_return": -0.10245696530141857,
+          "closed_trades": 184,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -7.548899643173723,
+              "final_idr": 1849022.0071365254,
+              "max_drawdown_pct": 15.567137458786618,
+              "closed_trades": 26
+            },
+            "ETHUSDT": {
+              "return_pct": 2.854541570223934,
+              "final_idr": 2057090.8314044785,
+              "max_drawdown_pct": 14.586236811315798,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": -10.245696530141856,
+              "final_idr": 1795086.0693971626,
+              "max_drawdown_pct": 16.535577933419326,
+              "closed_trades": 40
+            },
+            "XRPUSDT": {
+              "return_pct": -4.7675428020573785,
+              "final_idr": 1904649.1439588524,
+              "max_drawdown_pct": 26.10771678057702,
+              "closed_trades": 35
+            },
+            "SOLUSDT": {
+              "return_pct": -6.726820542049172,
+              "final_idr": 1865463.5891590165,
+              "max_drawdown_pct": 25.970798169559618,
+              "closed_trades": 45
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": true,
+        "positive_stress_each_year": false,
+        "positive_coin_years": false,
+        "enough_trades": true,
+        "drawdown": false,
+        "worst_loss": true
+      },
+      "eligible_for_prospective_paper_review": false,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    },
+    {
+      "candidate": "momentum-028-aggressive",
+      "profile": "aggressive",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 100,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.20644095227064305,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.3517402871251752,
+          "worst_return": -0.13454171829424943,
+          "closed_trades": 226,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 22.006747965266005,
+              "final_idr": 2440134.95930532,
+              "max_drawdown_pct": 23.75516800535693,
+              "closed_trades": 43
+            },
+            "ETHUSDT": {
+              "return_pct": 49.395377850507494,
+              "final_idr": 2987907.5570101496,
+              "max_drawdown_pct": 15.970894527237467,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": -3.2217419615236498,
+              "final_idr": 1935565.160769527,
+              "max_drawdown_pct": 35.17402871251752,
+              "closed_trades": 54
+            },
+            "XRPUSDT": {
+              "return_pct": -13.454171829424943,
+              "final_idr": 1730916.563411501,
+              "max_drawdown_pct": 28.11089086121548,
+              "closed_trades": 37
+            },
+            "SOLUSDT": {
+              "return_pct": 48.49426411049662,
+              "final_idr": 2969885.2822099323,
+              "max_drawdown_pct": 20.424902887473763,
+              "closed_trades": 54
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.11224897995215366,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.3521930486582942,
+          "worst_return": -0.19462782171782145,
+          "closed_trades": 222,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 10.114389169630122,
+              "final_idr": 2202287.7833926026,
+              "max_drawdown_pct": 25.689580009642267,
+              "closed_trades": 43
+            },
+            "ETHUSDT": {
+              "return_pct": 37.010738900444885,
+              "final_idr": 2740214.7780088973,
+              "max_drawdown_pct": 18.01778267111673,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": -8.42126343993409,
+              "final_idr": 1831574.731201318,
+              "max_drawdown_pct": 35.21930486582942,
+              "closed_trades": 50
+            },
+            "XRPUSDT": {
+              "return_pct": -19.462782171782145,
+              "final_idr": 1610744.356564357,
+              "max_drawdown_pct": 32.67357239306001,
+              "closed_trades": 37
+            },
+            "SOLUSDT": {
+              "return_pct": 36.883407517718055,
+              "final_idr": 2737668.150354361,
+              "max_drawdown_pct": 21.42675748422601,
+              "closed_trades": 54
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.3060380906484613,
+          "positive_cases": 4,
+          "target_hits": 1,
+          "worst_drawdown": 0.32602819207005834,
+          "worst_return": -0.05559218896629936,
+          "closed_trades": 220,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 26.47253325771839,
+              "final_idr": 2529450.6651543677,
+              "max_drawdown_pct": 15.3152901499271,
+              "closed_trades": 31
+            },
+            "ETHUSDT": {
+              "return_pct": 96.58104743403551,
+              "final_idr": 3931620.9486807096,
+              "max_drawdown_pct": 18.8805325372146,
+              "closed_trades": 37
+            },
+            "BNBUSDT": {
+              "return_pct": 6.17035075877177,
+              "final_idr": 2123407.015175435,
+              "max_drawdown_pct": 25.19776678753972,
+              "closed_trades": 52
+            },
+            "XRPUSDT": {
+              "return_pct": 29.354332770334924,
+              "final_idr": 2587086.655406698,
+              "max_drawdown_pct": 32.60281920700584,
+              "closed_trades": 56
+            },
+            "SOLUSDT": {
+              "return_pct": -5.559218896629936,
+              "final_idr": 1888815.6220674012,
+              "max_drawdown_pct": 21.752080520142314,
+              "closed_trades": 44
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": 0.20134229697007242,
+          "positive_cases": 3,
+          "target_hits": 1,
+          "worst_drawdown": 0.3520142895838175,
+          "worst_return": -0.12464861209738642,
+          "closed_trades": 204,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 17.47981220103496,
+              "final_idr": 2349596.2440206995,
+              "max_drawdown_pct": 17.053857823864625,
+              "closed_trades": 31
+            },
+            "ETHUSDT": {
+              "return_pct": 82.22994106482342,
+              "final_idr": 3644598.8212964684,
+              "max_drawdown_pct": 20.833963683993325,
+              "closed_trades": 37
+            },
+            "BNBUSDT": {
+              "return_pct": -4.488953533068873,
+              "final_idr": 1910220.9293386224,
+              "max_drawdown_pct": 28.307878357710088,
+              "closed_trades": 52
+            },
+            "XRPUSDT": {
+              "return_pct": 17.915209961985347,
+              "final_idr": 2358304.1992397066,
+              "max_drawdown_pct": 35.20142895838175,
+              "closed_trades": 40
+            },
+            "SOLUSDT": {
+              "return_pct": -12.464861209738643,
+              "final_idr": 1750702.7758052272,
+              "max_drawdown_pct": 26.94194742261939,
+              "closed_trades": 44
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": -0.024347393127608787,
+          "positive_cases": 1,
+          "target_hits": 0,
+          "worst_drawdown": 0.33967178649140006,
+          "worst_return": -0.09272749918327705,
+          "closed_trades": 184,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -4.090544230530946,
+              "final_idr": 1918189.115389381,
+              "max_drawdown_pct": 15.808963996886021,
+              "closed_trades": 26
+            },
+            "ETHUSDT": {
+              "return_pct": 10.444019367951075,
+              "final_idr": 2208880.3873590217,
+              "max_drawdown_pct": 18.630761723408508,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": -9.272749918327705,
+              "final_idr": 1814545.0016334457,
+              "max_drawdown_pct": 18.924652416730222,
+              "closed_trades": 40
+            },
+            "XRPUSDT": {
+              "return_pct": -3.5174339242349584,
+              "final_idr": 1929651.3215153005,
+              "max_drawdown_pct": 33.96717864914001,
+              "closed_trades": 35
+            },
+            "SOLUSDT": {
+              "return_pct": -5.736987858661857,
+              "final_idr": 1885260.2428267628,
+              "max_drawdown_pct": 33.44046636111381,
+              "closed_trades": 45
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": -0.16003271837340366,
+          "positive_cases": 1,
+          "target_hits": 0,
+          "worst_drawdown": 0.35365006633375945,
+          "worst_return": -0.2953460777214896,
+          "closed_trades": 160,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -9.960916282892162,
+              "final_idr": 1800781.6743421569,
+              "max_drawdown_pct": 19.822146387123045,
+              "closed_trades": 26
+            },
+            "ETHUSDT": {
+              "return_pct": 1.3740118122776979,
+              "final_idr": 2027480.2362455537,
+              "max_drawdown_pct": 23.204429110886803,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": -17.578227326249962,
+              "final_idr": 1648435.4534750006,
+              "max_drawdown_pct": 22.533339612250444,
+              "closed_trades": 40
+            },
+            "XRPUSDT": {
+              "return_pct": -24.316619617688453,
+              "final_idr": 1513667.6076462308,
+              "max_drawdown_pct": 35.36500663337595,
+              "closed_trades": 24
+            },
+            "SOLUSDT": {
+              "return_pct": -29.53460777214896,
+              "final_idr": 1409307.8445570208,
+              "max_drawdown_pct": 35.11350453532318,
+              "closed_trades": 32
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": false,
+        "positive_stress_each_year": false,
+        "positive_coin_years": false,
+        "enough_trades": true,
+        "drawdown": false,
+        "worst_loss": false
+      },
+      "eligible_for_prospective_paper_review": false,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    },
+    {
+      "candidate": "momentum-027-larger",
+      "profile": "larger",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.15834759355238756,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.19520173079671477,
+          "worst_return": -0.045706992966922044,
+          "closed_trades": 259,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 24.570586057225373,
+              "final_idr": 2491411.7211445076,
+              "max_drawdown_pct": 14.954650970087954,
+              "closed_trades": 52
+            },
+            "ETHUSDT": {
+              "return_pct": 29.984616740542403,
+              "final_idr": 2599692.334810848,
+              "max_drawdown_pct": 16.043225546496217,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": 20.54191438229156,
+              "final_idr": 2410838.2876458312,
+              "max_drawdown_pct": 19.520173079671476,
+              "closed_trades": 54
+            },
+            "XRPUSDT": {
+              "return_pct": -4.570699296692204,
+              "final_idr": 1908586.0140661558,
+              "max_drawdown_pct": 13.091403348010964,
+              "closed_trades": 40
+            },
+            "SOLUSDT": {
+              "return_pct": 8.647378892826652,
+              "final_idr": 2172947.577856533,
+              "max_drawdown_pct": 15.611758988051625,
+              "closed_trades": 75
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.08084713825126966,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.23167781920189184,
+          "worst_return": -0.09371276406404538,
+          "closed_trades": 259,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 14.003622305941189,
+              "final_idr": 2280072.4461188237,
+              "max_drawdown_pct": 16.624187266092434,
+              "closed_trades": 52
+            },
+            "ETHUSDT": {
+              "return_pct": 22.605449134292233,
+              "final_idr": 2452108.9826858444,
+              "max_drawdown_pct": 17.878438935276762,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": 11.422075013500832,
+              "final_idr": 2228441.5002700165,
+              "max_drawdown_pct": 23.167781920189185,
+              "closed_trades": 54
+            },
+            "XRPUSDT": {
+              "return_pct": -9.371276406404538,
+              "final_idr": 1812574.4718719092,
+              "max_drawdown_pct": 17.00100104890127,
+              "closed_trades": 40
+            },
+            "SOLUSDT": {
+              "return_pct": 1.7636990783051143,
+              "final_idr": 2035273.9815661022,
+              "max_drawdown_pct": 19.987972814663795,
+              "closed_trades": 75
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.08172362085546811,
+          "positive_cases": 2,
+          "target_hits": 0,
+          "worst_drawdown": 0.2648142609164285,
+          "worst_return": -0.07378519518003468,
+          "closed_trades": 284,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -2.6441588288250717,
+              "final_idr": 1947116.8234234985,
+              "max_drawdown_pct": 14.813986629781809,
+              "closed_trades": 39
+            },
+            "ETHUSDT": {
+              "return_pct": 31.147155017089823,
+              "final_idr": 2622943.1003417964,
+              "max_drawdown_pct": 16.15905276475235,
+              "closed_trades": 54
+            },
+            "BNBUSDT": {
+              "return_pct": -7.378519518003468,
+              "final_idr": 1852429.6096399305,
+              "max_drawdown_pct": 26.481426091642852,
+              "closed_trades": 75
+            },
+            "XRPUSDT": {
+              "return_pct": 26.251084835813575,
+              "final_idr": 2525021.6967162713,
+              "max_drawdown_pct": 20.67335383504661,
+              "closed_trades": 54
+            },
+            "SOLUSDT": {
+              "return_pct": -6.5137510783408015,
+              "final_idr": 1869724.9784331839,
+              "max_drawdown_pct": 18.536589641831476,
+              "closed_trades": 62
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": -0.017251598443161507,
+          "positive_cases": 2,
+          "target_hits": 0,
+          "worst_drawdown": 0.30172041063945804,
+          "worst_return": -0.28321308451143223,
+          "closed_trades": 253,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -9.180599634120245,
+              "final_idr": 1816388.007317595,
+              "max_drawdown_pct": 20.31150614348561,
+              "closed_trades": 39
+            },
+            "ETHUSDT": {
+              "return_pct": 22.303370281262257,
+              "final_idr": 2446067.405625245,
+              "max_drawdown_pct": 17.903511931741324,
+              "closed_trades": 54
+            },
+            "BNBUSDT": {
+              "return_pct": -28.321308451143224,
+              "final_idr": 1433573.8309771356,
+              "max_drawdown_pct": 30.172041063945805,
+              "closed_trades": 44
+            },
+            "XRPUSDT": {
+              "return_pct": 18.952572370061628,
+              "final_idr": 2379051.447401232,
+              "max_drawdown_pct": 23.146863673785653,
+              "closed_trades": 54
+            },
+            "SOLUSDT": {
+              "return_pct": -12.37983378764117,
+              "final_idr": 1752403.3242471765,
+              "max_drawdown_pct": 22.99386712422955,
+              "closed_trades": 62
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": -0.04866670042679484,
+          "positive_cases": 2,
+          "target_hits": 0,
+          "worst_drawdown": 0.22594083231475037,
+          "worst_return": -0.09558620973430287,
+          "closed_trades": 231,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -9.558620973430287,
+              "final_idr": 1808827.580531394,
+              "max_drawdown_pct": 16.34130874058815,
+              "closed_trades": 38
+            },
+            "ETHUSDT": {
+              "return_pct": -7.5901155905645945,
+              "final_idr": 1848197.688188708,
+              "max_drawdown_pct": 15.217495509816773,
+              "closed_trades": 56
+            },
+            "BNBUSDT": {
+              "return_pct": 0.18907236162661878,
+              "final_idr": 2003781.4472325323,
+              "max_drawdown_pct": 11.046938063880114,
+              "closed_trades": 41
+            },
+            "XRPUSDT": {
+              "return_pct": -7.815022578550678,
+              "final_idr": 1843699.5484289862,
+              "max_drawdown_pct": 22.594083231475036,
+              "closed_trades": 47
+            },
+            "SOLUSDT": {
+              "return_pct": 0.44133656752152195,
+              "final_idr": 2008826.73135043,
+              "max_drawdown_pct": 20.820452305009734,
+              "closed_trades": 49
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": -0.11570213284262235,
+          "positive_cases": 0,
+          "target_hits": 0,
+          "worst_drawdown": 0.25898425564834515,
+          "worst_return": -0.1576352927498974,
+          "closed_trades": 231,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -15.76352927498974,
+              "final_idr": 1684729.414500205,
+              "max_drawdown_pct": 20.304243150707453,
+              "closed_trades": 38
+            },
+            "ETHUSDT": {
+              "return_pct": -15.259442195258066,
+              "final_idr": 1694811.1560948386,
+              "max_drawdown_pct": 19.733393784284157,
+              "closed_trades": 56
+            },
+            "BNBUSDT": {
+              "return_pct": -7.089082241873667,
+              "final_idr": 1858218.3551625265,
+              "max_drawdown_pct": 13.808323823938762,
+              "closed_trades": 41
+            },
+            "XRPUSDT": {
+              "return_pct": -13.777600429811987,
+              "final_idr": 1724447.9914037604,
+              "max_drawdown_pct": 25.898425564834515,
+              "closed_trades": 47
+            },
+            "SOLUSDT": {
+              "return_pct": -5.96141227937771,
+              "final_idr": 1880771.7544124457,
+              "max_drawdown_pct": 24.272316279213833,
+              "closed_trades": 49
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": false,
+        "positive_stress_each_year": false,
+        "positive_coin_years": false,
+        "enough_trades": true,
+        "drawdown": false,
+        "worst_loss": false
+      },
+      "eligible_for_prospective_paper_review": false,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    },
+    {
+      "candidate": "momentum-027-aggressive",
+      "profile": "aggressive",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "4h",
+        "trend_period": 50,
+        "entry_period": 84,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.20830990047923842,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.28857014594958796,
+          "worst_return": -0.08846728037950646,
+          "closed_trades": 259,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 27.243417749960773,
+              "final_idr": 2544868.3549992153,
+              "max_drawdown_pct": 20.6775570179314,
+              "closed_trades": 52
+            },
+            "ETHUSDT": {
+              "return_pct": 45.43569064167994,
+              "final_idr": 2908713.8128335983,
+              "max_drawdown_pct": 24.014952994669496,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": 28.190984611845813,
+              "final_idr": 2563819.692236916,
+              "max_drawdown_pct": 28.857014594958798,
+              "closed_trades": 54
+            },
+            "XRPUSDT": {
+              "return_pct": -8.846728037950646,
+              "final_idr": 1823065.439240987,
+              "max_drawdown_pct": 20.98083825703654,
+              "closed_trades": 40
+            },
+            "SOLUSDT": {
+              "return_pct": 12.131585274083335,
+              "final_idr": 2242631.7054816666,
+              "max_drawdown_pct": 24.908033864465125,
+              "closed_trades": 75
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.08717937909378481,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.3368636836108397,
+          "worst_return": -0.15809789212769332,
+          "closed_trades": 259,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 12.07660002375337,
+              "final_idr": 2241532.000475067,
+              "max_drawdown_pct": 22.880721944608084,
+              "closed_trades": 52
+            },
+            "ETHUSDT": {
+              "return_pct": 32.9435283448823,
+              "final_idr": 2658870.5668976456,
+              "max_drawdown_pct": 26.635535482914495,
+              "closed_trades": 38
+            },
+            "BNBUSDT": {
+              "return_pct": 13.877623150561668,
+              "final_idr": 2277552.463011233,
+              "max_drawdown_pct": 33.68636836108397,
+              "closed_trades": 54
+            },
+            "XRPUSDT": {
+              "return_pct": -15.809789212769331,
+              "final_idr": 1683804.2157446132,
+              "max_drawdown_pct": 26.86671777355358,
+              "closed_trades": 40
+            },
+            "SOLUSDT": {
+              "return_pct": 0.5017272404644002,
+              "final_idr": 2010034.5448092879,
+              "max_drawdown_pct": 31.335074795163713,
+              "closed_trades": 75
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.0969946018944883,
+          "positive_cases": 2,
+          "target_hits": 1,
+          "worst_drawdown": 0.3518294675696658,
+          "worst_return": -0.32239956364571365,
+          "closed_trades": 246,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -2.418696515124852,
+              "final_idr": 1951626.069697503,
+              "max_drawdown_pct": 21.496696623647413,
+              "closed_trades": 39
+            },
+            "ETHUSDT": {
+              "return_pct": 50.81772095726171,
+              "final_idr": 3016354.419145234,
+              "max_drawdown_pct": 24.097969733872617,
+              "closed_trades": 54
+            },
+            "BNBUSDT": {
+              "return_pct": -32.23995636457136,
+              "final_idr": 1355200.8727085725,
+              "max_drawdown_pct": 35.18294675696658,
+              "closed_trades": 37
+            },
+            "XRPUSDT": {
+              "return_pct": 44.44213993027586,
+              "final_idr": 2888842.798605517,
+              "max_drawdown_pct": 32.09143266427634,
+              "closed_trades": 54
+            },
+            "SOLUSDT": {
+              "return_pct": -12.103907060597209,
+              "final_idr": 1757921.8587880558,
+              "max_drawdown_pct": 29.39533953219487,
+              "closed_trades": 62
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": -0.023399389635351396,
+          "positive_cases": 2,
+          "target_hits": 0,
+          "worst_drawdown": 0.3517814775769149,
+          "worst_return": -0.32292930389172936,
+          "closed_trades": 223,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -11.049845405581893,
+              "final_idr": 1779003.091888362,
+              "max_drawdown_pct": 28.146608114700438,
+              "closed_trades": 39
+            },
+            "ETHUSDT": {
+              "return_pct": 35.02480470363194,
+              "final_idr": 2700496.0940726385,
+              "max_drawdown_pct": 26.44693781733129,
+              "closed_trades": 54
+            },
+            "BNBUSDT": {
+              "return_pct": -32.29293038917294,
+              "final_idr": 1354141.392216541,
+              "max_drawdown_pct": 35.157269128633914,
+              "closed_trades": 31
+            },
+            "XRPUSDT": {
+              "return_pct": 18.951412286587143,
+              "final_idr": 2379028.245731743,
+              "max_drawdown_pct": 35.165943213306726,
+              "closed_trades": 42
+            },
+            "SOLUSDT": {
+              "return_pct": -22.333136013139953,
+              "final_idr": 1553337.2797372008,
+              "max_drawdown_pct": 35.17814775769149,
+              "closed_trades": 57
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": -0.09636971924245234,
+          "positive_cases": 0,
+          "target_hits": 0,
+          "worst_drawdown": 0.32335814084031134,
+          "worst_return": -0.14859421940090223,
+          "closed_trades": 231,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -12.469000113785667,
+              "final_idr": 1750619.9977242865,
+              "max_drawdown_pct": 20.704588629587057,
+              "closed_trades": 38
+            },
+            "ETHUSDT": {
+              "return_pct": -14.31661109063228,
+              "final_idr": 1713667.7781873543,
+              "max_drawdown_pct": 24.542399749796896,
+              "closed_trades": 56
+            },
+            "BNBUSDT": {
+              "return_pct": -3.007449175386756,
+              "final_idr": 1939851.0164922648,
+              "max_drawdown_pct": 15.023528054836769,
+              "closed_trades": 41
+            },
+            "XRPUSDT": {
+              "return_pct": -14.859421940090222,
+              "final_idr": 1702811.5611981954,
+              "max_drawdown_pct": 32.335814084031135,
+              "closed_trades": 47
+            },
+            "SOLUSDT": {
+              "return_pct": -3.5323773013312465,
+              "final_idr": 1929352.453973375,
+              "max_drawdown_pct": 31.274751771123473,
+              "closed_trades": 49
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": -0.23324330506924856,
+          "positive_cases": 0,
+          "target_hits": 0,
+          "worst_drawdown": 0.352134245937923,
+          "worst_return": -0.305431890199495,
+          "closed_trades": 198,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -20.20055152092607,
+              "final_idr": 1595988.9695814787,
+              "max_drawdown_pct": 25.58333475300288,
+              "closed_trades": 38
+            },
+            "ETHUSDT": {
+              "return_pct": -24.71777216704766,
+              "final_idr": 1505644.5566590468,
+              "max_drawdown_pct": 30.80514684416391,
+              "closed_trades": 56
+            },
+            "BNBUSDT": {
+              "return_pct": -12.209593121393336,
+              "final_idr": 1755808.1375721332,
+              "max_drawdown_pct": 18.505549705789846,
+              "closed_trades": 41
+            },
+            "XRPUSDT": {
+              "return_pct": -30.5431890199495,
+              "final_idr": 1389136.21960101,
+              "max_drawdown_pct": 35.2134245937923,
+              "closed_trades": 31
+            },
+            "SOLUSDT": {
+              "return_pct": -28.950546705307712,
+              "final_idr": 1420989.0658938459,
+              "max_drawdown_pct": 35.14019028794976,
+              "closed_trades": 32
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": false,
+        "positive_stress_each_year": false,
+        "positive_coin_years": false,
+        "enough_trades": true,
+        "drawdown": false,
+        "worst_loss": false
+      },
+      "eligible_for_prospective_paper_review": false,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    },
+    {
+      "candidate": "momentum-037-larger",
+      "profile": "larger",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.04594876721373984,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.10419221147494902,
+          "worst_return": -0.07222870341154519,
+          "closed_trades": 105,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 3.0221084470059,
+              "final_idr": 2060442.168940118,
+              "max_drawdown_pct": 9.467253678968651,
+              "closed_trades": 22
+            },
+            "ETHUSDT": {
+              "return_pct": 3.9104012647035002,
+              "final_idr": 2078208.02529407,
+              "max_drawdown_pct": 9.042243124806136,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 16.117146042586427,
+              "final_idr": 2322342.9208517284,
+              "max_drawdown_pct": 10.312919729287637,
+              "closed_trades": 25
+            },
+            "XRPUSDT": {
+              "return_pct": -7.222870341154519,
+              "final_idr": 1855542.5931769095,
+              "max_drawdown_pct": 10.419221147494902,
+              "closed_trades": 22
+            },
+            "SOLUSDT": {
+              "return_pct": 7.14759819372861,
+              "final_idr": 2142951.9638745724,
+              "max_drawdown_pct": 7.551342240095985,
+              "closed_trades": 19
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.03355849835771933,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.11239436255633832,
+          "worst_return": -0.08215437105627266,
+          "closed_trades": 105,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.5541850234205956,
+              "final_idr": 2031083.7004684121,
+              "max_drawdown_pct": 10.16063345197363,
+              "closed_trades": 22
+            },
+            "ETHUSDT": {
+              "return_pct": 2.9177190847108125,
+              "final_idr": 2058354.381694216,
+              "max_drawdown_pct": 9.662913321665021,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 14.221019098476063,
+              "final_idr": 2284420.381969521,
+              "max_drawdown_pct": 11.239436255633832,
+              "closed_trades": 25
+            },
+            "XRPUSDT": {
+              "return_pct": -8.215437105627267,
+              "final_idr": 1835691.2578874545,
+              "max_drawdown_pct": 11.05589142880575,
+              "closed_trades": 22
+            },
+            "SOLUSDT": {
+              "return_pct": 6.301763077879463,
+              "final_idr": 2126035.2615575893,
+              "max_drawdown_pct": 7.7225250799862195,
+              "closed_trades": 19
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.014130301579452054,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.09533905773813445,
+          "worst_return": -0.014985103678624934,
+          "closed_trades": 104,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.3635579077820426,
+              "final_idr": 2027271.1581556406,
+              "max_drawdown_pct": 5.719507525574096,
+              "closed_trades": 18
+            },
+            "ETHUSDT": {
+              "return_pct": -0.417894465739177,
+              "final_idr": 1991642.1106852165,
+              "max_drawdown_pct": 8.054747890994296,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 7.0475102619179,
+              "final_idr": 2140950.205238358,
+              "max_drawdown_pct": 8.21456470846685,
+              "closed_trades": 31
+            },
+            "XRPUSDT": {
+              "return_pct": -1.4985103678624934,
+              "final_idr": 1970029.79264275,
+              "max_drawdown_pct": 9.533905773813444,
+              "closed_trades": 23
+            },
+            "SOLUSDT": {
+              "return_pct": 0.5704874536277549,
+              "final_idr": 2011409.749072555,
+              "max_drawdown_pct": 6.515132892545871,
+              "closed_trades": 15
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": 0.0017708244504744952,
+          "positive_cases": 1,
+          "target_hits": 0,
+          "worst_drawdown": 0.09899864195054361,
+          "worst_return": -0.023888746575081554,
+          "closed_trades": 104,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -0.24619751541006263,
+              "final_idr": 1995076.0496917986,
+              "max_drawdown_pct": 6.684622962959905,
+              "closed_trades": 18
+            },
+            "ETHUSDT": {
+              "return_pct": -1.2770907316897895,
+              "final_idr": 1974458.1853662042,
+              "max_drawdown_pct": 8.384719388124632,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 4.901262592115319,
+              "final_idr": 2098025.2518423065,
+              "max_drawdown_pct": 9.39903556322639,
+              "closed_trades": 31
+            },
+            "XRPUSDT": {
+              "return_pct": -2.3888746575081554,
+              "final_idr": 1952222.5068498368,
+              "max_drawdown_pct": 9.899864195054361,
+              "closed_trades": 23
+            },
+            "SOLUSDT": {
+              "return_pct": -0.10368746227006342,
+              "final_idr": 1997926.2507545988,
+              "max_drawdown_pct": 6.586981840902387,
+              "closed_trades": 15
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": 0.03401518391982068,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.10830221379274345,
+          "worst_return": -0.014638170517968452,
+          "closed_trades": 73,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 7.064604854228818,
+              "final_idr": 2141292.0970845763,
+              "max_drawdown_pct": 4.922080143920773,
+              "closed_trades": 12
+            },
+            "ETHUSDT": {
+              "return_pct": 2.849674134938418,
+              "final_idr": 2056993.4826987681,
+              "max_drawdown_pct": 7.381465257242454,
+              "closed_trades": 19
+            },
+            "BNBUSDT": {
+              "return_pct": -1.4638170517968452,
+              "final_idr": 1970723.658964063,
+              "max_drawdown_pct": 10.830221379274345,
+              "closed_trades": 17
+            },
+            "XRPUSDT": {
+              "return_pct": 3.4346062166633384,
+              "final_idr": 2068692.1243332666,
+              "max_drawdown_pct": 9.259686802118903,
+              "closed_trades": 11
+            },
+            "SOLUSDT": {
+              "return_pct": 5.122523805876611,
+              "final_idr": 2102450.4761175322,
+              "max_drawdown_pct": 5.530546890716822,
+              "closed_trades": 14
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": 0.022884739849725656,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.11724126688823004,
+          "worst_return": -0.028357317600131493,
+          "closed_trades": 73,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 5.851401561476721,
+              "final_idr": 2117028.031229534,
+              "max_drawdown_pct": 5.670065599656059,
+              "closed_trades": 12
+            },
+            "ETHUSDT": {
+              "return_pct": 1.4675726799509015,
+              "final_idr": 2029351.453599018,
+              "max_drawdown_pct": 8.245265250602309,
+              "closed_trades": 19
+            },
+            "BNBUSDT": {
+              "return_pct": -2.8357317600131493,
+              "final_idr": 1943285.364799737,
+              "max_drawdown_pct": 11.724126688823004,
+              "closed_trades": 17
+            },
+            "XRPUSDT": {
+              "return_pct": 2.7628503616809796,
+              "final_idr": 2055257.0072336195,
+              "max_drawdown_pct": 9.668992735744377,
+              "closed_trades": 11
+            },
+            "SOLUSDT": {
+              "return_pct": 4.1962770817673745,
+              "final_idr": 2083925.5416353473,
+              "max_drawdown_pct": 6.009346838376066,
+              "closed_trades": 14
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": true,
+        "positive_stress_each_year": true,
+        "positive_coin_years": true,
+        "enough_trades": true,
+        "drawdown": true,
+        "worst_loss": true
+      },
+      "eligible_for_prospective_paper_review": true,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    },
+    {
+      "candidate": "momentum-037-aggressive",
+      "profile": "aggressive",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.07394146817460019,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.16810251527482392,
+          "worst_return": -0.11898031860288172,
+          "closed_trades": 105,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 4.437566377833102,
+              "final_idr": 2088751.3275566618,
+              "max_drawdown_pct": 14.991367615887368,
+              "closed_trades": 22
+            },
+            "ETHUSDT": {
+              "return_pct": 5.844157768217828,
+              "final_idr": 2116883.1553643565,
+              "max_drawdown_pct": 14.193670848609344,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 26.90276955721189,
+              "final_idr": 2538055.391144238,
+              "max_drawdown_pct": 16.351789791118946,
+              "closed_trades": 25
+            },
+            "XRPUSDT": {
+              "return_pct": -11.898031860288171,
+              "final_idr": 1762039.3627942365,
+              "max_drawdown_pct": 16.810251527482393,
+              "closed_trades": 22
+            },
+            "SOLUSDT": {
+              "return_pct": 11.684272244325445,
+              "final_idr": 2233685.444886509,
+              "max_drawdown_pct": 11.93451923081154,
+              "closed_trades": 19
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.05249491580507175,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.17880299495783894,
+          "worst_return": -0.13474570325946977,
+          "closed_trades": 105,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.712646413263852,
+              "final_idr": 2034252.9282652768,
+              "max_drawdown_pct": 16.046548651825713,
+              "closed_trades": 22
+            },
+            "ETHUSDT": {
+              "return_pct": 4.073433666920678,
+              "final_idr": 2081468.6733384132,
+              "max_drawdown_pct": 15.17435899563678,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 23.644957060673555,
+              "final_idr": 2472899.141213471,
+              "max_drawdown_pct": 17.880299495783895,
+              "closed_trades": 25
+            },
+            "XRPUSDT": {
+              "return_pct": -13.474570325946978,
+              "final_idr": 1730508.5934810604,
+              "max_drawdown_pct": 17.807421618950116,
+              "closed_trades": 22
+            },
+            "SOLUSDT": {
+              "return_pct": 10.290991087624768,
+              "final_idr": 2205819.821752495,
+              "max_drawdown_pct": 12.20567500452002,
+              "closed_trades": 19
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.020753339270744277,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.1509953441461237,
+          "worst_return": -0.029204862507039353,
+          "closed_trades": 104,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 2.0454763277566235,
+              "final_idr": 2040909.5265551324,
+              "max_drawdown_pct": 9.351404512274453,
+              "closed_trades": 18
+            },
+            "ETHUSDT": {
+              "return_pct": -1.022489558174322,
+              "final_idr": 1979550.2088365133,
+              "max_drawdown_pct": 13.007040562061922,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 11.542778906266093,
+              "final_idr": 2230855.578125322,
+              "max_drawdown_pct": 13.388491699988512,
+              "closed_trades": 31
+            },
+            "XRPUSDT": {
+              "return_pct": -2.9204862507039353,
+              "final_idr": 1941590.2749859213,
+              "max_drawdown_pct": 15.09953441461237,
+              "closed_trades": 23
+            },
+            "SOLUSDT": {
+              "return_pct": 0.7313902102276781,
+              "final_idr": 2014627.8042045536,
+              "max_drawdown_pct": 10.529906804699397,
+              "closed_trades": 15
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": -0.0008261007817464749,
+          "positive_cases": 1,
+          "target_hits": 0,
+          "worst_drawdown": 0.15646824499973816,
+          "worst_return": -0.04519037522007163,
+          "closed_trades": 104,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": -0.7206416008099237,
+              "final_idr": 1985587.1679838013,
+              "max_drawdown_pct": 10.961872184900349,
+              "closed_trades": 18
+            },
+            "ETHUSDT": {
+              "return_pct": -2.527899284952051,
+              "final_idr": 1949442.014300959,
+              "max_drawdown_pct": 13.553250984565354,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 7.747326102832175,
+              "final_idr": 2154946.5220566434,
+              "max_drawdown_pct": 15.24994100785772,
+              "closed_trades": 31
+            },
+            "XRPUSDT": {
+              "return_pct": -4.519037522007164,
+              "final_idr": 1909619.2495598567,
+              "max_drawdown_pct": 15.646824499973816,
+              "closed_trades": 23
+            },
+            "SOLUSDT": {
+              "return_pct": -0.3927980859362745,
+              "final_idr": 1992144.0382812743,
+              "max_drawdown_pct": 10.649726088925627,
+              "closed_trades": 15
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": 0.05206487535676714,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.17544083455119627,
+          "worst_return": -0.029369703427185367,
+          "closed_trades": 73,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 11.527718323817627,
+              "final_idr": 2230554.3664763523,
+              "max_drawdown_pct": 8.069637291571137,
+              "closed_trades": 12
+            },
+            "ETHUSDT": {
+              "return_pct": 4.262417640172322,
+              "final_idr": 2085248.3528034461,
+              "max_drawdown_pct": 12.037478854520552,
+              "closed_trades": 19
+            },
+            "BNBUSDT": {
+              "return_pct": -2.9369703427185367,
+              "final_idr": 1941260.5931456292,
+              "max_drawdown_pct": 17.544083455119626,
+              "closed_trades": 17
+            },
+            "XRPUSDT": {
+              "return_pct": 4.945474624660728,
+              "final_idr": 2098909.4924932146,
+              "max_drawdown_pct": 14.950694732841827,
+              "closed_trades": 11
+            },
+            "SOLUSDT": {
+              "return_pct": 8.233797432451428,
+              "final_idr": 2164675.9486490283,
+              "max_drawdown_pct": 8.977291453939749,
+              "closed_trades": 14
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": 0.033311028512129456,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.18915633721442765,
+          "worst_return": -0.05369401041008737,
+          "closed_trades": 73,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 9.599068269364652,
+              "final_idr": 2191981.3653872926,
+              "max_drawdown_pct": 9.32414527962997,
+              "closed_trades": 12
+            },
+            "ETHUSDT": {
+              "return_pct": 1.9984853026058236,
+              "final_idr": 2039969.7060521166,
+              "max_drawdown_pct": 13.379655637749641,
+              "closed_trades": 19
+            },
+            "BNBUSDT": {
+              "return_pct": -5.369401041008737,
+              "final_idr": 1892611.9791798252,
+              "max_drawdown_pct": 18.915633721442767,
+              "closed_trades": 17
+            },
+            "XRPUSDT": {
+              "return_pct": 3.7879218858495767,
+              "final_idr": 2075758.4377169912,
+              "max_drawdown_pct": 15.581579615715322,
+              "closed_trades": 11
+            },
+            "SOLUSDT": {
+              "return_pct": 6.639439839253414,
+              "final_idr": 2132788.796785068,
+              "max_drawdown_pct": 9.84936853643799,
+              "closed_trades": 14
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": true,
+        "positive_stress_each_year": false,
+        "positive_coin_years": true,
+        "enough_trades": true,
+        "drawdown": true,
+        "worst_loss": true
+      },
+      "eligible_for_prospective_paper_review": false,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    },
+    {
+      "candidate": "momentum-041-larger",
+      "profile": "larger",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.0343024576375633,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.11441265305192447,
+          "worst_return": -0.11189822929366289,
+          "closed_trades": 99,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 5.701266445068653,
+              "final_idr": 2114025.328901373,
+              "max_drawdown_pct": 6.170485303304584,
+              "closed_trades": 18
+            },
+            "ETHUSDT": {
+              "return_pct": -3.9370595861247137,
+              "final_idr": 1921258.8082775057,
+              "max_drawdown_pct": 11.376124382807951,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 16.418978088154333,
+              "final_idr": 2328379.5617630864,
+              "max_drawdown_pct": 9.188077709172475,
+              "closed_trades": 27
+            },
+            "XRPUSDT": {
+              "return_pct": -11.189822929366288,
+              "final_idr": 1776203.5414126741,
+              "max_drawdown_pct": 11.441265305192447,
+              "closed_trades": 25
+            },
+            "SOLUSDT": {
+              "return_pct": 10.157866801049664,
+              "final_idr": 2203157.336020993,
+              "max_drawdown_pct": 6.762654565524579,
+              "closed_trades": 12
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.02216260873752356,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.125302532085358,
+          "worst_return": -0.12308924997653992,
+          "closed_trades": 99,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 4.485673485905717,
+              "final_idr": 2089713.4697181142,
+              "max_drawdown_pct": 6.554829134650059,
+              "closed_trades": 18
+            },
+            "ETHUSDT": {
+              "return_pct": -5.012996500511857,
+              "final_idr": 1899740.0699897627,
+              "max_drawdown_pct": 11.872266962559577,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 14.329255744942127,
+              "final_idr": 2286585.1148988428,
+              "max_drawdown_pct": 9.962441770831031,
+              "closed_trades": 27
+            },
+            "XRPUSDT": {
+              "return_pct": -12.308924997653993,
+              "final_idr": 1753821.5000469203,
+              "max_drawdown_pct": 12.530253208535798,
+              "closed_trades": 25
+            },
+            "SOLUSDT": {
+              "return_pct": 9.588296636079786,
+              "final_idr": 2191765.9327215957,
+              "max_drawdown_pct": 7.092063849532525,
+              "closed_trades": 12
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.02781358752218712,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.10125097823577467,
+          "worst_return": -0.0459910137936258,
+          "closed_trades": 76,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 2.5478820105707456,
+              "final_idr": 2050957.640211415,
+              "max_drawdown_pct": 8.246129095680894,
+              "closed_trades": 14
+            },
+            "ETHUSDT": {
+              "return_pct": 9.864575104534023,
+              "final_idr": 2197291.5020906804,
+              "max_drawdown_pct": 5.385112662672402,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": 9.592010094953206,
+              "final_idr": 2191840.201899064,
+              "max_drawdown_pct": 7.951066893289845,
+              "closed_trades": 21
+            },
+            "XRPUSDT": {
+              "return_pct": -4.59910137936258,
+              "final_idr": 1908017.9724127483,
+              "max_drawdown_pct": 10.125097823577466,
+              "closed_trades": 18
+            },
+            "SOLUSDT": {
+              "return_pct": -3.498572069601835,
+              "final_idr": 1930028.5586079631,
+              "max_drawdown_pct": 7.999126313789738,
+              "closed_trades": 13
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": 0.018658198479898358,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.10472532617152201,
+          "worst_return": -0.054075774354663375,
+          "closed_trades": 76,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.3793275172485409,
+              "final_idr": 2027586.5503449705,
+              "max_drawdown_pct": 8.675405182625973,
+              "closed_trades": 14
+            },
+            "ETHUSDT": {
+              "return_pct": 9.382299951873518,
+              "final_idr": 2187645.99903747,
+              "max_drawdown_pct": 5.5639807956207505,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": 8.027363805279663,
+              "final_idr": 2160547.2761055934,
+              "max_drawdown_pct": 9.04930302074676,
+              "closed_trades": 21
+            },
+            "XRPUSDT": {
+              "return_pct": -5.4075774354663375,
+              "final_idr": 1891848.451290673,
+              "max_drawdown_pct": 10.4725326171522,
+              "closed_trades": 18
+            },
+            "SOLUSDT": {
+              "return_pct": -4.052314598986206,
+              "final_idr": 1918953.7080202757,
+              "max_drawdown_pct": 8.297451460876495,
+              "closed_trades": 13
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": 0.01726100842987439,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.10753415640945224,
+          "worst_return": -0.038246619812581706,
+          "closed_trades": 64,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 4.832464819613591,
+              "final_idr": 2096649.2963922715,
+              "max_drawdown_pct": 6.6287043333305915,
+              "closed_trades": 11
+            },
+            "ETHUSDT": {
+              "return_pct": 4.36313127044079,
+              "final_idr": 2087262.625408816,
+              "max_drawdown_pct": 7.006867621069138,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": -1.7981577567402929,
+              "final_idr": 1964036.844865194,
+              "max_drawdown_pct": 10.753415640945224,
+              "closed_trades": 15
+            },
+            "XRPUSDT": {
+              "return_pct": -3.8246619812581706,
+              "final_idr": 1923506.7603748366,
+              "max_drawdown_pct": 8.392258851516026,
+              "closed_trades": 14
+            },
+            "SOLUSDT": {
+              "return_pct": 5.057727862881278,
+              "final_idr": 2101154.5572576253,
+              "max_drawdown_pct": 7.088491726158431,
+              "closed_trades": 14
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": 0.00758161559662347,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.11579149008079434,
+          "worst_return": -0.04651759473792849,
+          "closed_trades": 64,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 3.680356247712635,
+              "final_idr": 2073607.1249542527,
+              "max_drawdown_pct": 7.458104709417395,
+              "closed_trades": 11
+            },
+            "ETHUSDT": {
+              "return_pct": 3.6431409660351965,
+              "final_idr": 2072862.819320704,
+              "max_drawdown_pct": 7.352145745652224,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": -3.0207748401867573,
+              "final_idr": 1939584.5031962646,
+              "max_drawdown_pct": 11.579149008079433,
+              "closed_trades": 15
+            },
+            "XRPUSDT": {
+              "return_pct": -4.651759473792849,
+              "final_idr": 1906964.8105241428,
+              "max_drawdown_pct": 8.944115440160228,
+              "closed_trades": 14
+            },
+            "SOLUSDT": {
+              "return_pct": 4.13984489854351,
+              "final_idr": 2082796.8979708701,
+              "max_drawdown_pct": 7.447090850353303,
+              "closed_trades": 14
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": true,
+        "positive_stress_each_year": true,
+        "positive_coin_years": false,
+        "enough_trades": true,
+        "drawdown": true,
+        "worst_loss": true
+      },
+      "eligible_for_prospective_paper_review": false,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    },
+    {
+      "candidate": "momentum-041-aggressive",
+      "profile": "aggressive",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 30,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.057535563312006086,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.18431299620743288,
+          "worst_return": -0.18039574877243103,
+          "closed_trades": 99,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 9.091065713851298,
+              "final_idr": 2181821.314277026,
+              "max_drawdown_pct": 10.040012130285007,
+              "closed_trades": 18
+            },
+            "ETHUSDT": {
+              "return_pct": -6.990186767098305,
+              "final_idr": 1860196.2646580338,
+              "max_drawdown_pct": 17.993927688408633,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 27.51706994838987,
+              "final_idr": 2550341.398967797,
+              "max_drawdown_pct": 14.859498959270608,
+              "closed_trades": 27
+            },
+            "XRPUSDT": {
+              "return_pct": -18.039574877243105,
+              "final_idr": 1639208.502455138,
+              "max_drawdown_pct": 18.43129962074329,
+              "closed_trades": 25
+            },
+            "SOLUSDT": {
+              "return_pct": 17.189407638103283,
+              "final_idr": 2343788.1527620656,
+              "max_drawdown_pct": 10.84935224991422,
+              "closed_trades": 12
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.03693593716839392,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.2010830641658592,
+          "worst_return": -0.1976583702519188,
+          "closed_trades": 99,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 6.787645257253994,
+              "final_idr": 2135752.9051450794,
+              "max_drawdown_pct": 10.779157639436363,
+              "closed_trades": 18
+            },
+            "ETHUSDT": {
+              "return_pct": -8.638447345540856,
+              "final_idr": 1827231.0530891828,
+              "max_drawdown_pct": 18.77951184519479,
+              "closed_trades": 17
+            },
+            "BNBUSDT": {
+              "return_pct": 23.913703732702608,
+              "final_idr": 2478274.074654052,
+              "max_drawdown_pct": 16.05553775511785,
+              "closed_trades": 27
+            },
+            "XRPUSDT": {
+              "return_pct": -19.76583702519188,
+              "final_idr": 1604683.2594961622,
+              "max_drawdown_pct": 20.10830641658592,
+              "closed_trades": 25
+            },
+            "SOLUSDT": {
+              "return_pct": 16.170903964973093,
+              "final_idr": 2323418.0792994616,
+              "max_drawdown_pct": 11.336221767946645,
+              "closed_trades": 12
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.045081826589684404,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.16276186238527363,
+          "worst_return": -0.08042322799832657,
+          "closed_trades": 76,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 4.019587101398292,
+              "final_idr": 2080391.7420279658,
+              "max_drawdown_pct": 13.538783344183184,
+              "closed_trades": 14
+            },
+            "ETHUSDT": {
+              "return_pct": 16.317001540268407,
+              "final_idr": 2326340.030805368,
+              "max_drawdown_pct": 8.22867940683509,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": 16.10262729423242,
+              "final_idr": 2322052.545884648,
+              "max_drawdown_pct": 13.03708439430886,
+              "closed_trades": 21
+            },
+            "XRPUSDT": {
+              "return_pct": -8.042322799832657,
+              "final_idr": 1839153.5440033467,
+              "max_drawdown_pct": 16.276186238527362,
+              "closed_trades": 18
+            },
+            "SOLUSDT": {
+              "return_pct": -5.855979841224257,
+              "final_idr": 1882880.403175515,
+              "max_drawdown_pct": 12.911705553775713,
+              "closed_trades": 13
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": 0.028867897971129586,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.16831903697221123,
+          "worst_return": -0.09326349488877261,
+          "closed_trades": 76,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 2.1686407097813554,
+              "final_idr": 2043372.814195627,
+              "max_drawdown_pct": 14.14186613147034,
+              "closed_trades": 14
+            },
+            "ETHUSDT": {
+              "return_pct": 15.262266303396888,
+              "final_idr": 2305245.3260679375,
+              "max_drawdown_pct": 8.557071113242062,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": 13.086675916141587,
+              "final_idr": 2261733.5183228315,
+              "max_drawdown_pct": 14.788827384938482,
+              "closed_trades": 21
+            },
+            "XRPUSDT": {
+              "return_pct": -9.326349488877261,
+              "final_idr": 1813473.0102224546,
+              "max_drawdown_pct": 16.831903697221122,
+              "closed_trades": 18
+            },
+            "SOLUSDT": {
+              "return_pct": -6.757284454877777,
+              "final_idr": 1864854.3109024444,
+              "max_drawdown_pct": 13.418759206682182,
+              "closed_trades": 13
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": 0.025286645384588448,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.17457946589465,
+          "worst_return": -0.06485046118627724,
+          "closed_trades": 64,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 7.599942115063518,
+              "final_idr": 2151998.84230127,
+              "max_drawdown_pct": 10.859236214678978,
+              "closed_trades": 11
+            },
+            "ETHUSDT": {
+              "return_pct": 6.861245697778551,
+              "final_idr": 2137224.913955571,
+              "max_drawdown_pct": 11.46045945160222,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": -3.452006264453744,
+              "final_idr": 1930959.874710925,
+              "max_drawdown_pct": 17.457946589465003,
+              "closed_trades": 15
+            },
+            "XRPUSDT": {
+              "return_pct": -6.485046118627724,
+              "final_idr": 1870299.0776274453,
+              "max_drawdown_pct": 13.58333737264764,
+              "closed_trades": 14
+            },
+            "SOLUSDT": {
+              "return_pct": 8.119187262533622,
+              "final_idr": 2162383.7452506726,
+              "max_drawdown_pct": 11.491054238332827,
+              "closed_trades": 14
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": 0.008767199685280636,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.1870179612528069,
+          "worst_return": -0.0779670534578224,
+          "closed_trades": 64,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 5.599003794720758,
+              "final_idr": 2111980.075894415,
+              "max_drawdown_pct": 12.21141342130306,
+              "closed_trades": 11
+            },
+            "ETHUSDT": {
+              "return_pct": 5.656351615648081,
+              "final_idr": 2113127.0323129613,
+              "max_drawdown_pct": 11.98192336221451,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": -5.622233073394012,
+              "final_idr": 1887555.3385321195,
+              "max_drawdown_pct": 18.70179612528069,
+              "closed_trades": 15
+            },
+            "XRPUSDT": {
+              "return_pct": -7.7967053457822395,
+              "final_idr": 1844065.893084355,
+              "max_drawdown_pct": 14.441316627892887,
+              "closed_trades": 14
+            },
+            "SOLUSDT": {
+              "return_pct": 6.54718285144773,
+              "final_idr": 2130943.6570289545,
+              "max_drawdown_pct": 12.067550395643014,
+              "closed_trades": 14
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": true,
+        "positive_stress_each_year": true,
+        "positive_coin_years": false,
+        "enough_trades": true,
+        "drawdown": true,
+        "worst_loss": true
+      },
+      "eligible_for_prospective_paper_review": false,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    },
+    {
+      "candidate": "momentum-039-larger",
+      "profile": "larger",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.05233287848196919,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.08447186190936708,
+          "worst_return": -0.03251723766076131,
+          "closed_trades": 63,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 4.713774243392566,
+              "final_idr": 2094275.484867851,
+              "max_drawdown_pct": 7.9016762943463865,
+              "closed_trades": 13
+            },
+            "ETHUSDT": {
+              "return_pct": 4.575268824741796,
+              "final_idr": 2091505.3764948358,
+              "max_drawdown_pct": 6.467118864513209,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": 14.598390821315622,
+              "final_idr": 2291967.816426312,
+              "max_drawdown_pct": 8.447186190936709,
+              "closed_trades": 16
+            },
+            "XRPUSDT": {
+              "return_pct": -3.251723766076131,
+              "final_idr": 1934965.524678477,
+              "max_drawdown_pct": 6.752817705103274,
+              "closed_trades": 10
+            },
+            "SOLUSDT": {
+              "return_pct": 5.530729117610744,
+              "final_idr": 2110614.5823522145,
+              "max_drawdown_pct": 7.7744011951380125,
+              "closed_trades": 14
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.04392345387828991,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.08892706492068841,
+          "worst_return": -0.037771221070073135,
+          "closed_trades": 63,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 3.619682405311897,
+              "final_idr": 2072393.6481062379,
+              "max_drawdown_pct": 8.22551166505435,
+              "closed_trades": 13
+            },
+            "ETHUSDT": {
+              "return_pct": 3.800270637909131,
+              "final_idr": 2076005.4127581825,
+              "max_drawdown_pct": 6.840288135644319,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": 13.405550376823939,
+              "final_idr": 2268111.007536479,
+              "max_drawdown_pct": 8.892706492068841,
+              "closed_trades": 16
+            },
+            "XRPUSDT": {
+              "return_pct": -3.7771221070073135,
+              "final_idr": 1924457.5578598536,
+              "max_drawdown_pct": 7.070315951943656,
+              "closed_trades": 10
+            },
+            "SOLUSDT": {
+              "return_pct": 4.913345626107302,
+              "final_idr": 2098266.912522146,
+              "max_drawdown_pct": 7.94300791757539,
+              "closed_trades": 14
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.02758370034615081,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.0908066416564179,
+          "worst_return": -0.003965921483246371,
+          "closed_trades": 63,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 4.448179348311343,
+              "final_idr": 2088963.5869662268,
+              "max_drawdown_pct": 5.5308135160696725,
+              "closed_trades": 7
+            },
+            "ETHUSDT": {
+              "return_pct": -0.3965921483246371,
+              "final_idr": 1992068.1570335072,
+              "max_drawdown_pct": 7.325378072616308,
+              "closed_trades": 11
+            },
+            "BNBUSDT": {
+              "return_pct": 6.516876849241893,
+              "final_idr": 2130337.5369848376,
+              "max_drawdown_pct": 7.760812569007427,
+              "closed_trades": 18
+            },
+            "XRPUSDT": {
+              "return_pct": 1.9969899068832841,
+              "final_idr": 2039939.7981376655,
+              "max_drawdown_pct": 9.08066416564179,
+              "closed_trades": 16
+            },
+            "SOLUSDT": {
+              "return_pct": 1.2263962169635212,
+              "final_idr": 2024527.9243392702,
+              "max_drawdown_pct": 6.515132892545871,
+              "closed_trades": 11
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": 0.0204771086706812,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.09293014596153078,
+          "worst_return": -0.009839309403456786,
+          "closed_trades": 63,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 3.812685564335472,
+              "final_idr": 2076253.7112867092,
+              "max_drawdown_pct": 5.6643082558601145,
+              "closed_trades": 7
+            },
+            "ETHUSDT": {
+              "return_pct": -0.9839309403456786,
+              "final_idr": 1980321.3811930863,
+              "max_drawdown_pct": 7.541112342731777,
+              "closed_trades": 11
+            },
+            "BNBUSDT": {
+              "return_pct": 5.348700853992949,
+              "final_idr": 2106974.017079859,
+              "max_drawdown_pct": 8.311920143758543,
+              "closed_trades": 18
+            },
+            "XRPUSDT": {
+              "return_pct": 1.3047371116057693,
+              "final_idr": 2026094.7422321155,
+              "max_drawdown_pct": 9.293014596153078,
+              "closed_trades": 16
+            },
+            "SOLUSDT": {
+              "return_pct": 0.7563617457520877,
+              "final_idr": 2015127.2349150418,
+              "max_drawdown_pct": 6.586981840902387,
+              "closed_trades": 11
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": -0.007106625184523474,
+          "positive_cases": 2,
+          "target_hits": 0,
+          "worst_drawdown": 0.09836655513129783,
+          "worst_return": -0.022891243722875654,
+          "closed_trades": 49,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.0290838142334557,
+              "final_idr": 2020581.6762846692,
+              "max_drawdown_pct": 4.949713607760112,
+              "closed_trades": 8
+            },
+            "ETHUSDT": {
+              "return_pct": 0.6939594718335274,
+              "final_idr": 2013879.1894366704,
+              "max_drawdown_pct": 4.697614327095338,
+              "closed_trades": 8
+            },
+            "BNBUSDT": {
+              "return_pct": -1.5531273687708125,
+              "final_idr": 1968937.4526245836,
+              "max_drawdown_pct": 9.836655513129783,
+              "closed_trades": 12
+            },
+            "XRPUSDT": {
+              "return_pct": -2.2891243722875654,
+              "final_idr": 1954217.5125542486,
+              "max_drawdown_pct": 9.035335376823191,
+              "closed_trades": 10
+            },
+            "SOLUSDT": {
+              "return_pct": -1.4341041372703422,
+              "final_idr": 1971317.917254593,
+              "max_drawdown_pct": 6.159401265320205,
+              "closed_trades": 11
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": -0.014144775003269782,
+          "positive_cases": 2,
+          "target_hits": 0,
+          "worst_drawdown": 0.10394393438969553,
+          "worst_return": -0.028669171322500908,
+          "closed_trades": 49,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.283933118170121,
+              "final_idr": 2005678.662363402,
+              "max_drawdown_pct": 5.237973767242721,
+              "closed_trades": 8
+            },
+            "ETHUSDT": {
+              "return_pct": 0.17531578568779072,
+              "final_idr": 2003506.3157137558,
+              "max_drawdown_pct": 4.985909735937605,
+              "closed_trades": 8
+            },
+            "BNBUSDT": {
+              "return_pct": -2.589644915031797,
+              "final_idr": 1948207.1016993641,
+              "max_drawdown_pct": 10.394393438969553,
+              "closed_trades": 12
+            },
+            "XRPUSDT": {
+              "return_pct": -2.866917132250091,
+              "final_idr": 1942661.657354998,
+              "max_drawdown_pct": 9.430022922414112,
+              "closed_trades": 10
+            },
+            "SOLUSDT": {
+              "return_pct": -2.0750743582109155,
+              "final_idr": 1958498.5128357816,
+              "max_drawdown_pct": 6.585928261370853,
+              "closed_trades": 11
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": false,
+        "positive_stress_each_year": false,
+        "positive_coin_years": false,
+        "enough_trades": true,
+        "drawdown": true,
+        "worst_loss": true
+      },
+      "eligible_for_prospective_paper_review": false,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    },
+    {
+      "candidate": "momentum-039-aggressive",
+      "profile": "aggressive",
+      "params": {
+        "mode": "momentum",
+        "timeframe": "1d",
+        "trend_period": 50,
+        "entry_period": 14,
+        "exit_period": 20,
+        "atr_period": 14,
+        "stop_atr": 3,
+        "target_atr": 0,
+        "trail_atr": 3,
+        "momentum_min": 0.05
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.08357377963333272,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.13367502310128482,
+          "worst_return": -0.055013619325512186,
+          "closed_trades": 63,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 6.916858334012366,
+              "final_idr": 2138337.166680247,
+              "max_drawdown_pct": 12.933136517854576,
+              "closed_trades": 13
+            },
+            "ETHUSDT": {
+              "return_pct": 6.846346340278475,
+              "final_idr": 2136926.92680557,
+              "max_drawdown_pct": 10.051028929594322,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": 24.596201742730806,
+              "final_idr": 2491924.034854616,
+              "max_drawdown_pct": 13.367502310128481,
+              "closed_trades": 16
+            },
+            "XRPUSDT": {
+              "return_pct": -5.501361932551219,
+              "final_idr": 1889972.7613489756,
+              "max_drawdown_pct": 11.063058932385724,
+              "closed_trades": 10
+            },
+            "SOLUSDT": {
+              "return_pct": 8.928845332195934,
+              "final_idr": 2178576.9066439182,
+              "max_drawdown_pct": 12.281535017307148,
+              "closed_trades": 14
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.06994846205215392,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.14179227033921998,
+          "worst_return": -0.06359877740258646,
+          "closed_trades": 63,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 5.162039168047916,
+              "final_idr": 2103240.783360958,
+              "max_drawdown_pct": 13.481138397924886,
+              "closed_trades": 13
+            },
+            "ETHUSDT": {
+              "return_pct": 5.725103828812195,
+              "final_idr": 2114502.0765762436,
+              "max_drawdown_pct": 10.69600471229423,
+              "closed_trades": 10
+            },
+            "BNBUSDT": {
+              "return_pct": 22.60070255851381,
+              "final_idr": 2452014.051170276,
+              "max_drawdown_pct": 14.179227033921999,
+              "closed_trades": 16
+            },
+            "XRPUSDT": {
+              "return_pct": -6.359877740258646,
+              "final_idr": 1872802.445194827,
+              "max_drawdown_pct": 11.570866630713555,
+              "closed_trades": 10
+            },
+            "SOLUSDT": {
+              "return_pct": 7.84626321096169,
+              "final_idr": 2156925.2642192338,
+              "max_drawdown_pct": 12.53725053444317,
+              "closed_trades": 14
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.04242238167361145,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.1435411088417818,
+          "worst_return": -0.01135552866825773,
+          "closed_trades": 63,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 7.148592059679482,
+              "final_idr": 2142971.8411935894,
+              "max_drawdown_pct": 9.139848894818893,
+              "closed_trades": 7
+            },
+            "ETHUSDT": {
+              "return_pct": -1.135552866825773,
+              "final_idr": 1977288.9426634845,
+              "max_drawdown_pct": 12.000571381339768,
+              "closed_trades": 11
+            },
+            "BNBUSDT": {
+              "return_pct": 10.693235687548452,
+              "final_idr": 2213864.713750969,
+              "max_drawdown_pct": 12.727914296707107,
+              "closed_trades": 18
+            },
+            "XRPUSDT": {
+              "return_pct": 2.6281144516769883,
+              "final_idr": 2052562.2890335396,
+              "max_drawdown_pct": 14.354110884178182,
+              "closed_trades": 16
+            },
+            "SOLUSDT": {
+              "return_pct": 1.8768015047265774,
+              "final_idr": 2037536.0300945316,
+              "max_drawdown_pct": 10.529906804699397,
+              "closed_trades": 11
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": 0.030009248392201805,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.14665325438127583,
+          "worst_return": -0.021215527839590576,
+          "closed_trades": 63,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 6.097898732035967,
+              "final_idr": 2121957.974640719,
+              "max_drawdown_pct": 9.361227341263318,
+              "closed_trades": 7
+            },
+            "ETHUSDT": {
+              "return_pct": -2.1215527839590576,
+              "final_idr": 1957568.9443208186,
+              "max_drawdown_pct": 12.271291920488228,
+              "closed_trades": 11
+            },
+            "BNBUSDT": {
+              "return_pct": 8.456959944348675,
+              "final_idr": 2169139.1988869733,
+              "max_drawdown_pct": 13.526322874907823,
+              "closed_trades": 18
+            },
+            "XRPUSDT": {
+              "return_pct": 1.5371567968824662,
+              "final_idr": 2030743.1359376493,
+              "max_drawdown_pct": 14.665325438127583,
+              "closed_trades": 16
+            },
+            "SOLUSDT": {
+              "return_pct": 1.0341615067928522,
+              "final_idr": 2020683.230135857,
+              "max_drawdown_pct": 10.649726088925627,
+              "closed_trades": 11
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": -0.013256940129104434,
+          "positive_cases": 2,
+          "target_hits": 0,
+          "worst_drawdown": 0.1601486788058219,
+          "worst_return": -0.039297131582417655,
+          "closed_trades": 49,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.534244197992729,
+              "final_idr": 2030684.8839598547,
+              "max_drawdown_pct": 8.147013105339514,
+              "closed_trades": 8
+            },
+            "ETHUSDT": {
+              "return_pct": 1.069374707241022,
+              "final_idr": 2021387.4941448204,
+              "max_drawdown_pct": 7.758663642950549,
+              "closed_trades": 8
+            },
+            "BNBUSDT": {
+              "return_pct": -2.829363853688538,
+              "final_idr": 1943412.7229262292,
+              "max_drawdown_pct": 16.01486788058219,
+              "closed_trades": 12
+            },
+            "XRPUSDT": {
+              "return_pct": -3.9297131582417655,
+              "final_idr": 1921405.7368351645,
+              "max_drawdown_pct": 14.597970950543724,
+              "closed_trades": 10
+            },
+            "SOLUSDT": {
+              "return_pct": -2.473011957855664,
+              "final_idr": 1950539.7608428868,
+              "max_drawdown_pct": 10.079470710430964,
+              "closed_trades": 11
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": -0.024851413097864383,
+          "positive_cases": 2,
+          "target_hits": 0,
+          "worst_drawdown": 0.16842145545503454,
+          "worst_return": -0.04887544302223712,
+          "closed_trades": 49,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 0.3458033957064899,
+              "final_idr": 2006916.0679141297,
+              "max_drawdown_pct": 8.661115589206306,
+              "closed_trades": 8
+            },
+            "ETHUSDT": {
+              "return_pct": 0.19892116241582158,
+              "final_idr": 2003978.4232483164,
+              "max_drawdown_pct": 8.234849727902073,
+              "closed_trades": 8
+            },
+            "BNBUSDT": {
+              "return_pct": -4.558648323573911,
+              "final_idr": 1908827.0335285217,
+              "max_drawdown_pct": 16.842145545503453,
+              "closed_trades": 12
+            },
+            "XRPUSDT": {
+              "return_pct": -4.887544302223712,
+              "final_idr": 1902249.1139555257,
+              "max_drawdown_pct": 15.218222511609389,
+              "closed_trades": 10
+            },
+            "SOLUSDT": {
+              "return_pct": -3.5242384812568806,
+              "final_idr": 1929515.2303748624,
+              "max_drawdown_pct": 10.770210836347443,
+              "closed_trades": 11
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": false,
+        "positive_stress_each_year": false,
+        "positive_coin_years": false,
+        "enough_trades": true,
+        "drawdown": true,
+        "worst_loss": true
+      },
+      "eligible_for_prospective_paper_review": false,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    },
+    {
+      "candidate": "ema-009-larger",
+      "profile": "larger",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.023944809532243583,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.11554250216564242,
+          "worst_return": -0.052692308151394474,
+          "closed_trades": 26,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 13.242875264118204,
+              "final_idr": 2264857.505282364,
+              "max_drawdown_pct": 6.795865208887673,
+              "closed_trades": 5
+            },
+            "ETHUSDT": {
+              "return_pct": 6.292126027389999,
+              "final_idr": 2125842.5205477998,
+              "max_drawdown_pct": 11.554250216564242,
+              "closed_trades": 5
+            },
+            "BNBUSDT": {
+              "return_pct": -5.269230815139448,
+              "final_idr": 1894615.3836972108,
+              "max_drawdown_pct": 10.657099332039948,
+              "closed_trades": 6
+            },
+            "XRPUSDT": {
+              "return_pct": -4.781253567635257,
+              "final_idr": 1904374.9286472946,
+              "max_drawdown_pct": 7.481751125270295,
+              "closed_trades": 6
+            },
+            "SOLUSDT": {
+              "return_pct": 2.4878878573882934,
+              "final_idr": 2049757.7571477657,
+              "max_drawdown_pct": 5.008643409510503,
+              "closed_trades": 4
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.019008522192860887,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.11940531936679177,
+          "worst_return": -0.057894084061616224,
+          "closed_trades": 26,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 12.667249766930011,
+              "final_idr": 2253344.9953386,
+              "max_drawdown_pct": 7.225673121131944,
+              "closed_trades": 5
+            },
+            "ETHUSDT": {
+              "return_pct": 5.726079413768459,
+              "final_idr": 2114521.5882753693,
+              "max_drawdown_pct": 11.940531936679177,
+              "closed_trades": 5
+            },
+            "BNBUSDT": {
+              "return_pct": -5.7894084061616224,
+              "final_idr": 1884211.8318767676,
+              "max_drawdown_pct": 11.068358004091145,
+              "closed_trades": 6
+            },
+            "XRPUSDT": {
+              "return_pct": -5.249358400271198,
+              "final_idr": 1895012.831994576,
+              "max_drawdown_pct": 7.853044519994307,
+              "closed_trades": 6
+            },
+            "SOLUSDT": {
+              "return_pct": 2.1496987221647945,
+              "final_idr": 2042993.974443296,
+              "max_drawdown_pct": 5.083468701045108,
+              "closed_trades": 4
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.03747787750741103,
+          "positive_cases": 5,
+          "target_hits": 0,
+          "worst_drawdown": 0.07138294136987408,
+          "worst_return": 0.013073717597226642,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 2.202972512219903,
+              "final_idr": 2044059.4502443979,
+              "max_drawdown_pct": 5.449935288183818,
+              "closed_trades": 5
+            },
+            "ETHUSDT": {
+              "return_pct": 6.330118739237012,
+              "final_idr": 2126602.37478474,
+              "max_drawdown_pct": 4.834539257293242,
+              "closed_trades": 3
+            },
+            "BNBUSDT": {
+              "return_pct": 5.210424131347646,
+              "final_idr": 2104208.4826269527,
+              "max_drawdown_pct": 6.2754364021550035,
+              "closed_trades": 4
+            },
+            "XRPUSDT": {
+              "return_pct": 1.3073717597226642,
+              "final_idr": 2026147.435194453,
+              "max_drawdown_pct": 7.138294136987408,
+              "closed_trades": 4
+            },
+            "SOLUSDT": {
+              "return_pct": 3.688051611178289,
+              "final_idr": 2073761.0322235655,
+              "max_drawdown_pct": 6.045885669075687,
+              "closed_trades": 4
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": 0.033437035095694734,
+          "positive_cases": 5,
+          "target_hits": 0,
+          "worst_drawdown": 0.07351066165397366,
+          "worst_return": 0.00986348406802895,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 1.5200990989105323,
+              "final_idr": 2030401.9819782106,
+              "max_drawdown_pct": 5.75431272619313,
+              "closed_trades": 5
+            },
+            "ETHUSDT": {
+              "return_pct": 6.05106338199235,
+              "final_idr": 2121021.267639847,
+              "max_drawdown_pct": 4.981849686093744,
+              "closed_trades": 3
+            },
+            "BNBUSDT": {
+              "return_pct": 4.769582190933175,
+              "final_idr": 2095391.6438186634,
+              "max_drawdown_pct": 6.443984992643411,
+              "closed_trades": 4
+            },
+            "XRPUSDT": {
+              "return_pct": 0.9863484068028949,
+              "final_idr": 2019726.9681360577,
+              "max_drawdown_pct": 7.3510661653973655,
+              "closed_trades": 4
+            },
+            "SOLUSDT": {
+              "return_pct": 3.391424469208415,
+              "final_idr": 2067828.4893841683,
+              "max_drawdown_pct": 6.160127903831544,
+              "closed_trades": 4
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": 0.04764463422379961,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.09594945818605813,
+          "worst_return": -0.04083423986201573,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 6.016670287659043,
+              "final_idr": 2120333.405753181,
+              "max_drawdown_pct": 3.7501482592203463,
+              "closed_trades": 3
+            },
+            "ETHUSDT": {
+              "return_pct": -4.0834239862015735,
+              "final_idr": 1918331.5202759684,
+              "max_drawdown_pct": 6.872280825329945,
+              "closed_trades": 3
+            },
+            "BNBUSDT": {
+              "return_pct": 13.834489947314,
+              "final_idr": 2276689.79894628,
+              "max_drawdown_pct": 4.619109110470026,
+              "closed_trades": 3
+            },
+            "XRPUSDT": {
+              "return_pct": 2.106931488266639,
+              "final_idr": 2042138.629765333,
+              "max_drawdown_pct": 8.471574395176704,
+              "closed_trades": 5
+            },
+            "SOLUSDT": {
+              "return_pct": 5.9476493748616965,
+              "final_idr": 2118952.987497234,
+              "max_drawdown_pct": 9.594945818605813,
+              "closed_trades": 6
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": 0.04303738237463981,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.09988372650152737,
+          "worst_return": -0.04335778451051975,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 5.531920580962191,
+              "final_idr": 2110638.4116192437,
+              "max_drawdown_pct": 3.874109243552349,
+              "closed_trades": 3
+            },
+            "ETHUSDT": {
+              "return_pct": -4.335778451051975,
+              "final_idr": 1913284.4309789604,
+              "max_drawdown_pct": 7.032795975961411,
+              "closed_trades": 3
+            },
+            "BNBUSDT": {
+              "return_pct": 13.34493129980292,
+              "final_idr": 2266898.6259960583,
+              "max_drawdown_pct": 4.7918872702753665,
+              "closed_trades": 3
+            },
+            "XRPUSDT": {
+              "return_pct": 1.6075075062027766,
+              "final_idr": 2032150.1501240553,
+              "max_drawdown_pct": 8.729432835449026,
+              "closed_trades": 5
+            },
+            "SOLUSDT": {
+              "return_pct": 5.370110251403992,
+              "final_idr": 2107402.2050280795,
+              "max_drawdown_pct": 9.988372650152737,
+              "closed_trades": 6
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": true,
+        "positive_stress_each_year": true,
+        "positive_coin_years": true,
+        "enough_trades": false,
+        "drawdown": true,
+        "worst_loss": true
+      },
+      "eligible_for_prospective_paper_review": false,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    },
+    {
+      "candidate": "ema-009-aggressive",
+      "profile": "aggressive",
+      "params": {
+        "timeframe": "1d",
+        "fast": 12,
+        "slow": 26,
+        "trend_ema": 50,
+        "rsi_period": 14,
+        "rsi_long_max": 80,
+        "rsi_short_min": 30,
+        "atr_period": 14,
+        "stop_atr": 2,
+        "target_atr": 0,
+        "trail_atr": 2,
+        "allow_short": false,
+        "exit_on_cross": true
+      },
+      "stages": {
+        "training_replay": {
+          "cases": 5,
+          "mean_return": 0.03695519116753023,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.18165263106444704,
+          "worst_return": -0.08691372273246112,
+          "closed_trades": 26,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 21.43284886729471,
+              "final_idr": 2428656.977345894,
+              "max_drawdown_pct": 10.601408878667634,
+              "closed_trades": 5
+            },
+            "ETHUSDT": {
+              "return_pct": 9.55793106877174,
+              "final_idr": 2191158.621375435,
+              "max_drawdown_pct": 18.165263106444705,
+              "closed_trades": 5
+            },
+            "BNBUSDT": {
+              "return_pct": -8.691372273246111,
+              "final_idr": 1826172.5545350777,
+              "max_drawdown_pct": 17.171197866379302,
+              "closed_trades": 6
+            },
+            "XRPUSDT": {
+              "return_pct": -7.959106840889241,
+              "final_idr": 1840817.863182215,
+              "max_drawdown_pct": 12.271476958913484,
+              "closed_trades": 6
+            },
+            "SOLUSDT": {
+              "return_pct": 4.137294761834021,
+              "final_idr": 2082745.8952366803,
+              "max_drawdown_pct": 8.100864556812974,
+              "closed_trades": 4
+            }
+          }
+        },
+        "training_replay_stress": {
+          "cases": 5,
+          "mean_return": 0.028698703568546403,
+          "positive_cases": 3,
+          "target_hits": 0,
+          "worst_drawdown": 0.18774336146552079,
+          "worst_return": -0.0954450072299885,
+          "closed_trades": 26,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 20.45513367541205,
+              "final_idr": 2409102.673508241,
+              "max_drawdown_pct": 11.25851596398813,
+              "closed_trades": 5
+            },
+            "ETHUSDT": {
+              "return_pct": 8.57999096195714,
+              "final_idr": 2171599.819239143,
+              "max_drawdown_pct": 18.774336146552077,
+              "closed_trades": 5
+            },
+            "BNBUSDT": {
+              "return_pct": -9.54450072299885,
+              "final_idr": 1809109.9855400228,
+              "max_drawdown_pct": 17.803664224988882,
+              "closed_trades": 6
+            },
+            "XRPUSDT": {
+              "return_pct": -8.719191218098787,
+              "final_idr": 1825616.1756380242,
+              "max_drawdown_pct": 12.87111958907727,
+              "closed_trades": 6
+            },
+            "SOLUSDT": {
+              "return_pct": 3.5779190880016465,
+              "final_idr": 2071558.3817600328,
+              "max_drawdown_pct": 8.221554051890081,
+              "closed_trades": 4
+            }
+          }
+        },
+        "validation": {
+          "cases": 5,
+          "mean_return": 0.058437746535176194,
+          "positive_cases": 5,
+          "target_hits": 0,
+          "worst_drawdown": 0.11387838657965774,
+          "worst_return": 0.019274955413167705,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 3.884546413900636,
+              "final_idr": 2077690.9282780127,
+              "max_drawdown_pct": 8.192941339744095,
+              "closed_trades": 5
+            },
+            "ETHUSDT": {
+              "return_pct": 10.252680359695665,
+              "final_idr": 2205053.6071939133,
+              "max_drawdown_pct": 7.536378762186057,
+              "closed_trades": 3
+            },
+            "BNBUSDT": {
+              "return_pct": 7.138542956039684,
+              "final_idr": 2142770.8591207936,
+              "max_drawdown_pct": 10.337983958266367,
+              "closed_trades": 4
+            },
+            "XRPUSDT": {
+              "return_pct": 1.9274955413167705,
+              "final_idr": 2038549.9108263352,
+              "max_drawdown_pct": 11.387838657965773,
+              "closed_trades": 4
+            },
+            "SOLUSDT": {
+              "return_pct": 6.0156079966353415,
+              "final_idr": 2120312.159932707,
+              "max_drawdown_pct": 9.815652933772144,
+              "closed_trades": 4
+            }
+          }
+        },
+        "validation_stress": {
+          "cases": 5,
+          "mean_return": 0.051330189253760095,
+          "positive_cases": 5,
+          "target_hits": 0,
+          "worst_drawdown": 0.11751941855390312,
+          "worst_return": 0.013678537280560565,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 2.7038686371729126,
+              "final_idr": 2054077.372743458,
+              "max_drawdown_pct": 8.623501370876077,
+              "closed_trades": 5
+            },
+            "ETHUSDT": {
+              "return_pct": 9.707019316820276,
+              "final_idr": 2194140.3863364053,
+              "max_drawdown_pct": 7.745774719689538,
+              "closed_trades": 3
+            },
+            "BNBUSDT": {
+              "return_pct": 6.38826944179427,
+              "final_idr": 2127765.3888358856,
+              "max_drawdown_pct": 10.617335570464544,
+              "closed_trades": 4
+            },
+            "XRPUSDT": {
+              "return_pct": 1.3678537280560565,
+              "final_idr": 2027357.074561121,
+              "max_drawdown_pct": 11.751941855390312,
+              "closed_trades": 4
+            },
+            "SOLUSDT": {
+              "return_pct": 5.498083503036533,
+              "final_idr": 2109961.6700607305,
+              "max_drawdown_pct": 9.980080557948707,
+              "closed_trades": 4
+            }
+          }
+        },
+        "confirmation": {
+          "cases": 5,
+          "mean_return": 0.06857731869111276,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.15546718689073707,
+          "worst_return": -0.06795417677543769,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 8.547817865040287,
+              "final_idr": 2170956.357300806,
+              "max_drawdown_pct": 6.269267527813896,
+              "closed_trades": 3
+            },
+            "ETHUSDT": {
+              "return_pct": -6.795417677543769,
+              "final_idr": 1864091.6464491247,
+              "max_drawdown_pct": 11.270650305100665,
+              "closed_trades": 3
+            },
+            "BNBUSDT": {
+              "return_pct": 20.310177851812195,
+              "final_idr": 2406203.5570362434,
+              "max_drawdown_pct": 6.683621865068198,
+              "closed_trades": 3
+            },
+            "XRPUSDT": {
+              "return_pct": 3.091137160582358,
+              "final_idr": 2061822.743211647,
+              "max_drawdown_pct": 13.784293964503258,
+              "closed_trades": 5
+            },
+            "SOLUSDT": {
+              "return_pct": 9.134944145665314,
+              "final_idr": 2182698.882913306,
+              "max_drawdown_pct": 15.546718689073707,
+              "closed_trades": 6
+            }
+          }
+        },
+        "confirmation_stress": {
+          "cases": 5,
+          "mean_return": 0.060850228933860585,
+          "positive_cases": 4,
+          "target_hits": 0,
+          "worst_drawdown": 0.16169513832228408,
+          "worst_return": -0.07189940989973043,
+          "closed_trades": 20,
+          "per_coin": {
+            "BTCUSDT": {
+              "return_pct": 7.775442438115765,
+              "final_idr": 2155508.848762315,
+              "max_drawdown_pct": 6.466144512466437,
+              "closed_trades": 3
+            },
+            "ETHUSDT": {
+              "return_pct": -7.189940989973042,
+              "final_idr": 1856201.180200539,
+              "max_drawdown_pct": 11.508943896755643,
+              "closed_trades": 3
+            },
+            "BNBUSDT": {
+              "return_pct": 19.468569266724312,
+              "final_idr": 2389371.385334486,
+              "max_drawdown_pct": 6.928937199147202,
+              "closed_trades": 3
+            },
+            "XRPUSDT": {
+              "return_pct": 2.204972564284202,
+              "final_idr": 2044099.451285684,
+              "max_drawdown_pct": 14.214998220440547,
+              "closed_trades": 5
+            },
+            "SOLUSDT": {
+              "return_pct": 8.166071187779057,
+              "final_idr": 2163321.423755581,
+              "max_drawdown_pct": 16.169513832228407,
+              "closed_trades": 6
+            }
+          }
+        }
+      },
+      "checks": {
+        "complete": true,
+        "positive_each_year": true,
+        "positive_stress_each_year": true,
+        "positive_coin_years": true,
+        "enough_trades": false,
+        "drawdown": true,
+        "worst_loss": true
+      },
+      "eligible_for_prospective_paper_review": false,
+      "meets_historical_50pct_research_target": false,
+      "live_authorized": false
+    }
+  ],
+  "paper_review_eligible": 1,
+  "historical_target_passes": 0,
+  "live_authorized": false,
+  "gates": {
+    "research_only": true,
+    "minimum_total_closed_trades_on_two_validation_years": 50,
+    "minimum_positive_coin_years_out_of_10": 7,
+    "minimum_normal_mean_return_each_validation_year": 0,
+    "minimum_stress_mean_return_each_validation_year": 0,
+    "maximum_individual_validation_drawdown": 0.25,
+    "maximum_individual_validation_loss": 0.2,
+    "target_gate_requires_mean_each_validation_year_at_least": 0.5,
+    "live_authorized": false,
+    "prospective_paper_required": true
+  },
+  "limitations": [
+    "This follows a 216-configuration search; no statistical certainty from selecting the historical winner.",
+    "Three yearly replays include a training year and two already-inspected market periods; no claim of pristine holdout.",
+    "Five correlated coins are not ten independent experiments; averages are across independently funded Rp2m cases, not one jointly funded portfolio.",
+    "Current instrument filters, fixed USD/IDR conversion and no tax, latency or order-book queue model.",
+    "Risk profiles can hold 75%/95% of equity and risk 3%/5% per trade; simulated risk is not user approval for live risk.",
+    "Cold-start warmup is inside each year; risk halts remain active with no automatic reset.",
+    "Terminal inventory estimated exit costs are deducted; drawdown metrics remain original engine intraperiod values.",
+    "Research gates are explicit screening rules, not proof or a guarantee; live approval cannot be granted by this worker."
+  ],
+  "failures": []
+}

@@ -1,0 +1,96 @@
+BACKTEST LOKAL: 19 Oktober 2025 - 19 Oktober 2026 (UTC)
+Modal setiap kombinasi strategi dan koin: Rp2.000.000 = 110,791048 USDT.
+Kurs tetap Rp18.052/USD; USDT diasumsikan setara USD.
+20 simulasi selesai; 10 kombinasi funding/xspread belum didukung.
+Waktu seluruh simulasi + baca CSV lokal: 83.55 detik (unduh data tidak termasuk).
+
+Saldo akhir (Rp), termasuk nilai koin yang masih dipegang:
+Koin      EMA          Grid         DCA          Market making
+BTC          1,816,558    1,918,194    1,667,810    1,599,966
+ETH          1,764,290    1,911,395    1,833,939    1,817,573
+BNB          1,817,944    1,932,958    1,845,700    1,774,601
+XRP          1,599,023    1,967,245    1,855,178    1,795,005
+SOL          1,861,431    1,917,251    1,902,318    1,760,738
+
+Rincian tiap simulasi (trades = penutupan/penjualan, bukan seluruh order):
+BTCUSDT emacross: -9.17%; saldo Rp1,816,558; drawdown terbesar 9.68%; 150 trades; posisi terbuka 0; 8.50 detik
+BTCUSDT grid: -4.09%; saldo Rp1,918,194; drawdown terbesar 5.48%; 7 trades; posisi terbuka 0; 3.23 detik
+  Catatan (1): grid stop hit: cancelling orders and closing inventory
+BTCUSDT dca: -16.61%; saldo Rp1,667,810; drawdown terbesar 17.73%; 5 trades; posisi terbuka 0; 2.34 detik
+  Catatan (1): KILL SWITCH: trading halted
+  Catatan (1): kill switch tripped
+BTCUSDT mm: -20.00%; saldo Rp1,599,966; drawdown terbesar 20.02%; 1013 trades; posisi terbuka 0; 6.34 detik
+  Catatan (1): KILL SWITCH: trading halted
+  Catatan (1): kill switch tripped
+ETHUSDT emacross: -11.79%; saldo Rp1,764,290; drawdown terbesar 11.80%; 152 trades; posisi terbuka 0; 5.02 detik
+ETHUSDT grid: -4.43%; saldo Rp1,911,395; drawdown terbesar 5.88%; 7 trades; posisi terbuka 0; 3.19 detik
+  Catatan (1): grid stop hit: cancelling orders and closing inventory
+ETHUSDT dca: -8.30%; saldo Rp1,833,939; drawdown terbesar 9.75%; 5 trades; posisi terbuka 0; 2.24 detik
+  Catatan (1): KILL SWITCH: trading halted
+  Catatan (1): kill switch tripped
+ETHUSDT mm: -9.12%; saldo Rp1,817,573; drawdown terbesar 9.16%; 421 trades; posisi terbuka 0; 4.81 detik
+  Catatan (1): KILL SWITCH: trading halted
+  Catatan (1): cancel failed
+  Catatan (1): kill switch tripped
+BNBUSDT emacross: -9.10%; saldo Rp1,817,944; drawdown terbesar 10.02%; 155 trades; posisi terbuka 0; 5.01 detik
+BNBUSDT grid: -3.35%; saldo Rp1,932,958; drawdown terbesar 3.84%; 4 trades; posisi terbuka 0; 2.80 detik
+  Catatan (1): grid stop hit: cancelling orders and closing inventory
+BNBUSDT dca: -7.72%; saldo Rp1,845,700; drawdown terbesar 9.41%; 4 trades; posisi terbuka 0; 1.86 detik
+  Catatan (1): KILL SWITCH: trading halted
+  Catatan (1): kill switch tripped
+BNBUSDT mm: -11.27%; saldo Rp1,774,601; drawdown terbesar 11.27%; 541 trades; posisi terbuka 0; 4.66 detik
+  Catatan (1): KILL SWITCH: trading halted
+  Catatan (1): kill switch tripped
+XRPUSDT emacross: -20.05%; saldo Rp1,599,023; drawdown terbesar 20.05%; 135 trades; posisi terbuka 0; 4.67 detik
+  Catatan (1): KILL SWITCH: trading halted
+  Catatan (1): kill switch tripped
+XRPUSDT grid: -1.64%; saldo Rp1,967,245; drawdown terbesar 5.01%; 17 trades; posisi terbuka 0; 2.95 detik
+  Catatan (1): grid stop hit: cancelling orders and closing inventory
+XRPUSDT dca: -7.24%; saldo Rp1,855,178; drawdown terbesar 9.08%; 6 trades; posisi terbuka 0; 1.82 detik
+  Catatan (1): KILL SWITCH: trading halted
+  Catatan (1): kill switch tripped
+XRPUSDT mm: -10.25%; saldo Rp1,795,005; drawdown terbesar 10.25%; 556 trades; posisi terbuka 0; 4.73 detik
+  Catatan (1): KILL SWITCH: trading halted
+  Catatan (1): cancel failed
+  Catatan (1): kill switch tripped
+SOLUSDT emacross: -6.93%; saldo Rp1,861,431; drawdown terbesar 12.23%; 135 trades; posisi terbuka 0; 5.00 detik
+SOLUSDT grid: -4.14%; saldo Rp1,917,251; drawdown terbesar 5.44%; 8 trades; posisi terbuka 0; 2.86 detik
+  Catatan (1): grid stop hit: cancelling orders and closing inventory
+SOLUSDT dca: -4.88%; saldo Rp1,902,318; drawdown terbesar 6.85%; 5 trades; posisi terbuka 0; 1.83 detik
+  Catatan (1): KILL SWITCH: trading halted
+  Catatan (1): kill switch tripped
+SOLUSDT mm: -11.96%; saldo Rp1,760,738; drawdown terbesar 11.96%; 640 trades; posisi terbuka 0; 5.00 detik
+  Catatan (1): KILL SWITCH: trading halted
+  Catatan (1): cancel failed
+  Catatan (1): kill switch tripped
+
+Strategi belum diuji:
+Funding: mesin backtest belum memasok riwayat funding ke strategi. Biaya funding konstan di mesin bukan pengganti data sinyal funding.
+Xspread: perlu riwayat futures tersinkron dari dua bursa. Endpoint publik Bybit mengalami connection reset. Tidak diganti dengan data Binance Spot.
+
+Asumsi dan batasan:
+- USDT = USD; fixed conversion at BI USD midpoint 2026-10-19 (18142.26 + 17961.74)/2; IDR FX fluctuations excluded
+- Spot fees maker/taker 0.1%; market/stop slippage 2 bps; no tax or withdrawal fees
+- Current public exchange rules, not historical snapshots; no parameter optimization on test period
+- EMA 1h signals with 1m execution; grid/DCA/MM 1m; cold-start indicator warmup within tested year
+- Default risk: 1% per trade, daily kill 5%, peak drawdown kill 20%, close on kill; no automatic reset
+- Grid fixed initial-open +/-15%, 10 levels, 10 USDT/level, stop 3% below lower boundary; does not restart after stop
+- OHLC limit fills omit queue position, liquidity and latency; MM/grid results are approximate and potentially optimistic
+- Final equity includes open inventory marked at final close; closing fees on remaining inventory not deducted
+- Fees metric includes closed trades only; entry fees on open inventory affect equity but may not appear in metric
+- Five coins selected from current top ten, not a historical-universe study; selection/survivorship bias applies
+
+Sumber:
+fx: https://www.bi.go.id/en/statistik/informasi-kurs/transaksi-bi/transaksi-bi/default.aspx
+instrument_rules: https://data-api.binance.vision/api/v3/exchangeInfo
+prices: https://data.binance.vision/
+ranking: https://coinucation.com/coins
+
+Reproduksi (dari root repository):
+python scripts/backtest-year/download.py /tmp/trading-bot-year
+go run ./scripts/backtest-year -data /tmp/trading-bot-year -out docs/testing/backtest-2026-10-19
+python scripts/backtest-year/summarize.py
+
+Download membutuhkan internet. Simulasi memakai CSV lokal, tanpa database, API key, atau order nyata.
+Data mentah besar ada di /tmp/trading-bot-year dan dapat hilang saat reboot; checksum dan URL arsip disimpan di data-manifest.json.
+Hasil ini hanya berlaku untuk parameter dan periode yang diuji; bukan bukti keuntungan di masa depan.

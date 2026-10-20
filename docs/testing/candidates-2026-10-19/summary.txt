@@ -1,0 +1,63 @@
+PERBANDINGAN LIMA KANDIDAT STRATEGI
+Periode: 2025-10-19T00:00:00Z sampai 2026-10-19T00:00:00Z (akhir eksklusif).
+Lima koin: BTC, ETH, BNB, XRP, SOL. Modal Rp2.000.000 per kandidat per koin.
+25 simulasi selesai dalam 133.71 detik, termasuk membaca CSV; tanpa unduh ulang.
+Biaya, modal, periode, data dan batas risiko sama dengan pengujian sebelumnya.
+Aturan lima kandidat dikunci di candidate-spec.json sebelum simulasi; tidak ada pencarian parameter lanjutan.
+
+Rata-rata lima pengujian independen; bukan simulasi portofolio bersama:
+Koreksi dalam tren naik (4 jam): +1.051%; untung 3/5; rugi 2/5; tidak trading 0/5; 60 penutupan transaksi; drawdown terburuk 3.09%
+Breakout harian: +0.172%; untung 2/5; rugi 3/5; tidak trading 0/5; 14 penutupan transaksi; drawdown terburuk 2.09%
+EMA 4 jam + tren: +0.031%; untung 1/5; rugi 4/5; tidak trading 0/5; 40 penutupan transaksi; drawdown terburuk 4.56%
+EMA harian + tren: +0.000%; untung 0/5; rugi 0/5; tidak trading 5/5; 0 penutupan transaksi; drawdown terburuk 0.00%
+Momentum harian: -0.582%; untung 1/5; rugi 4/5; tidak trading 0/5; 24 penutupan transaksi; drawdown terburuk 2.19%
+
+Hasil per koin (perubahan nilai modal):
+Koin | EMA 4 jam | EMA harian | Breakout harian | Momentum harian | Koreksi 4 jam
+BTC | -0.47% | +0.00% | -0.11% | -0.83% | +2.41%
+ETH | -1.97% | +0.00% | -0.54% | +0.18% | +2.35%
+BNB | -0.60% | +0.00% | -0.13% | -1.38% | -0.46%
+XRP | -0.28% | +0.00% | +1.50% | -0.63% | +2.46%
+SOL | +3.49% | +0.00% | +0.14% | -0.25% | -1.50%
+
+Rincian kandidat koreksi 4 jam:
+BTCUSDT: Rp2,048,211 (+2.41%), 14 penutupan, drawdown 2.42%; EMA lama Rp1,816,558 (-9.17%).
+ETHUSDT: Rp2,046,994 (+2.35%), 20 penutupan, drawdown 2.33%; EMA lama Rp1,764,290 (-11.79%).
+BNBUSDT: Rp1,990,701 (-0.46%), 11 penutupan, drawdown 2.34%; EMA lama Rp1,817,944 (-9.10%).
+XRPUSDT: Rp2,049,167 (+2.46%), 5 penutupan, drawdown 1.58%; EMA lama Rp1,599,023 (-20.05%).
+SOLUSDT: Rp1,970,027 (-1.50%), 10 penutupan, drawdown 3.09%; EMA lama Rp1,861,431 (-6.93%).
+
+Cara kerja kandidat koreksi:
+- Mengamati candle 4 jam yang sudah ditutup.
+- Membeli hanya di atas EMA 200 yang sedang naik, setelah RSI pulih menembus 40 dari bawah dan masih di bawah 65.
+- Keluar ketika RSI mencapai 65 atau harga di bawah EMA; stop 2,5 ATR dan target 5 ATR juga dipasang.
+- Risiko dan batas ukuran posisi tetap sama; tidak menambah modal atau menggunakan leverage.
+
+Batasan penting:
+- EMA harian tidak melakukan transaksi sama sekali; hasil 0% bukan bukti strategi berhasil.
+- Kandidat koreksi untung pada 3/5 koin dan rugi pada BNB/SOL. Sampel kecil dan keuntungan relatif tipis.
+- Beberapa kandidat lain masih memegang koin pada akhir periode; lihat OpenPositions pada results.json. Nilainya dihitung pada harga terakhir tanpa biaya penjualan akhir.
+- Tahun ini sudah pernah diperiksa; membandingkan kandidat di sini bukan pengujian pada data baru yang belum terlihat.
+- Agregasi 4 jam/harian memakai data satu menit yang sama. Warmup indikator terjadi dalam tahun pengujian; selama warmup saldo tetap tunai.
+- Hasil belum cukup untuk memilih konfigurasi live. Perlu data periode lain yang belum dipakai memilih strategi dan pengujian paper.
+
+Asumsi lengkap:
+- Same dates, symbols, initial capital, fee/slippage model and risk limits as baseline; no leverage or parameter search
+- Signals use fully closed 4h/1d bars aggregated from the same 1m CSV; fills still use every 1m bar
+- Cold start within tested year; 200x4h/100x1d trend warmup holds cash before signals; no pre-period warmup
+- Five candidates declared before running and shared across all five coins; this is exploratory on a previously inspected year, NOT untouched out-of-sample evidence
+- Spot maker/taker 0.1%, market/stop slippage 2 bps; USDT=USD; fixed Rp18052/USD; no taxes
+- Default risk unchanged: 1% per trade, max position 25% of equity, daily kill 5%, peak drawdown kill 20%, close on kill, no automatic reset
+- Current instrument rules approximate historical rules; no order-book queue, latency or liquidity simulation
+- Final equity marks open inventory at last close; unclosed inventory has no final liquidation fee deducted; fee metric covers closed trades only
+- Zero or very few trades is insufficient evidence of profitability; benchmark cash earns 0%
+- Results must be validated on untouched dates and paper trading before any live decision
+
+Validasi: seluruh test dengan race detector, build, vet, lint dan test integrasi pemulihan sesi lokal lolos.
+Aktifasi: strategi baru terdaftar sebagai trendspot, tetapi tidak diaktifkan pada konfigurasi lokal/VPS.
+
+Reproduksi (dari root project):
+go run ./scripts/backtest-year -suite candidates -declare
+go run ./scripts/backtest-year -suite candidates
+python scripts/backtest-year/summarize_candidates.py
+Data mentah yang dibutuhkan: /tmp/trading-bot-year/*.csv dan instruments.json; unduh ulang dengan download.py bila cache hilang.

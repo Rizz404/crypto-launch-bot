@@ -1,0 +1,71 @@
+{
+  "Job": {
+    "ID": "fee-discount-momentum-028-aggressive-BTCUSDT",
+    "Candidate": "momentum-028-aggressive",
+    "Family": "momentum",
+    "Stage": "fee_discount",
+    "Symbol": "BTCUSDT",
+    "From": "2025-10-19",
+    "To": "2026-10-19",
+    "InputTF": "1m",
+    "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/BTCUSDT.csv",
+    "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+    "Name": "trendspot",
+    "Params": {
+      "atr_period": 14,
+      "entry_period": 84,
+      "exit_period": 20,
+      "mode": "momentum",
+      "momentum_min": 0.05,
+      "stop_atr": 3,
+      "target_atr": 0,
+      "timeframe": "4h",
+      "trail_atr": 3,
+      "trend_period": 100
+    },
+    "Risk": {
+      "RiskPerTrade": 0.05,
+      "PositionPct": 0.95,
+      "MaxPositionPct": 0.95,
+      "MaxLeverage": 1,
+      "MaxOpenPositions": 1,
+      "MaxExposurePct": 1,
+      "DailyLossLimit": 0.1,
+      "MaxDrawdown": 0.35,
+      "CloseOnKill": true
+    },
+    "Fee": 0.00075,
+    "SlippageBps": 2
+  },
+  "Metrics": {
+    "Start": "2025-10-19T00:01:00Z",
+    "End": "2026-10-19T00:00:00Z",
+    "InitialEquity": 110.79104808331486,
+    "FinalEquity": 107.5231920318187,
+    "TotalReturn": -0.029495668720804447,
+    "CAGR": -0.029495724003119617,
+    "MaxDrawdown": 0.1504103175228531,
+    "Sharpe": -0.07314154551452595,
+    "Sortino": -0.11901109612159103,
+    "Trades": 26,
+    "WinRate": 0.3076923076923077,
+    "AvgTrade": -0.12568677121139146,
+    "AvgWin": 3.3455948173504093,
+    "AvgLoss": -1.6684785883499695,
+    "TotalFees": 3.802748518056181,
+    "TotalFunding": 0,
+    "AvgHoldingTime": 272266000000000,
+    "ProfitFactor": 0.8911897583318737
+  },
+  "ConservativeFinalUSDT": 107.5231920318187,
+  "ConservativeFinalIDR": 1941008.662558391,
+  "ConservativeReturn": -0.029495668720804447,
+  "TerminalExitCostUSDT": 0,
+  "OpenPositions": 0,
+  "Candles": 527790,
+  "Seconds": 6.08870039,
+  "Issues": {
+    "Counts": {},
+    "Samples": null
+  }
+}

@@ -1,0 +1,16 @@
+SENSITIVITAS BIAYA BINANCE SPOT
+Modal setiap pengujian Rp2 juta. Momentum-028-aggressive, 19 Oktober 2025–19 Oktober 2026.
+Perubahan hanya tarif komisi: 0,1% menjadi skenario diskon 0,075% per sisi. Bukan perubahan akun nyata.
+
+BTCUSDT: -4.09% -> -2.95%; selisih saldo akhir Rp22,820
+ETHUSDT: +10.44% -> +12.30%; selisih saldo akhir Rp37,064
+BNBUSDT: -9.27% -> -7.54%; selisih saldo akhir Rp34,749
+XRPUSDT: -3.52% -> -2.10%; selisih saldo akhir Rp28,294
+SOLUSDT: -5.74% -> -3.99%; selisih saldo akhir Rp34,842
+
+Asumsi:
+- Hypothetical BNB discount rate, not confirmation of actual account eligibility
+- No ETH network gas paid for internal Binance Spot trades in this model
+- Quote-equivalent fee-rate change only; separate BNB balance, acquisition costs and BNB price fluctuations are not simulated
+- Same previously inspected confirmation year, 2025-10-19..2026-10-19; this is cost sensitivity, not a new strategy holdout
+- Fixed USD/IDR rate, no taxes; no real orders or account changes

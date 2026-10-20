@@ -1,0 +1,38 @@
+{
+  "ID": "fee-discount-momentum-028-aggressive-XRPUSDT",
+  "Candidate": "momentum-028-aggressive",
+  "Family": "momentum",
+  "Stage": "fee_discount",
+  "Symbol": "XRPUSDT",
+  "From": "2025-10-19",
+  "To": "2026-10-19",
+  "InputTF": "1m",
+  "InputFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/XRPUSDT.csv",
+  "RulesFile": "/home/rizz404/kodingan/trading-bot/var/backtest-research/data/instruments.json",
+  "Name": "trendspot",
+  "Params": {
+    "atr_period": 14,
+    "entry_period": 84,
+    "exit_period": 20,
+    "mode": "momentum",
+    "momentum_min": 0.05,
+    "stop_atr": 3,
+    "target_atr": 0,
+    "timeframe": "4h",
+    "trail_atr": 3,
+    "trend_period": 100
+  },
+  "Risk": {
+    "RiskPerTrade": 0.05,
+    "PositionPct": 0.95,
+    "MaxPositionPct": 0.95,
+    "MaxLeverage": 1,
+    "MaxOpenPositions": 1,
+    "MaxExposurePct": 1,
+    "DailyLossLimit": 0.1,
+    "MaxDrawdown": 0.35,
+    "CloseOnKill": true
+  },
+  "Fee": 0.00075,
+  "SlippageBps": 2
+}
