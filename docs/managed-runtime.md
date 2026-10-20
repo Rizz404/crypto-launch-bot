@@ -60,10 +60,18 @@ di `internal/managed/control.go`, dan idempotency `id` unik. GET `/api/state`
 mengekspor ledger/run tanpa credentials. Jangan memublikasikannya tanpa auth.
 
 Telegram memakai satu long-poller, whitelist lama, notifikasi info/warn/error/off
-per instance dan dedup satu menit. Format: `/pause wallet instance`,
-`/flatten wallet instance/binding confirm`,
-`/finish wallet instance retain confirm`, `/stop confirm` untuk stop proses.
+per instance dan dedup satu menit. Saat start, bot mendaftarkan menu perintah
+(`setMyCommands`) khusus untuk chat whitelist, jadi mengetik `/` menampilkan
+daftar beserta formatnya. Pesan “Bot aktif” (akun, instance, strategi, modal)
+dikirim tiap start dan “Bot berhenti” saat proses keluar, termasuk penyebab error.
+Format: `/pause wallet instance`, `/flatten wallet instance/binding confirm`,
+`/finish wallet instance retain confirm`, `/resolve wallet order confirm`
+(verifikasi order tak pasti), `/stop confirm` untuk stop proses.
 Daily summary tetap 00.00 UTC/07.00 WIB; bukti penerimaan VPS masih diperlukan.
+
+Ledger menulis harga candle yang belum tertutup paling sering sekali per 10 detik
+per simbol (`MarkInterval`); candle tertutup, fill, order dan kontrol selalu
+ditulis seketika. Engine tetap memakai harga terbaru dari memori.
 
 ## Backtest tanpa koneksi database/exchange
 
