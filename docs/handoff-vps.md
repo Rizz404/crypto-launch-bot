@@ -1,14 +1,28 @@
 # Handoff VPS
 
-Panduan operasional server untuk sesi/agent berikutnya. Status per **2026-10-18
-17:30 UTC (2026-10-19 00:30 WIB)**. Cakupan dan keputusan proyek ada di [plan](plan.md);
+Panduan operasional server untuk sesi/agent berikutnya. Status per **2026-10-20
+11.55 UTC (18.55 WIB)**. Cakupan dan keputusan proyek ada di [plan](plan.md);
 prosedur umum ada di [panduan deployment](deployment.md).
 
 ## Status sekarang
 
-- **Uji multi-strategi Binance Spot Testnet 3 hari sedang berjalan**, mulai
-  2026-10-18 16:43 UTC. **Analisis setelah 2026-10-21 16:43 UTC (23:43 WIB)**
-  dengan langkah di [Analisis uji testnet](#analisis-uji-testnet).
+- **Tambahan 2026-10-19:** ETH momentum 4h adalah calon paper terpisah,
+  **belum di-deploy di VPS**. User melarang menjalankannya di laptop; trial lokal
+  sudah dihentikan. Opsi dokumentasi dipakai sambil menunggu testnet selesai.
+  Baca [referensi ETH](eth-paper-vps-reference.md) sebelum menyiapkan rilis atau
+  instance kedua. Belum ada izin memulai trial baru.
+
+- **Uji multi-strategi dihentikan lebih awal atas permintaan user** pada
+  2026-10-20 11:52:43 UTC (18.52.43 WIB), exit 0; run 9 selesai normal.
+  Mulai 2026-10-18 16:43 UTC, total sekitar 43 jam 9 menit, bukan 72 jam.
+  Tujuh order tersisa dibatalkan di testnet; query ulang exchange nol open order.
+  Inventori tetap disimpan. Bot tidak di-resume. Timer observasi disabled/inactive;
+  timer backup, DB, DNS, Grafana, Prometheus tetap aktif.
+  **Jadwal review 21 Oktober dibatalkan.** Baca
+  [analisis final dan bukti](testing/testnet-stop-2026-10-20/analysis.md).
+  Backup final `backup-20261020T115448Z`, baseline `differences: []`.
+  DB masih menyimpan tujuh order `new` karena pembatalan sesudah recorder stop;
+  gunakan bukti exchange final dan rekonsiliasi sebelum trial baru.
 - Source `f709429f5f7c697f7d7073dbaa35994ab628f85c` (detached), image
   `ghcr.io/rizz404/trading-bot@sha256:e5b8710bc76da2cd5d581511e19fb7bf9e6a472e0eb61b14fb3c099054fd0438`.
   Rilis sebelumnya, untuk rollback: `69d8dcb` /
@@ -104,7 +118,10 @@ skrip yang dialirkan lewat `ssh ... 'bash -s'`, karena stdin bisa tertelan.
 
 ## Analisis uji testnet
 
-Jendela: 2026-10-18 16:43 UTC sampai 2026-10-21 16:43 UTC. Jalankan dari
+**Sudah dianalisis dan ditutup:** [laporan 20 Oktober](testing/testnet-stop-2026-10-20/analysis.md).
+Jendela aktual: 2026-10-18 16:43 UTC sampai 2026-10-20 11:52:43 UTC.
+Contoh perintah di bawah adalah runbook historis; batas 21 Oktober merupakan
+target lama dan tidak menyatakan bot masih berjalan. Jalankan dari
 `/opt/trading-bot-paper/repo` dengan fungsi `dc` di atas.
 
 ```sh

@@ -1,0 +1,99 @@
+{
+  "initial_virtual_capital_usdt": 10000,
+  "final_reported_equity_usdt": 10082.4308758,
+  "reported_return_pct": 0.8243087580000141,
+  "cashflows_plus_retained_inventory_at_last_1m_close": {
+    "dca-xrp": -0.6601599999999621,
+    "ema-fast-eth": -6.297651000000769,
+    "ema-trend-btc": 0.9037548000000015,
+    "grid-sol": 88.38201999999995,
+    "mm-doge": -0.011249999999966676
+  },
+  "fee_sensitivity_assumption_per_side": 0.001,
+  "closed_trade_fee_sensitivity": [
+    {
+      "strategy": "ema-fast-eth",
+      "recorded_pnl": -6.297651,
+      "assumed_fees": 50.653860317,
+      "pnl_after_assumed_fees": -56.951511317000005
+    },
+    {
+      "strategy": "ema-trend-btc",
+      "recorded_pnl": 0.9037548,
+      "assumed_fees": 0.8782477652,
+      "pnl_after_assumed_fees": 0.02550703479999994
+    },
+    {
+      "strategy": "grid-sol",
+      "recorded_pnl": 84.91057303481325,
+      "assumed_fees": 3.505785006965187,
+      "pnl_after_assumed_fees": 81.40478802784807
+    },
+    {
+      "strategy": "mm-doge",
+      "recorded_pnl": 0.3876071518621551,
+      "assumed_fees": 1.5834540528481378,
+      "pnl_after_assumed_fees": -1.1958469009859827
+    }
+  ],
+  "latest_run_positions": [
+    {
+      "id": 7714,
+      "run_id": 9,
+      "exchange": "binance-testnet",
+      "market": "spot",
+      "symbol": "DOGEUSDT",
+      "side": "long",
+      "quantity": 83.0,
+      "entry_price": 0.0791109756526022,
+      "exit_price": null,
+      "leverage": 1,
+      "margin_mode": null,
+      "realized_pnl": 0,
+      "fees": 0.0,
+      "status": "open",
+      "opened_at": "2026-10-19T07:40:27.883+00:00",
+      "closed_at": null,
+      "strategy": "mm-doge"
+    },
+    {
+      "id": 7715,
+      "run_id": 9,
+      "exchange": "binance-testnet",
+      "market": "spot",
+      "symbol": "SOLUSDT",
+      "side": "long",
+      "quantity": 0.468,
+      "entry_price": 96.63237827951549,
+      "exit_price": null,
+      "leverage": 1,
+      "margin_mode": null,
+      "realized_pnl": 0,
+      "fees": 0.0,
+      "status": "open",
+      "opened_at": "2026-10-20T01:20:33.793+00:00",
+      "closed_at": null,
+      "strategy": "grid-sol"
+    },
+    {
+      "id": 7716,
+      "run_id": 9,
+      "exchange": "binance-testnet",
+      "market": "spot",
+      "symbol": "XRPUSDT",
+      "side": "long",
+      "quantity": 368.1,
+      "entry_price": 1.299693425699538,
+      "exit_price": null,
+      "leverage": 1,
+      "margin_mode": null,
+      "realized_pnl": 0,
+      "fees": 0,
+      "status": "open",
+      "opened_at": "2026-10-18T16:44:12.308+00:00",
+      "closed_at": null,
+      "strategy": "dca-xrp"
+    }
+  ],
+  "note": "Fees are a hypothetical sensitivity, not verified live tariffs. Inventory uses last stored candle; final engine uses intra-minute marks. Results are testnet only."
+}
