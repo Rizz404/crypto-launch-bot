@@ -9,6 +9,7 @@ import (
 	"maps"
 	"slices"
 	"sync"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -85,8 +86,27 @@ func (r *PGStore) Update(ctx context.Context, id, op string, payload any, fn fun
 		}
 		return tx.Commit(ctx)
 	}
+	if durableOperation(op) {
+		// Compaction drops old keys from the state; the journal keeps them.
+		var seen bool
+		if err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM managed_journal WHERE wallet_id=$1 AND request_id=$2)`, r.Key, id).Scan(&seen); err != nil {
+			return err
+		}
+		if seen {
+			return tx.Commit(ctx)
+		}
+	}
 	if err = fn(&s); err != nil {
 		return err
+	}
+	for _, a := range s.takeArchive() {
+		p, err := json.Marshal(a.Payload)
+		if err != nil {
+			return err
+		}
+		if _, err = tx.Exec(ctx, `INSERT INTO managed_archive(wallet_id,kind,item_key,occurred_at,payload) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING`, r.Key, a.Kind, a.Key, a.At, p); err != nil {
+			return err
+		}
 	}
 	next, marshalErr := json.Marshal(s)
 	if marshalErr != nil {
@@ -97,6 +117,10 @@ func (r *PGStore) Update(ctx context.Context, id, op string, payload any, fn fun
 	}
 	if durableOperation(op) {
 		s.Requests[id] = hash
+		if s.RequestAt == nil {
+			s.RequestAt = map[string]time.Time{}
+		}
+		s.RequestAt[id] = time.Now().UTC()
 	}
 	raw, err = json.Marshal(s)
 	if err != nil {
@@ -121,6 +145,10 @@ func (r *PGStore) Update(ctx context.Context, id, op string, payload any, fn fun
 type MemoryStore struct {
 	mu    sync.Mutex
 	state *State
+	// Archived collects compacted detail, mirroring managed_archive; journal
+	// mirrors managed_journal's unique request ids.
+	Archived []ArchiveRecord
+	journal  map[string]bool
 }
 
 func NewMemory(spec Spec) (*MemoryStore, error) {
@@ -180,6 +208,8 @@ func clone(s *State) *State {
 	out.PriceAt = maps.Clone(s.PriceAt)
 	out.Baseline = maps.Clone(s.Baseline)
 	out.Requests = maps.Clone(s.Requests)
+	out.RequestAt = maps.Clone(s.RequestAt)
+	out.archive = nil
 	out.FeeAssets = maps.Clone(s.FeeAssets)
 	out.PendingFees = maps.Clone(s.PendingFees)
 	out.Pending = slices.Clone(s.Pending)
@@ -239,11 +269,23 @@ func (r *MemoryStore) Update(_ context.Context, id, op string, payload any, fn f
 		}
 		return nil
 	}
+	if durableOperation(op) && r.journal[id] {
+		return nil
+	}
 	if err := fn(s); err != nil {
 		return err
 	}
+	r.Archived = append(r.Archived, s.takeArchive()...)
 	if durableOperation(op) {
 		s.Requests[id] = hash
+		if s.RequestAt == nil {
+			s.RequestAt = map[string]time.Time{}
+		}
+		s.RequestAt[id] = time.Now().UTC()
+		if r.journal == nil {
+			r.journal = map[string]bool{}
+		}
+		r.journal[id] = true
 	}
 	r.state = s
 	return nil
@@ -252,5 +294,5 @@ func (r *MemoryStore) Update(_ context.Context, id, op string, payload any, fn f
 // Price ticks/checkpoints are replaceable state, not financial commands. Keeping
 // a random id for every tick would grow memory quadratically in long backtests.
 func durableOperation(op string) bool {
-	return op != "sample" && op != "notice" && op != "mark" && op != "engine_checkpoint" && op != "event_checkpoint" && op != "settle_controls" && op != "warmup_prices" && op != "accepted" && op != "reconcile"
+	return op != "sample" && op != "notice" && op != "mark" && op != "engine_checkpoint" && op != "event_checkpoint" && op != "settle_controls" && op != "warmup_prices" && op != "accepted" && op != "reconcile" && op != "compact"
 }

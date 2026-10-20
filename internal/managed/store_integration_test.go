@@ -4,11 +4,13 @@ package managed
 
 import (
 	"context"
+	"errors"
 	"io"
 	"log/slog"
 	"os"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/rizz404/trading-bot/internal/storage"
 	"github.com/stretchr/testify/require"
@@ -35,6 +37,7 @@ func TestPGWalletJournalRecoveryAndLease(t *testing.T) {
 	r, err := Init(t.Context(), pool, sp)
 	require.NoError(t, err)
 	t.Cleanup(func() {
+		_, _ = pool.Exec(context.Background(), "DELETE FROM managed_archive WHERE wallet_id=$1", r.Key)
 		_, _ = pool.Exec(context.Background(), "DELETE FROM managed_journal WHERE wallet_id=$1", r.Key)
 		_, _ = pool.Exec(context.Background(), "DELETE FROM managed_wallets WHERE id=$1", r.Key)
 	})
@@ -75,4 +78,26 @@ func TestPGWalletJournalRecoveryAndLease(t *testing.T) {
 	require.NoError(t, err)
 	require.Error(t, lease.Check(t.Context()))
 	lease.Close(t.Context())
+
+	// Compaction writes the archive in the same transaction and old request
+	// keys stay idempotent through the journal after leaving the state.
+	old := time.Now().Add(-DefaultRetention - time.Hour)
+	require.NoError(t, r.Update(t.Context(), "audit-seed", "seed", nil, func(s *State) error {
+		s.History = append(s.History, Audit{At: old, Kind: "transfer", Message: "old"})
+		s.RequestAt["idempotent"] = old
+		return nil
+	}))
+	require.ErrorContains(t, r.Update(t.Context(), nonce(), "compact", nil, func(s *State) error {
+		s.Compact(time.Now(), DefaultRetention)
+		return errors.New("abort")
+	}), "abort")
+	require.NoError(t, pool.QueryRow(t.Context(), "SELECT count(*) FROM managed_archive WHERE wallet_id=$1", r.Key).Scan(&count))
+	require.Zero(t, count, "a failed transaction archives nothing")
+	require.NoError(t, r.Update(t.Context(), nonce(), "compact", nil, func(s *State) error { s.Compact(time.Now(), DefaultRetention); return nil }))
+	require.NoError(t, pool.QueryRow(t.Context(), "SELECT count(*) FROM managed_archive WHERE wallet_id=$1 AND kind='audit'", r.Key).Scan(&count))
+	require.Equal(t, 1, count)
+	s, err = r.Load(t.Context())
+	require.NoError(t, err)
+	require.NotContains(t, s.Requests, "idempotent")
+	require.NoError(t, r.Update(t.Context(), "idempotent", "transfer", "same", func(*State) error { panic("must not run after compaction") }))
 }

@@ -79,6 +79,7 @@ func (s *State) ReserveOrder(owner string, o domain.Order, group string, fee dec
 func (s *State) Reject(id, reason string) {
 	if o := s.Orders[id]; o != nil {
 		o.State = "terminal"
+		o.SettledAt = time.Now().UTC()
 		o.Order.Status = domain.OrderRejected
 		o.Order.Reason = reason
 		o.QuoteReserved = decimal.Zero
@@ -111,6 +112,7 @@ func (s *State) UpdateOrder(upd domain.Order) {
 	o.Deferred = nil
 	o.Order.Status = upd.Status
 	o.State = "terminal"
+	o.SettledAt = time.Now().UTC()
 	o.QuoteReserved = decimal.Zero
 	o.BaseReserved = decimal.Zero
 }
@@ -207,6 +209,7 @@ func (s *State) Fill(f domain.Fill) (bool, error) {
 	}
 	if !remaining.IsPositive() {
 		o.State = "terminal"
+		o.SettledAt = time.Now().UTC()
 		o.Order.Status = domain.OrderFilled
 		o.QuoteReserved = decimal.Zero
 		o.BaseReserved = decimal.Zero

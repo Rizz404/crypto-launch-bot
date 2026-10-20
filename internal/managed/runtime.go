@@ -30,7 +30,11 @@ func nonce() string {
 }
 
 type Runtime struct {
-	AllowGaps   bool
+	AllowGaps bool
+	// Retention is how long settled detail stays in the hot state before it
+	// moves to the archive; zero means DefaultRetention.
+	Retention   time.Duration
+	compacted   time.Time
 	lastClosed  map[domain.SeriesKey]time.Time
 	runID       string
 	revisions   map[string]string
@@ -396,6 +400,16 @@ func (r *Runtime) Tick(ctx context.Context, now time.Time) error {
 	}
 	if err = r.repo.Update(ctx, nonce(), "sample", nil, func(s *State) error { s.Sample(now); return nil }); err != nil {
 		return err
+	}
+	if hour := now.UTC().Truncate(time.Hour); hour.After(r.compacted) {
+		keep := r.Retention
+		if keep <= 0 {
+			keep = DefaultRetention
+		}
+		if err = r.repo.Update(ctx, nonce(), "compact", nil, func(s *State) error { s.Compact(now, keep); return nil }); err != nil {
+			return err
+		}
+		r.compacted = hour
 	}
 	if err = r.finalize(ctx); err != nil {
 		return err

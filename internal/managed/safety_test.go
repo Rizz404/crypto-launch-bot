@@ -388,3 +388,52 @@ func TestCapitalFlowsDoNotTripStrategyLossLimits(t *testing.T) {
 	require.False(t, s.Instances["a"].Halted)
 	require.False(t, s.Bindings["a/one"].Halted)
 }
+
+func TestCompactArchivesSettledDetailOnly(t *testing.T) {
+	repo, _ := NewMemory(spec())
+	now := time.Date(2026, 10, 20, 12, 0, 0, 0, time.UTC)
+	old := now.Add(-DefaultRetention - time.Hour)
+	require.NoError(t, repo.Update(t.Context(), "seed", "seed", nil, func(s *State) error {
+		s.Mark("ETHUSDT", d("100"))
+		buy := order("old-buy", domain.Buy, "1", "100")
+		require.NoError(t, s.ReserveOrder("a/one", buy, "", d("0")))
+		f := fill(buy, "t1", "1", "100")
+		f.Time = old
+		_, err := s.Fill(f)
+		require.NoError(t, err)
+		s.Orders["old-buy"].SettledAt = old
+		// An old OCO leg whose sibling is still open must stay.
+		stop := order("stop", domain.Sell, "1", "90")
+		target := order("target", domain.Sell, "1", "120")
+		require.NoError(t, s.ReserveOrder("a/one", stop, "oco/stop", d("0")))
+		require.NoError(t, s.ReserveOrder("a/one", target, "oco/stop", d("0")))
+		s.Reject("target", "expired")
+		s.Orders["target"].SettledAt = old
+		s.History = append(s.History, Audit{At: old, Kind: "transfer", Message: "old"})
+		s.Note("recent", "account", "kept")
+		s.Requests["old-request"] = "hash"
+		s.RequestAt["old-request"] = old
+		return nil
+	}))
+	before, _ := repo.Load(t.Context())
+	require.NoError(t, repo.Update(t.Context(), nonce(), "compact", nil, func(s *State) error { s.Compact(now, DefaultRetention); return nil }))
+	s, _ := repo.Load(t.Context())
+	require.Nil(t, s.Orders["old-buy"])
+	require.NotNil(t, s.Orders["target"], "sibling of an open leg")
+	require.NotNil(t, s.Orders["stop"])
+	require.Empty(t, s.Executions)
+	require.False(t, s.Seen["old-buy:t1"])
+	require.Len(t, s.History, 1)
+	require.NotContains(t, s.Requests, "old-request")
+	kinds := map[string]int{}
+	for _, a := range repo.Archived {
+		kinds[a.Kind]++
+	}
+	require.Equal(t, map[string]int{"order": 1, "execution": 1, "audit": 1}, kinds)
+	require.True(t, before.Bindings["a/one"].Fees.Equal(s.Bindings["a/one"].Fees))
+	require.True(t, before.Equity().Equal(s.Equity()), "aggregates do not move")
+	require.True(t, s.Holding("a/one", "ETHUSDT").Quantity.Equal(d("1")))
+
+	// A pruned idempotency key is still rejected through the journal.
+	require.NoError(t, repo.Update(t.Context(), "seed", "seed", nil, func(*State) error { panic("replayed") }))
+}

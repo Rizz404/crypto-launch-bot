@@ -128,6 +128,9 @@ type Order struct {
 	Group                       string
 	QuoteReserved, BaseReserved decimal.Decimal
 	State                       string // submitting, open, canceling, terminal, unknown
+	// SettledAt is when the ledger made the order terminal; compaction archives
+	// settled orders only after the retention window.
+	SettledAt time.Time `json:",omitzero"`
 }
 type Audit struct {
 	At                   time.Time
@@ -153,28 +156,31 @@ type Run struct {
 	Configuration                       json.RawMessage
 }
 type State struct {
-	Runs           []Run
-	Samples        []EquitySample
-	PriceAt        map[string]time.Time
-	ReconciledAt   time.Time
-	Executions     []Execution
-	FeeAssets      map[string]decimal.Decimal
-	PendingFees    map[string]FeeCharge
-	FeeQuote       decimal.Decimal
-	FeeIssue       string
-	Pending        []broker.Event
-	Version        int
-	Spec           Spec
-	ConfigHash     string
-	Reserve        decimal.Decimal
-	Instances      map[string]*Instance
-	Bindings       map[string]*Binding
-	Holdings       map[string]*Holding
-	Orders         map[string]*Order
-	Seen           map[string]bool
-	Prices         map[string]decimal.Decimal
-	Baseline       map[string]decimal.Decimal
-	Requests       map[string]string
+	Runs         []Run
+	Samples      []EquitySample
+	PriceAt      map[string]time.Time
+	ReconciledAt time.Time
+	Executions   []Execution
+	FeeAssets    map[string]decimal.Decimal
+	PendingFees  map[string]FeeCharge
+	FeeQuote     decimal.Decimal
+	FeeIssue     string
+	Pending      []broker.Event
+	Version      int
+	Spec         Spec
+	ConfigHash   string
+	Reserve      decimal.Decimal
+	Instances    map[string]*Instance
+	Bindings     map[string]*Binding
+	Holdings     map[string]*Holding
+	Orders       map[string]*Order
+	Seen         map[string]bool
+	Prices       map[string]decimal.Decimal
+	Baseline     map[string]decimal.Decimal
+	Requests     map[string]string
+	// RequestAt dates idempotency keys so compaction can drop old ones; the
+	// journal's unique request_id still rejects a replay after that.
+	RequestAt      map[string]time.Time
 	History        []Audit
 	Attention      string
 	Peak, DayStart decimal.Decimal
@@ -182,13 +188,16 @@ type State struct {
 	Halted         bool
 	Reason         string
 	StartedAt      time.Time
+	// archive is filled by Compact and written by the repository in the same
+	// transaction; it is never part of the JSON state.
+	archive []ArchiveRecord
 }
 
 func NewState(spec Spec) (*State, error) {
 	if err := spec.Validate(); err != nil {
 		return nil, err
 	}
-	s := &State{Version: 1, PriceAt: map[string]time.Time{}, FeeAssets: map[string]decimal.Decimal{}, PendingFees: map[string]FeeCharge{}, Spec: spec, ConfigHash: Hash(spec), Reserve: spec.Capital, Instances: map[string]*Instance{}, Bindings: map[string]*Binding{}, Holdings: map[string]*Holding{}, Orders: map[string]*Order{}, Seen: map[string]bool{}, Prices: map[string]decimal.Decimal{}, Baseline: map[string]decimal.Decimal{}, Requests: map[string]string{}, StartedAt: time.Now().UTC()}
+	s := &State{Version: 1, PriceAt: map[string]time.Time{}, FeeAssets: map[string]decimal.Decimal{}, PendingFees: map[string]FeeCharge{}, Spec: spec, ConfigHash: Hash(spec), Reserve: spec.Capital, Instances: map[string]*Instance{}, Bindings: map[string]*Binding{}, Holdings: map[string]*Holding{}, Orders: map[string]*Order{}, Seen: map[string]bool{}, Prices: map[string]decimal.Decimal{}, Baseline: map[string]decimal.Decimal{}, Requests: map[string]string{}, RequestAt: map[string]time.Time{}, StartedAt: time.Now().UTC()}
 	for _, i := range spec.Instances {
 		s.Instances[i.ID] = &Instance{ID: i.ID, Name: i.Name, Status: "running", Notify: i.Notify, Cash: i.Allocation, Funded: i.Allocation, Risk: i.Risk}
 		s.Reserve = s.Reserve.Sub(i.Allocation)
