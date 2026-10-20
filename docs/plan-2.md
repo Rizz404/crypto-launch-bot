@@ -291,12 +291,13 @@ bahwa seluruh Plan 2 atau kesiapan live selesai.
 
 ### P2-9 — Rilis dan trial prospektif VPS
 
-- [ ] Rilis source/image digest cocok melalui CI; cek backup, kapasitas, DNS,
+- [x] Rilis source/image digest cocok melalui CI; cek backup, kapasitas, DNS,
   port/resource limit, baseline proyek lain dan rollback.
-- [ ] Uji migrasi pada DB salinan; trial memakai database/modal/waktu awal baru.
+- [x] Uji migrasi pada DB salinan; trial memakai database/modal/waktu awal baru.
   Koordinator wallet baru tidak berjalan bersama bot lama pada akun yang sama.
-- [ ] Jalankan paper VPS terisolasi menurut [runbook ETH](eth-paper-vps-reference.md),
+- [x] Jalankan paper VPS terisolasi menurut [runbook ETH](eth-paper-vps-reference.md),
   setelah kesiapan kode/operasi dinilai; catat konfigurasi yang benar-benar dipakai.
+  Mulai 2026-10-20 15:37 UTC, [bukti](testing/p2-9-vps-start-2026-10-20.json).
 - [ ] Verifikasi restart/persistence/reservasi, proteksi, feed, Telegram digest
   dan whitelist, backup terjadwal/restore, memori Grafana dan ruang disk.
 - [ ] Review operasi setelah tujuh hari aktual; penilaian strategi memerlukan
@@ -360,4 +361,6 @@ Prioritas ini tidak menghalangi fondasi multi-instance Spot.
 | 2026-10-20 | Plan 1 ditutup; backlog dan fitur baru dipetakan ke Plan 2; rancangan dan navigasi diperbarui | Dokumentasi; belum implementasi kode/deploy |
 | 2026-10-20 | P2-0: klasifikasi log read-only, dua bug reconciliation diperbaiki, regression OCO dan audit reproducible | [Audit](testing/p2-0-audit-2026-10-20.md); unit/race/lint/vet/build dan integration DB sementara lolos; belum deploy |
 | 2026-10-20 | P2-7 QA browser fixture (Claude): desktop/mobile light/dark dan aksi form; empat perbaikan dashboard dengan regression | [QA browser](testing/plan2-browser-qa-2026-10-20.md); race/lint/vet/build lolos; belum deploy |
+| 2026-10-20 | Resolusi order tak pasti berbasis query exchange, kompaksi state ke `managed_archive` (migrasi 5), deploy DB trial terpisah | Unit/race/lint/vet/build, integration PG dan siklus migrasi lolos; CI `c3b4bad`/`db18c0e` hijau |
+| 2026-10-20 | P2-9 dimulai (Claude): migrasi diuji di salinan DB, trial ETH paper managed di `tradingbot_eth`, restart pertama lulus | [Bukti start](testing/p2-9-vps-start-2026-10-20.json); baseline VPS tetap `differences: []` |
 | 2026-10-20 | P2-8 review kode managed (Claude): tiga bug dana/risiko diperbaiki (baseline wallet kurang dana, cancel live sebelum exit, rebase batas rugi strategi); lima risiko terbuka dicatat | [Review](testing/plan2-code-review-2026-10-20.md); race/lint/vet/build lolos; belum deploy |

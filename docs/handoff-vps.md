@@ -7,6 +7,18 @@ prosedur umum ada di [panduan deployment](deployment.md).
 
 ## Status sekarang
 
+- **Trial P2-9 berjalan sejak 2026-10-20 15:37 UTC (22.37 WIB):** managed ETH
+  paper (`paper:eth-research`, 110,79 USDT, trendspot momentum 4h) di DB baru
+  `tradingbot_eth` (`BOT_DB_NAME`). Source `db18c0e`, image
+  `sha256:d0ffe0e3e75cfb50b268c966e15c913cb88540b206e9c19a53c9b6c77a4ad561`.
+  `configs/config.yaml` = `managed.eth-paper.yaml` + Telegram; config testnet
+  disimpan di `configs/config.testnet.yaml`. DB `tradingbot` (testnet) tidak
+  dimigrasi dan tetap versi 3. Timer observe aktif lagi. Bukti:
+  [start P2-9](testing/p2-9-vps-start-2026-10-20.json). Review operasional
+  paling cepat 2026-10-27 15:37 UTC. Rollback: stop bot, `BOT_DB_NAME=tradingbot`,
+  image/commit `f709429` di bawah, salin `config.testnet.yaml`. Jangan migrate
+  down `tradingbot_eth`. Status di bawah ini adalah riwayat sebelum trial.
+
 - **Plan 2 aktif:** fitur banyak instance dengan beberapa strategi dan pembagian
   modal dijadwalkan di [plan baru](plan-2.md). Ini instance virtual aplikasi,
   bukan izin menggandakan container dengan wallet/DB yang sama. Baca
