@@ -18,3 +18,6 @@ __pycache__/
 # Reproducible per-bar and per-trade exports; keep summaries and manifests
 /docs/testing/**/*-equity.csv
 /docs/testing/**/*-trades.csv
+
+# Local managed backtest full-state exports; commit reviewed summaries only
+/var/managed-backtest/
