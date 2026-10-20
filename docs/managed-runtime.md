@@ -94,7 +94,7 @@ Ini model OHLC tanpa antrean order, latency atau market impact, bukan holdout ba
 
 ## Migrasi, ownership dan recovery
 
-Schema perlu `bot migrate up` (migrasi 4), **pada DB salinan dahulu**. Wallet baru
+Schema perlu `bot migrate up` (migrasi 4 dan 5), **pada DB salinan dahulu**. Wallet baru
 menyimpan row unik exchange/mode/Spot dan advisory lease dedicated connection;
 pool perlu setidaknya jumlah wallet + 2 koneksi. Kehilangan lease menahan I/O.
 Jangan paralelkan dengan binary lama karena binary tersebut tidak mengenal lock.
@@ -111,6 +111,28 @@ aset menjadi attention. Jangan reset/mengubah saldo agar entry terbuka paksa.
 Trade history yang hilang harus dipulihkan dengan ID/komisi aktual. Fee aset
 ketiga tanpa harga menahan entry sampai valuasi tersedia.
 
+**Order tak pasti.** Submission timeout, bracket ambigu atau cancel yang belum
+dikonfirmasi muncul di panel “Order perlu verifikasi”. Setelah restart, dan
+minimal lima menit setelah order dibuat, operator memilih verifikasi
+(`resolve_order`, wajib konfirmasi, dijurnal). Runtime menanyakan exchange dan
+tidak pernah menebak:
+
+- Tidak ada di exchange (Binance -2013): reservasi dilepas, engine diberi tahu.
+- Masih terbuka: kembali dilacak sebagai `open`.
+- Sudah terminal: fill yang terlewat dipulihkan dari `myTrades`, lalu status final dibukukan.
+
+Query gagal membuat order tetap belum pasti. Attention dihitung ulang dengan
+rekonsiliasi penuh, bukan dihapus langsung. JSON: `{"operation":"resolve_order",
+"order":"<client id>","confirm":true,"id":"<unik>"}`.
+
+**Kompaksi.** Setiap jam, order terminal, eksekusi dan audit yang lebih tua dari
+7 hari dipindah dari `managed_wallets.state` ke `managed_archive` dalam
+transaksi yang sama. Order belum selesai, leg OCO yang saudaranya masih terbuka,
+inbox dan fee tertunda tidak disentuh. Agregat PnL/fee/holding tetap di state.
+Idempotency key lama dihapus dari state; replay tetap ditolak lewat unique
+`request_id` di `managed_journal`. Dashboard dan `/api/state` hanya menampilkan
+7 hari terakhir; riwayat lengkap ada di `managed_archive` dan `managed_journal`.
+
 Stop proses mempertahankan order. Untuk menutup eksperimen, gunakan finish
 terlebih dahulu dan verifikasi status order exchange terminal serta saldo.
 Snapshot DB/jurnal, hasil query exchange, konfigurasi/hash, waktu dan pilihan
@@ -118,7 +140,7 @@ retain/flatten menjadi bukti akhir. Bukti historis tidak boleh ditimpa.
 
 Rollback deployment: stop worker baru, backup state/schema, pastikan tidak ada
 order managed yang tertinggal sebelum mengaktifkan binary legacy. **Jangan down
-migration 4 pada DB berisi dana/history managed**; tes down/up hanya di DB test
+migration 4/5 pada DB berisi dana/history managed**; tes down/up hanya di DB test
 disposable. Binary lama tidak memahami ownership instance baru.
 
 ## Preview dashboard fixture
