@@ -14,6 +14,7 @@ build:
 	go build -trimpath -ldflags "$(LDFLAGS)" -o bin/bot ./cmd/bot
 	go build -trimpath -ldflags "$(LDFLAGS)" -o bin/datafetch ./cmd/datafetch
 	go build -trimpath -ldflags "$(LDFLAGS)" -o bin/backtest ./cmd/backtest
+	go build -trimpath -o bin/portfolio-backtest ./cmd/portfolio-backtest
 
 test:
 	go test ./...
