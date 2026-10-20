@@ -5,11 +5,13 @@ import (
 	"errors"
 	"io"
 	"log/slog"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/rizz404/trading-bot/internal/broker"
 	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/trading-bot/internal/exchange"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/require"
 )
@@ -275,4 +277,98 @@ func TestReconciliationKeepsUnderfundedWalletBlocked(t *testing.T) {
 	s.Reconcile(account, nil)
 	require.Empty(t, s.Attention)
 	require.True(t, s.Baseline["USDT"].Equal(d("50")))
+}
+
+// exchangeLike mimics Binance Spot: a successful cancel emits nothing; the
+// terminal state arrives later on the user stream or through an order query.
+type exchangeLike struct {
+	h       broker.Handler
+	open    map[string]domain.Order
+	queried int
+}
+
+func (x *exchangeLike) Exchange() string                             { return "sim" }
+func (x *exchangeLike) SetHandler(h broker.Handler)                  { x.h = h }
+func (x *exchangeLike) Track([]domain.Order)                         {}
+func (x *exchangeLike) Resync() <-chan struct{}                      { return nil }
+func (x *exchangeLike) Start(context.Context, *sync.WaitGroup) error { return nil }
+func (x *exchangeLike) SetLeverage(context.Context, domain.Market, string, int) error {
+	return nil
+}
+func (x *exchangeLike) AccountState(context.Context, domain.Market) (*broker.AccountState, error) {
+	return &broker.AccountState{}, nil
+}
+func (x *exchangeLike) PlaceOrder(_ context.Context, o domain.Order) (domain.Order, error) {
+	if x.open == nil {
+		x.open = map[string]domain.Order{}
+	}
+	o.Status = domain.OrderNew
+	x.open[o.ClientID] = o
+	return o, nil
+}
+func (x *exchangeLike) PlaceBracket(ctx context.Context, stop, target domain.Order) ([]domain.Order, error) {
+	a, _ := x.PlaceOrder(ctx, stop)
+	b, _ := x.PlaceOrder(ctx, target)
+	return []domain.Order{a, b}, nil
+}
+func (x *exchangeLike) CancelOrder(_ context.Context, o domain.Order) error {
+	if leg, ok := x.open[o.ClientID]; !ok || !leg.Status.Open() {
+		return &exchange.APIError{Exchange: "sim", HTTPStatus: 400, Code: -2011, Message: "Unknown order sent."}
+	}
+	// Canceling one OCO leg cancels the whole list on the exchange.
+	for id, leg := range x.open {
+		if leg.Symbol == o.Symbol && leg.Side == o.Side {
+			leg.Status = domain.OrderCanceled
+			x.open[id] = leg
+		}
+	}
+	delete(x.open, o.ClientID)
+	return nil
+}
+func (x *exchangeLike) SyncOrders(_ context.Context, tracked, _ []domain.Order) {
+	for _, o := range tracked {
+		x.queried++
+		final := o
+		final.Status = domain.OrderCanceled
+		if leg, ok := x.open[o.ClientID]; ok {
+			if leg.Status.Open() {
+				continue
+			}
+			delete(x.open, o.ClientID)
+		}
+		x.h(broker.Event{Kind: broker.EventOrder, Order: final})
+	}
+}
+
+func TestLiveCancelReleasesProtectionBeforeExit(t *testing.T) {
+	repo, _ := NewMemory(spec())
+	x := &exchangeLike{}
+	now := time.Now()
+	rt, err := NewRuntime(t.Context(), repo, x, testInstruments(), d("0.001"), func() time.Time { return now }, nil)
+	require.NoError(t, err)
+	require.NoError(t, repo.Update(t.Context(), "seed", "seed", nil, func(s *State) error {
+		s.Mark("ETHUSDT", d("100"))
+		s.Holding("a/one", "ETHUSDT").Quantity = d("0.2")
+		s.Holding("a/one", "ETHUSDT").Cost = d("20")
+		return nil
+	}))
+	b := &scopedBroker{r: rt, owner: "a/one"}
+	stop := order("stop", domain.Sell, "0.2", "90")
+	stop.Type = domain.OrderStopMarket
+	target := order("target", domain.Sell, "0.2", "120")
+	_, err = b.PlaceBracket(t.Context(), stop, target)
+	require.NoError(t, err)
+
+	// Engine exit: cancel both legs, then sell immediately.
+	require.NoError(t, b.CancelOrder(t.Context(), stop))
+	require.Error(t, b.CancelOrder(t.Context(), target), "second leg is already gone with the list")
+	exit := order("exit", domain.Sell, "0.2", "0")
+	exit.Type = domain.OrderMarket
+	_, err = b.PlaceOrder(t.Context(), exit)
+	require.NoError(t, err)
+	s, _ := repo.Load(t.Context())
+	require.Equal(t, "terminal", s.Orders["stop"].State)
+	require.Equal(t, "terminal", s.Orders["target"].State)
+	_, base := s.Reserved("", "a/one", "ETHUSDT")
+	require.True(t, base.Equal(d("0.2")), "only the exit order holds the coins")
 }

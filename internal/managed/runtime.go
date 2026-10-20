@@ -647,7 +647,30 @@ func (b *scopedBroker) CancelOrder(ctx context.Context, o domain.Order) error {
 	}); err != nil {
 		return err
 	}
-	return b.r.physical.CancelOrder(ctx, o)
+	err := b.r.physical.CancelOrder(ctx, o)
+	if live, ok := b.r.physical.(broker.Live); ok && (err == nil || unknownOrder(err)) {
+		// Exchanges acknowledge a cancel on the user stream, possibly after the
+		// engine already submits the exit or replacement bracket that needs the
+		// released coins. Query the final state now so the ledger can settle it.
+		if err := b.r.stage(ctx); err != nil {
+			return err
+		}
+		st, loadErr := b.r.repo.Load(ctx)
+		if loadErr != nil {
+			return loadErr
+		}
+		if tracked := st.Orders[o.ClientID]; tracked != nil && tracked.State != "terminal" {
+			live.SyncOrders(ctx, []domain.Order{tracked.Order}, nil)
+		}
+	}
+	return err
+}
+
+// unknownOrder reports Binance -2011/-2013: the order is no longer open, e.g.
+// the other leg of an already canceled OCO list.
+func unknownOrder(err error) bool {
+	var api *exchange.APIError
+	return errors.As(err, &api) && (api.Code == -2011 || api.Code == -2013)
 }
 func (b *scopedBroker) LinkedBracket(m domain.Market) bool {
 	if linked, ok := b.r.physical.(broker.LinkedBrackets); ok {
