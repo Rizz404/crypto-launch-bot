@@ -1,7 +1,8 @@
 # Rancangan multi-instance dalam satu akun exchange
 
-Tanggal: **20 Oktober 2026**. Status: **rancangan untuk implementasi Plan 2**,
-belum kontrak API/config yang tersedia. Urutan pengerjaan dan status ada di
+Tanggal: **20 Oktober 2026**. Status: **rancangan dengan implementasi lokal Plan 2**.
+Kontrak yang tersedia dan batas praktis ada di [panduan runtime](managed-runtime.md);
+model ini diwujudkan sebagai agregat JSONB/jurnal, bukan tabel SQL per entitas. Urutan pengerjaan dan status ada di
 [Plan 2](plan-2.md). Dokumen ini menjelaskan model yang disepakati agar istilah
 instance tidak tertukar dengan proses/container atau ID strategi lama.
 

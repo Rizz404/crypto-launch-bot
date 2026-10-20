@@ -1,0 +1,108 @@
+{
+  "purpose": "software integration smoke test; not prospective trial or new strategy holdout",
+  "source_commit": "6ce3747",
+  "period": {
+    "from": "2024-01-01",
+    "to_exclusive": "2024-01-03"
+  },
+  "rules_source": "public Binance exchangeInfo snapshot in existing local research cache, converted to domain.Instrument; not historical instrument rules",
+  "warmup": "available earlier local minute candles aggregated before from; no historical orders",
+  "cases": {
+    "baseline": {
+      "bars": 5760,
+      "capital": "110.79104808331486",
+      "cash_benchmark_return": 0,
+      "configuration_sha256": "49e4e563862fd15f692b0cd274fbd0ef44a4ace068894dfe3dc770a7eaec90f2",
+      "conservative_final_equity": "111.2401795648564599983748154",
+      "data_sha256": {
+        "BTCUSDT-1m.csv": "b3544414d4f0ed9b63e499425d5ca3996a1bf915f737787b7e69dec312999c1e",
+        "ETHUSDT-1m.csv": "8101a36bb21302efac7dbcb616d5d6f11650baa228d79857d3ec598ba8f643cb",
+        "instruments.json": "e0ceb07bba2adacddc4489bbe7689718169740df94473bd164134e3117b92434"
+      },
+      "equal_weight_buy_hold_return": "0.0450800530157871",
+      "fee_per_side": 0.001,
+      "fees": "0.0157674448584",
+      "final_equity": "111.25968178005646",
+      "from": "2024-01-01T00:00:00Z",
+      "limitations": [
+        "Signals and balances share one funded wallet; instances are not independent Rp2m simulations.",
+        "OHLC fills omit order-book queue, latency and market impact.",
+        "No taxes, IDR FX movement or funding; open inventory includes an explicit estimated terminal exit cost.",
+        "Dates used in past selection are not an untouched holdout."
+      ],
+      "max_drawdown": "0.0049721480812555",
+      "mode": "offline shared-capital backtest",
+      "return": "0.0042298877467897",
+      "slippage_bps": 2,
+      "terminal_exit_cost_estimate": "0.0195022152000000016251846",
+      "to_exclusive": "2024-01-03T00:00:00Z",
+      "turnover": "15.7674448584",
+      "checks": {
+        "attention": "",
+        "orders": 116,
+        "executions": 1,
+        "run_statuses": [
+          "completed"
+        ],
+        "owners": {
+          "comparison/btc1d": {
+            "realized": "0",
+            "fees": "0"
+          },
+          "momentum/eth4h": {
+            "realized": "0",
+            "fees": "0.0157674448584"
+          }
+        }
+      }
+    },
+    "stress": {
+      "bars": 5760,
+      "capital": "110.79104808331486",
+      "cash_benchmark_return": 0,
+      "configuration_sha256": "49e4e563862fd15f692b0cd274fbd0ef44a4ace068894dfe3dc770a7eaec90f2",
+      "conservative_final_equity": "111.18252214073086",
+      "data_sha256": {
+        "BTCUSDT-1m.csv": "b3544414d4f0ed9b63e499425d5ca3996a1bf915f737787b7e69dec312999c1e",
+        "ETHUSDT-1m.csv": "8101a36bb21302efac7dbcb616d5d6f11650baa228d79857d3ec598ba8f643cb",
+        "instruments.json": "e0ceb07bba2adacddc4489bbe7689718169740df94473bd164134e3117b92434"
+      },
+      "equal_weight_buy_hold_return": "0.0413213992995558",
+      "fee_per_side": 0.002,
+      "fees": "0.031560112584",
+      "final_equity": "111.23127767873086",
+      "from": "2024-01-01T00:00:00Z",
+      "limitations": [
+        "Signals and balances share one funded wallet; instances are not independent Rp2m simulations.",
+        "OHLC fills omit order-book queue, latency and market impact.",
+        "No taxes, IDR FX movement or funding; open inventory includes an explicit estimated terminal exit cost.",
+        "Dates used in past selection are not an untouched holdout."
+      ],
+      "max_drawdown": "0.0049734118421026",
+      "mode": "offline shared-capital backtest",
+      "return": "0.0039735123282248",
+      "slippage_bps": 10,
+      "terminal_exit_cost_estimate": "0.048755538",
+      "to_exclusive": "2024-01-03T00:00:00Z",
+      "turnover": "15.780056292",
+      "checks": {
+        "attention": "",
+        "orders": 116,
+        "executions": 1,
+        "run_statuses": [
+          "completed"
+        ],
+        "owners": {
+          "comparison/btc1d": {
+            "realized": "0",
+            "fees": "0"
+          },
+          "momentum/eth4h": {
+            "realized": "0",
+            "fees": "0.031560112584"
+          }
+        }
+      }
+    }
+  }
+}

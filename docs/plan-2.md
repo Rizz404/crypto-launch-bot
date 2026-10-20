@@ -1,7 +1,10 @@
 # Plan 2 — Multi-instance dan pengembangan platform trading
 
-Tanggal: **20 Oktober 2026**. Status: **aktif; implementasi dimulai dari P2-0,
-audit awal dan dua perbaikan reconciliation lokal selesai; P2-1 berikutnya**. [Plan 1](plan.md) ditutup sebagai siklus
+Tanggal: **20 Oktober 2026**. Status: **implementasi lokal P2-1–P2-6 selesai;
+pengujian/fixing P2-7/P2-8 dilakukan, QA browser masih terbuka; belum rilis VPS**.
+[Handover Claude](HANDOVER-CLAUDE.md), [panduan runtime](managed-runtime.md),
+[hasil pengujian](testing/plan2-local-2026-10-20.md).
+[Plan 1](plan.md) ditutup sebagai siklus
 pengembangan pertama atas permintaan user. Pekerjaan yang belum selesai dibawa
 ke sini; penutupan Plan 1 **tidak berarti semua pengujian lulus atau live siap**.
 
@@ -35,9 +38,9 @@ Tidak ada trial baru dijalankan sebagai bagian penyusunan dokumen ini.
 - Instance adalah portofolio virtual di aplikasi, **bukan container wajib**.
   Satu pengelola akun mengoordinasikan saldo, broker, event dan rate limit.
   Dua worker tidak boleh menjadi pemilik tulis wallet yang sama sekaligus.
-- Kode kini masih satu sesi engine, ledger per exchange/market, posisi per
-  simbol. Beberapa strategi bisa dikonfigurasi, tetapi modal/posisi antar-instance
-  belum terisolasi. Fitur Plan 2 tidak boleh diklaim sudah tersedia.
+- Runtime managed lokal memakai satu koordinator wallet dan engine/view terpisah
+  per binding. Ownership/modal terisolasi pada ledger; konfigurasi legacy tetap
+  didukung. Versi VPS lama belum memiliki fitur ini.
 - VPS terakhir diverifikasi: bot testnet stop normal 20 Oktober 18.52 WIB,
   tujuh order dibatalkan, inventori dipertahankan, timer observasi inactive.
   DB, DNS, monitoring dan backup tetap aktif. Tidak ada perintah ke VPS pada
@@ -75,9 +78,11 @@ Tidak ada trial baru dijalankan sebagai bagian penyusunan dokumen ini.
 | UX-09 | Notifikasi pilihan | Scope, tingkat pesan, ringkasan dan penggabungan pesan berulang | P2-5 |
 | UX-10 | Template instance | Duplikasi konfigurasi tanpa saldo/posisi/riwayat lama | P2-5 |
 
-Seluruh fitur tabel masih **belum diimplementasikan sebagai multi-instance**.
-Kontrol, laporan dan risk Plan 1 yang sudah ada menjadi fondasi, bukan bukti
-bahwa scope instance telah tersedia.
+Fitur tabel sudah mempunyai implementasi lokal melalui `internal/managed`,
+branch managed pada `bot run`, dan `portfolio-backtest`. Binding baru/edit perlu
+restart; laporan/history tersimpan dalam agregat JSONB dan jurnal, bukan tabel
+terpisah per entitas. QA visual dan bukti operasi VPS belum selesai. Lihat
+[panduan dan batas implementasi](managed-runtime.md).
 
 ## Pemindahan pekerjaan dari Plan 1
 
@@ -142,14 +147,14 @@ Kode diperbaiki lokal, belum dirilis; trial lama tetap mati.
 
 ### P2-1 — Domain, schema, konfigurasi dan migrasi
 
-- [ ] Pisahkan `exchange_account`, `bot_instance`, `strategy_binding`,
+- [x] Pisahkan `exchange_account`, `bot_instance`, `strategy_binding`,
   `run/session`, config revision dan identitas kepemilikan.
-- [ ] Tambahkan ownership pada order/fill/posisi/trade/snapshot; ID instance tidak
+- [x] Tambahkan ownership pada order/fill/posisi/trade/snapshot; ID instance tidak
   berubah saat restart dan tidak disamakan dengan `strategy_runs.instance_id` lama.
-- [ ] Schema jurnal alokasi/transfer/fee, reservasi durable dan perintah idempoten.
-- [ ] Rancang migrasi data lama ke satu instance legacy per akun/mode; mapping
+- [x] Schema jurnal alokasi/transfer/fee, reservasi durable dan perintah idempoten.
+- [x] Rancang migrasi data lama ke satu instance legacy per akun/mode; mapping
   ambigu masuk laporan untuk ditinjau, tanpa menduplikasi modal/posisi.
-- [ ] Kompatibilitas config lama, validasi ID unik, referensi strategi, mata uang,
+- [x] Kompatibilitas config lama, validasi ID unik, referensi strategi, mata uang,
   mode dan pembatas akun; rencana rollback schema/data sebelum migrasi nyata.
 
 Selesai bila build/config/schema siap, contoh baru jelas ditandai, dan migrasi
@@ -157,34 +162,35 @@ punya rencana uji DB salinan. Schema baru tidak langsung dipasang di VPS.
 
 ### P2-2 — Ledger modal dan transfer
 
-- [ ] Dana bot yang didanai eksplisit dipisahkan dari koin/saldo pribadi di wallet.
-- [ ] Alokasi cadangan → instance dan transfer instance → instance ditulis atomik
+- [x] Dana bot yang didanai eksplisit dipisahkan dari koin/saldo pribadi di wallet.
+- [x] Alokasi cadangan → instance dan transfer instance → instance ditulis atomik
   dengan idempotency key; tidak ada kredit tanpa debit pasangannya.
-- [ ] Ledger per strategi mempertahankan PnL/fee/inventori; pool instance dibagi
+- [x] Ledger per strategi mempertahankan PnL/fee/inventori; pool instance dibagi
   tanpa menduplikasi saldo. Default shared pool, batas strategi opsional.
-- [ ] Hitung tunai bebas, dana dipesan, nilai inventori dan equity secara jelas;
+- [x] Hitung tunai bebas, dana dipesan, nilai inventori dan equity secara jelas;
   PnL unrealized/inventori tidak bisa ditransfer sebagai uang tunai bebas.
-- [ ] Transfer/top-up/withdrawal tidak dianggap profit; baseline return/drawdown
-  disesuaikan terhadap arus modal dengan kebijakan eksplisit.
+- [x] Transfer internal tidak dianggap profit; baseline instance disesuaikan
+  terhadap arus modal. Top-up/withdrawal exchange tidak diotomasi: selisih
+  masuk reconciliation/attention, bukan kredit/profit yang ditebak.
 
 Selesai bila contoh pembagian satu modal menghasilkan jumlah yang konsisten
 pada akun/instance/strategi, dan transaksi gagal tidak meninggalkan saldo parsial.
 
 ### P2-3 — OMS, reservasi, ownership dan reconciliation
 
-- [ ] Satu koordinator order per wallet/mode dengan penguncian/lease persisten;
+- [x] Satu koordinator order per wallet/mode dengan penguncian/lease persisten;
   reservasi atomik mencakup saldo instance dan kemampuan wallet fisik.
-- [ ] Buy mengunci quote plus buffer fee, sell mengunci base milik strategi;
+- [x] Buy mengunci quote plus buffer fee, sell mengunci base milik strategi;
   OCO satu kelompok berbagi reservasi, bukan mengunci kuantitas dua kali.
-- [ ] Partial fill, fee base/quote/BNB, replay dan status snapshot diproses sekali;
+- [x] Partial fill, fee base/quote/BNB, replay dan status snapshot diproses sekali;
   cancel request belum boleh melepas dana sebelum status exchange pasti.
-- [ ] Strategi berbeda boleh memakai simbol sama dengan subledger terpisah;
+- [x] Strategi berbeda boleh memakai simbol sama dengan subledger terpisah;
   exit tidak menjual inventori pemilik lain. Tanpa internal netting di versi awal.
-- [ ] Persist rencana entry/proteksi/trailing, deduplikasi fill dan pemulihan
+- [x] Persist rencana entry/proteksi/trailing, deduplikasi fill dan pemulihan
   grid/DCA/MM beserta keputusan adopt/cancel setelah restart.
-- [ ] Transaksi manual, deposit/withdrawal, unknown order dan selisih wallet
+- [x] Transaksi manual, deposit/withdrawal, unknown order dan selisih wallet
   menghasilkan temuan; tahan aktivitas terdampak, jangan membagi koreksi sembarang.
-- [ ] Feed dibagi lintas instance, cold/warm start dan backfill gagal tidak
+- [x] Feed dibagi lintas instance, cold/warm start dan backfill gagal tidak
   menghasilkan entry dari state yang belum direkonsiliasi.
 
 Selesai bila pemilik setiap dana/order/fill dapat ditelusuri dan recovery tidak
@@ -192,16 +198,16 @@ menggandakan event. Race saldo dan crash diuji menyeluruh pada P2-7.
 
 ### P2-4 — Runtime, risiko dan kontrol
 
-- [ ] Lifecycle instance/strategi, start/pause/resume/archive, tanpa menghapus
+- [x] Lifecycle instance/strategi, start/pause/resume/archive, tanpa menghapus
   ledger atau me-reset risk otomatis. Arsip memerlukan order selesai dan posisi flat.
-- [ ] Batas dana/posisi/exposure/kerugian pada strategi, instance dan akun;
+- [x] Batas dana/posisi/exposure/kerugian pada strategi, instance dan akun;
   instance kecil tidak bisa melewati batas akun lewat banyak order kecil.
-- [ ] Pause hanya menghentikan entry; exit/proteksi dan reconciliation tetap aktif.
-- [ ] Aksi terpisah: cancel pending, close positions/flatten, stop untuk resume,
+- [x] Pause hanya menghentikan entry; exit/proteksi dan reconciliation tetap aktif.
+- [x] Aksi terpisah: cancel pending, close positions/flatten, stop untuk resume,
   finish experiment. Scope, dampak dan konfirmasi tampil sebelum aksi dana.
-- [ ] Saat close/cancel gagal, status `closing`/`needs_attention`, bukan sukses;
+- [x] Saat close/cancel gagal, status `closing`/`needs_attention`, bukan sukses;
   retry idempoten dan kill/reset tidak menghapus status yang belum pasti.
-- [ ] Audit perubahan konfigurasi/modal/kontrol, alasan ditolak/menunggu,
+- [x] Audit perubahan konfigurasi/modal/kontrol, alasan ditolak/menunggu,
   otorisasi web/Telegram dan pemulihan state setelah crash.
 
 Selesai bila perintah scoped tidak memengaruhi instance lain dan risk parent
@@ -210,15 +216,15 @@ bukan saldo pribadi/order manual yang tidak dikelola bot.
 
 ### P2-5 — Dashboard, laporan, notifikasi dan template
 
-- [ ] Akun → daftar instance → detail strategi, status paper/testnet/live jelas.
-- [ ] Buat/edit/arsip instance, tambah strategi, atur batas, transfer saldo bebas.
-- [ ] Laporan net PnL, fee, drawdown, reservasi/inventori, riwayat transfer,
+- [x] Akun → daftar instance → detail strategi, status paper/testnet/live jelas.
+- [x] Buat/edit/arsip instance, tambah strategi, atur batas, transfer saldo bebas.
+- [x] Laporan net PnL, fee, drawdown, reservasi/inventori, riwayat transfer,
   kesehatan feed/proteksi/reconciliation dan alasan menunggu.
-- [ ] Penanda harga/kurs dan timestamp; tampilan USDT + perkiraan USD/IDR;
+- [x] Penanda harga/kurs dan timestamp; tampilan USDT + perkiraan USD/IDR;
   desktop/mobile dan light/dark tetap berfungsi.
-- [ ] Telegram scoped, whitelist, tingkat notifikasi, digest harian dan deduplikasi;
+- [x] Telegram scoped, whitelist, tingkat notifikasi, digest harian dan deduplikasi;
   jangan membuat satu long-poller per instance dengan token yang sama.
-- [ ] Duplikasi template hanya menyalin konfigurasi, bukan modal, posisi atau hasil;
+- [x] Duplikasi template hanya menyalin konfigurasi, bukan modal, posisi atau hasil;
   preview menampilkan dana dan minimum order sebelum instance diaktifkan.
 
 Selesai bila alur pengguna dapat dijalankan pada data simulasi tanpa memahami
@@ -226,13 +232,13 @@ schema teknis, dan kontrol tidak mengarah ke instance yang salah.
 
 ### P2-6 — Riset strategi dan evaluasi portofolio
 
-- [ ] Backtest konfigurasi instance multi-strategi dengan satu sumber modal dan
+- [x] Backtest konfigurasi instance multi-strategi dengan satu sumber modal dan
   reservasi bersama, bukan menjumlahkan return tes independen.
-- [ ] Bekukan konfigurasi ETH utama/BTC pembanding; versi parameter dan sumber
+- [x] Bekukan konfigurasi ETH utama/BTC pembanding; versi parameter dan sumber
   data/biaya dicatat. Tentukan uji tambahan tanpa menyebut data lama holdout baru.
-- [ ] Bandingkan tunai, buy-and-hold, fee/slippage stress, drawdown, turnover,
+- [x] Bandingkan tunai, buy-and-hold, fee/slippage stress, drawdown, turnover,
   durasi/sampel dan konsentrasi aset. Perbaiki model eksekusi bila material.
-- [ ] Selaraskan definisi strategi backtest/paper/testnet/live, tetapi simpan
+- [x] Selaraskan definisi strategi backtest/paper/testnet/live, tetapi simpan
   saldo, sesi, credentials dan hasil tiap mode secara terpisah.
 - [ ] Periksa komisi aktual akun/simbol saat relevan; diskon BNB opsional,
   tanpa menganggap fee jaringan murah sebagai fee trading murah.
@@ -240,32 +246,46 @@ schema teknis, dan kontrol tidak mengarah ke instance yang salah.
 Selesai bila laporan menunjukkan hasil portofolio bersama setelah biaya dan
 batas bukti. Tidak ada klaim target +50% sudah tercapai konsisten.
 
+Catatan P2-6: baseline dan stress telah dijalankan sebagai smoke test historis
+singkat. Riset multi-tahun lama tidak dihitung sebagai holdout baru. Pemeriksaan
+komisi akun nyata tetap terbuka dan tidak diperlukan untuk membangun CLI offline.
+
 ### P2-7 — Testing menyeluruh
 
-- [ ] Inventaris/reuse test Plan 1 (C-15): indikator, risk/sizing, SimBroker,
+- [x] Inventaris/reuse test Plan 1 (C-15): indikator, risk/sizing, SimBroker,
   golden/metrik/split, recorder, CLI, migrasi up/down, adapter dan config.
-- [ ] Invariant ledger, dua alokasi serentak, transfer ulang, rollback DB,
+- [x] Invariant ledger, dua alokasi serentak, transfer ulang, rollback DB,
   reservation buy/sell/OCO, fee base/BNB dan arus modal.
-- [ ] Dua strategi pada simbol sama; fill tertunda/duplikat/out of order, cancel
+- [x] Dua strategi pada simbol sama; fill tertunda/duplikat/out of order, cancel
   timeout, status terminal ambigu, OCO, restart di antara debit dan kirim order.
-- [ ] Satu pemilik wallet, kehilangan lease, migrasi/resume data legacy,
+- [x] Satu pemilik wallet, kehilangan lease, migrasi/resume data legacy,
   unknown/manual order, selisih saldo dan DB/network outage.
-- [ ] Integrasi DB terpisah, paper restart, fixture Binance, gate live;
+- [x] Integrasi DB terpisah, paper restart, fixture Binance, gate live;
   race detector, build, vet, lint dan pemeriksaan monitoring sesuai CI.
 - [ ] Browser mobile/desktop light/dark, auth/CSP/control/confirmation, mode tanpa
   sesi, akurasi chart dan laporan; Telegram scoped/whitelist/digest/shutdown.
-- [ ] Uji isolasi akun/mode/instance: tidak ada perpindahan dana atau perintah
+- [x] Uji isolasi akun/mode/instance: tidak ada perpindahan dana atau perintah
   lintas scope; data test tidak menyentuh database eksperimen/produksi.
 
 Selesai bila bukti per area dan daftar temuan tersimpan di `docs/testing/`,
 bukan sekadar seluruh checkbox lama disalin menjadi selesai.
 
+Bukti lokal: [laporan pengujian](testing/plan2-local-2026-10-20.md).
+Checkbox integrasi/legacy berarti suite lokal dan kebijakan mapping aman
+tersedia; bukan migrasi inventori VPS sudah dilakukan. Browser belum terhubung;
+HTTP/auth/CSP/template diuji, visual mobile/desktop masih terbuka. Cakupan chaos
+network/DB di VPS dan notifikasi nyata tetap P2-9.
+
 ### P2-8 — Fixing dan pemeriksaan ulang
 
-- [ ] Urutkan temuan dana/proteksi → ledger/data → akses → operasi/UI.
-- [ ] Setiap bug material diberi reproduksi/regression, lalu jalankan ulang
+- [x] Urutkan temuan dana/proteksi → ledger/data → akses → operasi/UI.
+- [x] Setiap bug material diberi reproduksi/regression, lalu jalankan ulang
   pengujian terkait dan CI wajib. Tidak membuka fase rilis dengan temuan kritis.
-- [ ] Perbarui panduan migrasi, pemulihan dan batas yang belum terselesaikan.
+- [x] Perbarui panduan migrasi, pemulihan dan batas yang belum terselesaikan.
+
+Penutupan lokal P2-8: perbaikan material diberi regression dan pemeriksaan
+lokal dijalankan ulang. QA browser harus ditutup sebelum rilis; tidak ada klaim
+bahwa seluruh Plan 2 atau kesiapan live selesai.
 
 ### P2-9 — Rilis dan trial prospektif VPS
 

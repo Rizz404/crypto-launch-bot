@@ -10,7 +10,9 @@ prosedur umum ada di [panduan deployment](deployment.md).
 - **Plan 2 aktif:** fitur banyak instance dengan beberapa strategi dan pembagian
   modal dijadwalkan di [plan baru](plan-2.md). Ini instance virtual aplikasi,
   bukan izin menggandakan container dengan wallet/DB yang sama. Baca
-  [rancangan ownership](multi-instance.md). Kode fitur ini belum diterapkan.
+  [rancangan ownership](multi-instance.md). Kode fitur ini sudah diterapkan lokal; belum di-deploy. Baca
+  [handover development Claude](HANDOVER-CLAUDE.md) dan
+  [tes lokal Plan 2](testing/plan2-local-2026-10-20.md).
   Status server tetap checkpoint 20 Oktober. Audit P2-0 kemudian membaca
   kode/kategori log container stopped secara read-only; dua fix reconciliation
   hanya di lokal, belum di-deploy. [Hasil audit](testing/p2-0-audit-2026-10-20.md).

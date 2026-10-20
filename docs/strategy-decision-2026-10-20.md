@@ -46,6 +46,9 @@ berlaku; uji prospektif berikutnya direncanakan di VPS.
 Implementasi: `trendspot`, mode `momentum`, pasangan **ETHUSDT**, Binance Spot,
 long saja dan tanpa leverage. Identitas template: `eth-momentum028-larger-paper`.
 Konfigurasi sumber: [configs/paper.eth.yaml](../configs/paper.eth.yaml).
+Versi ledger multi-instance lokal: [configs/managed.eth-paper.yaml](../configs/managed.eth-paper.yaml).
+File managed ETH-only memakai satu modal total dan profil yang sama; contoh
+`managed.example.yaml` adalah demo split, bukan alokasi strategi yang disetujui.
 
 | Komponen | Aturan |
 |---|---|

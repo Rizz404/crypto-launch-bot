@@ -3,7 +3,9 @@
 Bot trading crypto otomatis dalam Go (Binance dan Bybit; spot + futures).
 Rencana aktif dan progres ada di [Plan 2](docs/plan-2.md): multi-instance dengan
 modal terpisah dalam satu akun dan beberapa strategi per instance.
-Fitur tersebut masih direncanakan, belum tersedia di runtime.
+Implementasi runtime managed sudah tersedia secara lokal untuk Binance Spot;
+belum dirilis ke VPS. [Panduan penggunaan](docs/managed-runtime.md) dan
+[handover Claude](docs/HANDOVER-CLAUDE.md) mencatat fitur, hasil tes, dan batasnya.
 [Plan 1](docs/plan.md) sudah selesai sebagai siklus pertama dan menjadi arsip;
 pekerjaan tertunda dipindahkan ke Plan 2. [Indeks dokumentasi](docs/README.md).
 

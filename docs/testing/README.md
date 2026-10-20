@@ -28,3 +28,11 @@ Git karena dapat dibuat ulang dengan script riset. Ringkasan, parameter,
 manifest sumber/checksum, hasil agregat, dan bukti penutupan testnet tetap
 diversikan. Arsip harga, binary, log antrean, database, serta kredensial runtime
 berada di direktori lokal yang diabaikan Git.
+
+## Plan 2 — implementasi lokal 20 Oktober 2026
+
+[Laporan testing/fixing](plan2-local-2026-10-20.md) dan
+[smoke test modal bersama](plan2-shared-capital-smoke-2026-10-20.json).
+Suite baru mencakup ledger, ownership, reservasi, crash/replay, lease,
+checkpoint, HTTP/control dan CLI. Browser QA serta bukti operasi VPS masih
+terbuka; ini bukan laporan trial prospektif atau hasil mainnet.

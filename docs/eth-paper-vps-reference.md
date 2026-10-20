@@ -133,3 +133,10 @@ ini gagal gerbang ketahanan semua lima koin. Tidak ada promosi otomatis ke live.
 
 Untuk membatalkan deployment paralel kelak, stop **project ETH saja**; pertahankan
 volume dan bukti. Hindari perintah global seperti prune atau down -v.
+
+## Implementasi managed lokal
+
+`configs/managed.eth-paper.yaml` mengekspresikan profil ETH-only pada ledger baru.
+Belum di-deploy atau diaktifkan. Jangan mengganti config sesi lama lalu resume:
+siapkan trial/DB baru setelah migrasi salinan, QA dan review P2-9. Baca
+[panduan managed](managed-runtime.md) dan [handover](HANDOVER-CLAUDE.md).

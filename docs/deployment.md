@@ -282,3 +282,12 @@ mengembalikan migrasi database.
 Referensi: [publikasi image dengan Actions](https://docs.github.com/en/actions/tutorials/publish-packages/publish-docker-images),
 [akses registry dan digest](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry),
 [cross-compilation multi-platform](https://docs.docker.com/build/building/multi-platform/).
+
+## Rilis runtime managed Plan 2
+
+Implementasi baru belum di-deploy. Ikuti [panduan managed](managed-runtime.md)
+untuk migrasi 4 pada DB salinan, lease, review legacy dan rollback. Binary VPS
+lama tidak mengenal lease baru. Jangan menjalankan worker lama dan managed
+bersamaan pada akun/mode yang sama. Jangan down migration pada DB dengan history
+managed. [Handover Claude](HANDOVER-CLAUDE.md) mencatat QA yang harus ditutup
+sebelum P2-9. Keputusan mainnet tetap P2-10 dan belum disetujui.
