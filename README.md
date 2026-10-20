@@ -55,8 +55,17 @@ podman compose -f deploy/compose.yml --profile bot up -d --build
 | `funding` | long spot + short perp saat funding tinggi |
 | `xspread` | selisih harga perp antar-exchange |
 | `mm` | market making sederhana (quote post-only) |
+| `trendspot` | eksperimen Spot: breakout, momentum, atau pullback dalam tren naik |
 
 Contoh konfigurasi ada di [configs/config.example.yaml](configs/config.example.yaml). Unit/contract test lokal dan integration paper dengan restart sudah berjalan. Validasi data live/testnet masih berlanjut; bukti dan sisa pengujian ada di [docs/plan.md](docs/plan.md#hasil-testing-2026-10-17).
+
+Riset lima kandidat Spot (belum diaktifkan untuk trading) ada di
+[ringkasan pengujian](docs/testing/candidates-2026-10-19/summary.txt).
+Parameter yang dikunci sebelum pengujian tersedia di
+[candidate-spec.json](docs/testing/candidates-2026-10-19/candidate-spec.json).
+Reproduksi memakai arsip harga lokal: `go run ./scripts/backtest-year -suite candidates`.
+Saat pertama kali menjalankan eksperimen, buat spesifikasi dengan
+`go run ./scripts/backtest-year -suite candidates -declare` terlebih dahulu.
 
 ## Perintah
 

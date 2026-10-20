@@ -5,6 +5,7 @@ asumsi yang dipakai; tidak ada kredensial.
 
 | File | Isi |
 |---|---|
+| [testnet-stop-2026-10-20/analysis.md](testnet-stop-2026-10-20/analysis.md) | Penghentian dini testnet, pembatalan tujuh order, hasil lima strategi dan backlog aplikasi. |
 | [browser-verification.json](browser-verification.json) | Uji dashboard di browser (desktop light, mobile dark, CSP, chart). |
 | [monitoring-verification.json](monitoring-verification.json) | Grafana, datasource, dan alert Prometheus lokal. |
 | [historical-backtest-2025q1.json](historical-backtest-2025q1.json) | Backtest awal emacross BTCUSDT 1h Q1 2025 dengan split. |
@@ -17,3 +18,9 @@ asumsi yang dipakai; tidak ada kredensial.
 Rekaman payload Binance Spot Testnet untuk test offline ada di
 `internal/exchange/binance/testdata/testnet/` (diputar ulang oleh
 `TestRecordedSpotTestnetPayloads`).
+
+Ekspor detail `*-equity.csv` dan `*-trades.csv` dari backtest tidak disimpan di
+Git karena dapat dibuat ulang dengan script riset. Ringkasan, parameter,
+manifest sumber/checksum, hasil agregat, dan bukti penutupan testnet tetap
+diversikan. Arsip harga, binary, log antrean, database, serta kredensial runtime
+berada di direktori lokal yang diabaikan Git.
