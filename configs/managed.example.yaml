@@ -1,0 +1,41 @@
+# Template only. No bot is launched by this file. Never load exchange keys for paper.
+app: {mode: paper, allow_live: false, log_level: info, log_format: json}
+database: {max_conns: 6}
+exchanges:
+  binance: {enabled: true, testnet: false}
+marketdata:
+  exchange: binance
+  markets: [spot]
+  symbols: [ETHUSDT, BTCUSDT]
+  timeframes: [1m, 4h, 1d]
+  initial_backfill: 300
+web: {enabled: true, listen: '127.0.0.1:18081'}
+metrics: {enabled: true, listen: '127.0.0.1:19101'}
+telegram: {enabled: false, notify_level: warn, daily_summary: true, fx: true}
+strategies: []
+wallets:
+  - id: research
+    exchange: binance
+    quote: USDT
+    capital: '110.79104808331486'
+    # Example split of ONE total capital; neither allocation is a live recommendation.
+    instances:
+      - id: momentum
+        name: Momentum ETH
+        allocation: '70'
+        notify: warn
+        strategies:
+          - id: eth4h
+            name: trendspot
+            symbols: [ETHUSDT]
+            cap: '0'
+            params: {mode: momentum, timeframe: 4h, entry_period: 84, trend_period: 100, atr_period: 14, stop_atr: 3, trail_atr: 3, target_atr: 0, momentum_min: 0.05}
+      - id: comparison
+        name: Pembanding BTC
+        allocation: '25'
+        notify: warn
+        strategies:
+          - id: btc1d
+            name: trendspot
+            symbols: [BTCUSDT]
+            params: {mode: momentum, timeframe: 1d, entry_period: 14, trend_period: 50, atr_period: 14, stop_atr: 3, trail_atr: 3, target_atr: 0, momentum_min: 0}

@@ -136,6 +136,18 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 		return fmt.Errorf("%d pending database migration(s), run \"bot migrate up\" first", pending)
 	}
 
+	leases, err := lockWallets(ctx, cfg, pool)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		for _, lease := range leases {
+			lease.Close(context.Background())
+		}
+	}()
+	if len(cfg.Wallets) > 0 {
+		return runManaged(ctx, cfg, pool, leases, log)
+	}
 	reg := metrics.NewRegistry(version, string(cfg.App.Mode))
 	errc := make(chan error, 1)
 	var srv *http.Server

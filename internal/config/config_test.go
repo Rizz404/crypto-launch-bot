@@ -28,6 +28,17 @@ exchanges:
     testnet: %t
 `
 
+func TestManagedExamplesRemainPaperAndSingleCapital(t *testing.T) {
+	for _, name := range []string{"managed.example.yaml", "managed.eth-paper.yaml"} {
+		cfg, err := load(filepath.Join("..", "..", "configs", name), []string{"TB_DATABASE__URL=postgres://unused@localhost/unused"})
+		require.NoError(t, err)
+		require.Equal(t, ModePaper, cfg.App.Mode)
+		require.False(t, cfg.App.AllowLive)
+		require.Len(t, cfg.Wallets, 1)
+		require.Empty(t, cfg.Strategies)
+	}
+}
+
 func TestLoadDefaultsAndEnvOverride(t *testing.T) {
 	path := writeFile(t, "config.yaml", fmt.Sprintf(baseYAML, "paper", true))
 
