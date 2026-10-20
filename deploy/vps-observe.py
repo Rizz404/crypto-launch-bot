@@ -71,8 +71,23 @@ def database(exchange):
       'last_equity',(SELECT max(ts) FROM equity_snapshots),
       'database_bytes',pg_database_size(current_database()));
     """
-    return json.loads(command(DC + ["exec", "-T", "db", "psql", "-U", "bot", "-d",
-                                  "tradingbot", "-v", "ON_ERROR_STOP=1", "-At", "-c", sql % exchange]))
+    out = json.loads(psql(sql % exchange))
+    out["managed"] = []
+    if psql("SELECT to_regclass('managed_wallets') IS NOT NULL").strip() == "t":
+        # Ledger health and hot-state size (compaction keeps it bounded).
+        out["managed"] = json.loads(psql("""
+        SELECT coalesce(json_agg(w),'[]'::json) FROM
+          (SELECT id, revision, octet_length(state::text) AS state_bytes,
+             nullif(state->>'Attention','') AS attention, coalesce((state->>'Halted')::boolean,false) AS halted,
+             jsonb_array_length(coalesce(state->'Pending','[]'::jsonb)) AS pending,
+             (SELECT count(*) FROM jsonb_object_keys(coalesce(state->'Orders','{}'::jsonb))) AS orders
+           FROM managed_wallets) w"""))
+    return out
+
+
+def psql(sql):
+    return command(DC + ["exec", "-T", "db", "psql", "-U", "bot", "-d", DB_NAME,
+                         "-v", "ON_ERROR_STOP=1", "-At", "-c", sql])
 
 
 def env_value(name, default):
@@ -89,6 +104,7 @@ def port(name, default):
 
 now = dt.datetime.now(dt.timezone.utc)
 mode = env_value("TB_APP__MODE", "paper")
+DB_NAME = env_value("BOT_DB_NAME", "tradingbot")
 exchange = "binance-testnet" if mode == "testnet" else "binance"
 metrics_port = port("BOT_METRICS_PORT", 19100)
 prometheus_port = port("PROMETHEUS_PORT", 19090)
@@ -119,6 +135,8 @@ if sample["database"]["ok"]:
     # A closed candle is stored once its period ends: allow two periods plus a margin.
     if not series or any(r["age_seconds"] > 2 * r["tf_seconds"] + 120 or r["gaps"] for r in series):
         problems.append("candle_freshness_or_gap")
+    if any(w["attention"] or w["halted"] for w in sample["database"]["data"]["managed"]):
+        problems.append("managed_attention")
 if sample["prometheus"]["ok"]:
     targets = sample["prometheus"]["data"]["data"]["activeTargets"]
     if not targets or any(t["health"] != "up" for t in targets):

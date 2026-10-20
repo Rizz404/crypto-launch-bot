@@ -110,7 +110,9 @@ services:
     environment:
       TB_APP__MODE: ${TB_APP__MODE:-paper}
       TB_APP__ALLOW_LIVE: "false"
-      TB_DATABASE__URL: postgres://bot:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}@db:5432/tradingbot?sslmode=disable
+      # A new trial gets its own database in the same server (BOT_DB_NAME);
+      # earlier trials stay untouched in theirs.
+      TB_DATABASE__URL: postgres://bot:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}@db:5432/${BOT_DB_NAME:-tradingbot}?sslmode=disable
       TB_METRICS__LISTEN: 0.0.0.0:9100
       TB_WEB__LISTEN: 0.0.0.0:8080
       TB_WEB__PASSWORD: ${TB_WEB__PASSWORD:?Set TB_WEB__PASSWORD in .env.vps}
