@@ -13,6 +13,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -92,7 +93,60 @@ func (b *Bot) Run(ctx context.Context) {
 	var wg sync.WaitGroup
 	wg.Go(func() { b.sendLoop(ctx) })
 	wg.Go(func() { b.pollLoop(ctx) })
+	wg.Go(func() { b.publishCommands(ctx) })
 	wg.Wait()
+}
+
+var commandName = regexp.MustCompile(`^[a-z0-9_]{1,32}$`)
+
+// publishCommands registers the command list with Telegram (setMyCommands),
+// so typing "/" in a whitelisted chat suggests the commands. It is scoped to
+// those chats: other users of the bot do not get the menu. Failures are
+// retried a few times and never affect commands or notifications.
+func (b *Bot) publishCommands(ctx context.Context) {
+	type botCommand struct {
+		Command     string `json:"command"`
+		Description string `json:"description"`
+	}
+	b.mu.Lock()
+	list := []botCommand{}
+	for _, n := range b.order {
+		help := strings.TrimSpace(b.commands[n].help)
+		if !commandName.MatchString(n) || help == "" {
+			continue
+		}
+		if utf8.RuneCountInString(help) > 256 {
+			help = string([]rune(help)[:255]) + "…"
+		}
+		list = append(list, botCommand{n, help})
+	}
+	_, ownHelp := b.commands["help"]
+	b.mu.Unlock()
+	if !ownHelp {
+		list = append(list, botCommand{"help", "daftar perintah dan cara pakai"})
+	}
+	raw, err := json.Marshal(list)
+	if err != nil {
+		return
+	}
+	for _, chat := range b.chatIDs {
+		scope := fmt.Sprintf(`{"type":"chat","chat_id":%d}`, chat)
+		for attempt, wait := 0, 5*time.Second; ; attempt, wait = attempt+1, wait*2 {
+			err = b.call(ctx, "setMyCommands", url.Values{"commands": {string(raw)}, "scope": {scope}}, nil)
+			if err == nil || ctx.Err() != nil {
+				break
+			}
+			if attempt == 3 {
+				b.log.Warn("telegram command menu not published", "err", err)
+				break
+			}
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.After(wait):
+			}
+		}
+	}
 }
 
 func (b *Bot) sendLoop(ctx context.Context) {
@@ -211,6 +265,9 @@ func (b *Bot) dispatch(ctx context.Context, text string) string {
 	b.log.Info("telegram command", "command", name, "args", fields[1:])
 	return cmd.fn(ctx, fields[1:])
 }
+
+// Help returns the /help text: intro plus every registered command.
+func (b *Bot) Help() string { return b.help() }
 
 func (b *Bot) help() string {
 	b.mu.Lock()

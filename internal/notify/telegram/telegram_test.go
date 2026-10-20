@@ -60,6 +60,9 @@ func TestShutdownDoesNotCutOffMessageBeingSent(t *testing.T) {
 			<-r.Context().Done()
 			return nil, r.Context().Err()
 		}
+		if strings.HasSuffix(r.URL.Path, "/setMyCommands") {
+			return response(`{"ok":true,"result":true}`), nil
+		}
 		close(sending)
 		time.Sleep(50 * time.Millisecond) // shutdown happens meanwhile
 		if err := r.Context().Err(); err != nil {
@@ -132,4 +135,23 @@ func TestHelpKeepsRegistrationOrderAndIntro(t *testing.T) {
 	help := b.dispatch(context.Background(), "/help")
 	assert.True(t, strings.HasPrefix(help, "<b>Perintah</b>\n\n"))
 	assert.Less(t, strings.Index(help, "/status"), strings.Index(help, "/balance"), "registration order, not alphabetical")
+}
+
+func TestCommandMenuIsPublishedToWhitelistedChats(t *testing.T) {
+	b := New("fake-token", []int64{42, 7}, slog.New(slog.NewTextHandler(io.Discard, nil)))
+	b.Handle("status", "ringkasan akun", func(context.Context, []string) string { return "" })
+	b.Handle("Bad-Name", "not a valid Telegram command", func(context.Context, []string) string { return "" })
+	var forms []url.Values
+	b.http = &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
+		require.True(t, strings.HasSuffix(r.URL.Path, "/setMyCommands"))
+		body, _ := io.ReadAll(r.Body)
+		form, _ := url.ParseQuery(string(body))
+		forms = append(forms, form)
+		return response(`{"ok":true,"result":true}`), nil
+	})}
+	b.publishCommands(context.Background())
+	require.Len(t, forms, 2)
+	assert.JSONEq(t, `[{"command":"status","description":"ringkasan akun"},{"command":"help","description":"daftar perintah dan cara pakai"}]`, forms[0].Get("commands"))
+	assert.JSONEq(t, `{"type":"chat","chat_id":42}`, forms[0].Get("scope"))
+	assert.JSONEq(t, `{"type":"chat","chat_id":7}`, forms[1].Get("scope"))
 }
