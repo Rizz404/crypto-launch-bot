@@ -285,9 +285,11 @@ Referensi: [publikasi image dengan Actions](https://docs.github.com/en/actions/t
 
 ## Rilis runtime managed Plan 2
 
-Implementasi baru belum di-deploy. Ikuti [panduan managed](managed-runtime.md)
+Sudah di-deploy sebagai trial P2-9 (DB terpisah via `BOT_DB_NAME`, lihat
+[handoff VPS](handoff-vps.md)). Ikuti [panduan managed](managed-runtime.md)
 untuk migrasi 4 pada DB salinan, lease, review legacy dan rollback. Binary VPS
 lama tidak mengenal lease baru. Jangan menjalankan worker lama dan managed
 bersamaan pada akun/mode yang sama. Jangan down migration pada DB dengan history
-managed. [Handover Claude](HANDOVER-CLAUDE.md) mencatat QA yang harus ditutup
-sebelum P2-9. Keputusan mainnet tetap P2-10 dan belum disetujui.
+managed. Trial baru memakai database baru (`CREATE DATABASE`, `BOT_DB_NAME`,
+`bot migrate up`) agar DB lama tetap utuh; backup mencakup semua DB proyek.
+Keputusan mainnet tetap P2-10 dan belum disetujui.

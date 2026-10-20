@@ -1,6 +1,7 @@
 # Penggunaan multi-instance Spot
 
-Implementasi lokal Plan 2, 20 Oktober 2026. Belum dirilis ke VPS. Lihat
+Implementasi Plan 2, 20 Oktober 2026; berjalan di VPS sebagai trial P2-9
+([handoff VPS](handoff-vps.md)). Lihat
 [handover](HANDOVER-CLAUDE.md) dan [hasil tes](testing/plan2-local-2026-10-20.md).
 
 ## Konfigurasi

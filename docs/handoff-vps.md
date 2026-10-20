@@ -24,12 +24,12 @@ prosedur umum ada di [panduan deployment](deployment.md).
 - **Plan 2 aktif:** fitur banyak instance dengan beberapa strategi dan pembagian
   modal dijadwalkan di [plan baru](plan-2.md). Ini instance virtual aplikasi,
   bukan izin menggandakan container dengan wallet/DB yang sama. Baca
-  [rancangan ownership](multi-instance.md). Kode fitur ini sudah diterapkan lokal; belum di-deploy. Baca
+  [rancangan ownership](multi-instance.md). Kode fitur ini kini sudah di-deploy (trial P2-9 di atas). Baca
   [handover development Claude](HANDOVER-CLAUDE.md) dan
   [tes lokal Plan 2](testing/plan2-local-2026-10-20.md).
   Status server tetap checkpoint 20 Oktober. Audit P2-0 kemudian membaca
   kode/kategori log container stopped secara read-only; dua fix reconciliation
-  hanya di lokal, belum di-deploy. [Hasil audit](testing/p2-0-audit-2026-10-20.md).
+  kemudian ikut dirilis bersama P2-9. [Hasil audit](testing/p2-0-audit-2026-10-20.md).
 
 
 - **Keputusan strategi 20 Oktober:** ETHUSDT momentum 4h adalah kandidat paper
@@ -148,6 +148,74 @@ python3 deploy/vps-baseline-check.py                     # proyek lain tidak ber
 
 Selalu `</dev/null` atau `--interactive=false` untuk perintah Compose di dalam
 skrip yang dialirkan lewat `ssh ... 'bash -s'`, karena stdin bisa tertelan.
+
+## Trial P2-9: pemantauan, laporan user dan review 7 hari
+
+Berlaku untuk trial managed ETH paper yang dihitung sejak
+**2026-10-20 16:24:45 UTC (23.24 WIB)**. Bukti start dan insiden:
+[p2-9-vps-start](testing/p2-9-vps-start-2026-10-20.json).
+
+**Kesepakatan dengan user (2026-10-21):** user akan melapor setelah sekitar 1, 3
+dan 7 hari (boleh terlambat). Di antara laporan **tidak ada tindakan agent**:
+jangan redeploy, restart, ubah config/parameter, atau menjalankan migrasi, agar
+jendela observasi bersih. Yang berjalan otomatis: bot, backup harian
+(~03.15 UTC), observasi tiap 5 menit (`trading-bot-paper-observe.timer`),
+ringkasan Telegram 00.00 UTC/07.00 WIB.
+
+| Laporan | Yang user periksa di Telegram | Yang agent periksa bila diminta |
+|---|---|---|
+| Hari 1 | Ketik `/` memunculkan menu; `/status` dibalas; ringkasan 07.00 WIB masuk; tidak ada “Bot berhenti” setelah batas 4h 03.00 WIB | Sampel observasi: `problems`, `container_restarted`, restart count; batas 4h 2026-10-20 20.00 UTC tanpa gap |
+| Hari 3 | Ringkasan tiap pagi, tidak ada peringatan “Perlu diperiksa” | Sama, plus ukuran state/WAL dan backup harian |
+| Hari 7 (≥ 2026-10-27 16:25 UTC) | User cukup meminta “review 7 hari” | Review lengkap di bawah |
+
+**Tanda bahaya yang membuat user melapor lebih cepat:** pesan “🛑 Bot berhenti”
+disusul “🤖 Bot aktif” berulang (crash loop), pesan berisi “Perlu diperiksa” /
+attention, atau ringkasan 07.00 WIB tidak masuk dua hari berturut-turut. Tidak
+ada transaksi selama seminggu itu **normal** (±37 transaksi per tahun).
+
+**Review 7 hari (read-only, jalankan dari `/opt/trading-bot-paper/repo`):**
+
+```sh
+dc() { docker compose --env-file .env.vps -f deploy/compose.vps.yml "$@" </dev/null; }
+q() { dc exec -T db psql -U bot -d tradingbot_eth -Atc "$1"; }
+# 1. Sampel observasi sejak start: masalah, restart, OOM
+python3 - <<'PY'
+import json, glob
+rows = [json.loads(l) for f in sorted(glob.glob("../evidence/samples-*.jsonl")) for l in open(f)]
+w = [r for r in rows if r["time"] >= "2026-10-20T16:24:45"]
+print(len(w), "samples;", sum(1 for r in w if r["problems"]), "with problems")
+print({r["time"][:16]: r["problems"] for r in w if r["problems"]})
+PY
+docker inspect -f 'restarts={{.RestartCount}} started={{.State.StartedAt}}' trading-bot-paper-bot-1
+# 2. WARN/ERROR dikelompokkan
+dc logs --no-log-prefix --since 2026-10-20T16:24:45Z bot 2>&1 | grep -v '"level":"INFO"' | cut -c1-200 | sort | uniq -c | sort -rn | head -30
+# 3. Ledger: run, attention, kas, holding, order, ukuran state
+q "select revision, octet_length(state::text), state->>'Attention', state->>'Halted', state->'Instances'->'momentum'->>'Cash', state->'Holdings', jsonb_array_length(state->'Runs') from managed_wallets"
+q "select r->>'Status', count(*) from managed_wallets, jsonb_array_elements(state->'Runs') r group by 1"
+q "select operation, count(*) from managed_journal where created_at >= '2026-10-20 16:24:45+00' group by 1 order by 2 desc"
+q "select kind, count(*) from managed_archive group by 1"
+# 4. Feed: gap/umur candle 1m dan 4h selama trial
+q "select timeframe, count(*), max(open_time) from candles where open_time >= '2026-10-20 16:24:45+00' group by 1"
+# 5. Backup harian ada, checksum valid; baseline proyek lain
+ls ../backups; python3 deploy/vps-baseline-check.py | grep differences
+```
+
+Nilai: uptime/restart (hanya restart terencana di bukti), tidak ada gap candle,
+attention kosong atau beralasan jelas, ledger konsisten (kas + nilai holding =
+equity, reservasi kosong saat tanpa order), entry/stop/trailing sesuai strategi
+bila ada transaksi, Telegram digest harian, backup harian dan ukuran DB/WAL wajar
+(≈95 kB WAL/menit setelah `c14aa08`). Catat hasil di
+`docs/testing/p2-9-review-<tanggal>.md`, centang item P2-9 terkait di
+[Plan 2](plan-2.md), dan **jangan** menyimpulkan izin live: P2-10 memerlukan
+keputusan modal/risk dan persetujuan eksplisit user. Penilaian strategi butuh
+sampel jauh lebih panjang dari 7 hari.
+
+**Izin agent di laptop user:** `.claude/settings.local.json` mengizinkan
+`ssh -o BatchMode=yes plesk …`, dan teks `autoMode` (diperluas 2026-10-20 untuk
+P2-9) mengizinkan checkout/deploy digest, config/env non-secret, DB trial/salinan,
+migrasi, restart project ini dan timer. Classifier menolak skrip gabungan yang
+besar; jalankan satu langkah per perintah. Skrip lama `vps-backup.sh` (sebelum
+`c3b4bad`) menelan stdin heredoc `ssh 'bash -s'`; versi sekarang aman.
 
 ## Analisis uji testnet
 

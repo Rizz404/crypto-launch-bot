@@ -19,6 +19,9 @@
 Per 20 Oktober 2026: Plan 1 ditutup; Plan 2 dimulai dengan
 [audit P2-0 dan dua perbaikan reconciliation lokal](testing/p2-0-audit-2026-10-20.md).
 Implementasi lokal P2-1–P2-6 tersedia; testing/fixing lokal dan
-[QA browser fixture](testing/plan2-browser-qa-2026-10-20.md) selesai. Belum dirilis ke VPS. Bot testnet VPS sudah dihentikan, belum ada trial ETH baru atau live.
+[QA browser fixture](testing/plan2-browser-qa-2026-10-20.md) selesai. **Trial P2-9 ETH paper managed
+berjalan di VPS sejak 2026-10-20 16:24:45 UTC** (DB `tradingbot_eth`); jadwal laporan user
+1/3/7 hari dan prosedur review ada di [handoff VPS](handoff-vps.md#trial-p2-9-pemantauan-laporan-user-dan-review-7-hari).
+Live belum diizinkan (P2-10).
 Penutupan plan tidak mengubah hasil tes menjadi lulus atau mengizinkan mainnet.
 Status server di atas adalah checkpoint terakhir, bukan pemeriksaan real-time.

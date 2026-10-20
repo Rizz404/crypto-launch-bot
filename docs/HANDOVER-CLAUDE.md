@@ -1,5 +1,15 @@
 # Handover Codex → Claude — Plan 2
 
+> **Status terkini (21 Oktober 2026, sesi Claude):** P2-7/P2-8 ditutup
+> (QA browser, review kode, perbaikan dana/risiko). Trial **P2-9 ETH paper
+> managed berjalan di VPS sejak 2026-10-20 16:24:45 UTC**, source `c14aa08`, DB
+> `tradingbot_eth`. Tahap sekarang **menunggu**: user melapor sekitar hari 1/3/7,
+> review 7 hari paling cepat 2026-10-27 16:25 UTC. Jangan ubah VPS di antara
+> laporan. Baca [handoff VPS](handoff-vps.md#trial-p2-9-pemantauan-laporan-user-dan-review-7-hari),
+> [bukti P2-9](testing/p2-9-vps-start-2026-10-20.json), lalu [Plan 2](plan-2.md).
+> Live (P2-10) belum diizinkan. Bagian di bawah adalah handover asli Codex
+> dengan penanda progres.
+
 Tanggal: **20 Oktober 2026**. User meminta menyelesaikan tahap development lokal
 yang sedang dikerjakan dan memperbarui dokumentasi sebelum pindah ke Claude
 karena limit Codex. **Baca dokumen ini dahulu**, lalu [Plan 2](plan-2.md),
@@ -112,6 +122,9 @@ ETH prospektif di laptop. Jangan menjalankan `bot run` untuk mencoba dashboard.
    2026-10-20 16:24:45 UTC ([bukti](testing/p2-9-vps-start-2026-10-20.json),
    [handoff VPS](handoff-vps.md)). Sisa P2-9: verifikasi Telegram/digest,
    batas candle 4h tanpa restart, review tujuh hari (≥ 2026-10-27 16:25 UTC).
+   User melapor sekitar hari 1/3/7; **jangan mengubah VPS di antara laporan**.
+   Checklist, tanda bahaya dan perintah review ada di
+   [handoff VPS](handoff-vps.md#trial-p2-9-pemantauan-laporan-user-dan-review-7-hari).
 
 Perintah, format input CLI dan prosedur recovery ada di
 [managed-runtime.md](managed-runtime.md). Jangan mengandalkan ringkasan chat

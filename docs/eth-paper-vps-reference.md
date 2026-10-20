@@ -1,5 +1,9 @@
 # Referensi paper ETH di VPS
 
+**Pembaruan 21 Oktober 2026:** profil ini kini berjalan di VPS sebagai trial
+managed P2-9 sejak 2026-10-20 16:24:45 UTC; lihat [handoff VPS](handoff-vps.md).
+Isi di bawah adalah riwayat persiapan.
+
 Status 19 Oktober 2026: **belum di-deploy di VPS, tidak berjalan di laptop,
 dan belum disetujui untuk live**. User meminta tidak menjalankan eksperimen ini
 di laptop; VPS boleh dipakai bila tidak mengganggu instance yang sudah berjalan.
