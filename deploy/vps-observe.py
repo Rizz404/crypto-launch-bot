@@ -79,8 +79,9 @@ def database(exchange):
         SELECT coalesce(json_agg(w),'[]'::json) FROM
           (SELECT id, revision, octet_length(state::text) AS state_bytes,
              nullif(state->>'Attention','') AS attention, coalesce((state->>'Halted')::boolean,false) AS halted,
-             jsonb_array_length(coalesce(state->'Pending','[]'::jsonb)) AS pending,
-             (SELECT count(*) FROM jsonb_object_keys(coalesce(state->'Orders','{}'::jsonb))) AS orders
+             -- Go encodes empty collections as JSON null, which coalesce does not catch.
+             CASE jsonb_typeof(state->'Pending') WHEN 'array' THEN jsonb_array_length(state->'Pending') ELSE 0 END AS pending,
+             CASE jsonb_typeof(state->'Orders') WHEN 'object' THEN (SELECT count(*) FROM jsonb_object_keys(state->'Orders')) ELSE 0 END AS orders
            FROM managed_wallets) w"""))
     return out
 
