@@ -21,6 +21,7 @@ type Command struct {
 	Amount    decimal.Decimal `json:"amount"`
 	Name      string          `json:"name"`
 	Policy    string          `json:"policy"`
+	Order     string          `json:"order,omitempty"`
 	Instance  *InstanceSpec   `json:"instance,omitempty"`
 	Binding   *BindingSpec    `json:"binding,omitempty"`
 	Confirm   bool            `json:"confirm"`
@@ -298,6 +299,9 @@ func (s *State) Apply(c Command) error {
 func (r *Runtime) Command(ctx context.Context, c Command) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	if c.Operation == "resolve_order" {
+		return r.resolveOrder(ctx, c)
+	}
 	if c.Operation == "resume" || c.Operation == "reset" {
 		st, err := r.repo.Load(ctx)
 		if err != nil {

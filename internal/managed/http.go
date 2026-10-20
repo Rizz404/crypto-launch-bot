@@ -169,7 +169,16 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 				m[v[i]] = v[i+1]
 			}
 			return m
-		}, "csrf": func() string { return h.token }, "rid": nonce, "wallet": func() string { return wallet }}).Parse(dashboardHTML))
+		}, "csrf": func() string { return h.token }, "rid": nonce, "wallet": func() string { return wallet }, "uncertain": func() []*Order {
+			var out []*Order
+			for _, o := range state.Orders {
+				if o.State == "submitting" || o.State == "unknown" || o.State == "canceling" {
+					out = append(out, o)
+				}
+			}
+			slices.SortFunc(out, func(a, b *Order) int { return a.Order.CreatedAt.Compare(b.Order.CreatedAt) })
+			return out
+		}}).Parse(dashboardHTML))
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	_ = tmpl.Execute(w, data)
 }
@@ -181,7 +190,7 @@ func formError(w http.ResponseWriter, q *http.Request, wallet string, err error)
 }
 
 func formCommand(q *http.Request) (Command, error) {
-	c := Command{ID: q.FormValue("id"), Operation: q.FormValue("operation"), Scope: q.FormValue("scope"), From: q.FormValue("from"), To: q.FormValue("to"), Name: q.FormValue("name"), Policy: q.FormValue("policy"), Confirm: q.FormValue("confirm") == "yes"}
+	c := Command{ID: q.FormValue("id"), Operation: q.FormValue("operation"), Scope: q.FormValue("scope"), From: q.FormValue("from"), To: q.FormValue("to"), Name: q.FormValue("name"), Policy: q.FormValue("policy"), Order: q.FormValue("order"), Confirm: q.FormValue("confirm") == "yes"}
 	if c.ID == "" {
 		return c, errors.New("ID aksi diperlukan")
 	}
@@ -238,7 +247,7 @@ func formCommand(q *http.Request) (Command, error) {
 const dashboardCSS = `:root{color-scheme:light dark;font:15px system-ui;background:#f5f7fa;color:#172534}body{margin:0}main{max-width:1200px;margin:auto;padding:24px}h1{font-size:28px}h2{font-size:20px}nav,.cards,.actions{display:flex;gap:12px;flex-wrap:wrap}.card,article,details{background:white;border:1px solid #d5dde6;border-radius:12px;padding:18px;margin:14px 0}.card{flex:1;min-width:160px}strong{display:block}svg{width:100%;height:180px}svg path{fill:none;stroke:#3299d6;stroke-width:3;vector-effect:non-scaling-stroke}table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px;border-bottom:1px solid #d5dde6}form{display:flex;align-items:end;gap:8px;flex-wrap:wrap;margin:12px 0}input,select,button{font:inherit;padding:9px;border-radius:6px;border:1px solid #a4b2c1;max-width:100%;box-sizing:border-box}button{cursor:pointer;background:#135e96;color:white}label{display:grid;gap:4px}.scroll{overflow:auto}.warning{background:#fff0ca;padding:14px;border-radius:8px}small{color:#506477}code{overflow-wrap:anywhere}@media(prefers-color-scheme:dark){:root{background:#101a25;color:#edf3fa}.card,article,details{background:#182635;border-color:#36495e}small{color:#b1c4d8}.warning{background:#463b19}}@media(max-width:600px){main{padding:12px}h1{font-size:23px}td,th{padding:7px}form>*{max-width:100%}}`
 const dashboardHTML = `<!doctype html><html lang="id"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Portofolio bot</title><link rel="stylesheet" href="/managed.css"><main>
 <h1>Portofolio bot</h1><nav>{{range $id,$rt:=.Wallets}}<a href="/?wallet={{$id}}">{{$id}}</a>{{end}}<a href="/api/state?wallet={{.Wallet}}">Ekspor status</a></nav>
-<p>Akun {{.Wallet}} · {{.State.Spec.Mode}} · {{.State.Spec.Exchange}}</p>{{if .Rate}}<p><small>{{.Rate}}</small></p>{{end}}{{if .Error}}<p class="warning" role="alert">Aksi ditolak: {{.Error}}</p>{{end}}{{if .State.Attention}}<p class="warning">Perlu diperiksa: {{.State.Attention}}. Entry baru ditahan.</p>{{end}}
+<p>Akun {{.Wallet}} · {{.State.Spec.Mode}} · {{.State.Spec.Exchange}}</p>{{if .Rate}}<p><small>{{.Rate}}</small></p>{{end}}{{if .Error}}<p class="warning" role="alert">Aksi ditolak: {{.Error}}</p>{{end}}{{with uncertain}}<div class="card"><h2>Order perlu verifikasi</h2><p>Status order berikut belum pasti. Verifikasi menanyakan exchange: order yang tidak ada dilepas reservasinya, order yang ada disinkronkan. Tersedia lima menit setelah order dibuat.</p><div class="scroll"><table><tr><th>Order / pemilik</th><th>Pair / sisi</th><th>Status ledger</th><th></th></tr>{{range .}}<tr><td><code>{{.Order.ClientID}}</code><br><small>{{.Owner}} · {{ts .Order.CreatedAt}}</small></td><td>{{.Order.Symbol}} {{.Order.Side}} {{.Order.Quantity}}</td><td>{{.State}}</td><td><form method="post" action="/control?wallet={{wallet}}"><input type="hidden" name="csrf" value="{{csrf}}"><input type="hidden" name="id" value="{{rid}}"><input type="hidden" name="operation" value="resolve_order"><input type="hidden" name="order" value="{{.Order.ClientID}}"><label><span>Konfirmasi</span><select name="confirm"><option value="">Belum</option><option value="yes">Ya, verifikasi ke exchange</option></select></label><button>Verifikasi</button></form></td></tr>{{end}}</table></div></div>{{end}}{{if .State.Attention}}<p class="warning">Perlu diperiksa: {{.State.Attention}}. Entry baru ditahan.</p>{{end}}
 {{if .State.Halted}}<p class="warning">Batas risiko akun aktif: {{.State.Reason}}</p>{{end}}
 <div class="cards"><div class="card">Nilai akun bot<strong>{{money accountEquity}}</strong></div><div class="card">Cadangan belum dialokasikan<strong>{{money .State.Reserve}}</strong></div><div class="card">Mulai<strong>{{ts .State.StartedAt}}</strong></div></div>
 <div class="card">PnL net akun<strong>{{money pnl}}</strong>Drawdown saat ini: {{dd accountEquity .State.Peak}}<br><small>Grafik equity per jam, maksimal 30 hari. Perubahan alokasi internal tidak menambah nilai akun.</small>{{if gt (len .State.Samples) 1}}<svg viewBox="0 0 1000 200" preserveAspectRatio="none" role="img" aria-label="Grafik nilai akun bot"><path d="{{chart .State.Samples}}"></path></svg><small>Rentang {{money (chartLow .State.Samples)}} – {{money (chartHigh .State.Samples)}} · {{ts (index .State.Samples 0).At}} → {{ts (index .State.Samples (len .State.Samples | dec)).At}}</small>{{else}}<p>Grafik tersedia setelah dua sampel jam berbeda.</p>{{end}}</div>

@@ -250,3 +250,24 @@ func TestDashboardFormRejectionAndRate(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "running", string(s.Instances["a"].Status))
 }
+
+func TestDashboardListsUncertainOrdersForResolution(t *testing.T) {
+	repo, _ := NewMemory(spec())
+	rt, err := NewRuntime(t.Context(), repo, broker.NewSim(broker.SimConfig{Exchange: "sim"}), nil, d("0"), time.Now, slog.New(slog.NewTextHandler(io.Discard, nil)))
+	require.NoError(t, err)
+	require.NoError(t, repo.Update(t.Context(), "seed", "seed", nil, func(s *State) error {
+		s.Mark("ETHUSDT", d("100"))
+		o := order("uncertain-1", domain.Buy, "1", "100")
+		if err := s.ReserveOrder("a/one", o, "", d("0")); err != nil {
+			return err
+		}
+		s.Orders["uncertain-1"].State = "unknown"
+		return nil
+	}))
+	w := httptest.NewRecorder()
+	NewHTTP(map[string]*Runtime{"test": rt}, "", nil).ServeHTTP(w, httptest.NewRequest("GET", "http://localhost/", nil))
+	body := w.Body.String()
+	require.Contains(t, body, "Order perlu verifikasi")
+	require.Contains(t, body, `name="order" value="uncertain-1"`)
+	require.Contains(t, body, `value="resolve_order"`)
+}

@@ -97,7 +97,7 @@ func (s *State) UpdateOrder(upd domain.Order) {
 	o.Order.ExchangeID = upd.ExchangeID
 	o.Order.UpdatedAt = upd.UpdatedAt
 	if upd.Status.Open() {
-		if o.State == "submitting" {
+		if o.State == "submitting" || o.State == "unknown" {
 			o.State = "open"
 		}
 		return

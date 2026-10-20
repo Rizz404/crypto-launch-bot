@@ -552,6 +552,9 @@ func (r *Runtime) deliver(ctx context.Context, ev broker.Event) error {
 func (r *Runtime) Reconcile(ctx context.Context) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	return r.reconcile(ctx)
+}
+func (r *Runtime) reconcile(ctx context.Context) error {
 	live, ok := r.physical.(broker.Live)
 	if !ok {
 		return nil
@@ -744,6 +747,19 @@ func (b *scopedBroker) PlaceBracket(ctx context.Context, stop, target domain.Ord
 			b.r.persist(ctx, nonce(), "bracket_unknown", group, func(s *State) error { s.Attention = "bracket submission requires reconciliation"; return nil })
 			b.r.failure = err
 		}
+	}
+	if len(out) > 0 {
+		// Accepted legs are open, as for single orders; brokers need not
+		// report NEW on their stream for the ledger to know that.
+		b.r.persist(ctx, nonce(), "accepted", group, func(s *State) error {
+			for _, placed := range out {
+				if tracked := s.Orders[placed.ClientID]; tracked != nil && tracked.State == "submitting" {
+					tracked.Order.ExchangeID = placed.ExchangeID
+					tracked.State = "open"
+				}
+			}
+			return nil
+		})
 	}
 	return out, err
 }

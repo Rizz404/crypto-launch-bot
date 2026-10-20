@@ -3,6 +3,7 @@ package managed
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"sync"
@@ -282,9 +283,16 @@ func TestReconciliationKeepsUnderfundedWalletBlocked(t *testing.T) {
 // exchangeLike mimics Binance Spot: a successful cancel emits nothing; the
 // terminal state arrives later on the user stream or through an order query.
 type exchangeLike struct {
-	h       broker.Handler
-	open    map[string]domain.Order
-	queried int
+	h        broker.Handler
+	open     map[string]domain.Order
+	queried  int
+	failNext error
+	balances map[string]broker.Balance
+	query    func(domain.Order) (domain.Order, error)
+}
+
+func (x *exchangeLike) QueryOrder(_ context.Context, o domain.Order) (domain.Order, error) {
+	return x.query(o)
 }
 
 func (x *exchangeLike) Exchange() string                             { return "sim" }
@@ -296,9 +304,19 @@ func (x *exchangeLike) SetLeverage(context.Context, domain.Market, string, int) 
 	return nil
 }
 func (x *exchangeLike) AccountState(context.Context, domain.Market) (*broker.AccountState, error) {
-	return &broker.AccountState{}, nil
+	st := &broker.AccountState{Balances: x.balances}
+	for _, o := range x.open {
+		if o.Status.Open() {
+			st.OpenOrders = append(st.OpenOrders, o)
+		}
+	}
+	return st, nil
 }
 func (x *exchangeLike) PlaceOrder(_ context.Context, o domain.Order) (domain.Order, error) {
+	if err := x.failNext; err != nil {
+		x.failNext = nil
+		return o, err
+	}
 	if x.open == nil {
 		x.open = map[string]domain.Order{}
 	}
@@ -328,6 +346,13 @@ func (x *exchangeLike) CancelOrder(_ context.Context, o domain.Order) error {
 func (x *exchangeLike) SyncOrders(_ context.Context, tracked, _ []domain.Order) {
 	for _, o := range tracked {
 		x.queried++
+		if x.query != nil {
+			final, err := x.query(o)
+			if err == nil && !final.Status.Open() {
+				x.h(broker.Event{Kind: broker.EventOrder, Order: final})
+			}
+			continue
+		}
 		final := o
 		final.Status = domain.OrderCanceled
 		if leg, ok := x.open[o.ClientID]; ok {
@@ -387,6 +412,76 @@ func TestCapitalFlowsDoNotTripStrategyLossLimits(t *testing.T) {
 	s.Observe(now.Add(3 * time.Minute))
 	require.False(t, s.Instances["a"].Halted)
 	require.False(t, s.Bindings["a/one"].Halted)
+}
+
+func TestResolveOrderUsesExchangeEvidence(t *testing.T) {
+	timeout := &exchange.APIError{Exchange: "sim", HTTPStatus: 503, Code: -1007, Message: "execution status unknown"}
+	for _, tc := range []struct {
+		name      string
+		query     func(domain.Order) (domain.Order, error)
+		wantState string
+		wantErr   string
+	}{
+		{name: "never reached exchange", wantState: "terminal", query: func(o domain.Order) (domain.Order, error) {
+			return o, fmt.Errorf("%w: -2013", broker.ErrOrderNotFound)
+		}},
+		{name: "resting on exchange", wantState: "open", query: func(o domain.Order) (domain.Order, error) {
+			o.Status, o.ExchangeID = domain.OrderNew, "77"
+			return o, nil
+		}},
+		{name: "query unavailable", wantState: "unknown", wantErr: "left unresolved", query: func(o domain.Order) (domain.Order, error) {
+			return o, errors.New("connection reset")
+		}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			repo, _ := NewMemory(spec())
+			now := time.Date(2026, 10, 20, 12, 0, 0, 0, time.UTC)
+			clock := func() time.Time { return now }
+			x := &exchangeLike{failNext: timeout, query: tc.query, balances: map[string]broker.Balance{"USDT": {Wallet: d("1000")}}}
+			rt, err := NewRuntime(t.Context(), repo, x, testInstruments(), d("0.001"), clock, nil)
+			require.NoError(t, err)
+			require.NoError(t, repo.Update(t.Context(), "price", "mark", nil, func(s *State) error {
+				s.Mark("ETHUSDT", d("100"))
+				s.PriceAt["ETHUSDT"] = now
+				return nil
+			}))
+			o := order("uncertain", domain.Buy, "1", "100")
+			o.CreatedAt = now
+			_, err = (&scopedBroker{r: rt, owner: "a/one"}).PlaceOrder(t.Context(), o)
+			require.Error(t, err)
+			s, _ := repo.Load(t.Context())
+			require.Equal(t, "unknown", s.Orders["uncertain"].State)
+			require.NotEmpty(t, s.Attention)
+
+			// The process stops on an uncertain submission; resolve after restart.
+			rt, err = NewRuntime(t.Context(), repo, x, testInstruments(), d("0.001"), clock, nil)
+			require.NoError(t, err)
+			cmd := Command{ID: "resolve-" + tc.name, Operation: "resolve_order", Order: "uncertain"}
+			require.ErrorContains(t, rt.Command(t.Context(), cmd), "confirmation")
+			cmd.Confirm = true
+			require.ErrorContains(t, rt.Command(t.Context(), cmd), "in flight")
+			now = now.Add(ResolveMinAge)
+			err = rt.Command(t.Context(), cmd)
+			if tc.wantErr != "" {
+				require.ErrorContains(t, err, tc.wantErr)
+			} else {
+				require.NoError(t, err)
+			}
+			s, _ = repo.Load(t.Context())
+			require.Equal(t, tc.wantState, s.Orders["uncertain"].State)
+			quote, _ := s.Reserved("", "a/one", "")
+			switch tc.wantState {
+			case "terminal":
+				require.True(t, quote.IsZero(), "reservation released")
+				require.Empty(t, s.Pending, "engine was told about the rejection")
+				require.Empty(t, s.Attention, "reconciliation cleared attention from evidence")
+			case "open":
+				require.True(t, quote.IsPositive(), "a resting order keeps its funds")
+			default:
+				require.NotEmpty(t, s.Attention)
+			}
+		})
+	}
 }
 
 func TestCompactArchivesSettledDetailOnly(t *testing.T) {
