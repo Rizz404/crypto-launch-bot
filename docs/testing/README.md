@@ -8,6 +8,7 @@ hasil kelulusan otomatis fitur multi-instance baru.
 
 | File | Isi |
 |---|---|
+| [p2-0-audit-2026-10-20.md](p2-0-audit-2026-10-20.md) | Audit OCO, dust DOGE, ekuitas transient dan kontrak akhir eksperimen; dua fix lokal dengan regression. |
 | [testnet-stop-2026-10-20/analysis.md](testnet-stop-2026-10-20/analysis.md) | Penghentian dini testnet, pembatalan tujuh order, hasil lima strategi dan backlog aplikasi. |
 | [browser-verification.json](browser-verification.json) | Uji dashboard di browser (desktop light, mobile dark, CSP, chart). |
 | [monitoring-verification.json](monitoring-verification.json) | Grafana, datasource, dan alert Prometheus lokal. |

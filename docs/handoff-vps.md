@@ -11,8 +11,9 @@ prosedur umum ada di [panduan deployment](deployment.md).
   modal dijadwalkan di [plan baru](plan-2.md). Ini instance virtual aplikasi,
   bukan izin menggandakan container dengan wallet/DB yang sama. Baca
   [rancangan ownership](multi-instance.md). Kode fitur ini belum diterapkan.
-  Status server tetap checkpoint 20 Oktober; penyusunan Plan 2 tidak mengakses
-  atau mengubah VPS.
+  Status server tetap checkpoint 20 Oktober. Audit P2-0 kemudian membaca
+  kode/kategori log container stopped secara read-only; dua fix reconciliation
+  hanya di lokal, belum di-deploy. [Hasil audit](testing/p2-0-audit-2026-10-20.md).
 
 
 - **Keputusan strategi 20 Oktober:** ETHUSDT momentum 4h adalah kandidat paper

@@ -1,7 +1,7 @@
 # Plan 2 — Multi-instance dan pengembangan platform trading
 
-Tanggal: **20 Oktober 2026**. Status: **rencana aktif; dokumentasi disusun,
-implementasi fitur baru belum dimulai**. [Plan 1](plan.md) ditutup sebagai siklus
+Tanggal: **20 Oktober 2026**. Status: **aktif; implementasi dimulai dari P2-0,
+audit awal dan dua perbaikan reconciliation lokal selesai; P2-1 berikutnya**. [Plan 1](plan.md) ditutup sebagai siklus
 pengembangan pertama atas permintaan user. Pekerjaan yang belum selesai dibawa
 ke sini; penutupan Plan 1 **tidak berarti semua pengujian lulus atau live siap**.
 
@@ -122,17 +122,23 @@ statusnya berubah. Fase eksternal tidak harus menahan build lokal lainnya.
 
 ### P2-0 — Audit temuan transaksi dan akuntansi
 
-- [ ] Reproduksi C-01 memakai payload OCO/partial fill/status terminal; cek
-  penolakan proteksi, fallback exit, order ambigu dan fill terlambat.
-- [ ] Telusuri C-02 ke fill, reconciliation, dust, mark dan jurnal fee; jangan
-  langsung menyimpulkan seluruh selisih sebagai laba atau bug.
-- [ ] Tentukan akhir eksperimen yang menyimpan konfirmasi cancel dan saldo akhir;
+- [x] Klasifikasi kode log C-01 dan reproduksi respons OCO `-2010` pada entry/trailing;
+  uji fallback exit/partial bracket/status terminal. Penyebab tick tepat dan
+  penanganan ambigu menyeluruh tetap diteruskan ke P2-3/P2-7/P2-8.
+- [x] Telusuri C-02: lima dust DOGE hilang dan cost kandidat terlalu dini berhasil
+  direproduksi/diperbaiki dengan regression test. Rekonstruksi PnL penuh tetap
+  terbatas bukti agregat; tidak mengubah snapshot historis.
+- [x] Tentukan kontrak akhir eksperimen yang menyimpan konfirmasi cancel dan saldo akhir;
   pertahankan bukti run 7/8/9 tanpa memodifikasi hasil historis.
-- [ ] Pisahkan noise DCA tanpa stop yang disengaja dari kegagalan proteksi wajib.
+- [x] Klasifikasikan noise DCA tanpa stop sebagai kebijakan strategi; implementasi
+  policy/level pesan eksplisit tetap pada P2-4/P2-5, bukan mematikan error proteksi.
 
 Selesai bila penyebab/ketidakpastian dan reproduksi tercatat, prioritas perbaikan
 jelas, serta regression test disertakan pada perbaikan dana yang dilakukan.
-Ini langkah pertama implementasi berikutnya; bukan menyalakan trial lama.
+Hasil: [audit P2-0](testing/p2-0-audit-2026-10-20.md),
+[perhitungan reproducible](testing/p2-0-audit-2026-10-20.json).
+Audit awal selesai; masalah lanjutan di laporan tetap terbuka pada fase tujuan.
+Kode diperbaiki lokal, belum dirilis; trial lama tetap mati.
 
 ### P2-1 — Domain, schema, konfigurasi dan migrasi
 
@@ -317,7 +323,8 @@ Prioritas ini tidak menghalangi fondasi multi-instance Spot.
 ## Panduan melanjutkan
 
 1. Baca Plan 2, [rancangan](multi-instance.md), keputusan strategi dan handoff VPS.
-2. Mulai P2-0, kemudian P2-1/P2-2; jangan membangun multi-instance dengan
+2. Audit awal P2-0 sudah tersedia; lanjut P2-1/P2-2 dan tindak lanjut laporan.
+   Jangan membangun multi-instance dengan
    menggandakan `bot run` pada wallet/DB lama.
 3. Catat progres di fase/ID yang sama, tautkan bukti, dan perbarui dokumen lain
    hanya bila kontrak, status atau prosedurnya berubah.
@@ -329,3 +336,4 @@ Prioritas ini tidak menghalangi fondasi multi-instance Spot.
 | Tanggal | Perubahan | Bukti/status |
 |---|---|---|
 | 2026-10-20 | Plan 1 ditutup; backlog dan fitur baru dipetakan ke Plan 2; rancangan dan navigasi diperbarui | Dokumentasi; belum implementasi kode/deploy |
+| 2026-10-20 | P2-0: klasifikasi log read-only, dua bug reconciliation diperbaiki, regression OCO dan audit reproducible | [Audit](testing/p2-0-audit-2026-10-20.md); unit/race/lint/vet/build dan integration DB sementara lolos; belum deploy |

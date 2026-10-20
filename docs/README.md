@@ -13,7 +13,8 @@
 | [Bukti pengujian](testing/README.md) | Hasil pengujian dan sumber laporan |
 | [Plan 1 — selesai/arsip](plan.md) | Riwayat fondasi dan hasil siklus pertama, bukan backlog aktif |
 
-Per 20 Oktober 2026: Plan 1 ditutup; implementasi multi-instance Plan 2 belum
-dimulai. Bot testnet VPS sudah dihentikan, belum ada trial ETH baru atau live.
+Per 20 Oktober 2026: Plan 1 ditutup; Plan 2 dimulai dengan
+[audit P2-0 dan dua perbaikan reconciliation lokal](testing/p2-0-audit-2026-10-20.md).
+Fondasi multi-instance P2-1 berikutnya; fitur runtime belum tersedia. Bot testnet VPS sudah dihentikan, belum ada trial ETH baru atau live.
 Penutupan plan tidak mengubah hasil tes menjadi lulus atau mengizinkan mainnet.
 Status server di atas adalah checkpoint terakhir, bukan pemeriksaan real-time.
