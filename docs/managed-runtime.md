@@ -130,4 +130,4 @@ TB_DASHBOARD_PREVIEW=127.0.0.1:18082 go test ./internal/managed \
 
 Hanya fixture memori, tanpa `Runtime.Start`, feed, DB, `.env` atau exchange.
 Tes ini sengaja blocking untuk preview; hentikan setelah QA. Auth/CSRF tetap
-diuji di suite biasa. Sesi Codex belum mempunyai browser untuk visual QA.
+diuji di suite biasa. Hasil visual QA: [laporan browser](testing/plan2-browser-qa-2026-10-20.md).

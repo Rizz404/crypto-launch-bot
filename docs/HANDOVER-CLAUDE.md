@@ -11,7 +11,8 @@ Implementasi lokal sudah mencakup P2-1 sampai P2-6: akun → instance → strate
 modal bersama, ledger/reservasi, pemulihan, kontrol/risiko bertingkat,
 dashboard/Telegram/template, dan CLI backtest portofolio. Pengujian/fixing
 P2-7/P2-8 sudah dilakukan; status final dan keterbatasannya ada pada laporan tes.
-**Bukan seluruh Plan 2 selesai:** browser QA, release/trial VPS P2-9,
+QA browser fixture diselesaikan sesi Claude ([laporan](testing/plan2-browser-qa-2026-10-20.md)).
+**Bukan seluruh Plan 2 selesai:** release/trial VPS P2-9,
 keputusan live P2-10, dan fitur bersyarat D-01/02/03 masih terpisah.
 
 Tidak ada deploy, push, trial prospektif baru, atau order mainnet pada pekerjaan
@@ -52,9 +53,9 @@ ETH prospektif di laptop. Jangan menjalankan `bot run` untuk mencoba dashboard.
 
 ## Batas fitur dan hal yang harus dilanjutkan
 
-1. **QA browser belum selesai:** inventory CUA mengembalikan nol browser.
-   HTTP/auth/CSRF/CSP/template diuji; belum ada bukti screenshot mobile/desktop
-   light/dark. Preview fixture tersedia lewat test opt-in, tanpa bot/feed/DB.
+1. **QA browser fixture selesai** (Firefox headless, desktop/mobile, light/dark,
+   aksi form). Perbaikan: format waktu, grafik berbasis waktu, baris kurs dan
+   penolakan form kembali ke dashboard. Perangkat fisik/Safari belum diuji.
 2. Schema memakai agregat JSONB, bukan satu tabel SQL per entitas rancangan.
    Ownership tersimpan pada binding/order/fill/holding. Jangan menambahkan
    modal dari portfolio view ke saldo ledger atau menafsirkan legacy
@@ -101,8 +102,8 @@ ETH prospektif di laptop. Jangan menjalankan `bot run` untuk mencoba dashboard.
 
 1. Baca `git status --short` dan `git log -12 --oneline`; commit lokal belum
    berarti sudah push/deploy. Lihat laporan tes untuk hasil akhir sesi Codex.
-2. Selesaikan QA browser fixture dan review kode baru, terutama recovery
-   checkpoint/inbox, partial OCO, unknown order, serta laporan risiko.
+2. ~~QA browser fixture~~ (selesai). Lanjutkan review kode baru, terutama
+   recovery checkpoint/inbox, partial OCO, unknown order, serta laporan risiko.
 3. Jika ada perubahan, jalankan regression yang relevan dan lint/vet/race;
    DB test harus terpisah dengan nama `_test`. Jangan memakai database trial.
 4. Persiapkan P2-9 sebagai rilis/trial baru dengan konfigurasi, DB, baseline dan

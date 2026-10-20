@@ -1,7 +1,7 @@
 # Plan 2 — Multi-instance dan pengembangan platform trading
 
 Tanggal: **20 Oktober 2026**. Status: **implementasi lokal P2-1–P2-6 selesai;
-pengujian/fixing P2-7/P2-8 dilakukan, QA browser masih terbuka; belum rilis VPS**.
+pengujian/fixing P2-7/P2-8 dan QA browser fixture selesai; belum rilis VPS**.
 [Handover Claude](HANDOVER-CLAUDE.md), [panduan runtime](managed-runtime.md),
 [hasil pengujian](testing/plan2-local-2026-10-20.md).
 [Plan 1](plan.md) ditutup sebagai siklus
@@ -262,8 +262,9 @@ komisi akun nyata tetap terbuka dan tidak diperlukan untuk membangun CLI offline
   unknown/manual order, selisih saldo dan DB/network outage.
 - [x] Integrasi DB terpisah, paper restart, fixture Binance, gate live;
   race detector, build, vet, lint dan pemeriksaan monitoring sesuai CI.
-- [ ] Browser mobile/desktop light/dark, auth/CSP/control/confirmation, mode tanpa
-  sesi, akurasi chart dan laporan; Telegram scoped/whitelist/digest/shutdown.
+- [x] Browser mobile/desktop light/dark, auth/CSP/control/confirmation, mode tanpa
+  sesi, akurasi chart dan laporan ([QA browser](testing/plan2-browser-qa-2026-10-20.md)).
+- [ ] Telegram scoped/whitelist/digest/shutdown dengan penerimaan nyata (P2-9).
 - [x] Uji isolasi akun/mode/instance: tidak ada perpindahan dana atau perintah
   lintas scope; data test tidak menyentuh database eksperimen/produksi.
 
@@ -272,8 +273,9 @@ bukan sekadar seluruh checkbox lama disalin menjadi selesai.
 
 Bukti lokal: [laporan pengujian](testing/plan2-local-2026-10-20.md).
 Checkbox integrasi/legacy berarti suite lokal dan kebijakan mapping aman
-tersedia; bukan migrasi inventori VPS sudah dilakukan. Browser belum terhubung;
-HTTP/auth/CSP/template diuji, visual mobile/desktop masih terbuka. Cakupan chaos
+tersedia; bukan migrasi inventori VPS sudah dilakukan. QA visual memakai Firefox
+headless pada fixture dan memperbaiki format waktu, sumbu grafik, baris kurs dan
+penolakan form. Cakupan chaos
 network/DB di VPS dan notifikasi nyata tetap P2-9.
 
 ### P2-8 — Fixing dan pemeriksaan ulang
@@ -284,7 +286,7 @@ network/DB di VPS dan notifikasi nyata tetap P2-9.
 - [x] Perbarui panduan migrasi, pemulihan dan batas yang belum terselesaikan.
 
 Penutupan lokal P2-8: perbaikan material diberi regression dan pemeriksaan
-lokal dijalankan ulang. QA browser harus ditutup sebelum rilis; tidak ada klaim
+lokal dijalankan ulang. QA browser fixture sudah ditutup; tidak ada klaim
 bahwa seluruh Plan 2 atau kesiapan live selesai.
 
 ### P2-9 — Rilis dan trial prospektif VPS
@@ -357,3 +359,4 @@ Prioritas ini tidak menghalangi fondasi multi-instance Spot.
 |---|---|---|
 | 2026-10-20 | Plan 1 ditutup; backlog dan fitur baru dipetakan ke Plan 2; rancangan dan navigasi diperbarui | Dokumentasi; belum implementasi kode/deploy |
 | 2026-10-20 | P2-0: klasifikasi log read-only, dua bug reconciliation diperbaiki, regression OCO dan audit reproducible | [Audit](testing/p2-0-audit-2026-10-20.md); unit/race/lint/vet/build dan integration DB sementara lolos; belum deploy |
+| 2026-10-20 | P2-7 QA browser fixture (Claude): desktop/mobile light/dark dan aksi form; empat perbaikan dashboard dengan regression | [QA browser](testing/plan2-browser-qa-2026-10-20.md); race/lint/vet/build lolos; belum deploy |
