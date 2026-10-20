@@ -35,5 +35,6 @@ berada di direktori lokal yang diabaikan Git.
 [smoke test modal bersama](plan2-shared-capital-smoke-2026-10-20.json).
 Suite baru mencakup ledger, ownership, reservasi, crash/replay, lease,
 checkpoint, HTTP/control dan CLI. [QA browser dashboard fixture](plan2-browser-qa-2026-10-20.md)
-selesai dengan empat perbaikan UI. Bukti operasi VPS masih terbuka; ini bukan
+selesai dengan empat perbaikan UI. [Review kode](plan2-code-review-2026-10-20.md)
+memperbaiki tiga bug dana/risiko dan mencatat risiko terbuka. Bukti operasi VPS masih terbuka; ini bukan
 laporan trial prospektif atau hasil mainnet.

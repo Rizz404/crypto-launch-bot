@@ -102,8 +102,10 @@ ETH prospektif di laptop. Jangan menjalankan `bot run` untuk mencoba dashboard.
 
 1. Baca `git status --short` dan `git log -12 --oneline`; commit lokal belum
    berarti sudah push/deploy. Lihat laporan tes untuk hasil akhir sesi Codex.
-2. ~~QA browser fixture~~ (selesai). Lanjutkan review kode baru, terutama
-   recovery checkpoint/inbox, partial OCO, unknown order, serta laporan risiko.
+2. ~~QA browser fixture dan review kode~~ (selesai,
+   [review](testing/plan2-code-review-2026-10-20.md)). Tiga bug diperbaiki;
+   risiko terbuka di laporan itu, terutama submission tak pasti tanpa jalan
+   keluar operator dan pertumbuhan state JSONB, perlu diputuskan untuk P2-9.
 3. Jika ada perubahan, jalankan regression yang relevan dan lint/vet/race;
    DB test harus terpisah dengan nama `_test`. Jangan memakai database trial.
 4. Persiapkan P2-9 sebagai rilis/trial baru dengan konfigurasi, DB, baseline dan
