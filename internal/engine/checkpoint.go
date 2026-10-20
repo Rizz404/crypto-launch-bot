@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/portfolio"
+	"github.com/rizz404/trading-bot/internal/risk"
 	"github.com/shopspring/decimal"
 	"time"
 )
@@ -181,4 +182,31 @@ func (e *Engine) Warmup(c domain.Candle) {
 			_ = i.s.OnCandle(c)
 		}
 	}
+}
+
+// CancelAllOrders requests terminal cancellation of all owned orders; callers
+// must explicitly choose to retain any positions left without protection.
+func (e *Engine) CancelAllOrders(ctx context.Context) {
+	e.mu.Lock()
+	defer e.unlockAndDrain(ctx)
+	for id := range e.orders {
+		e.cancel(ctx, id)
+	}
+}
+
+// SetPrice restores a current mark without running strategies or matching orders.
+func (e *Engine) SetPrice(exchange string, market domain.Market, symbol string, price decimal.Decimal) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	e.lastPrice[instKey{exchange, market, symbol}] = price
+	if a := e.cfg.Book.Account(portfolio.AccountKey{Exchange: exchange, Market: market}); a != nil {
+		a.Mark(symbol, price)
+	}
+}
+
+// SetRiskConfig changes sizing limits; managed parent loss limits remain durable.
+func (e *Engine) SetRiskConfig(c risk.Config) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	e.cfg.Risk = risk.NewManager(c, e.cfg.Log)
 }

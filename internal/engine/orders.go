@@ -173,7 +173,7 @@ func (e *Engine) exit(ctx context.Context, key domain.PositionKey, tag string) {
 }
 
 func (e *Engine) placeRaw(ctx context.Context, inst *instance, key domain.PositionKey, in strategy.Intent) {
-	if e.paused && !in.Order.ReduceOnly && !(key.Market == domain.Spot && in.Order.Side == domain.Sell) {
+	if e.paused && !in.Order.ReduceOnly && (key.Market != domain.Spot || in.Order.Side != domain.Sell) {
 		return
 	}
 	if in.Ref != "" {

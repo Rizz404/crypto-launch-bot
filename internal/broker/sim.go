@@ -140,9 +140,21 @@ func (s *Sim) OpenOrders() []domain.Order {
 // OnCandle matches open orders of c's symbol against the candle range.
 // Only orders placed at or before c.OpenTime are eligible.
 func (s *Sim) OnCandle(c domain.Candle) {
+	_ = s.MatchCandle(c, nil)
+}
+
+// MatchCandle lets a durable event coordinator settle each execution before
+// considering another candidate (e.g. cancel the other protective leg).
+func (s *Sim) MatchCandle(c domain.Candle, settle func() error) error {
 	for _, id := range s.candidates(c) {
 		s.tryFill(id, c)
+		if settle != nil {
+			if err := settle(); err != nil {
+				return err
+			}
+		}
 	}
+	return nil
 }
 
 // candidates returns eligible order ids in processing order: market,
