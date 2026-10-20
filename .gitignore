@@ -6,3 +6,15 @@ configs/config.yaml
 *.test
 *.out
 coverage.*
+.claude
+/var/backtest-research/
+/var/paper-eth/
+
+# Python bytecode and local test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Reproducible per-bar and per-trade exports; keep summaries and manifests
+/docs/testing/**/*-equity.csv
+/docs/testing/**/*-trades.csv
