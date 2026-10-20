@@ -1,0 +1,53 @@
+# Frozen prospective ETH experiment. Real prices, simulated orders only.
+# Rp2,000,000 / reference USDIDR 18,052; USDT assumed equal to USD.
+app: {mode: paper, allow_live: false, log_level: info, log_format: json}
+database: {max_conns: 4}
+metrics: {enabled: true, listen: '127.0.0.1:19100'}
+web: {enabled: true, listen: '127.0.0.1:18080'}
+telegram: {enabled: false}
+exchanges:
+  binance: {enabled: true, testnet: false}
+  bybit: {enabled: false}
+marketdata:
+  exchange: binance
+  markets: [spot]
+  timeframes: [1m, 4h]
+  symbols: [ETHUSDT]
+  initial_backfill: 300
+strategies:
+  - id: eth-momentum028-larger-paper
+    name: trendspot
+    enabled: true
+    exchange: binance
+    market: spot
+    symbols: [ETHUSDT]
+    leverage: 1
+    params:
+      mode: momentum
+      timeframe: 4h
+      trend_period: 100
+      entry_period: 84
+      exit_period: 20
+      atr_period: 14
+      stop_atr: 3
+      target_atr: 0
+      trail_atr: 3
+      momentum_min: 0.05
+risk:
+  risk_per_trade: 0.03
+  position_pct: 0.75
+  max_position_pct: 0.75
+  max_leverage: 1
+  max_open_positions: 1
+  max_exposure_pct: 1
+  daily_loss_limit: 0.08
+  max_drawdown: 0.30
+  close_on_kill: true
+paper:
+  initial_balance: 110.79104808331486
+  resume: true
+backtest:
+  initial_balance: 110.79104808331486
+  slippage_bps: 2
+  fees:
+    spot: {maker: 0.001, taker: 0.001}
