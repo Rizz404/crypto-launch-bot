@@ -14,6 +14,7 @@ import (
 
 	"github.com/rizz404/trading-bot/internal/broker"
 	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/trading-bot/internal/exchange"
 	"github.com/rizz404/trading-bot/internal/portfolio"
 	"github.com/rizz404/trading-bot/internal/risk"
 	"github.com/rizz404/trading-bot/internal/strategy"
@@ -470,4 +471,61 @@ func TestStaleCandlesWarmIndicatorsWithoutTrading(t *testing.T) {
 	h.e.OnCandle(context.Background(), h.bar(100, 100, 100, 100))
 	assert.Equal(t, 2, s.calls)
 	assert.Len(t, h.e.OpenOrders(), 1)
+}
+
+// The stopped VPS logs classified both ETH bracket failures as Binance -2010,
+// "relationship of the prices". The market can move after local validation.
+// Reproduce the rejection response and verify that neither initial protection
+// nor a trailing replacement leaves the position without a fallback exit.
+type priceRelationshipRejectBroker struct {
+	*linkedBracketBroker
+	reject bool
+}
+
+func (b *priceRelationshipRejectBroker) PlaceBracket(ctx context.Context, stop, target domain.Order) ([]domain.Order, error) {
+	if b.reject {
+		return nil, &exchange.APIError{Exchange: "sim", HTTPStatus: 400, Code: -2010,
+			Message: "The relationship of the prices for the orders is not correct."}
+	}
+	return b.linkedBracketBroker.PlaceBracket(ctx, stop, target)
+}
+
+func TestOCOPriceRelationshipRejectionClosesOnce(t *testing.T) {
+	for _, replacement := range []bool{false, true} {
+		name := "initial"
+		if replacement {
+			name = "trailing replacement"
+		}
+		t.Run(name, func(t *testing.T) {
+			h := setup(t)
+			b := &priceRelationshipRejectBroker{linkedBracketBroker: newLinkedBroker(h.s), reject: !replacement}
+			h.e.AddBroker(b)
+			stored := map[string]domain.Order{}
+			h.e.cfg.Hooks.OnOrder = func(o domain.Order) { stored[o.ClientID] = o }
+			h.intent(strategy.Intent{Kind: strategy.Enter, Side: domain.Long, Quantity: decimal.NewFromInt(1),
+				StopLoss: decimal.NewFromInt(95), TakeProfit: decimal.NewFromInt(105), TrailingStop: 0.05})
+			h.s.OnCandle(h.bar(100, 100, 100, 100))
+			if replacement {
+				require.Len(t, h.e.OpenOrders(), 2)
+				b.reject = true
+				h.e.OnCandle(context.Background(), h.bar(101, 102, 100, 101))
+			}
+			orders := h.e.OpenOrders()
+			require.Len(t, orders, 1, "only one fallback exit should remain")
+			assert.Equal(t, domain.TagExit, orders[0].Tag)
+			assert.True(t, orders[0].ReduceOnly)
+			assert.Len(t, h.s.OpenOrders(), 1, "previous native bracket must be canceled")
+			rejected := 0
+			for _, o := range stored {
+				if o.Status == domain.OrderRejected {
+					rejected++
+					assert.Contains(t, o.Reason, "code -2010")
+				}
+			}
+			assert.Equal(t, 2, rejected, "both rejected legs must be recorded")
+			h.s.OnCandle(h.bar(101, 101, 101, 101))
+			assert.Empty(t, h.a.Positions())
+			assert.Empty(t, h.e.OpenOrders())
+		})
+	}
 }
