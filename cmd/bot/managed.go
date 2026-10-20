@@ -228,7 +228,7 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 		// Closed history is indicator warmup only. Execution state is restored after
 		// replay so grid/DCA operational counters are not consumed by history.
 		for _, sub := range subs {
-			bars, err := source.Klines(ctx, exchange.KlineRequest{Market: domain.Spot, Symbol: sub.Symbol, Timeframe: sub.Timeframe, Start: time.Now().Add(-time.Duration(warmupBars+2) * sub.Timeframe.Duration()), Limit: warmupBars})
+			bars, err := source.Klines(ctx, warmupRequest(sub, time.Now()))
 			if err != nil {
 				return err
 			}
@@ -390,6 +390,17 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 		}
 	}
 }
+
+// warmupRequest asks for the history up to the still-forming candle. The
+// runtime's gap check starts from the newest warmup bar, while the feed resumes
+// after the newest stored candle; a window ending earlier left a hole between
+// them after every restart.
+func warmupRequest(sub exchange.KlineSub, now time.Time) exchange.KlineRequest {
+	tf := sub.Timeframe.Duration()
+	return exchange.KlineRequest{Market: domain.Spot, Symbol: sub.Symbol, Timeframe: sub.Timeframe,
+		Start: now.Truncate(tf).Add(-time.Duration(warmupBars) * tf), Limit: warmupBars + 1}
+}
+
 func managedStatus(ctx context.Context, runtimes map[string]*managed.Runtime, m money) string {
 	var out strings.Builder
 	out.WriteString("<b>Portofolio bot</b>\n")
