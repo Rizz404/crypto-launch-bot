@@ -1,0 +1,30 @@
+{
+  "verified_at": "2026-10-19T15:38:32.163996+00:00",
+  "unit_state": "active/running",
+  "mode": "paper",
+  "initial_balance_usdt": 110.79104808331486,
+  "orders": 0,
+  "closed_trades": 0,
+  "open_positions": 0,
+  "candles_4h": 363,
+  "candles_1m": 301,
+  "latest_closed_1m_open_utc": "2026-10-19T15:37:00Z",
+  "warmup_candles": 300,
+  "websocket_connected": true,
+  "dashboard_http": 200,
+  "resume_while_running": "no duplicate service, same PID 61165",
+  "checks": [
+    "go test ./internal/strategy/... ./internal/config/... passed",
+    "python compile passed",
+    "git diff --check passed"
+  ],
+  "bootstrap_excluded": "Initial provisioning run had zero orders/trades and was stopped to correct about Rp10 rounding before final trial; retained separately",
+  "subsequent_status": {
+    "at": "2026-10-19T15:42:52.284782+00:00",
+    "unit_state": "inactive",
+    "database_container": "exited",
+    "reason": "stopped by user request; retained all data",
+    "vps_deployed": false,
+    "review_26_oct_cancelled": true
+  }
+}

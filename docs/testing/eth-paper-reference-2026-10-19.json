@@ -1,0 +1,118 @@
+{
+  "status": "local paper stopped at user request; VPS not deployed; future reference after existing VPS test",
+  "active": false,
+  "live_authorized": false,
+  "trade_pairs": [
+    "ETHUSDT"
+  ],
+  "traded_coin_count": 1,
+  "quote_asset": "USDT",
+  "optional_fee_asset": "BNB, only if discount is enabled and eligible",
+  "suggested_total_paper_capital_idr": 2000000,
+  "previous_experiments_capital": "Rp2m independently per strategy/coin case; not Rp2m shared among five coins",
+  "strategy_implementation": "trendspot",
+  "strategy_params": {
+    "atr_period": 14,
+    "entry_period": 84,
+    "exit_period": 20,
+    "mode": "momentum",
+    "momentum_min": 0.05,
+    "stop_atr": 3,
+    "target_atr": 0,
+    "timeframe": "4h",
+    "trail_atr": 3,
+    "trend_period": 100
+  },
+  "exact_tested_risk_profile_for_comparison": {
+    "RiskPerTrade": 0.03,
+    "PositionPct": 0.75,
+    "MaxPositionPct": 0.75,
+    "MaxLeverage": 1,
+    "MaxOpenPositions": 1,
+    "MaxExposurePct": 1,
+    "DailyLossLimit": 0.08,
+    "MaxDrawdown": 0.3,
+    "CloseOnKill": true
+  },
+  "risk_profile_is_not_approved_for_live": true,
+  "entry_rules": [
+    "On closed 4h candle: close / close 84 previous 4h bars ago - 1 > 0.05",
+    "Close > EMA100 of 4h closes, indicators fully warmed",
+    "Flat account only; no pyramiding or DCA"
+  ],
+  "exit_rules": [
+    "Momentum <=0 OR close < EMA100, evaluated on closed 4h candles",
+    "Initial stop = signal close - 3*ATR14 on 4h bars",
+    "Trailing fraction fixed at entry signal = 3*ATR14 / signal close; engine ratchets stop using subsequent best highs",
+    "No fixed take profit"
+  ],
+  "execution_assumptions": [
+    "Spot long only, leverage1; orders cannot execute on already elapsed candles",
+    "1m OHLC execution replay, 2bps adverse slippage on market/stop fills",
+    "Fee .001 base or .00075 hypothetical BNB discount; BNB separate wallet costs not modeled",
+    "Order rounding, minimum quantity and minimum notional apply"
+  ],
+  "annual_fee_comparison": [
+    {
+      "from": "2023-10-19",
+      "to": "2024-10-19",
+      "standard_return_pct": 34.38469313769632,
+      "discount_return_pct": 35.87106193549854,
+      "discount_final_idr": 2717421.238709971,
+      "standard_max_drawdown_pct": 10.499936742375871,
+      "discount_max_drawdown_pct": 10.29534082034603,
+      "standard_closed_trades": 38,
+      "discount_closed_trades": 38,
+      "source_sha256": "8dc36f566279d970669b6ef2ba9c0f5b645d4408dd0f81639679374aa7afdab4"
+    },
+    {
+      "from": "2024-10-19",
+      "to": "2025-10-19",
+      "standard_return_pct": 57.812922605037585,
+      "discount_return_pct": 59.38884094291544,
+      "discount_final_idr": 3187776.8188583083,
+      "standard_max_drawdown_pct": 12.542722675977958,
+      "discount_max_drawdown_pct": 12.243632097968598,
+      "standard_closed_trades": 37,
+      "discount_closed_trades": 37,
+      "source_sha256": "bf4c7d82b6798e2d8696988e0416196f5ba15ccb5873fdb84c946e343a8e4b85"
+    },
+    {
+      "from": "2025-10-19",
+      "to": "2026-10-19",
+      "standard_return_pct": 8.797400475707274,
+      "discount_return_pct": 9.971600866103847,
+      "discount_final_idr": 2199432.017322077,
+      "standard_max_drawdown_pct": 11.369194212961087,
+      "discount_max_drawdown_pct": 10.852385273438662,
+      "standard_closed_trades": 38,
+      "discount_closed_trades": 38,
+      "source_sha256": "086a0f8454a083d554327fe4d97eb1c2cc8c9f8d68497504b812e2175cbf1e42"
+    }
+  ],
+  "limitations": [
+    "ETH focus chosen after looking at multiple coins; historical selection bias remains",
+    "Same 4h signal with75% risk profile failed original all-five-coin screen; ETH-only is a new research hypothesis, not a retroactive pass",
+    "Average market-specific performance is not a promise of50% per year",
+    "Lower-risk daily momentum037-larger is a different candidate and must not be confused with this4h proposal",
+    "Continuous prospective paper and review of operational reliability, actual fees and user-approved risk limits still required",
+    "Only dedicated local paper config/service/database activated on user follow-up; no VPS, exchange account settings or live configuration changed",
+    "User superseded local startup: do not resume on laptop. VPS read-only assessment passed baseline, but no CI image for new strategy has been released and documentation fallback was chosen."
+  ],
+  "paper_trial": {
+    "unit": "trading-bot-eth-paper.service",
+    "started_at": "2026-10-19T15:37:13Z",
+    "config": "configs/paper.eth.yaml",
+    "manifest": "var/paper-eth/manifest.json",
+    "database": "ethpaper_trial",
+    "dashboard": "inactive local dashboard; no VPS ETH dashboard deployed",
+    "fee_per_side": 0.001,
+    "initial_usdt": 110.79104808331486,
+    "first_operational_review_after": null,
+    "review_is_not_scheduled_ai_polling": true,
+    "status": "stopped at user request; not a completed strategy trial",
+    "stopped_at": "2026-10-19T15:42:52.284782+00:00"
+  },
+  "local_execution_allowed": false,
+  "deployment_reference": "docs/eth-paper-vps-reference.md"
+}
