@@ -123,6 +123,8 @@ type Fill struct {
 	Quantity      decimal.Decimal
 	Fee           decimal.Decimal // in quote currency
 	FeeAsset      string
+	Commission    decimal.Decimal // original fee amount in FeeAsset, before quote conversion
+	FeeUnknown    bool            // true when a recovery snapshot has no trade-level commission data
 	// BaseFee is the commission paid in the base asset (spot buys), so the
 	// account received Quantity - BaseFee. Fee holds its quote value.
 	BaseFee decimal.Decimal

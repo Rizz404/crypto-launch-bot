@@ -235,31 +235,42 @@ func algoStatus(s string) domain.OrderStatus {
 // no longer open on the exchange, and emits the fills and final states
 // that were missed (e.g. while the user stream was down).
 func (t *Trader) SyncOrders(ctx context.Context, tracked []domain.Order, exchangeOpen []domain.Order) {
-	open := map[string]bool{}
+	open := map[string]domain.Order{}
 	for _, o := range exchangeOpen {
-		open[o.ClientID] = true
+		open[o.ClientID] = o
 	}
 	for _, o := range tracked {
-		if o.Exchange != t.c.name || open[o.ClientID] {
+		if o.Exchange != t.c.name {
 			continue
 		}
-		final, err := t.queryOrder(ctx, o)
+		final, isOpen := open[o.ClientID]
+		var err error
+		if !isOpen {
+			final, err = t.queryOrder(ctx, o)
+		}
 		if err != nil {
 			t.log.Warn("order sync failed", "client_id", o.ClientID, "symbol", o.Symbol, "err", err)
 			continue
 		}
 		if missing := final.FilledQty.Sub(o.FilledQty); missing.IsPositive() && final.AvgPrice.IsPositive() {
-			// Fees of missed fills are unknown; reconciliation of the
-			// balance accounts for them.
-			t.log.Warn("recovered missed fill", "client_id", o.ClientID, "symbol", o.Symbol, "qty", missing, "price", final.AvgPrice)
-			t.emit(broker.Event{Kind: broker.EventFill, Order: final, Fill: domain.Fill{
-				OrderClientID: o.ClientID, TradeID: "sync-" + final.ExchangeID + "-" + final.FilledQty.String(),
-				Exchange: t.c.name, Market: o.Market, Symbol: o.Symbol, Side: o.Side,
-				Price: final.AvgPrice, Quantity: missing, Time: time.Now(),
-			}})
+			if o.Market == domain.Spot {
+				fills, recoveryErr := t.spotExecutions(ctx, o, final)
+				if recoveryErr != nil {
+					t.log.Warn("spot trade history recovery failed", "symbol", o.Symbol, "err", recoveryErr)
+					continue
+				}
+				for _, f := range fills {
+					t.emit(broker.Event{Kind: broker.EventFill, Order: final, Fill: f})
+				}
+			} else {
+				t.emit(broker.Event{Kind: broker.EventFill, Order: final, Fill: domain.Fill{FeeUnknown: true, OrderClientID: o.ClientID, TradeID: "sync-" + final.ExchangeID + "-" + final.FilledQty.String(), Exchange: t.c.name, Market: o.Market, Symbol: o.Symbol, Side: o.Side, Price: final.AvgPrice, Quantity: missing, Time: time.Now()}})
+			}
 		}
 		if !final.Status.Open() && final.Status != domain.OrderFilled {
 			t.emit(broker.Event{Kind: broker.EventOrder, Order: final})
+		}
+		if isOpen {
+			continue
 		}
 		t.mu.Lock()
 		delete(t.open, o.ClientID)
@@ -308,4 +319,64 @@ func (t *Trader) queryOrder(ctx context.Context, o domain.Order) (domain.Order, 
 		}
 		return so.domain(t.c.name), nil
 	}
+}
+
+// spotExecutions recovers actual trade IDs and commissions, including base/BNB.
+// Source: https://developers.binance.com/en/docs/catalog/core-trading-spot-trading/api/rest-api/account#account-trade-list-user_data
+func (t *Trader) spotExecutions(ctx context.Context, known, final domain.Order) ([]domain.Fill, error) {
+	type trade struct {
+		Symbol     string
+		ID         int64 `json:"id"`
+		OrderID    int64 `json:"orderId"`
+		Price      decimal.Decimal
+		Quantity   decimal.Decimal `json:"qty"`
+		Commission decimal.Decimal
+		Asset      string `json:"commissionAsset"`
+		Time       int64
+		Buyer      bool `json:"isBuyer"`
+		Maker      bool `json:"isMaker"`
+	}
+	orderID, err := strconv.ParseInt(final.ExchangeID, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("missing exchange order id")
+	}
+	q := url.Values{"symbol": {known.Symbol}, "orderId": {final.ExchangeID}, "fromId": {"0"}, "limit": {"1000"}}
+	var all []trade
+	for page := 0; page < 100; page++ {
+		var rows []trade
+		if err = t.signed(ctx, domain.Spot, "GET", "/api/v3/myTrades", q, 5, &rows); err != nil {
+			return nil, err
+		}
+		all = append(all, rows...)
+		if len(rows) < 1000 {
+			break
+		}
+		q.Set("fromId", strconv.FormatInt(rows[len(rows)-1].ID+1, 10))
+		if page == 99 {
+			return nil, fmt.Errorf("trade recovery exceeded page bound")
+		}
+	}
+	var out []domain.Fill
+	total := decimal.Zero
+	for _, tr := range all {
+		if tr.OrderID != orderID || tr.Symbol != known.Symbol || tr.Buyer != (known.Side == domain.Buy) || !tr.Quantity.IsPositive() || !tr.Price.IsPositive() {
+			return nil, fmt.Errorf("invalid recovered trade identity")
+		}
+		next := total.Add(tr.Quantity)
+		if next.GreaterThan(known.FilledQty) {
+			if total.LessThan(known.FilledQty) {
+				return nil, fmt.Errorf("local quantity splits a recovered trade")
+			}
+			f := domain.Fill{OrderClientID: known.ClientID, TradeID: strconv.FormatInt(tr.ID, 10), Exchange: t.c.name, Market: domain.Spot, Symbol: known.Symbol, Side: known.Side, Price: tr.Price, Quantity: tr.Quantity, Commission: tr.Commission, FeeAsset: tr.Asset, Fee: t.feeInQuote(known.Symbol, tr.Commission, tr.Asset, tr.Price), Maker: tr.Maker, Time: msTime(tr.Time)}
+			if known.Side == domain.Buy && strings.HasPrefix(known.Symbol, tr.Asset) && tr.Asset != "" {
+				f.BaseFee = tr.Commission
+			}
+			out = append(out, f)
+		}
+		total = next
+	}
+	if !total.Equal(final.FilledQty) {
+		return nil, fmt.Errorf("trade history does not cover final order quantity")
+	}
+	return out, nil
 }

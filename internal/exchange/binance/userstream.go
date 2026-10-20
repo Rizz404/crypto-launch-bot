@@ -229,7 +229,7 @@ func (t *Trader) onSpotExecution(r spotExecutionReport) {
 		f := domain.Fill{
 			OrderClientID: id, TradeID: strconv.FormatInt(r.TradeID, 10), Exchange: t.c.name, Market: domain.Spot,
 			Symbol: r.Symbol, Side: o.Side, Price: r.LastPrice, Quantity: r.LastQty,
-			Fee: t.feeInQuote(r.Symbol, r.Commission, asset, r.LastPrice), FeeAsset: asset, Maker: r.Maker,
+			Fee: t.feeInQuote(r.Symbol, r.Commission, asset, r.LastPrice), FeeAsset: asset, Commission: r.Commission, Maker: r.Maker,
 			Time: msTime(r.TradeTime),
 		}
 		if o.Side == domain.Buy && asset != "" && strings.HasPrefix(r.Symbol, asset) {
@@ -377,7 +377,7 @@ func (t *Trader) onFuturesOrder(u futuresOrderUpdate, eventMs int64) {
 		f := domain.Fill{
 			OrderClientID: id, TradeID: strconv.FormatInt(u.TradeID, 10), Exchange: t.c.name, Market: domain.Futures,
 			Symbol: u.Symbol, Side: o.Side, Price: u.LastPrice, Quantity: u.LastQty,
-			Fee: t.feeInQuote(u.Symbol, u.Commission, u.CommAsset, u.LastPrice), FeeAsset: u.CommAsset, Maker: u.Maker,
+			Fee: t.feeInQuote(u.Symbol, u.Commission, u.CommAsset, u.LastPrice), FeeAsset: u.CommAsset, Commission: u.Commission, Maker: u.Maker,
 			Time: msTime(u.TradeTime),
 		}
 		ev = broker.Event{Kind: broker.EventFill, Order: o, Fill: f}
