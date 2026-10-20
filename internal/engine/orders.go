@@ -173,7 +173,7 @@ func (e *Engine) exit(ctx context.Context, key domain.PositionKey, tag string) {
 }
 
 func (e *Engine) placeRaw(ctx context.Context, inst *instance, key domain.PositionKey, in strategy.Intent) {
-	if e.paused && !in.Order.ReduceOnly {
+	if e.paused && !in.Order.ReduceOnly && !(key.Market == domain.Spot && in.Order.Side == domain.Sell) {
 		return
 	}
 	if in.Ref != "" {
@@ -236,6 +236,10 @@ func (e *Engine) place(ctx context.Context, o domain.Order) error {
 	e.orders[o.ClientID] = &tracked
 
 	start := time.Now()
+	if err := e.beforeBroker(); err != nil {
+		delete(e.orders, o.ClientID)
+		return err
+	}
 	accepted, err := b.PlaceOrder(ctx, o)
 	if e.cfg.Hooks.OnPlaced != nil {
 		e.cfg.Hooks.OnPlaced(o.Exchange, time.Since(start), err)
@@ -261,6 +265,10 @@ func (e *Engine) cancel(ctx context.Context, clientID string) {
 	}
 	b := e.brokers[o.Exchange]
 	if b == nil {
+		return
+	}
+	if err := e.beforeBroker(); err != nil {
+		e.log.Error("cancel checkpoint failed")
 		return
 	}
 	if err := b.CancelOrder(ctx, *o); err != nil {
@@ -524,6 +532,11 @@ func (e *Engine) placeProtection(ctx context.Context, key domain.PositionKey, po
 				t.Status, t.CreatedAt, t.UpdatedAt = domain.OrderNew, e.cfg.Clock(), e.cfg.Clock()
 				e.orders[o.ClientID] = &t
 			}
+		}
+		if err := e.beforeBroker(); err != nil {
+			e.paused = true
+			e.log.Error("bracket checkpoint failed")
+			return
 		}
 		placed, err := bp.PlaceBracket(ctx, stop, target)
 		accepted := make(map[string]bool, len(placed))

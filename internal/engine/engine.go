@@ -28,9 +28,11 @@ import (
 // Hooks observe the engine; all are optional and are called with the
 // engine lock held, so they must not call back into the engine.
 type Hooks struct {
-	OnOrder func(domain.Order)              // every order state change
-	OnFill  func(domain.Fill, domain.Order) // every execution
-	OnTrade func(domain.Trade)              // every closed round trip
+	// BeforeBroker durably checkpoints execution plans before external side effects.
+	BeforeBroker func([]byte) error
+	OnOrder      func(domain.Order)              // every order state change
+	OnFill       func(domain.Fill, domain.Order) // every execution
+	OnTrade      func(domain.Trade)              // every closed round trip
 	// OnEntry reports a filled entry with the stop loss and take profit it
 	// will be protected by (zero when the plan has none).
 	OnEntry  func(o domain.Order, stopLoss, takeProfit decimal.Decimal)
@@ -230,6 +232,9 @@ func (e *Engine) Timeframes() []domain.Timeframe {
 func (e *Engine) SetPaused(p bool) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
+	if e.paused == p {
+		return
+	}
 	e.paused = p
 	e.notice(slog.LevelWarn, "engine paused state changed", "paused", p)
 }

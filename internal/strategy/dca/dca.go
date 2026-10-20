@@ -4,6 +4,7 @@
 package dca
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"time"
@@ -131,4 +132,29 @@ func (s *Strategy) resume(sym string, st *series, now time.Time) {
 	st.buys = max(1, int(math.Round(cost/s.p.QuoteAmount)))
 	st.lastBuy, st.lastPrice = now, pos.EntryPrice
 	s.ctx.Log().Info("dca cycle resumed from position", "symbol", sym, "buys", st.buys, "max_buys", s.p.MaxBuys)
+}
+
+type savedSeries struct {
+	Buys      int
+	LastBuy   time.Time
+	LastPrice decimal.Decimal
+	Synced    bool
+}
+
+func (s *Strategy) SaveState() ([]byte, error) {
+	out := map[string]savedSeries{}
+	for k, v := range s.series {
+		out[k] = savedSeries{v.buys, v.lastBuy, v.lastPrice, v.synced}
+	}
+	return json.Marshal(out)
+}
+func (s *Strategy) LoadState(raw []byte) error {
+	var in map[string]savedSeries
+	if err := json.Unmarshal(raw, &in); err != nil {
+		return err
+	}
+	for k, v := range in {
+		s.series[k] = &series{buys: v.Buys, lastBuy: v.LastBuy, lastPrice: v.LastPrice, synced: v.Synced}
+	}
+	return nil
 }

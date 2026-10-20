@@ -6,6 +6,7 @@
 package mm
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -126,4 +127,23 @@ func (s *Strategy) place(side domain.Side, price, qty decimal.Decimal, ref strin
 		Order:  strategy.OrderSpec{Side: side, Type: domain.OrderLimit, Price: price, Quantity: qty, PostOnly: true},
 		Reason: "mm quote",
 	}
+}
+
+type savedState struct {
+	Quoted     decimal.Decimal
+	LastQ      time.Time
+	Generation int
+	Dirty      bool
+}
+
+func (s *Strategy) SaveState() ([]byte, error) {
+	return json.Marshal(savedState{s.quoted, s.lastQ, s.gen, s.dirty})
+}
+func (s *Strategy) LoadState(raw []byte) error {
+	var v savedState
+	if err := json.Unmarshal(raw, &v); err != nil {
+		return err
+	}
+	s.quoted, s.lastQ, s.gen, s.dirty = v.Quoted, v.LastQ, v.Generation, v.Dirty
+	return nil
 }

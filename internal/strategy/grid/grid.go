@@ -5,6 +5,7 @@
 package grid
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"strconv"
@@ -160,4 +161,24 @@ func (s *Strategy) levelIndex(price decimal.Decimal) int {
 		}
 	}
 	return best
+}
+
+type savedState struct {
+	Started, Stopped bool
+	BaseFees         map[string]decimal.Decimal
+}
+
+func (s *Strategy) SaveState() ([]byte, error) {
+	return json.Marshal(savedState{s.started, s.stopped, s.baseFees})
+}
+func (s *Strategy) LoadState(raw []byte) error {
+	var v savedState
+	if err := json.Unmarshal(raw, &v); err != nil {
+		return err
+	}
+	s.started, s.stopped = v.Started, v.Stopped
+	if v.BaseFees != nil {
+		s.baseFees = v.BaseFees
+	}
+	return nil
 }
