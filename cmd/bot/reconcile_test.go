@@ -228,3 +228,74 @@ func TestReconcileRequiresPersistentMismatchAndPreservesMetadata(t *testing.T) {
 	_, exists = a.Position(key.Symbol)
 	assert.True(t, exists, "initial reconciliation loads positions immediately")
 }
+
+// A minimum order value is a trading rule, not proof that an asset is gone.
+// The testnet lost five one-DOGE remnants from the ledger this way.
+func TestReconcileSpotKeepsDustAndSubStepHoldings(t *testing.T) {
+	for _, qty := range []string{"1", "0.25"} {
+		t.Run(qty, func(t *testing.T) {
+			d := decimal.RequireFromString
+			key := domain.PositionKey{Exchange: "binance-testnet", Market: domain.Spot, Symbol: "DOGEUSDT"}
+			s := &session{log: slog.New(slog.NewTextHandler(io.Discard, nil)),
+				mismatch: map[domain.PositionKey]int{}, leverages: map[domain.PositionKey]int{},
+				metrics: metrics.NewTrading(prometheus.NewRegistry()),
+				instrument: map[domain.PositionKey]domain.Instrument{key: {
+					Exchange: key.Exchange, Market: key.Market, Symbol: key.Symbol, Base: "DOGE", Quote: "USDT",
+					TickSize: d("0.00001"), StepSize: d("1"), MinQty: d("1"), MinNotional: d("5"),
+				}}}
+			a := portfolio.NewAccount(portfolio.AccountKey{Exchange: key.Exchange, Market: key.Market}, d("10000"), nil)
+			a.SetPosition(domain.Position{PositionKey: key, Side: domain.Long, Quantity: d(qty),
+				EntryPrice: d("0.08"), Leverage: 1, Strategy: "mm-doge"})
+			a.Mark(key.Symbol, d("0.09"))
+			state := &broker.AccountState{Market: domain.Spot, Balances: map[string]broker.Balance{
+				"DOGE": {Asset: "DOGE", Wallet: d(qty)}, "USDT": {Asset: "USDT", Wallet: d("10000")},
+			}}
+			for range 3 {
+				s.reconcileSpot(a, state, "USDT", false)
+			}
+			p, ok := a.Position(key.Symbol)
+			require.True(t, ok, "untradeable inventory still belongs to the bot")
+			assert.True(t, p.Quantity.Equal(d(qty)))
+			assert.Equal(t, "mm-doge", p.Strategy)
+			assert.True(t, a.Snapshot().Equity.Equal(d("10000").Add(d(qty).Mul(d("0.09")))))
+			assert.Empty(t, s.mismatch, "matching dust is not an external sale")
+		})
+	}
+}
+
+func TestReconcileSpotValuesThePositionActuallyRetained(t *testing.T) {
+	d := decimal.RequireFromString
+	key := domain.PositionKey{Exchange: "binance-testnet", Market: domain.Spot, Symbol: "BTCUSDT"}
+	s := &session{log: slog.New(slog.NewTextHandler(io.Discard, nil)),
+		mismatch: map[domain.PositionKey]int{}, leverages: map[domain.PositionKey]int{},
+		metrics: metrics.NewTrading(prometheus.NewRegistry()),
+		instrument: map[domain.PositionKey]domain.Instrument{key: {
+			Exchange: key.Exchange, Market: key.Market, Symbol: key.Symbol, Base: "BTC", Quote: "USDT",
+			TickSize: d("0.01"), StepSize: d("0.00001"), MinQty: d("0.00001"), MinNotional: d("5"),
+		}}}
+	a := portfolio.NewAccount(portfolio.AccountKey{Exchange: key.Exchange, Market: key.Market}, d("10000"), nil)
+	a.SetPosition(domain.Position{PositionKey: key, Side: domain.Long, Quantity: d("0.00025"),
+		EntryPrice: d("80000"), Leverage: 1, Strategy: "ema"})
+	a.Mark(key.Symbol, d("90000"))
+	state := func(qty string) *broker.AccountState {
+		return &broker.AccountState{Market: domain.Spot, Balances: map[string]broker.Balance{
+			"BTC": {Asset: "BTC", Wallet: d(qty)}, "USDT": {Asset: "USDT", Wallet: d("10000")},
+		}}
+	}
+	// First discrepancy is deliberately held until confirmed; value the
+	// retained quantity, not the smaller candidate not yet applied.
+	s.reconcileSpot(a, state("0.0002"), "USDT", false)
+	assert.Equal(t, "10020", a.Snapshot().Balance.String())
+	assert.Equal(t, "10022.5", a.Snapshot().Equity.String())
+	s.reconcileSpot(a, state("0.0002"), "USDT", false)
+	assert.Equal(t, "10016", a.Snapshot().Balance.String())
+	assert.Equal(t, "10018", a.Snapshot().Equity.String())
+
+	// A transient zero followed by the original holding must not create
+	// an equity dip or delete the position.
+	s.reconcileSpot(a, state("0"), "USDT", false)
+	assert.Equal(t, "10018", a.Snapshot().Equity.String())
+	s.reconcileSpot(a, state("0.0002"), "USDT", false)
+	assert.Equal(t, "10018", a.Snapshot().Equity.String())
+	assert.Empty(t, s.mismatch)
+}

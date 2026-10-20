@@ -161,12 +161,13 @@ func (s *session) reconcilePositions(acct *portfolio.Account, exchange []domain.
 // equity = balance + unrealized PnL holds as on futures.
 func (s *session) reconcileSpot(acct *portfolio.Account, st *broker.AccountState, quote string, initial bool) {
 	var positions []domain.Position
-	cost := decimal.Zero
 	for key, in := range s.instrument {
 		if key.Exchange != acct.Key.Exchange || key.Market != acct.Key.Market {
 			continue
 		}
-		held := in.RoundQty(st.Balances[in.Base].Wallet)
+		// Wallet quantities are inventory, not order quantities. Dust and
+		// sub-step balances still have value and must remain in the ledger.
+		held := st.Balances[in.Base].Wallet
 		ours, hasO := acct.Position(key.Symbol)
 		if !hasO {
 			if initial && held.IsPositive() {
@@ -175,15 +176,21 @@ func (s *session) reconcileSpot(acct *portfolio.Account, st *broker.AccountState
 			continue
 		}
 		qty := decimal.Min(ours.Quantity, held)
-		if !qty.IsPositive() || in.CheckOrder(ours.EntryPrice, qty) != nil {
-			continue // sold outside the bot, or only dust left
+		if !qty.IsPositive() {
+			continue // no bot inventory remains in the wallet
 		}
 		p := ours
 		p.Quantity = qty
 		positions = append(positions, p)
-		cost = cost.Add(qty.Mul(p.EntryPrice))
 	}
 	s.reconcilePositions(acct, positions, initial)
+	// Non-startup corrections require two samples. Until a correction is
+	// applied, value the position the ledger actually retains rather than
+	// debiting the candidate quantity from balance a sample too early.
+	cost := decimal.Zero
+	for _, p := range acct.Positions() {
+		cost = cost.Add(p.Quantity.Mul(p.EntryPrice))
+	}
 	acct.SetBalance(st.Balances[quote].Wallet.Add(cost))
 }
 
