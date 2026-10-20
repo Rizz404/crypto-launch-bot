@@ -200,3 +200,53 @@ func TestHTTPAuthCSRFAndEscaping(t *testing.T) {
 	require.NotContains(t, w.Body.String(), "<script>")
 	require.Contains(t, w.Body.String(), "&lt;script&gt;")
 }
+
+func TestDashboardChartAndTimes(t *testing.T) {
+	at := time.Date(2026, 10, 20, 0, 0, 0, 0, time.UTC)
+	// One hour, then a nine-hour gap: the middle point must sit at 1/10 of the width.
+	path := chartPath([]EquitySample{{At: at, Account: d("100")}, {At: at.Add(time.Hour), Account: d("110")}, {At: at.Add(10 * time.Hour), Account: d("105")}})
+	require.Equal(t, "M10.00 180.00 L108.00 20.00 L990.00 100.00 ", path)
+	require.Equal(t, "belum ada", timestamp(time.Time{}))
+	require.Equal(t, "2026-10-20 07:00:00 UTC", timestamp(at.Add(7*time.Hour+123).In(time.FixedZone("WIB", 7*3600))))
+
+	repo, _ := NewMemory(spec())
+	rt, err := NewRuntime(t.Context(), repo, broker.NewSim(broker.SimConfig{Exchange: "sim"}), nil, d("0"), func() time.Time { return at }, slog.New(slog.NewTextHandler(io.Discard, nil)))
+	require.NoError(t, err)
+	require.NoError(t, repo.Update(t.Context(), "samples", "samples", nil, func(s *State) error {
+		s.Sample(at)
+		s.Sample(at.Add(time.Hour))
+		return nil
+	}))
+	w := httptest.NewRecorder()
+	NewHTTP(map[string]*Runtime{"test": rt}, "", nil).ServeHTTP(w, httptest.NewRequest("GET", "http://localhost/", nil))
+	body := w.Body.String()
+	require.Contains(t, body, "Reconciliation exchange terakhir: belum ada")
+	require.Contains(t, body, "2026-10-20 00:00:00 UTC → 2026-10-20 01:00:00 UTC")
+	require.NotContains(t, body, "0001-01-01")
+	require.NotContains(t, body, "+0000 UTC")
+}
+
+func TestDashboardFormRejectionAndRate(t *testing.T) {
+	repo, _ := NewMemory(spec())
+	rt, err := NewRuntime(t.Context(), repo, broker.NewSim(broker.SimConfig{Exchange: "sim"}), nil, d("0"), time.Now, slog.New(slog.NewTextHandler(io.Discard, nil)))
+	require.NoError(t, err)
+	h := NewHTTP(map[string]*Runtime{"test": rt}, "", nil)
+	h.RateLine = func() string { return "Kurs 1 USDT ≈ Rp16.000" }
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, httptest.NewRequest("GET", "http://localhost/", nil))
+	require.Contains(t, w.Body.String(), "Kurs 1 USDT ≈ Rp16.000")
+
+	req := httptest.NewRequest("POST", "http://localhost/control?wallet=test", strings.NewReader(url.Values{"csrf": {h.token}, "id": {"x"}, "operation": {"flatten"}, "scope": {"a"}}.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	w = httptest.NewRecorder()
+	h.ServeHTTP(w, req)
+	require.Equal(t, 303, w.Code)
+	location := w.Header().Get("Location")
+	require.Contains(t, location, "error=")
+	w = httptest.NewRecorder()
+	h.ServeHTTP(w, httptest.NewRequest("GET", "http://localhost"+location, nil))
+	require.Contains(t, w.Body.String(), `role="alert">Aksi ditolak: explicit confirmation required`)
+	s, err := rt.Snapshot(t.Context())
+	require.NoError(t, err)
+	require.Equal(t, "running", string(s.Instances["a"].Status))
+}

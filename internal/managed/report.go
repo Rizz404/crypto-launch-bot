@@ -42,28 +42,48 @@ func drawdown(equity, peak decimal.Decimal) string {
 }
 
 // chartPath contains only coordinates; templates still escape its attribute.
+// X follows sample time, so hours without samples (bot stopped) stay visible
+// as a straight segment instead of being compressed away.
 func chartPath(points []EquitySample) string {
 	if len(points) < 2 {
 		return ""
 	}
-	lo, hi := points[0].Account, points[0].Account
-	for _, p := range points {
-		lo = decimal.Min(lo, p.Account)
-		hi = decimal.Max(hi, p.Account)
-	}
+	lo, hi := chartBounds(points)
 	span := hi.Sub(lo)
 	if span.IsZero() {
 		span = decimal.NewFromInt(1)
 	}
+	first, last := points[0].At, points[len(points)-1].At
+	duration := last.Sub(first)
 	var out strings.Builder
 	for i, p := range points {
-		x := float64(i)*980/float64(len(points)-1) + 10
+		x := float64(i) * 980 / float64(len(points)-1)
+		if duration > 0 {
+			x = float64(p.At.Sub(first)) * 980 / float64(duration)
+		}
 		y, _ := p.Account.Sub(lo).Div(span).Mul(decimal.NewFromInt(160)).Float64()
 		verb := "L"
 		if i == 0 {
 			verb = "M"
 		}
-		fmt.Fprintf(&out, "%s%.2f %.2f ", verb, x, 180-y)
+		fmt.Fprintf(&out, "%s%.2f %.2f ", verb, x+10, 180-y)
 	}
 	return out.String()
+}
+
+func chartBounds(points []EquitySample) (lo, hi decimal.Decimal) {
+	lo, hi = points[0].Account, points[0].Account
+	for _, p := range points {
+		lo = decimal.Min(lo, p.Account)
+		hi = decimal.Max(hi, p.Account)
+	}
+	return lo, hi
+}
+
+// timestamp renders dashboard times in UTC; the zero value means "never".
+func timestamp(t time.Time) string {
+	if t.IsZero() {
+		return "belum ada"
+	}
+	return t.UTC().Format("2006-01-02 15:04:05 UTC")
 }
