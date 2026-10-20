@@ -312,6 +312,12 @@ func (s *State) Transfer(from, to string, amount decimal.Decimal) error {
 		i.Funded = i.Funded.Sub(amount)
 		i.Peak = i.Peak.Sub(amount)
 		i.DayStart = i.DayStart.Sub(amount)
+		s.rebaseBindings(from, func(b *Binding) decimal.Decimal {
+			if b.Spec.Cap.IsPositive() {
+				return decimal.Zero
+			}
+			return amount.Neg()
+		})
 	}
 	if to == "reserve" {
 		s.Reserve = s.Reserve.Add(amount)
@@ -321,6 +327,12 @@ func (s *State) Transfer(from, to string, amount decimal.Decimal) error {
 		i.Funded = i.Funded.Add(amount)
 		i.Peak = i.Peak.Add(amount)
 		i.DayStart = i.DayStart.Add(amount)
+		s.rebaseBindings(to, func(b *Binding) decimal.Decimal {
+			if b.Spec.Cap.IsPositive() {
+				return decimal.Zero
+			}
+			return amount
+		})
 	}
 	s.Note("transfer", from+" → "+to, amount.String())
 	return nil

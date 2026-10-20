@@ -84,6 +84,30 @@ func (s *State) CheckExposure(owner, symbol string, amount decimal.Decimal) erro
 	pending, _ = s.Reserved("", owner, "")
 	return check(b.Spec.Risk, s.InstanceEquity(i.ID), s.Inventory(owner), pending)
 }
+
+// bindingCapital is the reference capital for strategy loss limits: its cap,
+// or the shared instance funding when the strategy uses the pool.
+func (s *State) bindingCapital(b *Binding) decimal.Decimal {
+	if b.Spec.Cap.IsPositive() {
+		return b.Spec.Cap
+	}
+	return s.Instances[b.InstanceID].Funded
+}
+
+// rebaseBindings shifts loss-limit references of strategies whose capital
+// reference moved by an internal flow, so the flow is neither profit nor loss.
+func (s *State) rebaseBindings(instance string, delta func(*Binding) decimal.Decimal) {
+	for _, b := range s.Bindings {
+		if b.InstanceID != instance {
+			continue
+		}
+		if d := delta(b); !d.IsZero() {
+			b.Peak = b.Peak.Add(d)
+			b.DayStart = b.DayStart.Add(d)
+		}
+	}
+}
+
 func observe(c risk.Config, equity decimal.Decimal, day, now time.Time, start, peak decimal.Decimal) (time.Time, decimal.Decimal, decimal.Decimal, bool) {
 	c = effectiveRisk(c)
 	today := now.UTC().Truncate(24 * time.Hour)
@@ -110,11 +134,7 @@ func (s *State) Observe(now time.Time) {
 		}
 	}
 	for owner, b := range s.Bindings {
-		capital := s.Instances[b.InstanceID].Funded
-		if b.Spec.Cap.IsPositive() {
-			capital = b.Spec.Cap
-		}
-		equity := capital.Add(b.Realized).Add(s.Inventory(owner))
+		equity := s.bindingCapital(b).Add(b.Realized).Add(s.Inventory(owner))
 		for _, p := range s.Holdings {
 			if p.Owner == owner {
 				equity = equity.Sub(p.Cost)

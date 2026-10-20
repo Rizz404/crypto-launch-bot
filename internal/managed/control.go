@@ -169,7 +169,14 @@ func (s *State) Apply(c Command) error {
 			i.Risk = *c.Risk
 		} else {
 			b := s.Bindings[c.Scope]
+			before := s.bindingCapital(b)
 			b.Spec.Cap = c.Amount
+			s.rebaseBindings(b.InstanceID, func(other *Binding) decimal.Decimal {
+				if other != b {
+					return decimal.Zero
+				}
+				return s.bindingCapital(b).Sub(before)
+			})
 			if c.Risk != nil {
 				b.Spec.Risk = *c.Risk
 			}

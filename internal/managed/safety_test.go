@@ -372,3 +372,19 @@ func TestLiveCancelReleasesProtectionBeforeExit(t *testing.T) {
 	_, base := s.Reserved("", "a/one", "ETHUSDT")
 	require.True(t, base.Equal(d("0.2")), "only the exit order holds the coins")
 }
+
+func TestCapitalFlowsDoNotTripStrategyLossLimits(t *testing.T) {
+	s, _ := NewState(spec())
+	now := time.Date(2026, 10, 20, 12, 0, 0, 0, time.UTC)
+	s.Observe(now)
+	require.NoError(t, s.Transfer("a", "reserve", d("400")))
+	s.Observe(now.Add(time.Minute))
+	require.False(t, s.Bindings["a/one"].Halted, "moving free cash out is not a strategy loss")
+	require.NoError(t, s.Apply(Command{Operation: "limits", Scope: "a/one", Amount: d("50"), Confirm: true}))
+	s.Observe(now.Add(2 * time.Minute))
+	require.False(t, s.Bindings["a/one"].Halted, "setting a cap is not a strategy loss")
+	require.NoError(t, s.Transfer("reserve", "a", d("400")))
+	s.Observe(now.Add(3 * time.Minute))
+	require.False(t, s.Instances["a"].Halted)
+	require.False(t, s.Bindings["a/one"].Halted)
+}
