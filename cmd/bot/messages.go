@@ -5,9 +5,12 @@ package main
 // a short explanation.
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
+	"maps"
 	"regexp"
+	"slices"
 	"strings"
 	"time"
 
@@ -16,6 +19,7 @@ import (
 	"github.com/rizz404/trading-bot/internal/config"
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/fx"
+	"github.com/rizz404/trading-bot/internal/managed"
 	"github.com/rizz404/trading-bot/internal/notify/telegram"
 	"github.com/rizz404/trading-bot/internal/storage"
 	"github.com/rizz404/trading-bot/internal/strategy"
@@ -392,4 +396,47 @@ func shortVersion(v string) string {
 		return v[:7]
 	}
 	return v
+}
+
+// msgManagedStarted lists every managed wallet, instance and strategy with
+// its capital, so a restart is visible without opening the dashboard.
+func msgManagedStarted(ctx context.Context, m config.Mode, runtimes map[string]*managed.Runtime, version string) string {
+	var sb strings.Builder
+	fmt.Fprintf(&sb, "🤖 <b>Bot aktif</b>\nMode: %s\n", modeText(m))
+	for _, id := range slices.Sorted(maps.Keys(runtimes)) {
+		s, err := runtimes[id].Snapshot(ctx)
+		if err != nil {
+			fmt.Fprintf(&sb, "\n<b>%s</b>: status belum terbaca\n", esc(id))
+			continue
+		}
+		fmt.Fprintf(&sb, "\n<b>%s</b> · modal %s %s\n", esc(id), esc(s.Spec.Capital.StringFixed(2)), esc(s.Spec.Quote))
+		for _, iid := range slices.Sorted(maps.Keys(s.Instances)) {
+			i := s.Instances[iid]
+			fmt.Fprintf(&sb, "• <b>%s</b> (%s) · %s %s\n", esc(i.Name), esc(i.Status), esc(s.InstanceEquity(iid).StringFixed(2)), esc(s.Spec.Quote))
+			for _, owner := range slices.Sorted(maps.Keys(s.Bindings)) {
+				if b := s.Bindings[owner]; b.InstanceID == iid {
+					fmt.Fprintf(&sb, "  %s · %s · %s\n", esc(b.ID), esc(b.Spec.Name), esc(strings.Join(b.Spec.Symbols, ", ")))
+				}
+			}
+		}
+		if s.Attention != "" {
+			fmt.Fprintf(&sb, "⚠️ Perlu diperiksa: %s\n", esc(s.Attention))
+		}
+	}
+	fmt.Fprintf(&sb, "\nKetik / untuk menu perintah.\n<i>versi %s</i>", esc(shortVersion(version)))
+	return sb.String()
+}
+
+func msgManagedStopped(m config.Mode, err error) string {
+	var sb strings.Builder
+	sb.WriteString("🛑 <b>Bot berhenti</b>\n")
+	if err != nil {
+		fmt.Fprintf(&sb, "Penyebab: kesalahan, <code>%s</code>\n", esc(err.Error()))
+	}
+	if m == config.ModePaper {
+		sb.WriteString("Ledger, posisi dan order simulasi tersimpan; dilanjutkan saat bot jalan lagi.")
+	} else {
+		sb.WriteString("Order dan koin di exchange tetap ada; tidak ada penjualan otomatis saat berhenti.")
+	}
+	return sb.String()
 }

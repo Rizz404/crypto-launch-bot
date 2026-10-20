@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html"
 	"log/slog"
+	"maps"
 	"net/http"
 	"slices"
 	"strings"
@@ -79,6 +80,11 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 	feedMetrics := marketdata.NewMetrics(reg)
 	store := storage.NewStore(pool)
 	runtimes := map[string]*managed.Runtime{}
+	// Telegram outlives ctx briefly so the shutdown message is delivered.
+	var tg *telegram.Bot
+	tgCtx, tgCancel := context.WithCancel(context.Background())
+	tgDone := make(chan struct{})
+	tgStarted := false
 	defer func() {
 		cancel()
 		wg.Wait()
@@ -93,6 +99,13 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 			}
 			done()
 		}
+		if tgStarted {
+			tg.Notify(msgManagedStopped(cfg.App.Mode, runErr))
+		}
+		tgCancel()
+		if tgStarted {
+			<-tgDone
+		}
 	}()
 	var fxs *fx.Service
 	if cfg.Telegram.FX {
@@ -106,7 +119,6 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 		}
 		return m
 	}
-	var tg *telegram.Bot
 	if cfg.Telegram.Enabled {
 		tg = telegram.New(cfg.Telegram.Token.Reveal(), cfg.Telegram.ChatIDs, log)
 	}
@@ -296,7 +308,9 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 	}
 	if tg != nil {
 		registerManagedTelegram(tg, runtimes, moneyFor, cancel)
-		wg.Go(func() { tg.Run(ctx) })
+		tgStarted = true
+		go func() { defer close(tgDone); tg.Run(tgCtx) }()
+		tg.Notify(msgManagedStarted(ctx, cfg.App.Mode, runtimes, version))
 	}
 	var servers []*http.Server
 	startHTTP := func(srv *http.Server) {
@@ -393,9 +407,21 @@ func managedStatus(ctx context.Context, runtimes map[string]*managed.Runtime, m 
 	return out.String()
 }
 func registerManagedTelegram(tg *telegram.Bot, runtimes map[string]*managed.Runtime, moneyFor func() money, stop context.CancelFunc) {
-	tg.Handle("status", "ringkasan akun dan instance", func(ctx context.Context, _ []string) string { return managedStatus(ctx, runtimes, moneyFor()) })
+	ids := slices.Sorted(maps.Keys(runtimes))
+	tg.SetHelpIntro("<b>Perintah bot</b>\nAkun: <code>" + html.EscapeString(strings.Join(ids, ", ")) + "</code>. Scope: <code>account</code>, ID instance, atau <code>instance/strategi</code>. Aksi dana memerlukan kata <code>confirm</code>.")
+	tg.Handle("status", "ringkasan nilai akun dan instance", func(ctx context.Context, _ []string) string { return managedStatus(ctx, runtimes, moneyFor()) })
+	help := map[string]string{
+		"pause":   "jeda entry baru · /pause akun scope",
+		"resume":  "lanjutkan entry · /resume akun scope",
+		"cancel":  "batalkan order pending · /cancel akun scope confirm",
+		"flatten": "jual posisi milik scope · /flatten akun scope confirm",
+		"finish":  "akhiri eksperimen · /finish akun scope retain|flatten confirm",
+		"kill":    "halt darurat · /kill akun scope confirm",
+		"reset":   "buka halt risiko · /reset akun scope confirm",
+		"archive": "arsipkan instance kosong · /archive akun scope confirm",
+	}
 	for _, op := range []string{"pause", "resume", "cancel", "flatten", "finish", "kill", "reset", "archive"} {
-		tg.Handle(op, "akun scope [retain|flatten] confirm", func(ctx context.Context, args []string) string {
+		tg.Handle(op, help[op], func(ctx context.Context, args []string) string {
 			if len(args) < 2 {
 				return "Gunakan /" + op + " akun scope; scope = account, ID instance, atau instance/strategi. Aksi dana memerlukan confirm."
 			}
@@ -416,7 +442,21 @@ func registerManagedTelegram(tg *telegram.Bot, runtimes map[string]*managed.Runt
 			return "Perintah diterima. Periksa /status; penutupan menunggu konfirmasi order."
 		})
 	}
-	tg.Handle("stop", "stop proses untuk resume, bukan penutupan posisi", func(_ context.Context, args []string) string {
+	tg.Handle("resolve", "verifikasi order tak pasti ke exchange · /resolve akun order confirm", func(ctx context.Context, args []string) string {
+		if len(args) < 2 {
+			return "Gunakan /resolve akun order confirm. ID order ada di dashboard, panel Order perlu verifikasi."
+		}
+		rt := runtimes[args[0]]
+		if rt == nil {
+			return "Akun tidak ditemukan."
+		}
+		c := managed.Command{ID: fmt.Sprintf("telegram-%d", time.Now().UnixNano()), Operation: "resolve_order", Order: args[1], Confirm: slices.Contains(args[2:], "confirm")}
+		if err := rt.Command(ctx, c); err != nil {
+			return "Belum diselesaikan: " + html.EscapeString(err.Error())
+		}
+		return "Order diverifikasi ke exchange dan ledger diperbarui. Periksa /status."
+	})
+	tg.Handle("stop", "stop proses untuk resume; posisi dan order tetap · /stop confirm", func(_ context.Context, args []string) string {
 		if !slices.Contains(args, "confirm") {
 			return "Order dan posisi tetap ada di exchange. Untuk stop proses kirim /stop confirm."
 		}
