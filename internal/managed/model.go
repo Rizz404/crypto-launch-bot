@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"regexp"
 	"slices"
 	"time"
@@ -58,10 +59,13 @@ func (s Spec) Validate() error {
 	if !slices.Contains([]string{"paper", "testnet", "live", "backtest"}, s.Mode) {
 		return errors.New("invalid managed wallet mode")
 	}
+	if err := validateRisk(s.Risk); err != nil {
+		return err
+	}
 	ids := map[string]bool{}
 	total := decimal.Zero
 	for _, i := range s.Instances {
-		if !validID.MatchString(i.ID) || ids[i.ID] || i.Allocation.IsNegative() {
+		if !validID.MatchString(i.ID) || i.ID == "account" || i.ID == "reserve" || ids[i.ID] || i.Allocation.IsNegative() {
 			return fmt.Errorf("invalid or duplicate instance %q", i.ID)
 		}
 		ids[i.ID] = true
@@ -69,12 +73,18 @@ func (s Spec) Validate() error {
 		if !slices.Contains([]string{"", "info", "warn", "error", "off"}, i.Notify) {
 			return fmt.Errorf("invalid notification level for %s", i.ID)
 		}
+		if err := validateRisk(i.Risk); err != nil {
+			return err
+		}
 		bindings := map[string]bool{}
 		for _, b := range i.Strategies {
 			if !validID.MatchString(b.ID) || bindings[b.ID] || b.Name == "" || len(b.Symbols) == 0 || b.Cap.IsNegative() {
 				return fmt.Errorf("invalid binding in %s", i.ID)
 			}
 			bindings[b.ID] = true
+			if err := validateRisk(b.Risk); err != nil {
+				return err
+			}
 			for _, sym := range b.Symbols {
 				if len(sym) <= len(s.Quote) || !regexp.MustCompile(`^[A-Z0-9]+USDT$`).MatchString(sym) {
 					return fmt.Errorf("invalid USDT symbol %q", sym)
@@ -100,6 +110,7 @@ type Instance struct {
 }
 type Binding struct {
 	ID, InstanceID, Status, Reason string
+	LastNotice                     string
 	Spec                           BindingSpec
 	Realized, Fees, Peak, DayStart decimal.Decimal
 	Day                            time.Time
@@ -111,6 +122,7 @@ type Holding struct {
 	Quantity, Cost decimal.Decimal
 }
 type Order struct {
+	Deferred                    *domain.Order
 	Owner                       string
 	Order                       domain.Order
 	Group                       string
@@ -121,7 +133,35 @@ type Audit struct {
 	At                   time.Time
 	Kind, Scope, Message string
 }
+type FeeCharge struct {
+	Owner, Asset string
+	Quantity     decimal.Decimal
+}
+type Execution struct {
+	Owner    string
+	Fill     domain.Fill
+	Realized decimal.Decimal
+}
+type EquitySample struct {
+	At        time.Time
+	Account   decimal.Decimal
+	Instances map[string]decimal.Decimal
+}
+type Run struct {
+	ID, Mode, Status, ConfigurationHash string
+	StartedAt, EndedAt                  time.Time
+	Configuration                       json.RawMessage
+}
 type State struct {
+	Runs           []Run
+	Samples        []EquitySample
+	PriceAt        map[string]time.Time
+	ReconciledAt   time.Time
+	Executions     []Execution
+	FeeAssets      map[string]decimal.Decimal
+	PendingFees    map[string]FeeCharge
+	FeeQuote       decimal.Decimal
+	FeeIssue       string
 	Pending        []broker.Event
 	Version        int
 	Spec           Spec
@@ -135,7 +175,6 @@ type State struct {
 	Prices         map[string]decimal.Decimal
 	Baseline       map[string]decimal.Decimal
 	Requests       map[string]string
-	Trades         []domain.Trade
 	History        []Audit
 	Attention      string
 	Peak, DayStart decimal.Decimal
@@ -149,7 +188,7 @@ func NewState(spec Spec) (*State, error) {
 	if err := spec.Validate(); err != nil {
 		return nil, err
 	}
-	s := &State{Version: 1, Spec: spec, ConfigHash: Hash(spec), Reserve: spec.Capital, Instances: map[string]*Instance{}, Bindings: map[string]*Binding{}, Holdings: map[string]*Holding{}, Orders: map[string]*Order{}, Seen: map[string]bool{}, Prices: map[string]decimal.Decimal{}, Baseline: map[string]decimal.Decimal{}, Requests: map[string]string{}, StartedAt: time.Now().UTC()}
+	s := &State{Version: 1, PriceAt: map[string]time.Time{}, FeeAssets: map[string]decimal.Decimal{}, PendingFees: map[string]FeeCharge{}, Spec: spec, ConfigHash: Hash(spec), Reserve: spec.Capital, Instances: map[string]*Instance{}, Bindings: map[string]*Binding{}, Holdings: map[string]*Holding{}, Orders: map[string]*Order{}, Seen: map[string]bool{}, Prices: map[string]decimal.Decimal{}, Baseline: map[string]decimal.Decimal{}, Requests: map[string]string{}, StartedAt: time.Now().UTC()}
 	for _, i := range spec.Instances {
 		s.Instances[i.ID] = &Instance{ID: i.ID, Name: i.Name, Status: "running", Notify: i.Notify, Cash: i.Allocation, Funded: i.Allocation, Risk: i.Risk}
 		s.Reserve = s.Reserve.Sub(i.Allocation)
@@ -175,6 +214,7 @@ func (s *State) Holding(owner, symbol string) *Holding {
 func (s *State) Mark(symbol string, price decimal.Decimal) {
 	if price.IsPositive() {
 		s.Prices[symbol] = price
+		s.valueFees()
 	}
 }
 func (s *State) Inventory(owner string) decimal.Decimal {
@@ -283,5 +323,20 @@ func (s *State) Transfer(from, to string, amount decimal.Decimal) error {
 		i.DayStart = i.DayStart.Add(amount)
 	}
 	s.Note("transfer", from+" → "+to, amount.String())
+	return nil
+}
+
+func validateRisk(c risk.Config) error {
+	if c == (risk.Config{}) {
+		return nil
+	}
+	for _, v := range []float64{c.RiskPerTrade, c.PositionPct, c.MaxPositionPct, c.MaxExposurePct, c.DailyLossLimit, c.MaxDrawdown} {
+		if math.IsNaN(v) || math.IsInf(v, 0) || v < 0 {
+			return errors.New("risk settings must be finite and nonnegative")
+		}
+	}
+	if c.RiskPerTrade <= 0 || c.RiskPerTrade > 0.1 || c.MaxLeverage != 1 || c.PositionPct > 1 || c.MaxPositionPct > 1 || c.DailyLossLimit >= 1 || c.MaxDrawdown >= 1 {
+		return errors.New("managed risk requires leverage 1, risk per trade <=10%, fractions below 100%")
+	}
 	return nil
 }

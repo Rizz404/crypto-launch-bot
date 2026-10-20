@@ -6,6 +6,8 @@ import (
 	"github.com/rizz404/trading-bot/internal/broker"
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/shopspring/decimal"
+	"strings"
+	"time"
 )
 
 // Reserve records the intention BEFORE submitting an order. Only a definitive
@@ -88,6 +90,9 @@ func (s *State) UpdateOrder(upd domain.Order) {
 	if o == nil {
 		return
 	}
+	if o.State == "terminal" && (upd.Status.Open() || o.Order.Status == domain.OrderFilled) {
+		return
+	}
 	o.Order.ExchangeID = upd.ExchangeID
 	o.Order.UpdatedAt = upd.UpdatedAt
 	if upd.Status.Open() {
@@ -96,10 +101,14 @@ func (s *State) UpdateOrder(upd domain.Order) {
 		}
 		return
 	}
-	// A filled status can precede the executions. Do not discard reservations.
-	if upd.Status == domain.OrderFilled && o.Order.FilledQty.LessThan(o.Order.Quantity) {
+	// A terminal acknowledgment may arrive before its executions. Keep the
+	// reservation until the acknowledged cumulative quantity has been booked.
+	if o.Order.FilledQty.LessThan(upd.FilledQty) || (upd.Status == domain.OrderFilled && o.Order.FilledQty.LessThan(o.Order.Quantity)) {
+		cp := upd
+		o.Deferred = &cp
 		return
 	}
+	o.Deferred = nil
 	o.Order.Status = upd.Status
 	o.State = "terminal"
 	o.QuoteReserved = decimal.Zero
@@ -126,11 +135,27 @@ func (s *State) Fill(f domain.Fill) (bool, error) {
 	if f.Symbol != o.Order.Symbol || f.Side != o.Order.Side || f.Exchange != o.Order.Exchange || f.Market != domain.Spot {
 		return false, errors.New("execution identity mismatch")
 	}
+	if f.Quantity.GreaterThan(o.Order.Quantity.Sub(o.Order.FilledQty)) {
+		return false, errors.New("execution exceeds remaining order quantity")
+	}
 	b := s.Bindings[o.Owner]
 	i := s.Instances[b.InstanceID]
 	p := s.Holding(o.Owner, f.Symbol)
+	realizedBefore := b.Realized
 	notional := f.Quantity.Mul(f.Price)
+	thirdFee := f.FeeAsset != "" && f.FeeAsset != "QUOTE" && f.FeeAsset != s.Spec.Quote && !strings.HasPrefix(f.Symbol, f.FeeAsset)
+	if f.FeeUnknown {
+		s.FeeIssue = "recovered execution needs trade-level fee review"
+		s.Attention = s.FeeIssue
+	}
+	if thirdFee && f.Commission.IsPositive() {
+		s.FeeAssets[f.FeeAsset] = s.FeeAssets[f.FeeAsset].Add(f.Commission)
+		s.PendingFees[key] = FeeCharge{Owner: o.Owner, Asset: f.FeeAsset, Quantity: f.Commission}
+	}
 	quoteFee := f.Fee.Sub(f.BaseFee.Mul(f.Price))
+	if thirdFee {
+		quoteFee = decimal.Zero
+	}
 	if quoteFee.IsNegative() {
 		quoteFee = decimal.Zero
 	}
@@ -145,18 +170,29 @@ func (s *State) Fill(f domain.Fill) (bool, error) {
 		cost := p.Cost.Mul(f.Quantity).Div(p.Quantity)
 		p.Quantity = p.Quantity.Sub(f.Quantity)
 		p.Cost = p.Cost.Sub(cost)
-		proceeds := notional.Sub(f.Fee)
+		sellFee := f.Fee
+		if thirdFee {
+			sellFee = decimal.Zero
+		}
+		proceeds := notional.Sub(sellFee)
 		i.Cash = i.Cash.Add(proceeds)
 		b.Realized = b.Realized.Add(proceeds.Sub(cost))
 	}
-	b.Fees = b.Fees.Add(f.Fee)
+	if !thirdFee {
+		b.Fees = b.Fees.Add(f.Fee)
+	}
+	s.valueFees()
 	s.Seen[key] = true
+	s.Executions = append(s.Executions, Execution{Owner: o.Owner, Fill: f, Realized: b.Realized.Sub(realizedBefore)})
 	s.Mark(f.Symbol, f.Price)
 	previousRemaining := o.Order.Quantity.Sub(o.Order.FilledQty)
+	if f.Quantity.GreaterThan(previousRemaining) {
+		return false, errors.New("execution exceeds remaining order quantity")
+	}
+	o.Order.AvgPrice = o.Order.AvgPrice.Mul(o.Order.FilledQty).Add(f.Price.Mul(f.Quantity)).Div(o.Order.FilledQty.Add(f.Quantity))
 	o.Order.FilledQty = o.Order.FilledQty.Add(f.Quantity)
 	remaining := decimal.Max(o.Order.Quantity.Sub(o.Order.FilledQty), decimal.Zero)
-	ratio := remaining.Div(previousRemaining)
-	o.QuoteReserved = o.QuoteReserved.Mul(ratio)
+	o.QuoteReserved = o.QuoteReserved.Div(previousRemaining).Mul(remaining)
 	o.BaseReserved = remaining
 	if o.Order.Side == domain.Buy {
 		o.BaseReserved = decimal.Zero
@@ -177,10 +213,14 @@ func (s *State) Fill(f domain.Fill) (bool, error) {
 	} else {
 		o.Order.Status = domain.OrderPartiallyFilled
 	}
+	if o.Deferred != nil {
+		s.UpdateOrder(*o.Deferred)
+	}
 	return true, nil
 }
 func (s *State) Reconcile(st *broker.AccountState, instruments map[string]domain.Instrument) {
-	expected := map[string]decimal.Decimal{s.Spec.Quote: s.Reserve}
+	s.ReconciledAt = time.Now().UTC()
+	expected := map[string]decimal.Decimal{s.Spec.Quote: s.Reserve.Add(s.FeeQuote)}
 	for _, i := range s.Instances {
 		expected[s.Spec.Quote] = expected[s.Spec.Quote].Add(i.Cash)
 	}
@@ -190,7 +230,7 @@ func (s *State) Reconcile(st *broker.AccountState, instruments map[string]domain
 	}
 	if len(s.Baseline) == 0 {
 		for asset, b := range st.Balances {
-			s.Baseline[asset] = b.Wallet.Sub(expected[asset])
+			s.Baseline[asset] = b.Wallet.Sub(expected[asset]).Add(s.FeeAssets[asset])
 		}
 		for asset, v := range expected {
 			if st.Balances[asset].Wallet.LessThan(v) {
@@ -198,21 +238,74 @@ func (s *State) Reconcile(st *broker.AccountState, instruments map[string]domain
 				return
 			}
 		}
-		return
+	}
+	for asset := range st.Balances {
+		if _, ok := expected[asset]; !ok {
+			expected[asset] = decimal.Zero
+		}
+	}
+	for asset := range s.Baseline {
+		if _, ok := expected[asset]; !ok {
+			expected[asset] = decimal.Zero
+		}
 	}
 	for asset, v := range expected {
 		actual := st.Balances[asset].Wallet
-		want := v.Add(s.Baseline[asset])
+		want := v.Add(s.Baseline[asset]).Sub(s.FeeAssets[asset])
 		if !actual.Equal(want) {
 			s.Attention = "wallet discrepancy in " + asset
 			return
 		}
 	}
 	for _, o := range st.OpenOrders {
-		if s.Orders[o.ClientID] == nil {
+		if s.Orders[o.ClientID] == nil || s.Orders[o.ClientID].State == "terminal" {
 			s.Attention = "unknown exchange order " + o.Symbol
 			return
 		}
 	}
-	s.Attention = ""
+	for _, o := range s.Orders {
+		if o.State == "canceling" {
+			s.Attention = "cancellation awaiting exchange confirmation"
+			return
+		}
+		if o.State == "unknown" || o.State == "submitting" {
+			found := false
+			for _, ex := range st.OpenOrders {
+				if ex.ClientID == o.Order.ClientID {
+					found = true
+				}
+			}
+			if !found {
+				s.Attention = "unresolved order submission"
+				return
+			}
+		}
+	}
+	s.Attention = s.FeeIssue
+}
+
+// valueFees charges a strategy the quote value of third-asset commissions while
+// preserving the actual fee asset debit for wallet reconciliation.
+func (s *State) valueFees() {
+	for key, f := range s.PendingFees {
+		price := s.Prices[f.Asset+s.Spec.Quote]
+		if !price.IsPositive() {
+			s.FeeIssue = "waiting for commission asset valuation"
+			s.Attention = s.FeeIssue
+			continue
+		}
+		value := f.Quantity.Mul(price)
+		b := s.Bindings[f.Owner]
+		s.Instances[b.InstanceID].Cash = s.Instances[b.InstanceID].Cash.Sub(value)
+		b.Realized = b.Realized.Sub(value)
+		b.Fees = b.Fees.Add(value)
+		s.FeeQuote = s.FeeQuote.Add(value)
+		delete(s.PendingFees, key)
+	}
+	if len(s.PendingFees) == 0 && s.FeeIssue == "waiting for commission asset valuation" {
+		if s.Attention == s.FeeIssue {
+			s.Attention = ""
+		}
+		s.FeeIssue = ""
+	}
 }

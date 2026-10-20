@@ -1,10 +1,13 @@
 package managed
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
+	"slices"
 	"sync"
 
 	"github.com/jackc/pgx/v5"
@@ -85,7 +88,16 @@ func (r *PGStore) Update(ctx context.Context, id, op string, payload any, fn fun
 	if err = fn(&s); err != nil {
 		return err
 	}
-	s.Requests[id] = hash
+	next, marshalErr := json.Marshal(s)
+	if marshalErr != nil {
+		return marshalErr
+	}
+	if bytes.Equal(raw, next) {
+		return tx.Commit(ctx)
+	}
+	if durableOperation(op) {
+		s.Requests[id] = hash
+	}
 	raw, err = json.Marshal(s)
 	if err != nil {
 		return err
@@ -94,8 +106,10 @@ func (r *PGStore) Update(ctx context.Context, id, op string, payload any, fn fun
 	if err != nil {
 		return err
 	}
-	if _, err = tx.Exec(ctx, `INSERT INTO managed_journal(wallet_id,sequence,operation,request_id,payload) VALUES($1,$2,$3,$4,$5)`, r.Key, revision+1, op, id, p); err != nil {
-		return err
+	if durableOperation(op) {
+		if _, err = tx.Exec(ctx, `INSERT INTO managed_journal(wallet_id,sequence,operation,request_id,payload) VALUES($1,$2,$3,$4,$5)`, r.Key, revision+1, op, id, p); err != nil {
+			return err
+		}
 	}
 	if _, err = tx.Exec(ctx, `UPDATE managed_wallets SET state=$2,revision=revision+1,updated_at=now() WHERE id=$1`, r.Key, raw); err != nil {
 		return err
@@ -113,11 +127,92 @@ func NewMemory(spec Spec) (*MemoryStore, error) {
 	s, err := NewState(spec)
 	return &MemoryStore{state: s}, err
 }
+
+// Decimal values are immutable. Copy every mutable collection explicitly rather
+// than serializing the complete financial history on each backtest price tick.
 func clone(s *State) *State {
-	raw, _ := json.Marshal(s)
-	var out State
-	_ = json.Unmarshal(raw, &out)
+	out := *s
+	out.Runs = slices.Clone(s.Runs)
+	for n := range out.Runs {
+		out.Runs[n].Configuration = slices.Clone(out.Runs[n].Configuration)
+	}
+	binding := func(b BindingSpec) BindingSpec {
+		b.Symbols = slices.Clone(b.Symbols)
+		b.Params = cloneParams(b.Params)
+		return b
+	}
+	out.Spec.Instances = slices.Clone(s.Spec.Instances)
+	for n := range out.Spec.Instances {
+		i := &out.Spec.Instances[n]
+		i.Strategies = slices.Clone(i.Strategies)
+		for j := range i.Strategies {
+			i.Strategies[j] = binding(i.Strategies[j])
+		}
+	}
+	out.Instances = make(map[string]*Instance, len(s.Instances))
+	for k, v := range s.Instances {
+		cp := *v
+		out.Instances[k] = &cp
+	}
+	out.Bindings = make(map[string]*Binding, len(s.Bindings))
+	for k, v := range s.Bindings {
+		cp := *v
+		cp.Spec = binding(cp.Spec)
+		cp.Engine = slices.Clone(v.Engine)
+		out.Bindings[k] = &cp
+	}
+	out.Holdings = make(map[string]*Holding, len(s.Holdings))
+	for k, v := range s.Holdings {
+		cp := *v
+		out.Holdings[k] = &cp
+	}
+	out.Orders = make(map[string]*Order, len(s.Orders))
+	for k, v := range s.Orders {
+		cp := *v
+		if v.Deferred != nil {
+			d := *v.Deferred
+			cp.Deferred = &d
+		}
+		out.Orders[k] = &cp
+	}
+	out.Seen = maps.Clone(s.Seen)
+	out.Prices = maps.Clone(s.Prices)
+	out.PriceAt = maps.Clone(s.PriceAt)
+	out.Baseline = maps.Clone(s.Baseline)
+	out.Requests = maps.Clone(s.Requests)
+	out.FeeAssets = maps.Clone(s.FeeAssets)
+	out.PendingFees = maps.Clone(s.PendingFees)
+	out.Pending = slices.Clone(s.Pending)
+	out.Executions = slices.Clone(s.Executions)
+	out.History = slices.Clone(s.History)
+	out.Samples = slices.Clone(s.Samples)
+	for n := range out.Samples {
+		out.Samples[n].Instances = maps.Clone(out.Samples[n].Instances)
+	}
 	return &out
+}
+func cloneParams(in map[string]any) map[string]any {
+	out := make(map[string]any, len(in))
+	for k, v := range in {
+		out[k] = cloneParam(v)
+	}
+	return out
+}
+func cloneParam(v any) any {
+	switch x := v.(type) {
+	case map[string]any:
+		return cloneParams(x)
+	case []any:
+		out := make([]any, len(x))
+		for n, v := range x {
+			out[n] = cloneParam(v)
+		}
+		return out
+	case []string:
+		return slices.Clone(x)
+	default:
+		return v
+	}
 }
 func (r *MemoryStore) Load(context.Context) (*State, error) {
 	r.mu.Lock()
@@ -147,7 +242,15 @@ func (r *MemoryStore) Update(_ context.Context, id, op string, payload any, fn f
 	if err := fn(s); err != nil {
 		return err
 	}
-	s.Requests[id] = hash
+	if durableOperation(op) {
+		s.Requests[id] = hash
+	}
 	r.state = s
 	return nil
+}
+
+// Price ticks/checkpoints are replaceable state, not financial commands. Keeping
+// a random id for every tick would grow memory quadratically in long backtests.
+func durableOperation(op string) bool {
+	return op != "sample" && op != "notice" && op != "mark" && op != "engine_checkpoint" && op != "event_checkpoint" && op != "settle_controls" && op != "warmup_prices" && op != "accepted" && op != "reconcile"
 }
