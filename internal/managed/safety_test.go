@@ -261,3 +261,18 @@ func TestReconciliationFindsInitialUnknownOrdersAndNewDeposits(t *testing.T) {
 	s.valueFees()
 	require.Contains(t, s.Attention, "DOGE", "valuing a fee cannot clear an unrelated discrepancy")
 }
+
+func TestReconciliationKeepsUnderfundedWalletBlocked(t *testing.T) {
+	s, _ := NewState(spec())
+	account := &broker.AccountState{Balances: map[string]broker.Balance{"USDT": {Wallet: d("600")}}}
+	s.Reconcile(account, nil)
+	require.Contains(t, s.Attention, "does not cover")
+	// The next periodic reconciliation must not accept the shortfall as baseline.
+	s.Reconcile(account, nil)
+	require.Contains(t, s.Attention, "does not cover")
+	require.Empty(t, s.Baseline)
+	account.Balances["USDT"] = broker.Balance{Wallet: d("1050")}
+	s.Reconcile(account, nil)
+	require.Empty(t, s.Attention)
+	require.True(t, s.Baseline["USDT"].Equal(d("50")))
+}

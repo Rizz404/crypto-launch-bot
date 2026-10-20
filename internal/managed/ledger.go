@@ -229,14 +229,16 @@ func (s *State) Reconcile(st *broker.AccountState, instruments map[string]domain
 		expected[in.Base] = expected[in.Base].Add(p.Quantity)
 	}
 	if len(s.Baseline) == 0 {
-		for asset, b := range st.Balances {
-			s.Baseline[asset] = b.Wallet.Sub(expected[asset]).Add(s.FeeAssets[asset])
-		}
+		// Check coverage before persisting a baseline: a negative baseline would
+		// make the next reconciliation accept the shortfall and clear attention.
 		for asset, v := range expected {
 			if st.Balances[asset].Wallet.LessThan(v) {
 				s.Attention = "wallet does not cover funded bot assets"
 				return
 			}
+		}
+		for asset, b := range st.Balances {
+			s.Baseline[asset] = b.Wallet.Sub(expected[asset]).Add(s.FeeAssets[asset])
 		}
 	}
 	for asset := range st.Balances {
