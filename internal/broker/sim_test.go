@@ -109,3 +109,26 @@ func TestSimRestoredPartialOrderFillsOnlyRemainingQuantity(t *testing.T) {
 	assert.Equal(t, "2", events[0].Order.FilledQty.String())
 	assert.Equal(t, "97.5", events[0].Order.AvgPrice.String())
 }
+
+// Orders placed at the same clock instant fill in placement order on every
+// run, so backtests and recovery tests are reproducible.
+func TestSimFillsSimultaneousOrdersInPlacementOrder(t *testing.T) {
+	at := time.Date(2026, 10, 20, 0, 0, 0, 0, time.UTC)
+	ids := []string{"zz", "aa", "mm", "bb", "yy", "cc"}
+	for range 50 {
+		s := NewSim(SimConfig{Exchange: "sim", Clock: func() time.Time { return at }})
+		var filled []string
+		s.SetHandler(func(ev Event) {
+			if ev.Kind == EventFill {
+				filled = append(filled, ev.Fill.OrderClientID)
+			}
+		})
+		for _, id := range ids {
+			_, err := s.PlaceOrder(context.Background(), domain.Order{ClientID: id, Exchange: "sim", Market: domain.Spot, Symbol: "ETHUSDT", Side: domain.Buy, Type: domain.OrderMarket, Quantity: decimal.NewFromInt(1)})
+			require.NoError(t, err)
+		}
+		c := domain.Candle{Exchange: "sim", Market: domain.Spot, Symbol: "ETHUSDT", Timeframe: "1m", OpenTime: at, Open: decimal.NewFromInt(100), High: decimal.NewFromInt(100), Low: decimal.NewFromInt(100), Close: decimal.NewFromInt(100), Closed: true}
+		require.NoError(t, s.MatchCandle(c, nil))
+		assert.Equal(t, ids, filled)
+	}
+}

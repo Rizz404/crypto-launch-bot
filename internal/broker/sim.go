@@ -1,6 +1,7 @@
 package broker
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -47,11 +48,13 @@ type Sim struct {
 	mu      sync.Mutex
 	handler Handler
 	orders  map[string]*simOrder
+	seq     int64 // placement order; breaks ties between equal timestamps
 }
 
 type simOrder struct {
 	order    domain.Order
 	placedAt time.Time
+	seq      int64
 }
 
 func NewSim(cfg SimConfig) *Sim {
@@ -102,7 +105,8 @@ func (s *Sim) PlaceOrder(_ context.Context, o domain.Order) (domain.Order, error
 		o.Status = domain.OrderPartiallyFilled
 	}
 	o.CreatedAt, o.UpdatedAt = now, now
-	s.orders[o.ClientID] = &simOrder{order: o, placedAt: now}
+	s.seq++
+	s.orders[o.ClientID] = &simOrder{order: o, placedAt: now, seq: s.seq}
 	return o, nil
 }
 
@@ -166,6 +170,7 @@ func (s *Sim) candidates(c domain.Candle) []string {
 		id   string
 		rank int
 		at   time.Time
+		seq  int64
 	}
 	var cs []cand
 	for id, so := range s.orders {
@@ -176,13 +181,18 @@ func (s *Sim) candidates(c domain.Candle) []string {
 		rank := map[domain.OrderType]int{
 			domain.OrderMarket: 0, domain.OrderStopMarket: 1, domain.OrderLimit: 2, domain.OrderTakeProfit: 3,
 		}[o.Type]
-		cs = append(cs, cand{id, rank, so.placedAt})
+		cs = append(cs, cand{id, rank, so.placedAt, so.seq})
 	}
+	// Orders come from a map: without a total order, equal ranks and times
+	// (fixed backtest clocks) would fill in random order between runs.
 	slices.SortFunc(cs, func(a, b cand) int {
 		if a.rank != b.rank {
 			return a.rank - b.rank
 		}
-		return a.at.Compare(b.at)
+		if c := a.at.Compare(b.at); c != 0 {
+			return c
+		}
+		return cmp.Compare(a.seq, b.seq)
 	})
 	ids := make([]string, len(cs))
 	for i, c := range cs {
