@@ -100,4 +100,14 @@ func TestPGWalletJournalRecoveryAndLease(t *testing.T) {
 	require.NoError(t, err)
 	require.NotContains(t, s.Requests, "idempotent")
 	require.NoError(t, r.Update(t.Context(), "idempotent", "transfer", "same", func(*State) error { panic("must not run after compaction") }))
+
+	// A no-op update (e.g. an unchanged checkpoint or observation) must not
+	// rewrite the row; JSONB normalization once made every update a write.
+	var revision, after int64
+	require.NoError(t, pool.QueryRow(t.Context(), "SELECT revision FROM managed_wallets WHERE id=$1", r.Key).Scan(&revision))
+	for n := 0; n < 5; n++ {
+		require.NoError(t, r.Update(t.Context(), nonce(), "mark", nil, func(*State) error { return nil }))
+	}
+	require.NoError(t, pool.QueryRow(t.Context(), "SELECT revision FROM managed_wallets WHERE id=$1", r.Key).Scan(&after))
+	require.Equal(t, revision, after)
 }

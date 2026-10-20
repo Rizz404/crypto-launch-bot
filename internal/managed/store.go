@@ -96,6 +96,13 @@ func (r *PGStore) Update(ctx context.Context, id, op string, payload any, fn fun
 			return tx.Commit(ctx)
 		}
 	}
+	// Compare Go encodings: JSONB is normalized by PostgreSQL (key order,
+	// spacing), so the stored bytes never equal json.Marshal output and every
+	// no-op update would otherwise rewrite the row.
+	before, err := json.Marshal(s)
+	if err != nil {
+		return err
+	}
 	if err = fn(&s); err != nil {
 		return err
 	}
@@ -112,7 +119,7 @@ func (r *PGStore) Update(ctx context.Context, id, op string, payload any, fn fun
 	if marshalErr != nil {
 		return marshalErr
 	}
-	if bytes.Equal(raw, next) {
+	if bytes.Equal(before, next) {
 		return tx.Commit(ctx)
 	}
 	if durableOperation(op) {
