@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rizz404/trading-bot/internal/broker"
 	"github.com/rizz404/trading-bot/internal/storage"
 	"github.com/stretchr/testify/require"
 )
@@ -107,6 +108,18 @@ func TestPGWalletJournalRecoveryAndLease(t *testing.T) {
 	require.NoError(t, pool.QueryRow(t.Context(), "SELECT revision FROM managed_wallets WHERE id=$1", r.Key).Scan(&revision))
 	for n := 0; n < 5; n++ {
 		require.NoError(t, r.Update(t.Context(), nonce(), "mark", nil, func(*State) error { return nil }))
+	}
+	require.NoError(t, pool.QueryRow(t.Context(), "SELECT revision FROM managed_wallets WHERE id=$1", r.Key).Scan(&after))
+	require.Equal(t, revision, after)
+
+	// Engine checkpoints come back from JSONB with another key order; saving
+	// the same engine state again must not count as a change.
+	rt, err := NewRuntime(t.Context(), r, broker.NewSim(broker.SimConfig{Exchange: "sim"}), testInstruments(), d("0"), nil, nil)
+	require.NoError(t, err)
+	require.NoError(t, rt.save(t.Context(), "a/one"))
+	require.NoError(t, pool.QueryRow(t.Context(), "SELECT revision FROM managed_wallets WHERE id=$1", r.Key).Scan(&revision))
+	for n := 0; n < 5; n++ {
+		require.NoError(t, rt.save(t.Context(), "a/one"))
 	}
 	require.NoError(t, pool.QueryRow(t.Context(), "SELECT revision FROM managed_wallets WHERE id=$1", r.Key).Scan(&after))
 	require.Equal(t, revision, after)

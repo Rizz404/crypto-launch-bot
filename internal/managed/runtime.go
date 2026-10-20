@@ -1,6 +1,7 @@
 package managed
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
 	"encoding/hex"
@@ -9,6 +10,7 @@ import (
 	"fmt"
 	"github.com/rizz404/trading-bot/internal/exchange"
 	"log/slog"
+	"reflect"
 	"slices"
 	"sync"
 	"time"
@@ -140,7 +142,15 @@ func (r *Runtime) checkpoint(ctx context.Context, owner string, raw []byte) erro
 	if Hash(st.Bindings[owner].Spec.Config(r.physical.Exchange(), owner)) != r.revisions[owner] {
 		return nil
 	}
-	err = r.repo.Update(ctx, nonce(), "engine_checkpoint", map[string]any{"owner": owner, "state": jsonRaw(raw)}, func(s *State) error { s.Bindings[owner].Engine = append([]byte(nil), raw...); return nil })
+	err = r.repo.Update(ctx, nonce(), "engine_checkpoint", map[string]any{"owner": owner, "state": jsonRaw(raw)}, func(s *State) error {
+		// The stored copy comes back with JSONB key order; only a different
+		// value is a change, otherwise every save would rewrite the ledger.
+		if sameJSON(s.Bindings[owner].Engine, raw) {
+			return nil
+		}
+		s.Bindings[owner].Engine = append([]byte(nil), raw...)
+		return nil
+	})
 	if err != nil {
 		r.failure = err
 	}
@@ -148,6 +158,19 @@ func (r *Runtime) checkpoint(ctx context.Context, owner string, raw []byte) erro
 }
 
 type jsonRaw = []byte
+
+// sameJSON reports whether two JSON documents hold the same value,
+// regardless of key order or spacing.
+func sameJSON(a, b []byte) bool {
+	if bytes.Equal(a, b) {
+		return true
+	}
+	var x, y any
+	if json.Unmarshal(a, &x) != nil || json.Unmarshal(b, &y) != nil {
+		return false
+	}
+	return reflect.DeepEqual(x, y)
+}
 
 func (r *Runtime) Warmup(c domain.Candle) {
 	r.mu.Lock()

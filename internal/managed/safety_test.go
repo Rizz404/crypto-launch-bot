@@ -575,3 +575,9 @@ func TestIntrabarPricesAreThrottledInTheLedger(t *testing.T) {
 	s, _ = mem.Load(t.Context())
 	require.True(t, s.Prices["ETHUSDT"].Equal(d("105")), "closed candles are always written")
 }
+
+func TestSameJSONIgnoresKeyOrderAndSpacing(t *testing.T) {
+	require.True(t, sameJSON([]byte(`{"b":1,"a":{"y":[1,2],"x":"s"}}`), []byte(`{"a": {"x": "s", "y": [1, 2]}, "b": 1}`)))
+	require.False(t, sameJSON([]byte(`{"a":1}`), []byte(`{"a":2}`)))
+	require.False(t, sameJSON(nil, []byte(`{"a":1}`)))
+}
