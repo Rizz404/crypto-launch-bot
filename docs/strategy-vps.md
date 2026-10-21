@@ -1,8 +1,10 @@
 # Referensi paper ETH di VPS
 
-**Pembaruan 21 Oktober 2026:** profil ini kini berjalan di VPS sebagai trial
-managed P2-9 sejak 2026-10-20 16:24:45 UTC; lihat [handoff VPS](handoff-vps.md).
-Isi di bawah adalah riwayat persiapan.
+**Pembaruan 21 Oktober 2026:** trial managed P2-9 yang dimulai
+2026-10-20 16:24:45 UTC sudah dihentikan atas permintaan user pada 21 Oktober
+20.30 WIB. Jangan resume; data/backup dipertahankan. Lihat
+[keputusan riset terbaru](strategy-2.md) dan
+[handoff VPS](handover-vps.md). Isi di bawah adalah riwayat persiapan.
 
 Status 19 Oktober 2026: **belum di-deploy di VPS, tidak berjalan di laptop,
 dan belum disetujui untuk live**. User meminta tidak menjalankan eksperimen ini
@@ -22,7 +24,7 @@ fitur multi-instance yang belum tersedia.
 
 Rekomendasi setelah analisis adalah ETH momentum 4h untuk kandidat paper utama,
 dengan BTC momentum harian sebagai pembanding. Baca
-[keputusan strategi](strategy-decision-2026-10-20.md) untuk alasan dan syaratnya.
+[keputusan strategi](strategy.md) untuk alasan dan syaratnya.
 Belum ada trial baru dijalankan. Catatan 19 Oktober di bawah adalah riwayat
 persiapan; status bot testnet sudah berhenti dan source lokal sudah di-commit,
 belum menjadi rilis VPS.
@@ -48,7 +50,7 @@ Dipilih opsi dokumentasi yang user izinkan: **tidak ada deployment baru sekarang
 Tidak membuat branch, push, image, restart, migrasi database VPS, atau perubahan
 konfigurasi instance berjalan. Jangan mengklaim eksperimen ETH sudah berjalan
 di VPS. Riwayat startup lokal ada di
-[bukti bootstrap/start](testing/eth-paper-start-2026-10-19.json), bukan bukti trial
+[bukti bootstrap/start](testing/eth-paper-start.json), bukan bukti trial
 prospektif yang selesai. Timestamp penghentian ada di
 `var/paper-eth/disabled-by-user.json`.
 
@@ -64,7 +66,7 @@ prospektif yang selesai. Timestamp penghentian ada di
   risk terencana 3% per transaksi, daily loss 8%, drawdown 30%, close on kill.
   Ini profil paper yang diuji, bukan persetujuan batas kerugian live.
 - Fee standar 0,1% per sisi dan slippage 2bps. Jangan mengasumsikan diskon BNB.
-- Detail lengkap: [referensi terstruktur](testing/eth-paper-reference-2026-10-19.json)
+- Detail lengkap: [referensi terstruktur](testing/eth-paper-reference.json)
   dan [konfigurasi strategi](../configs/paper.eth.yaml). Konfigurasi tersebut
   adalah template strategi; port, secret, koneksi DB, dan pembatasan deployment
   tetap harus disiapkan khusus VPS.
@@ -73,9 +75,9 @@ prospektif yang selesai. Timestamp penghentian ada di
 
 Uji testnet VPS **dihentikan lebih awal pada 20 Oktober 2026 pukul 18.52 WIB**
 atas permintaan user; target 21 Oktober pukul 23.43 WIB dibatalkan.
-[Analisis penutupan](testing/testnet-stop-2026-10-20/analysis.md) sudah tersedia.
+[Analisis penutupan](testing/testnet-stop/analysis.md) sudah tersedia.
 User ingin mencari strategi lain dan mengembangkan aplikasi. ETH kini direkomendasikan sebagai kandidat paper utama sesuai
-[keputusan 20 Oktober](strategy-decision-2026-10-20.md), tetapi trial belum dimulai.
+[keputusan 20 Oktober](strategy.md), tetapi trial belum dimulai.
 Nilai kembali hasil dan keandalan aplikasi sebelum menyiapkan deployment berikutnya.
 Tidak ada jadwal otomatis untuk memulai ETH, dan tidak ada polling AI.
 
@@ -143,4 +145,4 @@ volume dan bukti. Hindari perintah global seperti prune atau down -v.
 `configs/managed.eth-paper.yaml` mengekspresikan profil ETH-only pada ledger baru.
 Belum di-deploy atau diaktifkan. Jangan mengganti config sesi lama lalu resume:
 siapkan trial/DB baru setelah migrasi salinan, QA dan review P2-9. Baca
-[panduan managed](managed-runtime.md) dan [handover](HANDOVER-CLAUDE.md).
+[panduan managed](managed-runtime.md) dan [handover](handover-agent.md).

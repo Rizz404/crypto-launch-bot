@@ -4,7 +4,7 @@
 
 Kode lokal P2-1 sampai P2-6 sudah diimplementasikan; pengujian/fixing P2-7/P2-8
 mencakup suite lama serta suite baru. **Tidak ada deployment atau trial baru.**
-Status ini bukan bukti live siap. [Handover](../HANDOVER-CLAUDE.md).
+Status ini bukan bukti live siap. [Handover](../handover-agent.md).
 
 Pemeriksaan yang telah lulus dalam sesi ini:
 
@@ -52,7 +52,7 @@ memperlambat backtest. Sudah diperbaiki dan pengujian relevan dijalankan ulang.
 ## Batas bukti yang masih terbuka
 
 - Browser QA dilanjutkan sesi Claude dengan Firefox headless pada fixture:
-  [laporan](plan2-browser-qa-2026-10-20.md). Perangkat fisik/Safari belum diuji.
+  [laporan](plan-2-browser-qa.md). Perangkat fisik/Safari belum diuji.
 - Dashboard grafik ringkas 720 jam; tidak menggantikan arsip analitik lengkap.
 - MyTrades/BNB memakai fixture, bukan pengujian fee riil akun. Rules instrumen
   historis pada smoke test berasal snapshot publik lokal, bukan arsip per tanggal.
@@ -74,7 +74,7 @@ remote atau image publish pada sesi ini.
 Database sementara `tradingbot_plan2_test` sudah dihapus; `trading-bot_db_1`
 dikembalikan stopped. Tidak ada proses preview fixture tersisa. Semua container
 lokal bot/monitoring/DB ETH tetap stopped; marker dan data ETH dipertahankan. Laporan JSON ringkas disimpan di
-`plan2-shared-capital-smoke-2026-10-20.json`; CSV/full state/temp exports tidak
+`plan-2-shared-capital-smoke.json`; CSV/full state/temp exports tidak
 ditambahkan ke Git. Baca `git status` untuk memastikan kondisi aktual checkout.
 
 

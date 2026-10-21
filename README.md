@@ -3,17 +3,18 @@
 Bot trading crypto otomatis dalam Go (Binance dan Bybit; spot + futures).
 Rencana aktif dan progres ada di [Plan 2](docs/plan-2.md): multi-instance dengan
 modal terpisah dalam satu akun dan beberapa strategi per instance.
-Implementasi runtime managed sudah tersedia secara lokal untuk Binance Spot;
-belum dirilis ke VPS. [Panduan penggunaan](docs/managed-runtime.md) dan
-[handover Claude](docs/HANDOVER-CLAUDE.md) mencatat fitur, hasil tes, dan batasnya.
+Runtime managed Binance Spot sudah dirilis dan sempat menjalani trial VPS.
+Trial ETH paper dihentikan user pada 21 Oktober; fokus kembali ke riset.
+[Panduan penggunaan](docs/managed-runtime.md) dan
+[handover agent](docs/handover-agent.md) mencatat fitur, hasil tes, dan batasnya.
 [Plan 1](docs/plan.md) sudah selesai sebagai siklus pertama dan menjadi arsip;
-pekerjaan tertunda dipindahkan ke Plan 2. [Indeks dokumentasi](docs/README.md).
+pekerjaan tertunda dipindahkan ke Plan 2. [Indeks dokumentasi](docs/readme.md).
 
 Rilis dan deploy VPS mengikuti alur GitHub Actions → GHCR → image dengan digest
 tetap. Panduan: [docs/deployment.md](docs/deployment.md). Konfigurasi VPS memakai
 mode paper secara default. Observasi paper 24 jam Plan 1 sudah lulus;
 uji multi-strategi testnet berikutnya dihentikan lebih awal pada 20 Oktober.
-Belum ada trial baru atau transaksi mainnet yang disetujui.
+Trial ETH berikutnya juga sudah ditutup; tidak ada strategi aktif atau izin mainnet.
 
 ## Prasyarat
 
@@ -67,12 +68,12 @@ podman compose -f deploy/compose.yml --profile bot up -d --build
 
 Contoh konfigurasi ada di [configs/config.example.yaml](configs/config.example.yaml). Unit/contract test lokal dan integration paper dengan restart sudah berjalan. Bukti siklus pertama ada di [Plan 1](docs/plan.md#hasil-testing-2026-10-17);
 pekerjaan lanjutan ada di [Plan 2](docs/plan-2.md). Pilihan kandidat pengujian
-berikutnya tercatat di [keputusan strategi](docs/strategy-decision-2026-10-20.md).
+berikutnya tercatat di [riset strategi terbaru](docs/strategy-2.md).
 
 Riset lima kandidat Spot (belum diaktifkan untuk trading) ada di
-[ringkasan pengujian](docs/testing/candidates-2026-10-19/summary.txt).
+[ringkasan pengujian](docs/testing/candidates/summary.txt).
 Parameter yang dikunci sebelum pengujian tersedia di
-[candidate-spec.json](docs/testing/candidates-2026-10-19/candidate-spec.json).
+[candidate-spec.json](docs/testing/candidates/candidate-spec.json).
 Reproduksi memakai arsip harga lokal: `go run ./scripts/backtest-year -suite candidates`.
 Saat pertama kali menjalankan eksperimen, buat spesifikasi dengan
 `go run ./scripts/backtest-year -suite candidates -declare` terlebih dahulu.

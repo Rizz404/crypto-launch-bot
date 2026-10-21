@@ -1,9 +1,16 @@
 # Plan 2 — Multi-instance dan pengembangan platform trading
 
-Tanggal: **20 Oktober 2026**. Status: **implementasi lokal P2-1–P2-6 selesai;
-pengujian/fixing P2-7/P2-8 dan QA browser fixture selesai; belum rilis VPS**.
-[Handover Claude](HANDOVER-CLAUDE.md), [panduan runtime](managed-runtime.md),
-[hasil pengujian](testing/plan2-local-2026-10-20.md).
+> **Status terbaru, 21 Oktober 2026:** P2-9 sudah dirilis dan trial ETH paper
+> dihentikan atas permintaan user pukul 20.30 WIB, sebelum review tujuh hari.
+> Penutupan normal, tanpa posisi/order/eksekusi; bukti dan backup disimpan.
+> Pekerjaan aktif berpindah ke [riset dan pengelolaan strategi](strategy-2.md).
+> Belum ada pengganti aktif atau izin live. Kondisi awal di bawah adalah riwayat.
+
+Disusun **20 Oktober 2026**, diperbarui **21 Oktober 2026**. Implementasi
+P2-1–P2-6 dan pengujian/fixing P2-7/P2-8 tersedia; P2-9 telah dirilis, tetapi
+trial dihentikan user sebelum review tujuh hari. Prioritas kini riset strategi.
+[Handover Claude](handover-agent.md), [panduan runtime](managed-runtime.md),
+[hasil pengujian](testing/plan-2-local.md).
 [Plan 1](plan.md) ditutup sebagai siklus
 pengembangan pertama atas permintaan user. Pekerjaan yang belum selesai dibawa
 ke sini; penutupan Plan 1 **tidak berarti semua pengujian lulus atau live siap**.
@@ -27,8 +34,9 @@ sesuai pola kerja user. Cek build/format dan regression test untuk perbaikan
 keamanan dana tetap dilakukan saat scope terkait berubah.
 
 Baca [rancangan multi-instance](multi-instance.md) sebelum mengubah schema,
-portfolio, engine atau sesi. Pilihan strategi tetap
-[ETH momentum 4h, BTC harian sebagai pembanding](strategy-decision-2026-10-20.md).
+portfolio, engine atau sesi. Pilihan historis
+[ETH momentum 4h, BTC harian sebagai pembanding](strategy.md)
+kini ditinjau ulang menurut [keputusan 21 Oktober](strategy-2.md).
 Tidak ada trial baru dijalankan sebagai bagian penyusunan dokumen ini.
 
 ## Batas cakupan dan kondisi awal
@@ -44,7 +52,7 @@ Tidak ada trial baru dijalankan sebagai bagian penyusunan dokumen ini.
 - VPS terakhir diverifikasi: bot testnet stop normal 20 Oktober 18.52 WIB,
   tujuh order dibatalkan, inventori dipertahankan, timer observasi inactive.
   DB, DNS, monitoring dan backup tetap aktif. Tidak ada perintah ke VPS pada
-  pekerjaan dokumentasi ini. [Handoff operasional](handoff-vps.md).
+  pekerjaan dokumentasi ini. [Handoff operasional](handover-vps.md).
 - Paper ETH di laptop tetap dilarang; marker penghentian dan data dipertahankan.
 - Mainnet belum disetujui. Penutupan Plan 1 tidak menghapus kebutuhan keputusan
   strategi/risk dan persetujuan live eksplisit.
@@ -90,7 +98,7 @@ Sumber: [Sisa Fase 9](plan.md#sisa-fase-9),
 [penutupan Fase 9](plan.md#penutupan-fase-9-2026-10-18),
 [backlog testing lama](plan.md#backlog-testing-diisi-selama-fase-28-dikerjakan-di-fase-9),
 [pertanyaan lama](plan.md#pertanyaan-terbuka-belum-diputuskan),
-serta [laporan penutupan testnet](testing/testnet-stop-2026-10-20/analysis.md).
+serta [laporan penutupan testnet](testing/testnet-stop/analysis.md).
 
 | ID | Pekerjaan/status akhir yang dibawa | Tujuan |
 |---|---|---|
@@ -140,8 +148,8 @@ statusnya berubah. Fase eksternal tidak harus menahan build lokal lainnya.
 
 Selesai bila penyebab/ketidakpastian dan reproduksi tercatat, prioritas perbaikan
 jelas, serta regression test disertakan pada perbaikan dana yang dilakukan.
-Hasil: [audit P2-0](testing/p2-0-audit-2026-10-20.md),
-[perhitungan reproducible](testing/p2-0-audit-2026-10-20.json).
+Hasil: [audit P2-0](testing/p2-0-audit.md),
+[perhitungan reproducible](testing/p2-0-audit.json).
 Audit awal selesai; masalah lanjutan di laporan tetap terbuka pada fase tujuan.
 Kode diperbaiki lokal, belum dirilis; trial lama tetap mati.
 
@@ -263,7 +271,7 @@ komisi akun nyata tetap terbuka dan tidak diperlukan untuk membangun CLI offline
 - [x] Integrasi DB terpisah, paper restart, fixture Binance, gate live;
   race detector, build, vet, lint dan pemeriksaan monitoring sesuai CI.
 - [x] Browser mobile/desktop light/dark, auth/CSP/control/confirmation, mode tanpa
-  sesi, akurasi chart dan laporan ([QA browser](testing/plan2-browser-qa-2026-10-20.md)).
+  sesi, akurasi chart dan laporan ([QA browser](testing/plan-2-browser-qa.md)).
 - [ ] Telegram scoped/whitelist/digest/shutdown dengan penerimaan nyata (P2-9).
 - [x] Uji isolasi akun/mode/instance: tidak ada perpindahan dana atau perintah
   lintas scope; data test tidak menyentuh database eksperimen/produksi.
@@ -271,7 +279,7 @@ komisi akun nyata tetap terbuka dan tidak diperlukan untuk membangun CLI offline
 Selesai bila bukti per area dan daftar temuan tersimpan di `docs/testing/`,
 bukan sekadar seluruh checkbox lama disalin menjadi selesai.
 
-Bukti lokal: [laporan pengujian](testing/plan2-local-2026-10-20.md).
+Bukti lokal: [laporan pengujian](testing/plan-2-local.md).
 Checkbox integrasi/legacy berarti suite lokal dan kebijakan mapping aman
 tersedia; bukan migrasi inventori VPS sudah dilakukan. QA visual memakai Firefox
 headless pada fixture dan memperbaiki format waktu, sumbu grafik, baris kurs dan
@@ -295,15 +303,21 @@ bahwa seluruh Plan 2 atau kesiapan live selesai.
   port/resource limit, baseline proyek lain dan rollback.
 - [x] Uji migrasi pada DB salinan; trial memakai database/modal/waktu awal baru.
   Koordinator wallet baru tidak berjalan bersama bot lama pada akun yang sama.
-- [x] Jalankan paper VPS terisolasi menurut [runbook ETH](eth-paper-vps-reference.md),
+- [x] Jalankan paper VPS terisolasi menurut [runbook ETH](strategy-vps.md),
   setelah kesiapan kode/operasi dinilai; catat konfigurasi yang benar-benar dipakai.
-  Dihitung sejak 2026-10-20 16:24:45 UTC, [bukti](testing/p2-9-vps-start-2026-10-20.json).
+  Dihitung sejak 2026-10-20 16:24:45 UTC, [bukti](testing/p2-9-vps-start.json).
 - [ ] Verifikasi restart/persistence/reservasi, proteksi, feed, Telegram digest
   dan whitelist, backup terjadwal/restore, memori Grafana dan ruang disk.
 - [ ] Review operasi setelah tujuh hari aktual; penilaian strategi memerlukan
   sampel cukup. Periode 43 jam testnet lama tidak dihitung sebagai trial baru.
-- [ ] Akhiri trial dengan cancel/close sesuai keputusan, audit terminal, backup
-  dan timer yang konsisten; tidak ada auto-promosi ke live.
+- [x] Akhiri trial dengan cancel/close sesuai keputusan, audit terminal, backup
+  dan timer yang konsisten; tidak ada auto-promosi ke live. Dihentikan user
+  21 Oktober 20.30 WIB; tanpa posisi/order/eksekusi, backup disimpan, observe
+  timer disabled. [Bukti](testing/p2-9-stop.json).
+
+Trial ditutup sebelum tujuh hari, sehingga item review tujuh hari tetap belum
+terpenuhi dan jadwalnya dibatalkan. Audit WARN shutdown/restart masih terbuka.
+Riset berikutnya mengikuti [daftar kandidat dan protokol](strategy-2.md).
 
 ### P2-10 — Keputusan live dan evaluasi setelah aktivasi
 
@@ -359,9 +373,9 @@ Prioritas ini tidak menghalangi fondasi multi-instance Spot.
 | Tanggal | Perubahan | Bukti/status |
 |---|---|---|
 | 2026-10-20 | Plan 1 ditutup; backlog dan fitur baru dipetakan ke Plan 2; rancangan dan navigasi diperbarui | Dokumentasi; belum implementasi kode/deploy |
-| 2026-10-20 | P2-0: klasifikasi log read-only, dua bug reconciliation diperbaiki, regression OCO dan audit reproducible | [Audit](testing/p2-0-audit-2026-10-20.md); unit/race/lint/vet/build dan integration DB sementara lolos; belum deploy |
-| 2026-10-20 | P2-7 QA browser fixture (Claude): desktop/mobile light/dark dan aksi form; empat perbaikan dashboard dengan regression | [QA browser](testing/plan2-browser-qa-2026-10-20.md); race/lint/vet/build lolos; belum deploy |
+| 2026-10-20 | P2-0: klasifikasi log read-only, dua bug reconciliation diperbaiki, regression OCO dan audit reproducible | [Audit](testing/p2-0-audit.md); unit/race/lint/vet/build dan integration DB sementara lolos; belum deploy |
+| 2026-10-20 | P2-7 QA browser fixture (Claude): desktop/mobile light/dark dan aksi form; empat perbaikan dashboard dengan regression | [QA browser](testing/plan-2-browser-qa.md); race/lint/vet/build lolos; belum deploy |
 | 2026-10-20 | Resolusi order tak pasti berbasis query exchange, kompaksi state ke `managed_archive` (migrasi 5), deploy DB trial terpisah | Unit/race/lint/vet/build, integration PG dan siklus migrasi lolos; CI `c3b4bad`/`db18c0e` hijau |
-| 2026-10-20 | P2-9 lanjutan (Claude): restore drill DB trial, menu/pesan Telegram, `/resolve`, throttle tulis ledger (WAL ±15× lebih kecil); crash loop warmup dan flake Sim diperbaiki | [Bukti](testing/p2-9-vps-start-2026-10-20.json); CI `c14aa08` hijau, deploy stabil |
-| 2026-10-20 | P2-9 dimulai (Claude): migrasi diuji di salinan DB, trial ETH paper managed di `tradingbot_eth`, restart pertama lulus | [Bukti start](testing/p2-9-vps-start-2026-10-20.json); baseline VPS tetap `differences: []` |
-| 2026-10-20 | P2-8 review kode managed (Claude): tiga bug dana/risiko diperbaiki (baseline wallet kurang dana, cancel live sebelum exit, rebase batas rugi strategi); lima risiko terbuka dicatat | [Review](testing/plan2-code-review-2026-10-20.md); race/lint/vet/build lolos; belum deploy |
+| 2026-10-20 | P2-9 lanjutan (Claude): restore drill DB trial, menu/pesan Telegram, `/resolve`, throttle tulis ledger (WAL ±15× lebih kecil); crash loop warmup dan flake Sim diperbaiki | [Bukti](testing/p2-9-vps-start.json); CI `c14aa08` hijau, deploy stabil |
+| 2026-10-20 | P2-9 dimulai (Claude): migrasi diuji di salinan DB, trial ETH paper managed di `tradingbot_eth`, restart pertama lulus | [Bukti start](testing/p2-9-vps-start.json); baseline VPS tetap `differences: []` |
+| 2026-10-20 | P2-8 review kode managed (Claude): tiga bug dana/risiko diperbaiki (baseline wallet kurang dana, cancel live sebelum exit, rebase batas rugi strategi); lima risiko terbuka dicatat | [Review](testing/plan-2-code-review.md); race/lint/vet/build lolos; belum deploy |

@@ -1,0 +1,576 @@
+{
+  "requested_action": "Withdraw ETH paper trial for strategy research; preserve data",
+  "checked_at_utc": "2026-10-21T13:30:38.589531+00:00",
+  "before": {
+    "Holdings": {},
+    "Orders": {},
+    "Executions": null,
+    "Reserve": "0",
+    "Attention": "",
+    "Halted": false,
+    "Pending": null,
+    "instances": {
+      "momentum": {
+        "Cash": "110.79104808331486",
+        "Funded": "110.79104808331486",
+        "Status": "running",
+        "Halted": false
+      }
+    },
+    "runs": [
+      {
+        "ID": "5da8171729edddf3982ec3fd7a73ac95",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T15:37:31.138477516Z",
+        "EndedAt": "2026-10-20T15:45:58.535670076Z"
+      },
+      {
+        "ID": "5cc6c1206053a2fb7d5f6e0850d31cd7",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T15:46:00.510228034Z",
+        "EndedAt": "2026-10-20T16:00:00.175810562Z"
+      },
+      {
+        "ID": "022ad416d603165881f1b7668170455e",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:00:07.577037821Z",
+        "EndedAt": "2026-10-20T16:01:00.071210306Z"
+      },
+      {
+        "ID": "13718108dd5610adfce00f19bc5a544d",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:01:03.165422255Z",
+        "EndedAt": "2026-10-20T16:02:00.06634039Z"
+      },
+      {
+        "ID": "f92daacd53e6e73e638cf29a4d38a5b0",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:02:03.426380169Z",
+        "EndedAt": "2026-10-20T16:03:00.074598108Z"
+      },
+      {
+        "ID": "2845b9103847f4ded428c023a7e194f6",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:03:02.699208468Z",
+        "EndedAt": "2026-10-20T16:04:00.074526326Z"
+      },
+      {
+        "ID": "b6b029c7e0a5fecfcea46868d9dc5b4f",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:04:03.149679291Z",
+        "EndedAt": "2026-10-20T16:05:00.077291717Z"
+      },
+      {
+        "ID": "638112265b21386ecf89be6478bdeabd",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:05:04.209621458Z",
+        "EndedAt": "2026-10-20T16:06:00.07431333Z"
+      },
+      {
+        "ID": "2b336c56697115fac2696a4555015d83",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:06:03.455507405Z",
+        "EndedAt": "2026-10-20T16:07:00.073478615Z"
+      },
+      {
+        "ID": "382b6d687480e687bc340c1107e0ce19",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:07:02.4330361Z",
+        "EndedAt": "2026-10-20T16:08:00.077844777Z"
+      },
+      {
+        "ID": "8794234ae1da4c08299d9740c1f30402",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:08:03.215012547Z",
+        "EndedAt": "2026-10-20T16:09:00.095113817Z"
+      },
+      {
+        "ID": "00f123512db9161b2bcecbe671e17013",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:09:03.775543211Z",
+        "EndedAt": "2026-10-20T16:10:00.08333733Z"
+      },
+      {
+        "ID": "b6764e9cf42c47d4717773daec1c129c",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:10:04.281119648Z",
+        "EndedAt": "2026-10-20T16:11:00.067067307Z"
+      },
+      {
+        "ID": "4aba7ea8c572de921b67351e079786d5",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:11:02.905462197Z",
+        "EndedAt": "2026-10-20T16:12:00.080939309Z"
+      },
+      {
+        "ID": "7ae94463791654415627b6f80ee01bf3",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T16:12:04.077850028Z",
+        "EndedAt": "2026-10-20T16:12:17.266010208Z"
+      },
+      {
+        "ID": "083842b4c4233c8006aa5d0bf7d6ecd6",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:12:19.176902389Z",
+        "EndedAt": "2026-10-20T16:13:00.071477246Z"
+      },
+      {
+        "ID": "b5e6d97049276cbee7ac3837e7799a2c",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:13:04.387023082Z",
+        "EndedAt": "2026-10-20T16:14:00.091177928Z"
+      },
+      {
+        "ID": "1698b90e3ba486a50f4b104ddcf1f153",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:14:05.243514548Z",
+        "EndedAt": "2026-10-20T16:15:00.099590129Z"
+      },
+      {
+        "ID": "ba070dfc8dca5c25ffb5ef284e3b2cfa",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:15:05.504322715Z",
+        "EndedAt": "2026-10-20T16:16:00.084410784Z"
+      },
+      {
+        "ID": "f5eeb0d9f771789a8ad9e9bb8afe49f1",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:16:04.316659866Z",
+        "EndedAt": "2026-10-20T16:17:00.074705Z"
+      },
+      {
+        "ID": "8d57700957c5aeb9bf0eb40affe2bb7a",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:17:03.508790723Z",
+        "EndedAt": "2026-10-20T16:18:00.073411338Z"
+      },
+      {
+        "ID": "a2084b147ac9dc9816c13344ef33b60f",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T16:18:03.346529278Z",
+        "EndedAt": "2026-10-20T16:18:07.045023384Z"
+      },
+      {
+        "ID": "3dbb08158dc6202499c412f622cfe538",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T16:24:46.377943372Z",
+        "EndedAt": "2026-10-20T16:28:06.375970428Z"
+      },
+      {
+        "ID": "c853494692fce1fdc562474b91c1ead5",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T16:28:08.55177934Z",
+        "EndedAt": "2026-10-20T16:41:46.935624063Z"
+      },
+      {
+        "ID": "09bf729a5749abcf244cfa878ced8a49",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T16:41:48.833895613Z",
+        "EndedAt": "2026-10-20T16:59:22.727335336Z"
+      },
+      {
+        "ID": "e7d615133994debadaeee73de2ebde92",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:59:25.085361457Z",
+        "EndedAt": "0001-01-01T00:00:00Z"
+      },
+      {
+        "ID": "8ec73105133bfdcbf9bf5297e61b81ab",
+        "Mode": "paper",
+        "Status": "running",
+        "StartedAt": "2026-10-21T03:24:01.688423581Z",
+        "EndedAt": "0001-01-01T00:00:00Z"
+      }
+    ]
+  },
+  "stop_output": "",
+  "container": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-21T03:23:55.322736358Z",
+    "FinishedAt": "2026-10-21T13:30:39.384275107Z"
+  },
+  "after": {
+    "Holdings": {},
+    "Orders": {},
+    "Executions": null,
+    "Reserve": "0",
+    "Attention": "",
+    "Halted": false,
+    "Pending": null,
+    "instances": {
+      "momentum": {
+        "Cash": "110.79104808331486",
+        "Funded": "110.79104808331486",
+        "Status": "running",
+        "Halted": false
+      }
+    },
+    "runs": [
+      {
+        "ID": "5da8171729edddf3982ec3fd7a73ac95",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T15:37:31.138477516Z",
+        "EndedAt": "2026-10-20T15:45:58.535670076Z"
+      },
+      {
+        "ID": "5cc6c1206053a2fb7d5f6e0850d31cd7",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T15:46:00.510228034Z",
+        "EndedAt": "2026-10-20T16:00:00.175810562Z"
+      },
+      {
+        "ID": "022ad416d603165881f1b7668170455e",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:00:07.577037821Z",
+        "EndedAt": "2026-10-20T16:01:00.071210306Z"
+      },
+      {
+        "ID": "13718108dd5610adfce00f19bc5a544d",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:01:03.165422255Z",
+        "EndedAt": "2026-10-20T16:02:00.06634039Z"
+      },
+      {
+        "ID": "f92daacd53e6e73e638cf29a4d38a5b0",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:02:03.426380169Z",
+        "EndedAt": "2026-10-20T16:03:00.074598108Z"
+      },
+      {
+        "ID": "2845b9103847f4ded428c023a7e194f6",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:03:02.699208468Z",
+        "EndedAt": "2026-10-20T16:04:00.074526326Z"
+      },
+      {
+        "ID": "b6b029c7e0a5fecfcea46868d9dc5b4f",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:04:03.149679291Z",
+        "EndedAt": "2026-10-20T16:05:00.077291717Z"
+      },
+      {
+        "ID": "638112265b21386ecf89be6478bdeabd",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:05:04.209621458Z",
+        "EndedAt": "2026-10-20T16:06:00.07431333Z"
+      },
+      {
+        "ID": "2b336c56697115fac2696a4555015d83",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:06:03.455507405Z",
+        "EndedAt": "2026-10-20T16:07:00.073478615Z"
+      },
+      {
+        "ID": "382b6d687480e687bc340c1107e0ce19",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:07:02.4330361Z",
+        "EndedAt": "2026-10-20T16:08:00.077844777Z"
+      },
+      {
+        "ID": "8794234ae1da4c08299d9740c1f30402",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:08:03.215012547Z",
+        "EndedAt": "2026-10-20T16:09:00.095113817Z"
+      },
+      {
+        "ID": "00f123512db9161b2bcecbe671e17013",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:09:03.775543211Z",
+        "EndedAt": "2026-10-20T16:10:00.08333733Z"
+      },
+      {
+        "ID": "b6764e9cf42c47d4717773daec1c129c",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:10:04.281119648Z",
+        "EndedAt": "2026-10-20T16:11:00.067067307Z"
+      },
+      {
+        "ID": "4aba7ea8c572de921b67351e079786d5",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:11:02.905462197Z",
+        "EndedAt": "2026-10-20T16:12:00.080939309Z"
+      },
+      {
+        "ID": "7ae94463791654415627b6f80ee01bf3",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T16:12:04.077850028Z",
+        "EndedAt": "2026-10-20T16:12:17.266010208Z"
+      },
+      {
+        "ID": "083842b4c4233c8006aa5d0bf7d6ecd6",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:12:19.176902389Z",
+        "EndedAt": "2026-10-20T16:13:00.071477246Z"
+      },
+      {
+        "ID": "b5e6d97049276cbee7ac3837e7799a2c",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:13:04.387023082Z",
+        "EndedAt": "2026-10-20T16:14:00.091177928Z"
+      },
+      {
+        "ID": "1698b90e3ba486a50f4b104ddcf1f153",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:14:05.243514548Z",
+        "EndedAt": "2026-10-20T16:15:00.099590129Z"
+      },
+      {
+        "ID": "ba070dfc8dca5c25ffb5ef284e3b2cfa",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:15:05.504322715Z",
+        "EndedAt": "2026-10-20T16:16:00.084410784Z"
+      },
+      {
+        "ID": "f5eeb0d9f771789a8ad9e9bb8afe49f1",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:16:04.316659866Z",
+        "EndedAt": "2026-10-20T16:17:00.074705Z"
+      },
+      {
+        "ID": "8d57700957c5aeb9bf0eb40affe2bb7a",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:17:03.508790723Z",
+        "EndedAt": "2026-10-20T16:18:00.073411338Z"
+      },
+      {
+        "ID": "a2084b147ac9dc9816c13344ef33b60f",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T16:18:03.346529278Z",
+        "EndedAt": "2026-10-20T16:18:07.045023384Z"
+      },
+      {
+        "ID": "3dbb08158dc6202499c412f622cfe538",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T16:24:46.377943372Z",
+        "EndedAt": "2026-10-20T16:28:06.375970428Z"
+      },
+      {
+        "ID": "c853494692fce1fdc562474b91c1ead5",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T16:28:08.55177934Z",
+        "EndedAt": "2026-10-20T16:41:46.935624063Z"
+      },
+      {
+        "ID": "09bf729a5749abcf244cfa878ced8a49",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-20T16:41:48.833895613Z",
+        "EndedAt": "2026-10-20T16:59:22.727335336Z"
+      },
+      {
+        "ID": "e7d615133994debadaeee73de2ebde92",
+        "Mode": "paper",
+        "Status": "interrupted",
+        "StartedAt": "2026-10-20T16:59:25.085361457Z",
+        "EndedAt": "0001-01-01T00:00:00Z"
+      },
+      {
+        "ID": "8ec73105133bfdcbf9bf5297e61b81ab",
+        "Mode": "paper",
+        "Status": "stopped",
+        "StartedAt": "2026-10-21T03:24:01.688423581Z",
+        "EndedAt": "2026-10-21T13:30:38.784364843Z"
+      }
+    ]
+  },
+  "backup": "Backup completed: /opt/trading-bot-paper/repo/../backups/backup-20261021T133042Z",
+  "observe_timer_active": "inactive",
+  "observe_timer_enabled": "disabled",
+  "backup_timer_active": "active",
+  "outside_project_unchanged": true,
+  "historical_baseline": {
+    "host_boot": "2026-10-17T15:42:13+00:00",
+    "containers_checked": 28,
+    "restarted_by_host_boot": 0,
+    "services": {
+      "psa": "active/exited",
+      "nginx": "active/running",
+      "httpd": "active/running",
+      "sw-cp-server": "active/running",
+      "docker": "active/running"
+    },
+    "differences": [
+      [
+        "restarted",
+        "/hindsight-app",
+        "2026-10-21T03:23:55.416152963Z",
+        0
+      ],
+      [
+        "restarted",
+        "/hindsight-db",
+        "2026-10-21T03:23:55.412735491Z",
+        0
+      ],
+      [
+        "restarted",
+        "/company-web-backend-backend-1",
+        "2026-10-21T03:23:55.384755515Z",
+        0
+      ],
+      [
+        "restarted",
+        "/company-web-backend-db-1",
+        "2026-10-21T03:23:55.313786609Z",
+        0
+      ],
+      [
+        "restarted",
+        "/company-web-backend-redis-1",
+        "2026-10-21T03:23:55.414178021Z",
+        0
+      ],
+      [
+        "restarted",
+        "/lrc-translate-app-1",
+        "2026-10-21T03:23:55.400852699Z",
+        0
+      ],
+      [
+        "restarted",
+        "/lrc-translate-libretranslate-1",
+        "2026-10-21T03:23:55.351117466Z",
+        0
+      ],
+      [
+        "restarted",
+        "/glitchtip-postgres-1",
+        "2026-10-21T03:23:55.229025869Z",
+        0
+      ],
+      [
+        "restarted",
+        "/glitchtip-valkey-1",
+        "2026-10-21T03:23:55.23578389Z",
+        0
+      ],
+      [
+        "restarted",
+        "/plesk-portainer",
+        "2026-10-21T03:23:55.35444927Z",
+        0
+      ],
+      [
+        "restarted",
+        "/vaultwarden",
+        "2026-10-21T03:23:55.343315906Z",
+        0
+      ],
+      [
+        "restarted",
+        "/wa-automation-api",
+        "2026-10-21T03:23:55.286623565Z",
+        0
+      ],
+      [
+        "restarted",
+        "/wa-automation-db",
+        "2026-10-21T03:23:55.414741729Z",
+        0
+      ],
+      [
+        "restarted",
+        "/wa-automation-redis",
+        "2026-10-21T03:23:55.408355329Z",
+        0
+      ],
+      [
+        "restarted",
+        "/openwa-api",
+        "2026-10-21T03:23:55.413623917Z",
+        0
+      ],
+      [
+        "restarted",
+        "/openwa-dashboard",
+        "2026-10-21T03:23:55.34991042Z",
+        0
+      ],
+      [
+        "restarted",
+        "/changedetection.io",
+        "2026-10-21T03:23:55.382755645Z",
+        0
+      ],
+      [
+        "restarted",
+        "/hbbs",
+        "2026-10-21T03:23:55.407724149Z",
+        0
+      ],
+      [
+        "restarted",
+        "/hbbr",
+        "2026-10-21T03:23:55.405532381Z",
+        0
+      ],
+      [
+        "restarted",
+        "/redis",
+        "2026-10-21T03:23:55.29618373Z",
+        0
+      ]
+    ]
+  },
+  "source_commit": "c14aa087141583a9f185c5b8b5f595009988c41c",
+  "image": "ghcr.io/rizz404/trading-bot@sha256:5a50dd484438c0739093b6417622bfea35c11f96fd9fb815ad3e6976c3333424",
+  "completed_at_utc": "2026-10-21T13:30:43.339759+00:00"
+}

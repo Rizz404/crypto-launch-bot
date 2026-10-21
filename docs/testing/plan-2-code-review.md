@@ -1,6 +1,6 @@
 # Review kode managed runtime — 20 Oktober 2026
 
-Lanjutan [handover](../HANDOVER-CLAUDE.md) langkah 2, sesi Claude. Fokus:
+Lanjutan [handover](../handover-agent.md) langkah 2, sesi Claude. Fokus:
 recovery checkpoint/inbox, OCO parsial, order tak dikenal, reconciliation dan
 laporan/batas risiko di `internal/managed` (runtime, ledger, control, limits,
 store). Tidak ada `bot run`, deploy atau DB eksperimen; semua bukti adalah unit

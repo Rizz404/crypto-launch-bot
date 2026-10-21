@@ -1,5 +1,12 @@
 # Keputusan strategi berikutnya — 20 Oktober 2026
 
+> **Digantikan oleh keputusan 21 Oktober 2026:** profil ini sempat dijalankan
+> sebagai trial VPS, lalu ditarik atas permintaan user pada 21 Oktober 20.30 WIB.
+> Tidak ada posisi/order/eksekusi; modal virtual tidak berubah. ETH disimpan
+> sebagai kandidat referensi, bukan strategi aktif atau pilihan final berikutnya.
+> Baca [penarikan dan pengelolaan riset](strategy-2.md).
+> Alasan dan parameter di bawah dipertahankan sebagai keputusan historis.
+
 ## Hubungan dengan rencana aktif
 
 Pengembangan aplikasi dan pekerjaan tersisa mengikuti [Plan 2](plan-2.md).
@@ -81,7 +88,7 @@ menggunakan momentum dan EMA, bukan breakout low 20 bar.
 
 ## Bukti hasil dan batas interpretasi
 
-[Uji konfigurasi ETH referensi](testing/eth-reference-fees-2026-10-19/summary.json)
+[Uji konfigurasi ETH referensi](testing/eth-reference-fees/summary.json)
 memakai modal Rp2 juta per tahun secara independen, komisi standar 0,1% per sisi
 serta slippage dasar 2 bps:
 
@@ -131,12 +138,12 @@ Pajak, transfer dan perubahan kurs belum dimodelkan dalam hasil historis itu.
 ## Urutan sebelum menjalankan uji berikutnya
 
 1. Audit dua kegagalan order pelindung ETH, lifecycle OCO/fill terlambat dan
-   rekonsiliasi lima DOGE dari [penutupan testnet](testing/testnet-stop-2026-10-20/analysis.md).
+   rekonsiliasi lima DOGE dari [penutupan testnet](testing/testnet-stop/analysis.md).
    Pastikan pencatatan saldo/PnL dan prosedur cancel order akhir eksperimen benar.
 2. Siapkan rilis GitHub/CI dan image dengan digest tetap; source lokal sudah
    di-commit hingga `9c05d7b` sebelum dokumen ini, belum di-push pada checkpoint itu.
    Periksa ulang status rilis; jangan menganggap source tersebut sudah di VPS.
-3. Ikuti [runbook ETH VPS](eth-paper-vps-reference.md): database trial baru,
+3. Ikuti [runbook ETH VPS](strategy-vps.md): database trial baru,
    modal baru, isolasi resource/secret, baseline proyek lain, paper dan
    `allow_live: false`. Jangan melanjutkan ledger testnet/lokal lama sebagai trial baru.
 4. Catat waktu mulai aktual, commit/digest, hash config, biaya, saldo awal dan
@@ -151,11 +158,11 @@ Pajak, transfer dan perubahan kurs belum dimodelkan dalam hasil historis itu.
 ## Rujukan sesi mendatang
 
 Baca dokumen keputusan ini dahulu untuk pilihan strategi; gunakan
-[Plan 2](plan-2.md) untuk progres dan [handoff VPS](handoff-vps.md) untuk status server.
-Bukti tambahan: [baseline](testing/backtest-2026-10-19/summary.txt),
-[kandidat awal](testing/candidates-2026-10-19/summary.txt),
-[riset lanjutan](testing/research-analysis-2026-10-19.json),
-[validasi dan batas interpretasi](testing/high-return-validation-analysis-2026-10-19.json),
-[referensi ETH terstruktur](testing/eth-paper-reference-2026-10-19.json).
+[Plan 2](plan-2.md) untuk progres dan [handoff VPS](handover-vps.md) untuk status server.
+Bukti tambahan: [baseline](testing/backtest/summary.txt),
+[kandidat awal](testing/candidates/summary.txt),
+[riset lanjutan](testing/research-analysis.json),
+[validasi dan batas interpretasi](testing/high-return-validation-analysis.json),
+[referensi ETH terstruktur](testing/eth-paper-reference.json).
 Jika keputusan berubah, perbarui status dan alasan dengan tanggal; jangan
 menimpa bukti historis atau menganggap rekomendasi ini sebagai deployment aktif.

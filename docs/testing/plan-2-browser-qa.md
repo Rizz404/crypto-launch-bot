@@ -1,6 +1,6 @@
 # QA browser dashboard managed — 20 Oktober 2026
 
-Sesi Claude melanjutkan [handover](../HANDOVER-CLAUDE.md). Hanya fixture
+Sesi Claude melanjutkan [handover](../handover-agent.md). Hanya fixture
 `TestDashboardPreview` (memori, tanpa runtime/feed/DB/exchange/`.env`); tidak ada
 `bot run`, deploy atau trial. Preview dihentikan setelah QA.
 

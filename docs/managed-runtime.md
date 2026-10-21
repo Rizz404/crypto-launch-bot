@@ -1,164 +1,122 @@
-# Penggunaan multi-instance Spot
+# Runtime managed
 
-Implementasi Plan 2, 20 Oktober 2026; berjalan di VPS sebagai trial P2-9
-([handoff VPS](handoff-vps.md)). Lihat
-[handover](HANDOVER-CLAUDE.md) dan [hasil tes](testing/plan2-local-2026-10-20.md).
+Panduan konfigurasi dan kontrol multi-instance Binance Spot. Status deployment
+di [handover VPS](handover-vps.md), desain di [multi-instance](multi-instance.md).
+Trial ETH sudah dihentikan; contoh perintah di sini bukan izin memulainya lagi.
 
-## Konfigurasi
+## Konfigurasi dan modal
 
-`configs/managed.example.yaml` menunjukkan dua instance yang membagi **satu**
-modal menjadi 70 USDT, 25 USDT, dan sisanya cadangan. Split ini demonstrasi,
-bukan keputusan mengalokasikan uang ke kedua kandidat.
-`configs/managed.eth-paper.yaml` mempertahankan profil ETH-only yang dibekukan:
-110,79104808331486 USDT total, risiko 3%, posisi 75%, daily kill 8%, drawdown 30%,
-leverage 1. Referensi: [keputusan strategi](strategy-decision-2026-10-20.md).
+`wallets[] → instances[] → strategies[]` menggantikan daftar legacy; jangan
+mengaktifkan keduanya bersamaan. Satu wallet Spot USDT per akun/mode. Secret
+lewat environment, bukan YAML/state/laporan; paper tidak perlu key trading.
 
-Struktur `wallets[] → instances[] → strategies[]` menggantikan daftar strategi
-legacy untuk proses managed. Jangan mengaktifkan keduanya dalam konfigurasi
-yang sama. Versi ini satu Binance Spot USDT wallet per akun/mode. Kredensial
-tetap melalui environment, bukan YAML, state atau laporan. Paper tidak perlu key.
-
-Modal awal ditetapkan eksplisit pada wallet. `allocation` instance diambil dari
-modal tersebut; sisa menjadi reserve. Strategi berbagi tunai instance, dengan
-`cap` opsional. Cap mencakup nilai inventori dan reservasi buy; equity strategi
-tidak boleh dijumlahkan seolah-olah masing-masing mempunyai saldo instance.
-Risiko yang dihilangkan memakai default; blok nonzero perlu konfigurasi valid
-lengkap dengan leverage 1. Parent account/instance tetap membatasi strategi.
-
-Konfigurasi bootstrap diberi hash; perubahan file setelah state dibuat ditolak
-agar allocation tidak terulang. Ubah parameter melalui perintah yang dijurnal,
-atau gunakan wallet/DB eksperimen baru setelah review. Startup tetap memakai
-file bootstrap asli, lalu memuat revisi tersimpan. Run mencatat konfigurasi aktif.
+- `configs/managed.example.yaml`: demo satu modal dibagi 70/25 USDT dan cadangan,
+  bukan keputusan alokasi strategi.
+- `configs/managed.eth-paper.yaml`: profil historis ETH-only 110,79104808331486
+  USDT total, risk 3%, posisi 75%, daily kill 8%, drawdown 30%, leverage 1.
+  Parameter lengkap di [Strategi](strategy.md); arah terbaru di [Strategi 2](strategy-2.md).
+- `allocation` instance berasal modal wallet. Binding berbagi cash; `cap`
+  opsional mencakup inventori dan reserved buy, tanpa saldo baru.
+- Default risk berlaku jika blok dihilangkan; blok nonzero harus valid lengkap.
+  Batas parent tetap berlaku. Transfer/setoran bukan profit.
+- Bootstrap config diberi hash. Jangan edit file lama lalu resume untuk mengganti
+  eksperimen; gunakan kontrol terjurnal atau DB/wallet baru yang direview.
 
 ## Kontrol
 
-Dashboard menyediakan buat/clone, rename, preferensi notifikasi, tambah binding,
-risiko/cap, transfer dan kontrol per scope. `account` berarti semua instance bot
-terdaftar; scope lain adalah ID instance atau `instance/binding`.
+Scope `account` berarti semua instance terdaftar; scope lain ID instance atau
+`instance/binding`. Dashboard mendukung create/clone, rename, binding, cap/risk,
+transfer, lifecycle dan preferensi notifikasi.
 
 | Aksi | Perilaku |
 |---|---|
-| Pause | Tahan entry baru; exit/proteksi tetap berjalan |
-| Resume | Lanjut jika tidak halted/attention dan engine sesuai konfigurasi |
-| Cancel | Batalkan entry/raw pending; bukan menjual posisi |
-| Flatten | Cancel proteksi lalu jual inventori milik scope; tunggu konfirmasi |
-| Finish retain | Cancel seluruh order scope, simpan koin; selesai setelah ack |
-| Finish flatten | Tutup inventori scope; selesai setelah ack dan flat |
-| Kill/reset | Halt sticky; reset eksplisit tidak menghapus selisih saldo |
-| Archive | Posisi/order kosong termasuk dust; tunai instance pindah ke reserve dahulu |
-| Stop proses | Persist state untuk resume; order/koin di exchange tetap ada |
+| Pause | Tahan entry; exit/proteksi lanjut |
+| Resume | Hanya jika state sehat dan engine cocok dengan konfigurasi |
+| Cancel | Batalkan entry/raw pending, tanpa menjual posisi |
+| Flatten | Cancel proteksi, jual inventori scope; tunggu konfirmasi |
+| Finish retain / flatten | Selesaikan order; simpan / tutup inventori |
+| Kill/reset | Halt sticky; reset tidak menghapus selisih saldo |
+| Archive | Order/posisi termasuk dust kosong, cash sudah ke reserve |
+| Stop proses | Persist untuk resume; order/koin tetap dapat ada |
 
-Aksi dana memerlukan pilihan konfirmasi dan finish memerlukan retain/flatten.
-Status closing tidak berarti order sudah selesai. Buat/clone dimulai paused
-tanpa modal/riwayat; transfer saldo bebas terlebih dahulu. Binding baru atau
-parameter edit perlu restart agar feed/indikator siap. Batas risiko bisa diubah
-langsung; arus modal internal tidak dianggap profit. Dust tidak dihapus otomatis.
+Aksi dana/finish memerlukan konfirmasi; closing belum berarti selesai.
+Create/clone mulai paused tanpa modal/riwayat. Binding baru/edit memerlukan
+restart agar feed/indikator siap; risk/cap bisa berubah langsung. Transfer hanya
+cash bebas. Tidak ada penghapusan dust atau koreksi saldo paksa.
 
-Web memakai Basic Auth bila password diaktifkan, CSRF per server, origin check,
-CSP dan template escaping. Tetap gunakan bind loopback dan proxy HTTPS sesuai
-runbook. JSON `POST /control?wallet=ID` memakai `X-CSRF-Token`, schema `Command`
-di `internal/managed/control.go`, dan idempotency `id` unik. GET `/api/state`
-mengekspor ledger/run tanpa credentials. Jangan memublikasikannya tanpa auth.
+Web memakai Basic Auth, CSRF, origin check, CSP dan escaping. Bind loopback;
+gunakan HTTPS bila diproxy. JSON `POST /control?wallet=ID` memakai
+`X-CSRF-Token`, schema `Command` di `internal/managed/control.go`, dan ID unik.
+`GET /api/state` berisi ledger/run tanpa credentials, tetap harus dilindungi.
 
-Telegram memakai satu long-poller, whitelist lama, notifikasi info/warn/error/off
-per instance dan dedup satu menit. Saat start, bot mendaftarkan menu perintah
-(`setMyCommands`) khusus untuk chat whitelist, jadi mengetik `/` menampilkan
-daftar beserta formatnya. Pesan “Bot aktif” (akun, instance, strategi, modal)
-dikirim tiap start dan “Bot berhenti” saat proses keluar, termasuk penyebab error.
-Format: `/pause wallet instance`, `/flatten wallet instance/binding confirm`,
-`/finish wallet instance retain confirm`, `/resolve wallet order confirm`
-(verifikasi order tak pasti), `/stop confirm` untuk stop proses.
-Daily summary tetap 00.00 UTC/07.00 WIB; bukti penerimaan VPS masih diperlukan.
+Telegram memakai satu long-poller, whitelist, notifikasi info/warn/error/off per
+instance, dedup satu menit dan menu `/`. Contoh format:
 
-Ledger menulis harga candle yang belum tertutup paling sering sekali per 10 detik
-per simbol (`MarkInterval`); candle tertutup, fill, order dan kontrol selalu
-ditulis seketika. Engine tetap memakai harga terbaru dari memori.
-
-## Backtest tanpa koneksi database/exchange
-
-```sh
-make build
-mkdir -p var/managed-backtest
-TB_DATABASE__URL=postgres://unused@localhost/unused ./bin/portfolio-backtest \
-  -config configs/managed.example.yaml -data /path/data \
-  -from 2024-01-01 -to 2024-01-03 -out var/managed-backtest/result.json
+```text
+/pause wallet instance
+/flatten wallet instance/binding confirm
+/finish wallet instance retain confirm
+/resolve wallet order confirm
+/stop confirm
 ```
 
-URL dummy hanya memenuhi validasi config; CLI tidak membuka DB, exchange, `.env`
-atau feed live. **Jangan menjalankan `bot run` di laptop untuk mengujinya.**
-Data: `SYMBOL-1m.csv` dengan timestamp UTC detik/milidetik/mikrodetik dan kolom
-open_time,open,high,low,close,volume; header opsional. `instruments.json` berupa
-array `domain.Instrument`, **bukan** respons mentah Binance `exchangeInfo`.
-Gunakan aturan tick/lot/minimum yang diketahui pada periode relevan dan catat
-bila snapshot instrumen saat ini dipakai untuk harga lama.
+Digest dijadwalkan 00.00 UTC/07.00 WIB; jadwal bukan bukti pesan diterima.
+Mark ledger candle berjalan dibatasi sekali/10 detik/simbol; candle tutup,
+fill/order/kontrol langsung dipersist. Engine memakai harga terbaru di memori.
 
-CSV digabung kronologis, candle strategi dibangun dari 1m lengkap. Data sebelum
-`from` hanya warmup; tidak ada order historis. Gap/duplikat ditolak. Opsi
-`-allow-gaps` membolehkan gap secara eksplisit dan membuang agregat tidak lengkap.
-Biaya diatur `-fee 0.001 -slippage-bps 2`; ulangi stress, misalnya 0.002/10.
-Laporan mencakup hash konfigurasi/data, modal, return, drawdown, turnover, fee,
-estimasi biaya exit inventori, tunai, buy-and-hold, dan state per pemilik.
-Buy-and-hold adalah pembanding equal-weight penuh, bukan alokasi identik strategi.
-Ini model OHLC tanpa antrean order, latency atau market impact, bukan holdout baru.
+## Backtest dan preview
 
-## Migrasi, ownership dan recovery
-
-Schema perlu `bot migrate up` (migrasi 4 dan 5), **pada DB salinan dahulu**. Wallet baru
-menyimpan row unik exchange/mode/Spot dan advisory lease dedicated connection;
-pool perlu setidaknya jumlah wallet + 2 koneksi. Kehilangan lease menahan I/O.
-Jangan paralelkan dengan binary lama karena binary tersebut tidak mengenal lock.
-
-Tidak ada auto-import saldo legacy: `managed_legacy_imports` berstatus `review`.
-Untuk trial baru gunakan DB baru dengan modal virtual eksplisit; history lama
-tetap utuh. Adopsi inventori riil memerlukan mapping/review terpisah. Jangan
-menjalankan wallet baru untuk “mencoba” pada akun lama yang masih punya order.
-
-Jika DB/network putus, hentikan entry dan simpan bukti. Restart memulihkan
-checkpoint, inbox, reservasi dan order, kemudian membandingkan wallet exchange.
-Order unknown/cancel ambigu, transaksi manual, deposit/withdrawal atau selisih
-aset menjadi attention. Jangan reset/mengubah saldo agar entry terbuka paksa.
-Trade history yang hilang harus dipulihkan dengan ID/komisi aktual. Fee aset
-ketiga tanpa harga menahan entry sampai valuasi tersedia.
-
-**Order tak pasti.** Submission timeout, bracket ambigu atau cancel yang belum
-dikonfirmasi muncul di panel “Order perlu verifikasi”. Setelah restart, dan
-minimal lima menit setelah order dibuat, operator memilih verifikasi
-(`resolve_order`, wajib konfirmasi, dijurnal). Runtime menanyakan exchange dan
-tidak pernah menebak:
-
-- Tidak ada di exchange (Binance -2013): reservasi dilepas, engine diberi tahu.
-- Masih terbuka: kembali dilacak sebagai `open`.
-- Sudah terminal: fill yang terlewat dipulihkan dari `myTrades`, lalu status final dibukukan.
-
-Query gagal membuat order tetap belum pasti. Attention dihitung ulang dengan
-rekonsiliasi penuh, bukan dihapus langsung. JSON: `{"operation":"resolve_order",
-"order":"<client id>","confirm":true,"id":"<unik>"}`.
-
-**Kompaksi.** Setiap jam, order terminal, eksekusi dan audit yang lebih tua dari
-7 hari dipindah dari `managed_wallets.state` ke `managed_archive` dalam
-transaksi yang sama. Order belum selesai, leg OCO yang saudaranya masih terbuka,
-inbox dan fee tertunda tidak disentuh. Agregat PnL/fee/holding tetap di state.
-Idempotency key lama dihapus dari state; replay tetap ditolak lewat unique
-`request_id` di `managed_journal`. Dashboard dan `/api/state` hanya menampilkan
-7 hari terakhir; riwayat lengkap ada di `managed_archive` dan `managed_journal`.
-
-Stop proses mempertahankan order. Untuk menutup eksperimen, gunakan finish
-terlebih dahulu dan verifikasi status order exchange terminal serta saldo.
-Snapshot DB/jurnal, hasil query exchange, konfigurasi/hash, waktu dan pilihan
-retain/flatten menjadi bukti akhir. Bukti historis tidak boleh ditimpa.
-
-Rollback deployment: stop worker baru, backup state/schema, pastikan tidak ada
-order managed yang tertinggal sebelum mengaktifkan binary legacy. **Jangan down
-migration 4/5 pada DB berisi dana/history managed**; tes down/up hanya di DB test
-disposable. Binary lama tidak memahami ownership instance baru.
-
-## Preview dashboard fixture
+Jalankan hanya saat pekerjaan pengujian telah diminta. CLI `portfolio-backtest`
+tidak membuka DB/exchange/`.env`; URL dummy hanya memenuhi validasi config:
 
 ```sh
-TB_DASHBOARD_PREVIEW=127.0.0.1:18082 go test ./internal/managed \
-  -run '^TestDashboardPreview$' -v -timeout 10m
+TB_DATABASE__URL=postgres://unused@localhost/unused ./bin/portfolio-backtest -config configs/managed.example.yaml -data /path/data -from 2024-01-01 -to 2024-01-03 -out var/managed-backtest/result.json
 ```
 
-Hanya fixture memori, tanpa `Runtime.Start`, feed, DB, `.env` atau exchange.
-Tes ini sengaja blocking untuk preview; hentikan setelah QA. Auth/CSRF tetap
-diuji di suite biasa. Hasil visual QA: [laporan browser](testing/plan2-browser-qa-2026-10-20.md).
+Data `SYMBOL-1m.csv`: timestamp UTC detik/ms/µs, OHLCV, header opsional.
+`instruments.json` adalah array `domain.Instrument`, bukan raw `exchangeInfo`.
+CSV digabung kronologis; data sebelum `from` hanya warmup. Gap/duplikat ditolak;
+`-allow-gaps` membuang agregat tidak lengkap. Catat jika rules instrumen sekarang
+menggantikan snapshot historis.
+
+Baseline `-fee 0.001 -slippage-bps 2`; stress misalnya 0.002/10. Laporan berisi
+hash data/config, satu modal total, return/drawdown, turnover/fee, estimasi exit,
+benchmark tunai/buy-and-hold dan ownership. Buy-and-hold equal-weight penuh
+berbeda exposure dari strategi. Model OHLC tanpa queue/latensi/market impact
+bukan holdout baru atau bukti profit live.
+
+Preview `TB_DASHBOARD_PREVIEW=127.0.0.1:18082 go test ./internal/managed -run '^TestDashboardPreview$' -v -timeout 10m`
+hanya fixture memori, tanpa Runtime/feed/DB/`.env`; hentikan setelah QA.
+Jangan memakai `bot run` di laptop. [Hasil QA historis](testing/plan-2-browser-qa.md).
+
+## Migrasi dan recovery
+
+Migrasi 4/5 diuji pada DB salinan dahulu. Wallet memakai row unik dan advisory
+lease dedicated connection; pool minimal jumlah wallet + 2. Kehilangan lease
+menahan I/O. Binary legacy lama tidak mengenal lock: jangan paralelkan worker.
+Legacy import tetap `review`, tanpa adopsi saldo/inventori otomatis.
+
+Putus DB/network atau mismatch aset menahan entry. Restart memulihkan checkpoint,
+inbox dan reservasi, lalu reconciliation. Jangan reset attention untuk memaksa
+entry; pulihkan trade ID/komisi asli. Fee aset ketiga menahan entry sampai harga
+valuasinya tersedia. Transaksi manual/deposit/withdrawal harus ditelusuri.
+
+**Order tak pasti:** setelah restart dan minimal lima menit sejak order dibuat,
+pilih `resolve_order` dengan konfirmasi/ID unik. Exchange `-2013` melepas
+reservasi dan memberi tahu engine; order open dilacak kembali; status terminal
+memulihkan fill dari `myTrades`. Query gagal tetap unknown. Attention dihitung
+ulang dari reconciliation, bukan dihapus langsung.
+
+**Kompaksi:** tiap jam, order terminal/eksekusi/audit lebih dari tujuh hari
+berpindah ke `managed_archive` secara atomik. Order belum selesai, saudara OCO
+terbuka, inbox dan fee pending tetap di state. Agregat finansial dipertahankan;
+unique journal request ID menolak replay lama. Dashboard/API hanya tujuh hari
+terakhir; history lengkap di archive/journal. Grafik ringkas maksimal 720 jam.
+
+**Penutupan:** finish dengan pilihan retain/flatten, verifikasi terminal dan
+saldo, simpan DB/jurnal/config hash/waktu serta bukti exchange, baru tutup proses.
+Stop proses tidak membatalkan order. Bukti historis jangan ditimpa.
+
+**Rollback:** stop worker, backup schema/state, selesaikan order managed dan
+periksa kompatibilitas binary. Jangan down migrasi 4/5 pada DB berisi dana/
+history; down/up hanya DB test disposable.

@@ -88,7 +88,7 @@ ranking: https://coinucation.com/coins
 
 Reproduksi (dari root repository):
 python scripts/backtest-year/download.py /tmp/trading-bot-year
-go run ./scripts/backtest-year -data /tmp/trading-bot-year -out docs/testing/backtest-2026-10-19
+go run ./scripts/backtest-year -data /tmp/trading-bot-year -out docs/testing/backtest
 python scripts/backtest-year/summarize.py
 
 Download membutuhkan internet. Simulasi memakai CSV lokal, tanpa database, API key, atau order nyata.
