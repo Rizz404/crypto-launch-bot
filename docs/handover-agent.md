@@ -6,11 +6,16 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
 ## Status dan prioritas
 
 - Permintaan terbaru: commit seluruh perubahan dan mulai "tes live", dengan
-  laporan user hari 1/3/7. Mode paper VPS vs mainnet uang asli sedang ditanyakan;
+  laporan user hari 1/3/7. User sudah mengonfirmasi **paper VPS dengan uang virtual**;
   belum ada trial baru dimulai atau jadwal kalender review. Baca
   [protokol review dan prasyarat start](handover-vps.md#permintaan-pengujian-berikutnya-dan-review-hari-137).
   T0 harus start baru yang terverifikasi. Komposisi 24/72 belum runnable dan
   modal/risiko mainnet belum ditetapkan. Jangan melanjutkan demo sebagai live.
+  Konfigurasi awal siap ditinjau: `configs/managed.research-stage-one.yaml`,
+  tiga instance Tren (Rp500 ribu/2 juta/5 juta virtual), sembilan binding pada
+  BTC/ETH/SOL, satu posisi per instance. Bukan semua 24/72 sekaligus. Load dan
+  invariant modal/risk config lulus; preflight/migrasi/start VPS belum dilakukan.
+  Menunggu izin push eksplisit agar rilis CI dapat diterbitkan.
 
 - Implementasi managed P2-1–P2-6 serta pengujian/fixing P2-7/P2-8 tersedia.
   Rincian penerimaan dan pekerjaan terbuka ada di [Plan 2](plan-2.md).

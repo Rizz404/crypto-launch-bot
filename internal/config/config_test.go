@@ -29,7 +29,7 @@ exchanges:
 `
 
 func TestManagedExamplesRemainPaperAndSingleCapital(t *testing.T) {
-	for _, name := range []string{"managed.example.yaml", "managed.eth-paper.yaml"} {
+	for _, name := range []string{"managed.example.yaml", "managed.eth-paper.yaml", "managed.research-stage-one.yaml"} {
 		cfg, err := load(filepath.Join("..", "..", "configs", name), []string{"TB_DATABASE__URL=postgres://unused@localhost/unused"})
 		require.NoError(t, err)
 		require.Equal(t, ModePaper, cfg.App.Mode)
@@ -37,6 +37,26 @@ func TestManagedExamplesRemainPaperAndSingleCapital(t *testing.T) {
 		require.Len(t, cfg.Wallets, 1)
 		require.Empty(t, cfg.Strategies)
 	}
+}
+
+func TestResearchStageOneUsesBoundedSharedCapital(t *testing.T) {
+	cfg, err := load(filepath.Join("..", "..", "configs", "managed.research-stage-one.yaml"), []string{"TB_DATABASE__URL=postgres://unused@localhost/unused"})
+	require.NoError(t, err)
+	require.False(t, cfg.Telegram.Enabled)
+	w := cfg.Wallets[0]
+	require.Len(t, w.Instances, 3)
+	remaining := w.Capital
+	for _, i := range w.Instances {
+		remaining = remaining.Sub(i.Allocation)
+		require.Len(t, i.Strategies, 3)
+		require.Equal(t, 1, i.Risk.MaxOpenPositions)
+		for _, b := range i.Strategies {
+			require.Equal(t, "trendspot", b.Name)
+			require.Equal(t, 1, b.Risk.MaxLeverage)
+		}
+	}
+	require.True(t, remaining.IsZero(), "allocations must use one wallet capital without duplication")
+	require.Equal(t, []string{"BTCUSDT", "ETHUSDT", "SOLUSDT"}, cfg.MarketData.Symbols)
 }
 
 func TestLoadDefaultsAndEnvOverride(t *testing.T) {

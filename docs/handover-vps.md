@@ -31,8 +31,8 @@ start sebelumnya mengalami crash loop warmup dan tidak dihitung.
 ### Permintaan pengujian berikutnya dan review hari 1/3/7
 
 Pada 21 Oktober 2026 user meminta commit semua perubahan, memulai "tes live",
-dan akan kembali melapor pada hari 1, 3 dan 7. **Arti live sedang diklarifikasi:
-paper VPS dengan uang virtual atau mainnet dengan uang asli.** Belum ada start,
+dan akan kembali melapor pada hari 1, 3 dan 7. **User kemudian mengonfirmasi
+paper di VPS: harga pasar asli dengan uang virtual, bukan mainnet.** Belum ada start,
 deploy, push, perubahan kredensial/mode, atau pembukaan order dari permintaan
 ini. Jangan menyimpulkan demo Telegram adalah trial yang sudah berjalan.
 
@@ -40,6 +40,33 @@ Rancangan 24 instance/72 binding belum runnable: rotasi, squeeze, mean reversion
 antrean VPS dan guard kapasitas masih pekerjaan terbuka. Jumlah itu plafon
 bertahap, bukan konfigurasi siap diaktifkan. Jangan membuat strategi pengganti
 dengan nama yang sama atau memakai ledger trial ETH lama untuk mempercepat start.
+
+Konfigurasi tahap awal yang disiapkan:
+[managed.research-stage-one.yaml](../configs/managed.research-stage-one.yaml).
+Ini tiga varian komposisi Tren yang sudah ada pada rancangan: `tren-500k`,
+`tren-2000k`, `tren-5000k`, masing-masing momentum BTC 4h, momentum ETH 4h dan
+pullback SOL 4h. Jadi **3 instance / 9 binding / 3 koin / 6 stream unik**,
+bukan aktivasi semua 24 instance atau penggantian strategi yang belum tersedia.
+Modal Rp500 ribu + Rp2 juta + Rp5 juta = **Rp7,5 juta virtual total**,
+415,46643031243073 USDT pada kurs perbandingan historis Rp18.052. Tidak ada
+penggandaan modal per binding, tidak ada dana riil atau leverage.
+
+Profil bersama tahap awal: risk sizing 1% per transaksi, posisi maksimal 25%
+ekuitas instance, satu posisi per instance, tiga posisi akun; kill harian 5%
+dan drawdown 20%, close-on-kill. Komisi simulasi 0,1% per sisi dan slippage 2 bps.
+Ini profil operasional baru untuk perbandingan modal, bukan profil ETH lama
+3%/75%, dan belum memiliki hasil evaluasi portofolio atau kalibrasi beban baru.
+Aturan sinyal memakai momentum 84×4h >5%/EMA100 serta pullback RSI40/65/EMA200
+yang sudah tersedia. Parameter lengkap ada pada config, dibekukan untuk trial.
+Alokasi kecil tetap tunduk minimum order; jangan memaksa entry bila tidak layak.
+
+Template tetap mematikan Telegram; deployment mengaktifkannya dengan whitelist
+privat yang sudah ada dan satu long-poller. Target DB baru yang disiapkan adalah
+`tradingbot_research_stage_one`, wallet `paper:research-stage-one`.
+Config SHA256: `8cc676de2af2b37fd1b455611104a7b65867f166f962c660b8161cefc4839371`.
+Tes load config, jumlah binding, satu sumber modal dan batas posisi/leverage
+lulus. Belum start/deploy, migrasi target, atau pengukuran operasional.
+Izin push belum diberikan secara eksplisit; rilis CI menunggu izin tersebut.
 
 Sebelum start, catat mode yang dikonfirmasi, strategi/koin/aturan yang benar-benar
 siap, modal total/alokasi, batas risiko, database baru, source commit, image

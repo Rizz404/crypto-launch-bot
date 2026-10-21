@@ -7,7 +7,8 @@
 > Belum ada pengganti aktif atau izin live. Kondisi awal di bawah adalah riwayat.
 
 Permintaan terbaru 21 Oktober: user meminta commit semua dan "tes live", lalu
-melapor hari 1/3/7. Mode/konfigurasi start sedang diklarifikasi; belum ada trial
+melapor hari 1/3/7. Mode dikonfirmasi paper VPS; konfigurasi tahap awal tiga
+instance Tren/sembilan binding tersedia, menunggu rilis/preflight. Belum ada trial
 baru dijalankan. [Prasyarat dan protokol review](handover-vps.md#permintaan-pengujian-berikutnya-dan-review-hari-137).
 
 Disusun **20 Oktober 2026**, diperbarui **21 Oktober 2026**. Implementasi
