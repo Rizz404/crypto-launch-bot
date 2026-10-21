@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT = ROOT / 'docs/testing/testnet-stop-2026-10-20'
+DEFAULT = ROOT / 'docs/testing/testnet-stop'
 
 
 def summarize(directory, errors_path=None):

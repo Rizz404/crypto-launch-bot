@@ -1,6 +1,6 @@
 """Produce a compact text report and attach provenance to completed results."""
 import hashlib,json,pathlib,subprocess
-out=pathlib.Path('docs/testing/backtest-2026-10-19')
+out=pathlib.Path('docs/testing/backtest')
 p=out/'results.json';v=json.loads(p.read_text())
 assert len(v['results'])==30
 assert sum(r['Status']=='completed' for r in v['results'])==20
@@ -23,6 +23,6 @@ for r in v['results']:
  for msg,count in r['Issues']['Counts'].items():lines.append(f'  Catatan ({count}): {msg}')
 lines+=['','Strategi belum diuji:','Funding: mesin backtest belum memasok riwayat funding ke strategi. Biaya funding konstan di mesin bukan pengganti data sinyal funding.','Xspread: perlu riwayat futures tersinkron dari dua bursa. Endpoint publik Bybit mengalami connection reset. Tidak diganti dengan data Binance Spot.','','Asumsi dan batasan:']+['- '+s for s in v['assumptions']]
 lines+=['','Sumber:']+[f'{k}: {url}' for k,url in v['sources'].items()]
-lines+=['','Reproduksi (dari root repository):','python scripts/backtest-year/download.py /tmp/trading-bot-year','go run ./scripts/backtest-year -data /tmp/trading-bot-year -out docs/testing/backtest-2026-10-19','python scripts/backtest-year/summarize.py','','Download membutuhkan internet. Simulasi memakai CSV lokal, tanpa database, API key, atau order nyata.','Data mentah besar ada di /tmp/trading-bot-year dan dapat hilang saat reboot; checksum dan URL arsip disimpan di data-manifest.json.','Hasil ini hanya berlaku untuk parameter dan periode yang diuji; bukan bukti keuntungan di masa depan.']
+lines+=['','Reproduksi (dari root repository):','python scripts/backtest-year/download.py /tmp/trading-bot-year','go run ./scripts/backtest-year -data /tmp/trading-bot-year -out docs/testing/backtest','python scripts/backtest-year/summarize.py','','Download membutuhkan internet. Simulasi memakai CSV lokal, tanpa database, API key, atau order nyata.','Data mentah besar ada di /tmp/trading-bot-year dan dapat hilang saat reboot; checksum dan URL arsip disimpan di data-manifest.json.','Hasil ini hanya berlaku untuk parameter dan periode yang diuji; bukan bukti keuntungan di masa depan.']
 (out/'summary.txt').write_text('\n'.join(lines)+'\n')
 print('\n'.join(lines[:15]))

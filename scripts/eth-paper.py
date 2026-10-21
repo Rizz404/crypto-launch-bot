@@ -163,7 +163,7 @@ def resume():
 def ensure_local_allowed():
     if (STATE / 'disabled-by-user.json').exists():
         raise SystemExit('Local ETH paper disabled at user request. Do not resume on laptop. '
-                         'See docs/eth-paper-vps-reference.md for the VPS plan.')
+                         'See docs/strategy-vps.md for the VPS plan.')
 
 
 if __name__ == '__main__':

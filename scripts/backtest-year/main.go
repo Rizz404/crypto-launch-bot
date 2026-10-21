@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/rizz404/trading-bot/internal/backtest"
@@ -148,7 +149,7 @@ func candidates() []candidate {
 
 func main() {
 	data := flag.String("data", "/tmp/trading-bot-year", "verified archive CSV directory")
-	out := flag.String("out", "docs/testing/backtest-2026-10-19", "report directory")
+	out := flag.String("out", "docs/testing/backtest", "report directory")
 	suite := flag.String("suite", "baseline", "baseline or candidates")
 	declare := flag.Bool("declare", false, "write candidate specification and exit before simulations")
 	job := flag.String("job", "", "execute one queued research job from JSON")
@@ -161,8 +162,8 @@ func main() {
 	if *suite != "baseline" && *suite != "candidates" {
 		panic("unknown suite")
 	}
-	if *suite == "candidates" && *out == "docs/testing/backtest-2026-10-19" {
-		*out = "docs/testing/candidates-2026-10-19"
+	if *suite == "candidates" && *out == "docs/testing/backtest" {
+		*out = "docs/testing/candidates"
 	}
 	must(os.MkdirAll(*out, 0755))
 	spec, err := json.MarshalIndent(candidates(), "", "  ")
@@ -271,7 +272,7 @@ func main() {
 					}
 				}
 				res.Equity = hourly
-				must(backtest.WriteCSV(*out, sc.ID, res))
+				must(backtest.WriteCSV(*out, strings.ToLower(sc.ID), res))
 				fmt.Printf("%s %s: return %.2f%% final Rp%.0f trades %d took %.2fs\n", sym, name, res.Metrics.TotalReturn*100, r.FinalIDR, res.Metrics.Trades, r.Seconds)
 			}
 			rows = append(rows, r)

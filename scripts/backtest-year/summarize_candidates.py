@@ -1,8 +1,8 @@
 """Verify the fixed five-candidate experiment and compare it with the prior run."""
 import csv,hashlib,json,pathlib,statistics,subprocess
 root=pathlib.Path('.')
-out=root/'docs/testing/candidates-2026-10-19'
-base=root/'docs/testing/backtest-2026-10-19'
+out=root/'docs/testing/candidates'
+base=root/'docs/testing/backtest'
 raw=pathlib.Path('/tmp/trading-bot-year')
 read=lambda p:json.loads(p.read_text())
 v=read(out/'results.json');old=read(base/'results.json')
@@ -17,7 +17,7 @@ assert len(ids)==5 and len(set(ids))==5
 labels={'ema4h-trend':'EMA 4 jam + tren','ema1d-trend':'EMA harian + tren','breakout1d':'Breakout harian','momentum1d':'Momentum harian','pullback4h':'Koreksi dalam tren naik (4 jam)'}
 ledger_checks=[]
 for r in v['results']:
- with (out/f"{r['Strategy']}-{r['Symbol']}-trades.csv").open() as f:tr=list(csv.DictReader(f))
+ with (out/f"{r['Strategy']}-{r['Symbol'].lower()}-trades.csv").open() as f:tr=list(csv.DictReader(f))
  assert len(tr)==r['Metrics']['Trades']
  check={'symbol':r['Symbol'],'candidate':r['Strategy'],'closed_trades':len(tr),'open_positions':r['OpenPositions']}
  if not r['OpenPositions']:
