@@ -2,6 +2,16 @@
 
 ## Keputusan terbaru
 
+**Pembaruan 22 Oktober:** setelah persetujuan user, paper riset baru dimulai
+21 Oktober 23:58:57 WIB: tiga instance Tren/sembilan binding BTC/ETH/SOL,
+Rp7,5 juta virtual total pada DB baru. Ini uji operasional dua mode strategi
+yang sudah tersedia, bukan hasil seleksi dari matriks backtest di bawah;
+backtest portofolio baru belum dijalankan. Rancangan 24/72 tidak diaktifkan.
+Sampel awal CPU bot mendekati batas 0,5 core; jangan naik tahap sebelum
+mengurangi akses ledger berulang dan mengukur ulang. Detail, hash dan jadwal
+review ada di [handover VPS](handover-vps.md). Riwayat penarikan berikut tetap berlaku
+untuk ledger ETH lama saja.
+
 User meminta menarik strategi yang berjalan dan kembali melakukan riset serta
 mengelola pilihan strategi. **Trial P2-9 ETH momentum 4h sudah dihentikan di VPS
 pada 21 Oktober 2026 20.30.39 WIB (13:30:39 UTC)**, exit 0. Tidak ada strategi
@@ -401,8 +411,9 @@ Tidak ada rencana testnet massal atau transaksi live dari matriks ini.
 6. Trial baru memakai DB/wallet/config hash sendiri, tahap 3→6→12→24 instance.
    Kurangi target bila beban tidak lolos; tidak ada kewajiban memenuhi 24.
 
-Belum ada pengukuran throughput, hard guard baru, antrean berjalan atau rilis
-baru. Tidak ada klaim target 24 instance aman sebelum pengukuran bertahap.
+Matriks backtest, hard guard baru dan antrean belum dijalankan. Sampel operasional
+3/9 dari trial baru tercatat di handover VPS; tidak membuktikan throughput
+backtest atau keamanan target 24 instance.
 
 ## Sumber primer yang dibaca ulang
 
@@ -422,7 +433,8 @@ baru. Tidak ada klaim target 24 instance aman sebelum pengukuran bertahap.
 - [x] Tarik proses trial, simpan data dan backup, hentikan observasi trial.
 - [x] Catat saldo, order/eksekusi/arsip, gangguan observasi dan syarat momentum.
 - [x] Tetapkan daftar kandidat dan protokol evaluasi tanpa mengaktifkan pengganti.
-- [ ] Audit restart bersama pukul 10.23 WIB dan WARN shutdown sebelum trial baru.
+- [x] Audit restart bersama pukul 10.23 WIB dan WARN shutdown: journal menunjukkan
+  service Docker dihentikan dan DB memutus koneksi; pemicu administratif belum ditelusuri.
 - [ ] Sepakati trade-off aktivitas, return dan drawdown; bekukan spesifikasi
   perbandingan, tempat eksekusi serta periode data sebelum backtest berikutnya.
 - [ ] Jalankan evaluasi terkontrol, lalu perbarui daftar di atas dengan hasilnya.

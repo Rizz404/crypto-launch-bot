@@ -1,27 +1,28 @@
 # Handover agent
 
-Untuk Codex, Claude dan agent berikutnya. Checkpoint **21 Oktober 2026**;
+Untuk Codex, Claude dan agent berikutnya. Checkpoint **22 Oktober 2026**;
 verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirilis.
 
 ## Status dan prioritas
 
-- Permintaan terbaru: commit seluruh perubahan dan mulai "tes live", dengan
-  laporan user hari 1/3/7. User sudah mengonfirmasi **paper VPS dengan uang virtual**;
-  belum ada trial baru dimulai atau jadwal kalender review. Baca
+- Permintaan terbaru sudah dilaksanakan: commit/push, CI sukses, **paper VPS
+  dengan uang virtual aktif sejak 21 Oktober 2026 23:58:57 WIB**. Baca
   [protokol review dan prasyarat start](handover-vps.md#permintaan-pengujian-berikutnya-dan-review-hari-137).
-  T0 harus start baru yang terverifikasi. Komposisi 24/72 belum runnable dan
-  modal/risiko mainnet belum ditetapkan. Jangan melanjutkan demo sebagai live.
-  Konfigurasi awal siap ditinjau: `configs/managed.research-stage-one.yaml`,
+  DB `tradingbot_research_stage_one`, wallet `paper:research-stage-one`, image
+  source `37ffd6a`; jangan menganggap commit docs sesudahnya sebagai versi image.
+  Komposisi 24/72 belum runnable dan mainnet belum diizinkan. Konfigurasi aktif
+  berasal `configs/managed.research-stage-one.yaml`,
   tiga instance Tren (Rp500 ribu/2 juta/5 juta virtual), sembilan binding pada
   BTC/ETH/SOL, satu posisi per instance. Bukan semua 24/72 sekaligus. Load dan
-  invariant modal/risk config lulus; preflight/migrasi/start VPS belum dilakukan.
-  Menunggu izin push eksplisit agar rilis CI dapat diterbitkan.
+  invariant modal/risk config serta preflight/migrasi/cek awal VPS lulus.
+  Review user: 22/24/28 Oktober pukul 23:58:57 WIB (hari 1/3/7). Observe 5 menit
+  dan backup aktif; tidak ada reminder AI atau recovery otomatis.
 
 - Implementasi managed P2-1–P2-6 serta pengujian/fixing P2-7/P2-8 tersedia.
   Rincian penerimaan dan pekerjaan terbuka ada di [Plan 2](plan-2.md).
 - P2-9 sempat berjalan di VPS, lalu ditarik user pada 21 Oktober 20.30 WIB.
   Bot exited 0; kas virtual tetap 110,791048 USDT; posisi/order/eksekusi kosong.
-  Review tujuh hari dibatalkan, bukan lulus. Tidak ada strategi pengganti aktif.
+  Review ETH tujuh hari dibatalkan, bukan lulus. Ledger lama tetap dipertahankan.
 - Fokus: [riset strategi terbaru](strategy-2.md). ETH momentum lama menjadi
   referensi; BTC harian dan pullback BTC/ETH masih kandidat evaluasi.
 - User memperluas riset ke top 20, variasi modal/timeframe dan multi-strategi.
@@ -35,7 +36,7 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
 - Perbaikan Telegram lokal: runtime managed memulihkan `/balance`, `/pnl`,
   `/positions`, `/orders`, `/strategies`, menambah alias `/killswitch` dan
   mendaftarkan `/help`/`/start` pada menu yang sama. Tes command dan payload
-  suggestion lulus; belum deploy/publikasi menu nyata atau resume trial.
+  suggestion lulus; sudah dirilis dan 19 command menu chat diverifikasi API.
   Bahasa laporan/kontrol sudah dirapikan, ringkasan dipisah dari rincian dan
   daftar memakai halaman lima item. `/status` membedakan proses aktif dengan
   izin entry menurut pengaturan; tidak mengklaim kesehatan feed/sinyal.
@@ -47,7 +48,8 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
   persiapan commit: `go test -race ./...`, `go vet -tags integration ./...`,
   lint (0 issues) dan `make build` lulus. Tes yang memerlukan socket localhost
   diulang di luar sandbox setelah gagal karena izin, bukan karena assertion.
-  Integrasi DB bertag, monitoring container dan CI/GHCR belum dijalankan ulang.
+  CI rilis `37ffd6a` kemudian lulus termasuk integrasi DB/pemulihan, monitoring,
+  race/vet/lint/build, smoke image dan publikasi GHCR.
 - Arahan uji Telegram 21 Oktober: gunakan `.env` lokal; user menyatakan env
   lokal/VPS masih sama selama belum live. Token lokal tersedia; isi env tidak
   dibandingkan/disinkronisasi. Sebanyak 32 contoh diterima API (11 dari VPS
@@ -59,13 +61,16 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
 
 1. Periksa `git status --short` dan `git log -12 --oneline`; pertahankan perubahan
    yang belum di-commit. Jangan commit/push tanpa permintaan user.
-   User sudah meminta commit seluruh perubahan sesi ini; push belum diminta.
+   User sudah mengizinkan commit dan push/deploy untuk trial ini; perubahan
+   strategi/modal atau deployment berikutnya tetap harus mengikuti cakupan izin.
 2. Baca [Strategi 2](strategy-2.md) dan [Plan 2](plan-2.md). Bekukan aturan,
    benchmark, biaya, periode dan risiko sebelum backtest berikutnya.
-3. Audit restart bersama pukul 10.23 WIB dan WARN shutdown sebelum trial baru.
-   Bukti dan kondisi server ada di [handover VPS](handover-vps.md).
-4. Jangan mengaktifkan ulang trial lama. Trial berikutnya memakai ledger/DB baru,
-   modal total eksplisit dan prosedur [deployment](deployment.md).
+3. Saat user kembali, review trial aktif dari T0 tersebut dan bandingkan bukti
+   VPS/Telegram dengan [handover VPS](handover-vps.md). Restart bersama lama
+   terbukti berkaitan penghentian service Docker, bukan reboot host; pemicunya
+   belum ditelusuri. Jangan restart Docker untuk proyek bot.
+4. Jangan mengaktifkan ulang trial ETH lama atau mengubah parameter trial aktif.
+   Trial berikutnya memakai ledger/DB baru dan prosedur [deployment](deployment.md).
 
 ## Batas kerja
 

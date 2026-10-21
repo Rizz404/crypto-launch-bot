@@ -1,17 +1,19 @@
 # Plan 2 — Multi-instance dan pengembangan platform trading
 
-> **Status terbaru, 21 Oktober 2026:** P2-9 sudah dirilis dan trial ETH paper
+> **Status terbaru, 22 Oktober 2026:** P2-9 sudah dirilis dan trial ETH paper
 > dihentikan atas permintaan user pukul 20.30 WIB, sebelum review tujuh hari.
 > Penutupan normal, tanpa posisi/order/eksekusi; bukti dan backup disimpan.
 > Pekerjaan aktif berpindah ke [riset dan pengelolaan strategi](strategy-2.md).
-> Belum ada pengganti aktif atau izin live. Kondisi awal di bawah adalah riwayat.
+> Paper riset tahap awal kini aktif; transaksi uang asli belum diizinkan.
+> Kondisi awal di bawah adalah riwayat.
 
 Permintaan terbaru 21 Oktober: user meminta commit semua dan "tes live", lalu
-melapor hari 1/3/7. Mode dikonfirmasi paper VPS; konfigurasi tahap awal tiga
-instance Tren/sembilan binding tersedia, menunggu rilis/preflight. Belum ada trial
-baru dijalankan. [Prasyarat dan protokol review](handover-vps.md#permintaan-pengujian-berikutnya-dan-review-hari-137).
+melapor hari 1/3/7. Setelah persetujuan push/deploy, paper VPS tiga instance
+Tren/sembilan binding BTC/ETH/SOL mulai 21 Oktober 23:58:57 WIB pada DB baru.
+Modal Rp7,5 juta virtual total; ini tahap 3/9, bukan seluruh rencana 24/72.
+Review 22/24/28 Oktober pada jam yang sama. [Bukti start dan protokol review](handover-vps.md).
 
-Disusun **20 Oktober 2026**, diperbarui **21 Oktober 2026**. Implementasi
+Disusun **20 Oktober 2026**, diperbarui **22 Oktober 2026**. Implementasi
 P2-1–P2-6 dan pengujian/fixing P2-7/P2-8 tersedia; P2-9 telah dirilis, tetapi
 trial dihentikan user sebelum review tujuh hari. Prioritas kini riset strategi.
 [Handover Claude](handover-agent.md), [panduan runtime](managed-runtime.md),

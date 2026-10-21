@@ -8,6 +8,7 @@ isi laporan/payload. Arah aktif: [Strategi 2](../strategy-2.md), [Plan 2](../pla
 
 | Bukti | Isi |
 |---|---|
+| [Start riset tahap awal](research-stage-one-start.json) | Paper VPS 3 instance/9 binding, DB baru, T0/review 1/3/7, pemeriksaan rilis/ledger/menu dan batas CPU |
 | [Stop P2-9](p2-9-stop.json) / [review](p2-9-review.json) | ETH paper ditarik 21 Oktober: tanpa trade, backup tersimpan, sinyal momentum dan temuan operasi |
 | [Start P2-9](p2-9-vps-start.json) | Rilis, migrasi DB salinan, restore drill dan insiden warmup |
 | [Test lokal](plan-2-local.md) / [smoke modal bersama](plan-2-shared-capital-smoke.json) | Ledger, ownership, reservasi, recovery, lease, HTTP/CLI dan benchmark singkat |

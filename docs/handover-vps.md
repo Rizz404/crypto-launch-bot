@@ -1,9 +1,57 @@
 # Handover VPS
 
-Checkpoint terverifikasi **21 Oktober 2026 20.30 WIB**. Prosedur perubahan ada di
+Checkpoint diperbarui **22 Oktober 2026**. Prosedur perubahan ada di
 [deployment](deployment.md); keputusan aktif di [Strategi 2](strategy-2.md).
 
 ## Status terakhir
+
+**Paper riset tahap awal sudah berjalan** setelah user menyetujui push dan
+start VPS. T0 ledger **21 Oktober 2026 23:58:57 WIB** (`16:58:57 UTC`);
+container mulai dua detik sebelumnya. Ini uang virtual dengan data pasar publik
+Binance mainnet; tidak ada order yang dikirim ke exchange.
+
+| Komponen trial aktif | Kondisi |
+|---|---|
+| Profil | `managed.research-stage-one.yaml` + Telegram whitelist privat |
+| Komposisi | 3 instance Tren, 9 binding, BTC/ETH/SOL; 6 stream unik 1m/4h |
+| Modal | 415,46643031243073 USDT virtual; perbandingan Rp7,5 juta pada kurs historis Rp18.052 |
+| Database / wallet | `tradingbot_research_stage_one` / `paper:research-stage-one` |
+| Source / CI | `37ffd6a798bbe0d14bb8b96decfc60c52dfc1ddc`; [semua job lulus](https://github.com/Rizz404/trading-bot/actions/runs/39638221196) |
+| Image | `sha256:fc47df3e382be6e746a4b5b3658291c1330d3d4dc911b6fb8b777945c6411b72` |
+| Config privat SHA256 | `d2b163e5ca6ae28425950a694b67f4564c0cf4e8c4e0130a04e6dee204149792` |
+| Config ledger hash | `a10572ca03406c41bb564141fc4923d4c7b553879018490783262e77fe9d7356` |
+| Observe / backup timer | Active; observasi 5 menit dan backup harian, tanpa recovery otomatis |
+| Backup sebelum / sesudah | `backup-20261021T164954Z` / `backup-20261021T170053Z` |
+
+Pemeriksaan awal: ledger tiga alokasi cocok, sembilan binding running, tidak
+halt/attention/pending, belum ada posisi/order. Enam seri masing-masing mempunyai
+300 candle warmup; candle 1m baru masuk. Monitoring sempat `prometheus_target`
+pada scrape pertama saat pergantian container, lalu `problems: []`. Menu Telegram
+chat terverifikasi lewat `getMyCommands`: 19 command termasuk balance/pnl.
+Dashboard 401 tanpa auth dan 200 dengan auth. Pengiriman notifikasi startup tidak
+mencatat error; tampilan aplikasi Telegram dan ringkasan harian berikutnya belum
+diverifikasi. Timestamp harga adalah batas candle, bisa berada di masa depan
+pada candle 4h yang sedang terbentuk; gunakan seri candle/monitoring untuk cek feed.
+
+Backup sebelum deploy valid checksum dan berhasil direstore ke DB scratch;
+ledger/jurnal/schema 5 cocok dengan ETH lama. Image baru memeriksa migrasi copy
+dan menerapkan migrasi 1–5 pada target kosong. Scratch dihapus setelah cocok;
+hash ledger ETH lama tetap sama. File config aktif dimiliki UID 65532 mode 600
+agar user non-root container dapat membacanya; jangan mengubahnya menjadi
+root:root mode 600. Percobaan migrasi pertama tertahan izin file, sebelum start.
+Snapshot 28 container proyek lain identik sebelum/sesudah; lima service host
+tetap aktif. Bukti rinci dan batas pemeriksaan: [start riset](testing/research-stage-one-start.json).
+
+Sampel beban 163,51 detik: bot sekitar 56 MiB/512 MiB dan CPU 51% dari satu
+core (quota 0,5 core), DB sekitar 189 MiB/1 GiB dan CPU 50%. Sekitar 18 revisi
+ledger/menit, state 30 KB, tetapi 543 commit DB/detik karena pembacaan/transaksi
+berulang per update/binding. WAL cluster sekitar 371 KB/menit termasuk backup
+dan DB lain. Ini sampel singkat, bukan benchmark beban puncak. **Jangan naik
+ke 6/12/24 instance** sebelum mengurangi pembacaan/round-trip ledger dan mengukur
+ulang, termasuk saat entry/exit dan batas candle 4h. Tidak ada perubahan kode
+runtime/parameter tambahan setelah image tersebut untuk menyamarkan beban ini.
+
+### Trial ETH sebelumnya — tetap dihentikan
 
 | Komponen | Kondisi |
 |---|---|
@@ -32,9 +80,9 @@ start sebelumnya mengalami crash loop warmup dan tidak dihitung.
 
 Pada 21 Oktober 2026 user meminta commit semua perubahan, memulai "tes live",
 dan akan kembali melapor pada hari 1, 3 dan 7. **User kemudian mengonfirmasi
-paper di VPS: harga pasar asli dengan uang virtual, bukan mainnet.** Belum ada start,
-deploy, push, perubahan kredensial/mode, atau pembukaan order dari permintaan
-ini. Jangan menyimpulkan demo Telegram adalah trial yang sudah berjalan.
+paper di VPS: harga pasar asli dengan uang virtual, tanpa transaksi uang asli.**
+User menyetujui push/deploy/start; hasil aktual tercatat di atas. Demo Telegram
+sebelumnya tetap fixture dan tidak menjadi bagian performa trial ini.
 
 Rancangan 24 instance/72 binding belum runnable: rotasi, squeeze, mean reversion,
 antrean VPS dan guard kapasitas masih pekerjaan terbuka. Jumlah itu plafon
@@ -65,8 +113,8 @@ privat yang sudah ada dan satu long-poller. Target DB baru yang disiapkan adalah
 `tradingbot_research_stage_one`, wallet `paper:research-stage-one`.
 Config SHA256: `8cc676de2af2b37fd1b455611104a7b65867f166f962c660b8161cefc4839371`.
 Tes load config, jumlah binding, satu sumber modal dan batas posisi/leverage
-lulus. Belum start/deploy, migrasi target, atau pengukuran operasional.
-Izin push belum diberikan secara eksplisit; rilis CI menunggu izin tersebut.
+lulus. Profil sudah dirilis dan dijalankan setelah persetujuan eksplisit;
+kapasitas 24/72 dan evaluasi strategi baru tetap belum teruji.
 
 Sebelum start, catat mode yang dikonfirmasi, strategi/koin/aturan yang benar-benar
 siap, modal total/alokasi, batas risiko, database baru, source commit, image
@@ -96,13 +144,23 @@ pelindung/`perlu diperiksa`, atau ringkasan 07.00 WIB hilang dua hari berturut.
 Pada review, cocokkan bukti VPS dengan Telegram dan timestamp harga; pesan
 "proses aktif" atau `healthz` sendiri tidak membuktikan seluruh feed sehat.
 Jangan memaksa entry jika sinyal belum muncul. Tanggal kalender review baru diisi
-setelah T0 tercatat; saat ini belum ada jadwal trial baru yang dimulai.
+setelah T0 tercatat. Jadwal trial aktif (WIB):
+
+| Review | Waktu |
+|---|---|
+| Hari 1 | 22 Oktober 2026 23:58:57 |
+| Hari 3 | 24 Oktober 2026 23:58:57 |
+| Hari 7 | 28 Oktober 2026 23:58:57 |
+
+Ini waktu referensi saat user kembali, bukan reminder AI terjadwal.
 
 ### Temuan trial sebelumnya
 
-- Bot dan 20 container proyek lain mulai kembali sekitar 21 Okt 03:23:55 UTC
-  sebelum tindakan penutupan. Penyebab belum dibuktikan; jangan menyebutnya
-  reboot host. Snapshot proyek lain sebelum/sesudah penutupan identik.
+- Bot dan 20 container proyek lain mulai kembali sekitar 21 Okt 03:23:55 UTC.
+  Preflight berikutnya menemukan journal Docker: systemd menghentikan Docker
+  pukul 03:23:40 UTC. WARN persist bot berisi DB connection terminated by
+  administrator pada waktu sama. Ini restart service Docker, bukan reboot host;
+  pemicu administrasinya belum ditelusuri. Jangan restart Docker untuk bot ini.
 - Baseline historis 17 Oktober karena itu tidak lagi `differences: []`.
   Simpan selisih dan bandingkan kondisi sebelum/sesudah; jangan reset baseline
   untuk menyembunyikan perubahan yang belum dijelaskan.
@@ -127,8 +185,9 @@ prune global atau menghapus volume. Mainnet belum diizinkan; manifest memaksa
   backups/      tujuh backup sukses terbaru, berisi secret
 ```
 
-Config aktif adalah profil managed ETH dengan Telegram; config testnet lama
-tersimpan sebagai `configs/config.testnet.yaml`. `BOT_DB_NAME=tradingbot_eth`.
+Config aktif adalah profil riset tahap awal dengan Telegram. ETH dihentikan dan
+config-nya tersimpan `configs/config.eth-stopped.yaml`; testnet lama di
+`configs/config.testnet.yaml`. `BOT_DB_NAME=tradingbot_research_stage_one`.
 Secret hanya melalui `deploy/vps-set-env.py` via stdin SSH; jangan mencetak
 `.env.vps`. Tool itu menerima `TB_*`, `BOT_IMAGE` dan `BOT_DB_NAME`.
 
@@ -144,8 +203,8 @@ python3 deploy/vps-baseline-check.py
 systemctl is-active trading-bot-paper-backup.timer
 ```
 
-`vps-observe.py` memeriksa proses/feed yang aktif; bot sengaja mati akan memberi
-masalah kesehatan. Jangan menyalakan timer observasi trial yang sudah ditutup.
+`vps-observe.py` memeriksa proses/feed trial riset aktif; bot sengaja mati akan
+memberi masalah kesehatan. Timer lama diaktifkan kembali untuk trial baru ini.
 `/healthz` hanya membuktikan DB, bukan kesehatan feed atau strategi.
 
 Port host loopback: web 18080, metrics 19100, Prometheus 19090, Grafana 13000.

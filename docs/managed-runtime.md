@@ -15,6 +15,11 @@ lewat environment, bukan YAML/state/laporan; paper tidak perlu key trading.
 - `configs/managed.eth-paper.yaml`: profil historis ETH-only 110,79104808331486
   USDT total, risk 3%, posisi 75%, daily kill 8%, drawdown 30%, leverage 1.
   Parameter lengkap di [Strategi](strategy.md); arah terbaru di [Strategi 2](strategy-2.md).
+- `configs/managed.research-stage-one.yaml`: trial aktif di VPS, tiga instance
+  Tren Rp500 ribu/2 juta/5 juta virtual; masing-masing BTC/ETH momentum 4h dan
+  SOL pullback 4h. Modal dibagi sekali, sembilan binding tidak berarti sembilan
+  saldo baru. Risk 1%, posisi maksimal 25%, satu posisi per instance. T0 dan
+  hash deployment tercatat di [handover VPS](handover-vps.md).
 - `allocation` instance berasal modal wallet. Binding berbagi cash; `cap`
   opsional mencakup inventori dan reserved buy, tanpa saldo baru.
 - Default risk berlaku jika blok dihilangkan; blok nonzero harus valid lengkap.

@@ -4,7 +4,9 @@ Bot trading crypto otomatis dalam Go (Binance dan Bybit; spot + futures).
 Rencana aktif dan progres ada di [Plan 2](docs/plan-2.md): multi-instance dengan
 modal terpisah dalam satu akun dan beberapa strategi per instance.
 Runtime managed Binance Spot sudah dirilis dan sempat menjalani trial VPS.
-Trial ETH paper dihentikan user pada 21 Oktober; fokus kembali ke riset.
+Trial ETH paper dihentikan user pada 21 Oktober. Paper riset baru aktif sejak
+21 Oktober 23:58:57 WIB: tiga instance Tren/sembilan binding BTC/ETH/SOL,
+Rp7,5 juta virtual total. Status dan review hari 1/3/7: [handover VPS](docs/handover-vps.md).
 [Panduan penggunaan](docs/managed-runtime.md) dan
 [handover agent](docs/handover-agent.md) mencatat fitur, hasil tes, dan batasnya.
 [Plan 1](docs/plan.md) sudah selesai sebagai siklus pertama dan menjadi arsip;
@@ -14,7 +16,8 @@ Rilis dan deploy VPS mengikuti alur GitHub Actions → GHCR → image dengan dig
 tetap. Panduan: [docs/deployment.md](docs/deployment.md). Konfigurasi VPS memakai
 mode paper secara default. Observasi paper 24 jam Plan 1 sudah lulus;
 uji multi-strategi testnet berikutnya dihentikan lebih awal pada 20 Oktober.
-Trial ETH berikutnya juga sudah ditutup; tidak ada strategi aktif atau izin mainnet.
+Trial ETH berikutnya juga sudah ditutup; trial riset memakai DB baru.
+Transaksi mainnet dengan uang asli belum diizinkan.
 
 ## Prasyarat
 

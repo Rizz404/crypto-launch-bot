@@ -1,8 +1,9 @@
 # Deployment
 
 Prosedur rilis dan operasi untuk project `trading-bot-paper`. Status server ada
-di [handover VPS](handover-vps.md); **bot saat ini sengaja dihentikan**.
-Panduan ini tidak memberi izin start trial atau mainnet.
+di [handover VPS](handover-vps.md); **paper riset tahap awal aktif** sejak
+21 Oktober 2026 23:58:57 WIB. Panduan ini tidak memberi izin trial tambahan
+atau transaksi mainnet dengan uang asli.
 
 ## Rilis dan persiapan
 
@@ -23,7 +24,9 @@ Panduan ini tidak memberi izin start trial atau mainnet.
 Instalasi pertama membuat `.env.vps` mode 600 dan `configs/config.yaml` dari
 contoh VPS. Jangan menimpanya saat update. Password DB, dashboard dan Grafana
 harus berbeda; password DB hex agar aman dalam URL. Direktori backup mode 700,
-file backup 600. Paper memakai harga publik tanpa key perdagangan.
+file backup 600. Config bind-mount harus terbaca UID container 65532;
+trial saat ini memakai owner 65532:65532 mode 600. File env tetap root mode 600.
+Paper memakai harga publik tanpa key perdagangan.
 
 | Pengaturan | Penggunaan |
 |---|---|
@@ -126,5 +129,5 @@ Periksa aturan gap/universe bila config berubah. Detail kesalahan ada di
 `journalctl -u trading-bot-paper-observe.service` atau service backup.
 
 Saat trial selesai, matikan observe timer; pertahankan backup serta DB sesuai
-kebutuhan. Status saat ini: observe disabled, backup active. Jangan mengaktifkan
+kebutuhan. Status saat ini: observe dan backup active untuk trial riset. Jangan mengaktifkan
 ulang keduanya secara membabi buta dari runbook lama.

@@ -16,9 +16,10 @@ Mulai dari [handover agent](handover-agent.md), lalu pilih panduan yang diperluk
 | [Bukti pengujian](testing/readme.md) | Indeks laporan dan data pendukung |
 | [Plan](plan.md) | Arsip siklus pertama; bukan backlog aktif |
 
-Checkpoint 21 Oktober 2026: ETH paper VPS sudah dihentikan atas permintaan user;
-modal virtual tetap 110,791048 USDT tanpa posisi/order/eksekusi. Data dan backup
-tersimpan. Fokus kembali ke riset; tidak ada pengganti aktif atau izin mainnet.
+Checkpoint 22 Oktober 2026: paper riset VPS aktif sejak 21 Oktober 23:58:57 WIB,
+tiga instance Tren/sembilan binding BTC/ETH/SOL pada DB baru, Rp7,5 juta virtual.
+Trial ETH lama tetap dihentikan dan ledger/backup dipertahankan. Review user
+22/24/28 Oktober pada jam yang sama; transaksi uang asli belum diizinkan.
 Ini checkpoint terdokumentasi, bukan status server real-time.
 
 ## Aturan dokumentasi
