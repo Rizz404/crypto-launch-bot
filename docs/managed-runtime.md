@@ -60,6 +60,108 @@ instance, dedup satu menit dan menu `/`. Contoh format:
 /stop confirm
 ```
 
+Command laporan yang tersedia: `/status`, `/balance`, `/pnl`, `/positions`,
+`/orders`, `/strategies`. Semua menerima `[akun] [sasaran] [halaman]`;
+tanpa argumen menampilkan ringkasan semua wallet, misalnya `/pnl eth-research momentum`
+atau `/orders eth-research momentum/eth4h`. `/balance` pada scope strategi tetap
+menamai saldo sebagai pool instance, bukan modal bebas eksklusif strategi.
+`/pnl` adalah kumulatif ledger sejak eksperimen, termasuk sebelum restart;
+bukan ringkasan hari ini. Fee sudah diperhitungkan, tidak dikurangi dua kali.
+
+Respons memakai bahasa Indonesia: nilai modal, uang tersedia, dana untuk order,
+hasil transaksi tercatat dan perubahan nilai posisi terbuka. Kurs tersedia ditampilkan
+sebagai perkiraan USD/rupiah; kurs yang belum tersedia tidak ditebak. `/status`
+membedakan proses aktif dari izin entry menurut pengaturan; izin bukan bukti
+sinyal sudah muncul atau koneksi sehat. Ringkasan akun `/pnl` menghitung semua
+strategi tanpa mencetak seluruh detail. Daftar posisi/order/strategi dan rincian
+PnL maksimal lima item per halaman, dengan jumlah total dan perintah halaman
+berikutnya, misalnya `/strategies eth-research account 2`. Total PnL tetap
+menghitung seluruh sasaran, bukan hanya lima item yang ditampilkan.
+Balasan kontrol menyebut akun, sasaran dan efek tindakan. Permintaan cancel/
+flatten/finish bukan bukti order sudah selesai; `/stop` mengakui permintaan
+shutdown, bukan mengklaim proses sudah mati sebelum menyimpan state.
+
+`/killswitch` adalah alias `/kill akun scope confirm`. Seluruh command managed,
+termasuk `/help` dan `/start`, didaftarkan ke suggestion `/` untuk chat whitelist
+melalui `setMyCommands` saat bot mulai. Perbaikan command 21 Oktober masih lokal;
+belum dipublikasikan ke Telegram/VPS dan tidak menjadi izin resume trial lama.
+
+### Uji format Telegram dari lokal
+
+Arahan user **21 Oktober 2026**: selama belum live, env lokal dan VPS menurut
+user masih sama; **gunakan `.env` lokal untuk pengujian Telegram**, tidak perlu
+SSH untuk mengambil kredensial/mengirim contoh. Token lokal sudah diperiksa
+tersedia tanpa mencetak nilainya; kesamaan seluruh isi env tidak dibandingkan.
+Ini kondisi fase sekarang, bukan janji env selalu sama setelah live. Jangan
+menyalin/sinkronisasi env sebagai bagian pengujian format.
+
+Izin lokal ini khusus pengujian pesan, bukan menjalankan `bot run`, feed harga,
+strategi atau trial di laptop. Gunakan data fixture di memori dan formatter yang
+sama, lalu `sendMessage` ke chat user yang sudah diverifikasi. Jangan menjalankan
+`getUpdates`, kontrol trading, mengubah menu aktif, mengirim order exchange atau
+membuka database eksperimen. Labeli setiap pesan **DEMO — data simulasi, bukan
+kondisi akun sebenarnya**; contoh start/stop/kill/penjualan bukan tindakan nyata.
+
+Ekspor contoh tanpa koneksi Telegram/database/exchange:
+
+```sh
+TB_PREVIEW_OUTPUT=/tmp/trading-bot-telegram-preview.json go test ./cmd/bot -run '^TestTelegramPreviewExport$' -v
+```
+
+Ekspor mencakup laporan/rincian, halaman, kontrol, pesan kosong/error, start/stop
+dan format notifikasi pendukung; tidak mengirim pesan dan tidak membuktikan semua
+notifikasi terpasang di runtime managed. Pengiriman terpisah membaca token env
+ke memori tanpa mencetak token/URL bertoken, memakai HTML, notifikasi senyap dan
+jeda minimal 1,2 detik antarpesan. Catat acknowledgment API per nomor contoh;
+jangan retry buta pada timeout yang hasilnya belum pasti.
+
+**Hasil demo sesi ini:** 32 contoh dikonfirmasi diterima API Telegram. Sebelas
+terkirim lewat VPS sebelum arahan lokal diterima, lalu koneksi pengirim SSH
+dihentikan dan 21 sisanya dikirim dari `.env` lokal. Satu pesan yang sedang
+dikirim saat pemutusan mungkin diterima tanpa acknowledgment yang terlihat;
+duplikat pada batas peralihan tidak dapat dikesampingkan. Tidak ada trial dimulai
+ulang atau menu suggestion nyata diubah. Penerimaan API bukan bukti user sudah
+membaca pesan atau memverifikasi tampilannya di aplikasi Telegram.
+
+Demo lanjutan memakai komposisi [rancangan strategi](strategy-2.md#portofolio-dan-target-paper):
+24 instance, 72 binding dan empat modal (Rp500 ribu/2 juta/5 juta/10 juta),
+total Rp105 juta virtual. Enam contoh detail mewakili tren, breakout, sideways,
+pullback, rotasi dan campuran. Rotasi/squeeze/mean reversion diberi status
+belum diimplementasikan; tidak diganti dengan strategi lain yang seolah aktif.
+Ekspor 17 contoh dengan:
+
+```sh
+TB_STRATEGY_PREVIEW_OUTPUT=/tmp/trading-bot-telegram-strategies-preview.json go test ./cmd/bot -run '^TestTelegramStrategyPlanPreviewExport$' -v
+```
+
+Fixture hanya membuat `managed.State` untuk formatter, tanpa Runtime/feed atau
+evaluasi sinyal. Alur entry/holding/exit ETH momentum 4h memakai angka sintetis,
+komisi 0,1% per sisi, tanpa slippage pada ilustrasi; ini bukan model eksekusi
+riset atau hasil strategi. Kurs Rp18.052 juga asumsi demo. Assertion memeriksa
+perubahan equity setelah alur tersebut sama dengan PnL bersih 0,919 USDT.
+Seluruh 17 contoh dikonfirmasi diterima API Telegram dari pengiriman lokal;
+belum ada verifikasi visual dari aplikasi user atau eksekusi strategi nyata.
+
+Revisi setelah user meninjau salinan pesan: pisahkan strategi belum tersedia
+dari strategi dijeda (ketersediaan dari registry kode), tampilkan nama strategi
+yang mudah dibaca, ringkas detail PnL nol tanpa menghapus total, pertahankan
+presisi komisi, dan sertakan waktu laporan/mulai eksperimen/candle harga.
+Waktu candle adalah waktu yang disimpan ledger, bukan klaim tick terbaru;
+jika belum ada timestamp, tampilkan `belum tercatat`. Stop loss memakai istilah
+perkiraan kerugian di harga stop, sebelum komisi/selisih eksekusi, tanpa jaminan
+rugi maksimum. Persentase hasil posisi memakai nilai pembelian; dampak satu
+transaksi memakai modal acuan instance bila tersedia dan disebutkan.
+
+Jalur notifikasi legacy tidak membawa modal acuan instance dan trade hanya
+membawa tag exit umum. Karena itu respons menandai denominator/alasan rinci
+yang belum tersedia, bukan menebaknya. Demo menyediakan modal acuan Rp2 juta
+sehingga hasil posisi +2,30% dan dampak +0,83% dapat dibandingkan. Alasan exit
+sinyal pada demo tetap ilustrasi, bukan bukti alasan rinci sudah tersimpan
+dalam trade runtime. Demo revisi memakai 17 skenario dan angka yang sama.
+Seluruh 17 pesan revisi dikonfirmasi diterima API Telegram dari `.env` lokal;
+label `DEMO STRATEGI REVISI` membedakannya dari pengiriman sebelumnya. Tes
+paket bot/Telegram dengan race detector dan ekspor fixture revisi lulus.
+
 Digest dijadwalkan 00.00 UTC/07.00 WIB; jadwal bukan bukti pesan diterima.
 Mark ledger candle berjalan dibatasi sekali/10 detik/simbol; candle tutup,
 fill/order/kontrol langsung dipersist. Engine memakai harga terbaru di memori.

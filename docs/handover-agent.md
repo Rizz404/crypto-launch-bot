@@ -5,6 +5,13 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
 
 ## Status dan prioritas
 
+- Permintaan terbaru: commit seluruh perubahan dan mulai "tes live", dengan
+  laporan user hari 1/3/7. Mode paper VPS vs mainnet uang asli sedang ditanyakan;
+  belum ada trial baru dimulai atau jadwal kalender review. Baca
+  [protokol review dan prasyarat start](handover-vps.md#permintaan-pengujian-berikutnya-dan-review-hari-137).
+  T0 harus start baru yang terverifikasi. Komposisi 24/72 belum runnable dan
+  modal/risiko mainnet belum ditetapkan. Jangan melanjutkan demo sebagai live.
+
 - Implementasi managed P2-1–P2-6 serta pengujian/fixing P2-7/P2-8 tersedia.
   Rincian penerimaan dan pekerjaan terbuka ada di [Plan 2](plan-2.md).
 - P2-9 sempat berjalan di VPS, lalu ditarik user pada 21 Oktober 20.30 WIB.
@@ -12,13 +19,42 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
   Review tujuh hari dibatalkan, bukan lulus. Tidak ada strategi pengganti aktif.
 - Fokus: [riset strategi terbaru](strategy-2.md). ETH momentum lama menjadi
   referensi; BTC harian dan pullback BTC/ETH masih kandidat evaluasi.
+- User memperluas riset ke top 20, variasi modal/timeframe dan multi-strategi.
+  [Matriks dan kapasitas](strategy-2.md#perluasan-riset-multi-instance--21-oktober-2026):
+  plafon 6.528 backtest serial, paper bertahap maksimal 24 instance/72 binding.
+  Baru rancangan; tiga strategi, antrean VPS/guard dan throughput belum siap.
+  Inspeksi VPS read-only 21 Okt sekitar 21.53 WIB: 8 CPU, available RAM 19,6 GiB,
+  disk free 137 GiB. Ini snapshot, bukan kapasitas teruji untuk 72 binding.
 - Mainnet/P2-10 belum disetujui. Futures menunggu Demo key; Bybit/xspread
   ditunda, OKX dihapus dan saham tokenisasi tetap dikecualikan.
+- Perbaikan Telegram lokal: runtime managed memulihkan `/balance`, `/pnl`,
+  `/positions`, `/orders`, `/strategies`, menambah alias `/killswitch` dan
+  mendaftarkan `/help`/`/start` pada menu yang sama. Tes command dan payload
+  suggestion lulus; belum deploy/publikasi menu nyata atau resume trial.
+  Bahasa laporan/kontrol sudah dirapikan, ringkasan dipisah dari rincian dan
+  daftar memakai halaman lima item. `/status` membedakan proses aktif dengan
+  izin entry menurut pengaturan; tidak mengklaim kesehatan feed/sinyal.
+  Revisi format setelah review user: bedakan belum tersedia/dijeda dari registry,
+  nama strategi manusiawi, PnL nol diringkas, presisi komisi dan timestamp,
+  label basis persentase serta estimasi rugi stop. Legacy belum menyediakan
+  modal acuan instance/alasan exit rinci; respons menyatakan keterbatasannya.
+  Implementasi dan fixture sudah di-commit sebagai `400e70a`. Pemeriksaan
+  persiapan commit: `go test -race ./...`, `go vet -tags integration ./...`,
+  lint (0 issues) dan `make build` lulus. Tes yang memerlukan socket localhost
+  diulang di luar sandbox setelah gagal karena izin, bukan karena assertion.
+  Integrasi DB bertag, monitoring container dan CI/GHCR belum dijalankan ulang.
+- Arahan uji Telegram 21 Oktober: gunakan `.env` lokal; user menyatakan env
+  lokal/VPS masih sama selama belum live. Token lokal tersedia; isi env tidak
+  dibandingkan/disinkronisasi. Sebanyak 32 contoh diterima API (11 dari VPS
+  sebelum arahan, 21 sisanya dari lokal; satu duplikat saat peralihan mungkin).
+  Izin lokal khusus pesan demo, bukan `bot run`/trial. Prosedur/ekspor contoh:
+  [runtime managed](managed-runtime.md#uji-format-telegram-dari-lokal).
 
 ## Lanjutkan dari sini
 
 1. Periksa `git status --short` dan `git log -12 --oneline`; pertahankan perubahan
    yang belum di-commit. Jangan commit/push tanpa permintaan user.
+   User sudah meminta commit seluruh perubahan sesi ini; push belum diminta.
 2. Baca [Strategi 2](strategy-2.md) dan [Plan 2](plan-2.md). Bekukan aturan,
    benchmark, biaya, periode dan risiko sebelum backtest berikutnya.
 3. Audit restart bersama pukul 10.23 WIB dan WARN shutdown sebelum trial baru.
@@ -35,7 +71,9 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
 - VPS Plesk berbagi layanan produksi. Sentuh hanya project `trading-bot-paper`
   di `/opt/trading-bot-paper`; jangan restart host/Docker atau mengubah proyek lain.
 - Rilis lewat GitHub → CI/GHCR → digest tetap; jangan salin source laptop.
-  Secret tetap di VPS dan tidak masuk chat, repo, log atau shared memory.
+  Secret lokal/VPS tetap di file env masing-masing dan tidak masuk chat, repo,
+  log atau shared memory. Uji pesan Telegram memakai env lokal sesuai arahan
+  user; jangan menyalin env sebagai bagian pengujian.
 - Backup di luar VPS ditunda sampai live sesuai keputusan user; backup saat ini
   masih satu server. Tidak ada izin live dari kelulusan test atau penutupan plan.
 

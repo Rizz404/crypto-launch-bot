@@ -28,6 +28,51 @@ start sebelumnya mengalami crash loop warmup dan tidak dihitung.
 
 ## Temuan terbuka
 
+### Permintaan pengujian berikutnya dan review hari 1/3/7
+
+Pada 21 Oktober 2026 user meminta commit semua perubahan, memulai "tes live",
+dan akan kembali melapor pada hari 1, 3 dan 7. **Arti live sedang diklarifikasi:
+paper VPS dengan uang virtual atau mainnet dengan uang asli.** Belum ada start,
+deploy, push, perubahan kredensial/mode, atau pembukaan order dari permintaan
+ini. Jangan menyimpulkan demo Telegram adalah trial yang sudah berjalan.
+
+Rancangan 24 instance/72 binding belum runnable: rotasi, squeeze, mean reversion,
+antrean VPS dan guard kapasitas masih pekerjaan terbuka. Jumlah itu plafon
+bertahap, bukan konfigurasi siap diaktifkan. Jangan membuat strategi pengganti
+dengan nama yang sama atau memakai ledger trial ETH lama untuk mempercepat start.
+
+Sebelum start, catat mode yang dikonfirmasi, strategi/koin/aturan yang benar-benar
+siap, modal total/alokasi, batas risiko, database baru, source commit, image
+digest, config hash, baseline proyek lain, kapasitas dan temuan operasi terbuka.
+Rilis mengikuti [deployment](deployment.md); commit lokal tidak berarti sudah
+di-push, diterbitkan CI atau dipasang di VPS. Mainnet memerlukan modal riil,
+pilihan strategi dan batas kerugian yang eksplisit; jangan memakai Rp105 juta
+virtual atau batas paper sebagai keputusan uang asli.
+
+Jadwal dihitung dari **T0 = start trial baru yang benar-benar diverifikasi**,
+bukan waktu commit, pengiriman demo atau start trial ETH lama:
+
+| Review user | Waktu relatif | Fokus agent saat user kembali |
+|---|---|---|
+| Hari 1 | T0 + 24 jam | Proses/feed, gap, warmup, restart, ledger/order, proteksi, Telegram dan beban CPU/RAM/DB |
+| Hari 3 | T0 + 72 jam | Keandalan berkelanjutan, fee/PnL, reservasi, pemulihan, backup dan perubahan beban |
+| Hari 7 | T0 + 168 jam | Rekap operasi, seluruh transaksi/biaya, drawdown, jeda tanpa entry, kualitas data dan keputusan lanjut/henti |
+
+User boleh melapor terlambat; catat durasi aktual. Tidak memasang jadwal AI,
+polling berkala atau perubahan otomatis di antara laporan tanpa permintaan.
+Observasi layanan yang disepakati saat start boleh mengumpulkan bukti, tetapi
+bukan alasan agent mengubah parameter/modal atau memulai ulang proses sendiri.
+Review tujuh hari bukan bukti profit konsisten atau promosi mode/modal otomatis.
+
+Minta user melapor lebih cepat bila start/stop berulang, peringatan saldo/order
+pelindung/`perlu diperiksa`, atau ringkasan 07.00 WIB hilang dua hari berturut.
+Pada review, cocokkan bukti VPS dengan Telegram dan timestamp harga; pesan
+"proses aktif" atau `healthz` sendiri tidak membuktikan seluruh feed sehat.
+Jangan memaksa entry jika sinyal belum muncul. Tanggal kalender review baru diisi
+setelah T0 tercatat; saat ini belum ada jadwal trial baru yang dimulai.
+
+### Temuan trial sebelumnya
+
 - Bot dan 20 container proyek lain mulai kembali sekitar 21 Okt 03:23:55 UTC
   sebelum tindakan penutupan. Penyebab belum dibuktikan; jangan menyebutnya
   reboot host. Snapshot proyek lain sebelum/sesudah penutupan identik.

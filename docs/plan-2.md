@@ -6,6 +6,10 @@
 > Pekerjaan aktif berpindah ke [riset dan pengelolaan strategi](strategy-2.md).
 > Belum ada pengganti aktif atau izin live. Kondisi awal di bawah adalah riwayat.
 
+Permintaan terbaru 21 Oktober: user meminta commit semua dan "tes live", lalu
+melapor hari 1/3/7. Mode/konfigurasi start sedang diklarifikasi; belum ada trial
+baru dijalankan. [Prasyarat dan protokol review](handover-vps.md#permintaan-pengujian-berikutnya-dan-review-hari-137).
+
 Disusun **20 Oktober 2026**, diperbarui **21 Oktober 2026**. Implementasi
 P2-1–P2-6 dan pengujian/fixing P2-7/P2-8 tersedia; P2-9 telah dirilis, tetapi
 trial dihentikan user sebelum review tujuh hari. Prioritas kini riset strategi.
@@ -257,6 +261,20 @@ batas bukti. Tidak ada klaim target +50% sudah tercapai konsisten.
 Catatan P2-6: baseline dan stress telah dijalankan sebagai smoke test historis
 singkat. Riset multi-tahun lama tidak dihitung sebagai holdout baru. Pemeriksaan
 komisi akun nyata tetap terbuka dan tidak diperlukan untuk membangun CLI offline.
+
+Perluasan diminta user 21 Oktober: [matriks riset dan batas kapasitas](strategy-2.md#perluasan-riset-multi-instance--21-oktober-2026).
+Plafon rencana 6.528 backtest serial; paper bertahap sampai 24 instance dengan
+tiga binding per instance (72 binding), bukan ribuan strategi aktif sekaligus.
+Jumlah akhir mengikuti kelayakan koin/data dan pengukuran, bukan kuota wajib.
+
+- [ ] Verifikasi universe top 20/Spot, bekukan aturan tujuh keluarga strategi,
+  empat timeframe, empat modal virtual, biaya dan komposisi modal bersama.
+- [ ] Implementasikan rotasi, squeeze dan mean reversion sideways; adaptasi
+  antrean VPS, resource guard dan anggaran API/reconnect sebelum skala besar.
+- [ ] Kalibrasi batch VPS, selesaikan evaluasi individual/portofolio dan catat
+  seluruh hasil/kegagalan; periode lama tetap eksplorasi, bukan holdout baru.
+- [ ] Jika lolos, trial DB baru mulai 3 instance/9 binding; kenaikan 6/18,
+  12/36, 24/72 hanya sesudah beban/lag/DB terbukti sehat. Mainnet tetap nonaktif.
 
 ### P2-7 — Testing menyeluruh
 
