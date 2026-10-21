@@ -53,12 +53,16 @@ type Bot struct {
 }
 
 func New(token string, chatIDs []int64, log *slog.Logger) *Bot {
-	return &Bot{
+	b := &Bot{
 		token: token, chatIDs: chatIDs, log: log.With("component", "telegram"),
 		http:     &http.Client{Timeout: (pollTimeout + 15) * time.Second},
 		commands: map[string]command{},
 		queue:    make(chan string, queueSize),
 	}
+	for _, name := range []string{"help", "start"} {
+		b.Handle(name, "daftar perintah dan cara pakai", func(context.Context, []string) string { return b.help() })
+	}
+	return b
 }
 
 // Handle registers a command, e.g. Handle("status", "show status", fn).
@@ -120,11 +124,7 @@ func (b *Bot) publishCommands(ctx context.Context) {
 		}
 		list = append(list, botCommand{n, help})
 	}
-	_, ownHelp := b.commands["help"]
 	b.mu.Unlock()
-	if !ownHelp {
-		list = append(list, botCommand{"help", "daftar perintah dan cara pakai"})
-	}
 	raw, err := json.Marshal(list)
 	if err != nil {
 		return

@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"io"
 	"log/slog"
@@ -151,7 +152,32 @@ func TestCommandMenuIsPublishedToWhitelistedChats(t *testing.T) {
 	})}
 	b.publishCommands(context.Background())
 	require.Len(t, forms, 2)
-	assert.JSONEq(t, `[{"command":"status","description":"ringkasan akun"},{"command":"help","description":"daftar perintah dan cara pakai"}]`, forms[0].Get("commands"))
+	assert.JSONEq(t, `[{"command":"help","description":"daftar perintah dan cara pakai"},{"command":"start","description":"daftar perintah dan cara pakai"},{"command":"status","description":"ringkasan akun"}]`, forms[0].Get("commands"))
 	assert.JSONEq(t, `{"type":"chat","chat_id":42}`, forms[0].Get("scope"))
 	assert.JSONEq(t, `{"type":"chat","chat_id":7}`, forms[1].Get("scope"))
+}
+
+func TestSuggestionMenuMatchesHelpAndDispatch(t *testing.T) {
+	b := newBot()
+	for _, name := range []string{"balance", "pnl", "positions", "orders", "strategies", "killswitch"} {
+		b.Handle(name, "laporan "+name, func(context.Context, []string) string { return name })
+	}
+	var published []struct {
+		Command string `json:"command"`
+	}
+	b.http = &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
+		require.NoError(t, r.ParseForm())
+		require.NoError(t, json.Unmarshal([]byte(r.Form.Get("commands")), &published))
+		return response(`{"ok":true,"result":true}`), nil
+	})}
+	b.publishCommands(context.Background())
+	require.Len(t, published, 8)
+	for _, cmd := range published {
+		assert.Contains(t, b.Help(), "/"+cmd.Command+" — ")
+		if cmd.Command == "help" || cmd.Command == "start" {
+			assert.Equal(t, b.Help(), b.dispatch(context.Background(), "/"+cmd.Command))
+		} else {
+			assert.Equal(t, cmd.Command, b.dispatch(context.Background(), "/"+cmd.Command+"@MyBot"))
+		}
+	}
 }

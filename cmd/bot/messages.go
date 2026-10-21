@@ -8,9 +8,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"maps"
 	"regexp"
-	"slices"
 	"strings"
 	"time"
 
@@ -75,6 +73,14 @@ func (m money) amount(d decimal.Decimal) string {
 		return usdt(d) + " USDT"
 	}
 	return fmt.Sprintf("%s USDT (≈ $%s · %s)", usdt(d), d.Mul(m.rates.USD).StringFixed(2), rupiah(d.Mul(m.rates.IDR), false))
+}
+
+// exactAmount keeps commission precision so its USDT and rupiah values agree.
+func (m money) exactAmount(d decimal.Decimal) string {
+	if !m.ok {
+		return d.String() + " USDT"
+	}
+	return fmt.Sprintf("%s USDT (≈ $%s · %s)", d.String(), d.Mul(m.rates.USD).String(), rupiah(d.Mul(m.rates.IDR), false))
 }
 
 // change is a profit or loss (always signed).
@@ -216,11 +222,11 @@ func reasonText(reason string) string {
 func exitText(tag string) string {
 	switch tag {
 	case domain.TagStopLoss:
-		return "🛡 Kena stop loss: harga menyentuh batas rugi yang dipasang saat masuk"
+		return "🛡 Kena stop loss: batas stop tersentuh; rincian stop awal/trailing belum tercatat."
 	case domain.TagTakeProfit:
 		return "🎯 Target untung (take profit) tercapai"
 	case domain.TagExit:
-		return "Strategi atau kill switch meminta posisi ditutup"
+		return "Posisi ditutup atas permintaan bot; alasan rinci belum tercatat (sinyal, manual, atau batas risiko)."
 	case domain.TagStrategy:
 		return "Order jual dari strategi (grid/DCA/market making)"
 	}
@@ -268,7 +274,7 @@ func msgEntry(o domain.Order, base, stratID string, stop, target decimal.Decimal
 	}
 	if stop.IsPositive() {
 		loss := stop.Sub(o.AvgPrice).Mul(o.FilledQty).Mul(sign)
-		fmt.Fprintf(&sb, "🛡 Stop loss: %s (%s)\n   rugi maks ≈ %s\n", price(stop), pct(stop.Sub(o.AvgPrice), o.AvgPrice), m.change(loss))
+		fmt.Fprintf(&sb, "🛡 Stop loss: %s (%s)\n   perkiraan rugi di harga stop ≈ %s\n   Belum termasuk komisi dan selisih harga eksekusi; bukan batas rugi yang dijamin.\n", price(stop), pct(stop.Sub(o.AvgPrice), o.AvgPrice), m.change(loss))
 	} else {
 		sb.WriteString("⚠️ Tanpa stop loss\n")
 	}
@@ -292,7 +298,7 @@ func msgStrategyFill(o domain.Order, base string, m money) string {
 		m.amount(o.FilledQty.Mul(o.AvgPrice)), reasonText(o.Reason))
 }
 
-func msgTradeClosed(t domain.Trade, base string, m money) string {
+func msgTradeClosed(t domain.Trade, base string, m money, instanceCapital decimal.Decimal) string {
 	net := t.NetPnL()
 	cost := t.Quantity.Mul(t.EntryPrice)
 	head := "🔴 <b>Posisi ditutup: RUGI</b>"
@@ -303,10 +309,14 @@ func msgTradeClosed(t domain.Trade, base string, m money) string {
 	if t.Side == domain.Short {
 		side = "Short (jual dulu)"
 	}
-	return fmt.Sprintf("%s\n<b>%s</b> (%s)\n%s · %s · %s\n\nMasuk %s → Keluar %s\nJumlah: %s %s · modal %s · lama %s\nKotor %s USDT · fee %s USDT\n\n%s",
-		head, m.change(net), pct(net, cost), esc(t.Symbol), side, esc(t.Strategy),
+	impact := "Dampak terhadap modal instance: belum tersedia (modal acuan belum dicatat)."
+	if instanceCapital.IsPositive() {
+		impact = "Dampak transaksi terhadap modal acuan instance: " + pct(net, instanceCapital) + " (acuan " + m.amount(instanceCapital) + ")."
+	}
+	return fmt.Sprintf("%s\n<b>%s</b>\nHasil posisi: %s dari nilai pembelian\n%s\n%s · %s · %s\n\nMasuk %s → Keluar %s\nJumlah: %s %s · modal %s · lama %s\nKotor %s USDT · komisi %s\n\nAlasan keluar: %s\nWaktu keluar: %s",
+		head, m.change(net), pct(net, cost), impact, esc(t.Symbol), side, esc(t.Strategy),
 		price(t.EntryPrice), price(t.ExitPrice), t.Quantity, esc(base), m.amount(cost), duration(t.ClosedAt.Sub(t.OpenedAt)),
-		signed(t.GrossPnL), usdt(t.Fees), exitText(t.ExitReason))
+		signed(t.GrossPnL), m.exactAmount(t.Fees), exitText(t.ExitReason), telegramTime(t.ClosedAt))
 }
 
 // noticeText gives the engine's English notices a plain explanation.
@@ -398,33 +408,8 @@ func shortVersion(v string) string {
 	return v
 }
 
-// msgManagedStarted lists every managed wallet, instance and strategy with
-// its capital, so a restart is visible without opening the dashboard.
-func msgManagedStarted(ctx context.Context, m config.Mode, runtimes map[string]*managed.Runtime, version string) string {
-	var sb strings.Builder
-	fmt.Fprintf(&sb, "🤖 <b>Bot aktif</b>\nMode: %s\n", modeText(m))
-	for _, id := range slices.Sorted(maps.Keys(runtimes)) {
-		s, err := runtimes[id].Snapshot(ctx)
-		if err != nil {
-			fmt.Fprintf(&sb, "\n<b>%s</b>: status belum terbaca\n", esc(id))
-			continue
-		}
-		fmt.Fprintf(&sb, "\n<b>%s</b> · modal %s %s\n", esc(id), esc(s.Spec.Capital.StringFixed(2)), esc(s.Spec.Quote))
-		for _, iid := range slices.Sorted(maps.Keys(s.Instances)) {
-			i := s.Instances[iid]
-			fmt.Fprintf(&sb, "• <b>%s</b> (%s) · %s %s\n", esc(i.Name), esc(i.Status), esc(s.InstanceEquity(iid).StringFixed(2)), esc(s.Spec.Quote))
-			for _, owner := range slices.Sorted(maps.Keys(s.Bindings)) {
-				if b := s.Bindings[owner]; b.InstanceID == iid {
-					fmt.Fprintf(&sb, "  %s · %s · %s\n", esc(b.ID), esc(b.Spec.Name), esc(strings.Join(b.Spec.Symbols, ", ")))
-				}
-			}
-		}
-		if s.Attention != "" {
-			fmt.Fprintf(&sb, "⚠️ Perlu diperiksa: %s\n", esc(s.Attention))
-		}
-	}
-	fmt.Fprintf(&sb, "\nKetik / untuk menu perintah.\n<i>versi %s</i>", esc(shortVersion(version)))
-	return sb.String()
+func msgManagedStarted(ctx context.Context, runtimes map[string]*managed.Runtime, m money, version string) string {
+	return "🤖 <b>Bot aktif</b>\n" + managedStatus(ctx, runtimes, m) + "\nKetik / untuk menu perintah.\n<i>versi " + esc(shortVersion(version)) + "</i>"
 }
 
 func msgManagedStopped(m config.Mode, err error) string {

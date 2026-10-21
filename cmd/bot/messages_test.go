@@ -27,12 +27,12 @@ func TestEntryMessageShowsRiskAndTargetInMoney(t *testing.T) {
 	msg := msgEntry(o, "BTC", "ema-btc", d("79200"), d("81600"), testMoney)
 	assert.Contains(t, msg, "Posisi dibuka: BELI BTCUSDT")
 	assert.Contains(t, msg, "0.003 BTC · 240.00 USDT (≈ $240.00 · Rp 4.320.000)")
-	assert.Contains(t, msg, "Stop loss: 79200.00 (-1.00%)\n   rugi maks ≈ -2.40 USDT (≈ -$2.40 · -Rp 43.200)")
+	assert.Contains(t, msg, "Stop loss: 79200.00 (-1.00%)\n   perkiraan rugi di harga stop ≈ -2.40 USDT (≈ -$2.40 · -Rp 43.200)")
 	assert.Contains(t, msg, "Take profit: 81600.00 (+2.00%)\n   untung ≈ +4.80 USDT (≈ +$4.80 · +Rp 86.400)")
 	assert.Contains(t, msg, "Sinyal tren naik")
 
 	short := msgEntry(domain.Order{Symbol: "ETHUSDT", Side: domain.Sell, FilledQty: d("1"), AvgPrice: d("2000")}, "ETH", "s", d("2100"), decimal.Zero, money{})
-	assert.Contains(t, short, "rugi maks ≈ -100.00 USDT\n", "a short loses when the price rises; without rates only USDT")
+	assert.Contains(t, short, "perkiraan rugi di harga stop ≈ -100.00 USDT\n", "a short loses when the price rises; without rates only USDT")
 	assert.NotContains(t, short, "Take profit")
 }
 
@@ -42,15 +42,32 @@ func TestTradeClosedMessageExplainsTheResult(t *testing.T) {
 	tr := domain.Trade{PositionKey: domain.PositionKey{Symbol: "ETHUSDT"}, Strategy: "ema-eth", Side: domain.Long,
 		Quantity: d("0.1"), EntryPrice: d("2400"), ExitPrice: d("2376"), OpenedAt: open, ClosedAt: open.Add(7 * time.Minute),
 		GrossPnL: d("-2.4"), Fees: d("0.48"), ExitReason: domain.TagStopLoss}
-	msg := msgTradeClosed(tr, "ETH", testMoney)
+	msg := msgTradeClosed(tr, "ETH", testMoney, decimal.Zero)
 	assert.Contains(t, msg, "RUGI")
-	assert.Contains(t, msg, "-2.88 USDT (≈ -$2.88 · -Rp 51.840)</b> (-1.20%)")
+	assert.Contains(t, msg, "-2.88 USDT (≈ -$2.88 · -Rp 51.840)</b>\nHasil posisi: -1.20% dari nilai pembelian")
 	assert.Contains(t, msg, "lama 7 menit")
 	assert.Contains(t, msg, "Kena stop loss")
 	tr.GrossPnL, tr.ExitReason = d("5"), domain.TagTakeProfit
-	win := msgTradeClosed(tr, "ETH", testMoney)
+	win := msgTradeClosed(tr, "ETH", testMoney, decimal.Zero)
 	assert.Contains(t, win, "UNTUNG")
 	assert.Contains(t, win, "+4.52 USDT (≈ +$4.52 · +Rp 81.360)")
+}
+
+func TestTradeMessageLabelsRiskAndPercentageBases(t *testing.T) {
+	d := decimal.RequireFromString
+	tr := domain.Trade{PositionKey: domain.PositionKey{Symbol: "ETHUSDT"}, Strategy: "tren/eth", Side: domain.Long,
+		Quantity: d("0.02"), EntryPrice: d("2000"), ExitPrice: d("2050"), GrossPnL: d("1"), Fees: d("0.081"),
+		ExitReason: domain.TagExit, ClosedAt: time.Date(2026, 10, 21, 0, 0, 0, 0, time.UTC)}
+	msg := msgTradeClosed(tr, "ETH", testMoney, d("110.79104808331486"))
+	assert.Contains(t, msg, "Hasil posisi: +2.30% dari nilai pembelian")
+	assert.Contains(t, msg, "Dampak transaksi terhadap modal acuan instance: +0.83%")
+	assert.Contains(t, msg, "komisi 0.081 USDT (≈ $0.081 · Rp 1.458)")
+	assert.Contains(t, msg, "alasan rinci belum tercatat")
+	assert.Contains(t, msg, "Waktu keluar: 21 Oct 2026 07:00:00 WIB")
+	assert.Contains(t, msgTradeClosed(tr, "ETH", money{}, decimal.Zero), "modal acuan belum dicatat")
+	entry := msgEntry(domain.Order{Side: domain.Buy, FilledQty: tr.Quantity, AvgPrice: tr.EntryPrice}, "ETH", "tren/eth", d("1910"), decimal.Zero, money{})
+	assert.Contains(t, entry, "bukan batas rugi yang dijamin")
+	assert.NotContains(t, entry, "rugi maks")
 }
 
 func TestMessagesTranslateAndEscape(t *testing.T) {

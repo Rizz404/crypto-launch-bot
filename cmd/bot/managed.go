@@ -310,7 +310,7 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 		registerManagedTelegram(tg, runtimes, moneyFor, cancel)
 		tgStarted = true
 		go func() { defer close(tgDone); tg.Run(tgCtx) }()
-		tg.Notify(msgManagedStarted(ctx, cfg.App.Mode, runtimes, version))
+		tg.Notify(msgManagedStarted(ctx, runtimes, moneyFor(), version))
 	}
 	var servers []*http.Server
 	startHTTP := func(srv *http.Server) {
@@ -402,39 +402,39 @@ func warmupRequest(sub exchange.KlineSub, now time.Time) exchange.KlineRequest {
 }
 
 func managedStatus(ctx context.Context, runtimes map[string]*managed.Runtime, m money) string {
-	var out strings.Builder
-	out.WriteString("<b>Portofolio bot</b>\n")
-	for id, r := range runtimes {
-		s, err := r.Snapshot(ctx)
-		if err != nil {
-			continue
-		}
-		fmt.Fprintf(&out, "\n<b>%s</b> · %s\nNilai: %s\nCadangan: %s\n", html.EscapeString(id), html.EscapeString(s.Spec.Mode), m.amount(s.Equity()), m.amount(s.Reserve))
-		for key, i := range s.Instances {
-			fmt.Fprintf(&out, "• %s: %s · %s\n", html.EscapeString(key), m.amount(s.InstanceEquity(key)), html.EscapeString(i.Status))
-		}
-	}
-	out.WriteString("\n" + m.rateLine())
-	return out.String()
+	return managedReport(ctx, runtimes, "status", nil, m)
 }
 func registerManagedTelegram(tg *telegram.Bot, runtimes map[string]*managed.Runtime, moneyFor func() money, stop context.CancelFunc) {
 	ids := slices.Sorted(maps.Keys(runtimes))
-	tg.SetHelpIntro("<b>Perintah bot</b>\nAkun: <code>" + html.EscapeString(strings.Join(ids, ", ")) + "</code>. Scope: <code>account</code>, ID instance, atau <code>instance/strategi</code>. Aksi dana memerlukan kata <code>confirm</code>.")
-	tg.Handle("status", "ringkasan nilai akun dan instance", func(ctx context.Context, _ []string) string { return managedStatus(ctx, runtimes, moneyFor()) })
-	help := map[string]string{
-		"pause":   "jeda entry baru · /pause akun scope",
-		"resume":  "lanjutkan entry · /resume akun scope",
-		"cancel":  "batalkan order pending · /cancel akun scope confirm",
-		"flatten": "jual posisi milik scope · /flatten akun scope confirm",
-		"finish":  "akhiri eksperimen · /finish akun scope retain|flatten confirm",
-		"kill":    "halt darurat · /kill akun scope confirm",
-		"reset":   "buka halt risiko · /reset akun scope confirm",
-		"archive": "arsipkan instance kosong · /archive akun scope confirm",
+	tg.SetHelpIntro("<b>Perintah bot</b>\nAkun: <code>" + html.EscapeString(strings.Join(ids, ", ")) + "</code>\nLaporan tanpa argumen menampilkan ringkasan. Tambahkan akun dan sasaran untuk detail: <code>/pnl akun instance</code>.\nSasaran: <code>account</code> (semua instance), ID instance, atau <code>instance/strategi</code>. Tindakan penjualan/pembatalan memerlukan kata <code>confirm</code>.")
+	descriptions := map[string]string{
+		"status":     "proses bot, izin entry, modal dan posisi",
+		"balance":    "modal, uang tersedia dan dana dalam order",
+		"pnl":        "hasil bersih dan komisi per strategi",
+		"positions":  "koin yang sedang dipegang strategi",
+		"orders":     "order aktif dan order perlu verifikasi",
+		"strategies": "strategi, koin, timeframe dan alasan menunggu",
 	}
-	for _, op := range []string{"pause", "resume", "cancel", "flatten", "finish", "kill", "reset", "archive"} {
+	for _, view := range []string{"status", "balance", "pnl", "positions", "orders", "strategies"} {
+		tg.Handle(view, descriptions[view]+" · /"+view+" [akun] [sasaran] [halaman]", func(ctx context.Context, args []string) string {
+			return managedReport(ctx, runtimes, view, args, moneyFor())
+		})
+	}
+	help := map[string]string{
+		"pause":      "jeda entry baru · /pause akun sasaran",
+		"resume":     "lanjutkan entry · /resume akun sasaran",
+		"cancel":     "batalkan order pending · /cancel akun sasaran confirm",
+		"flatten":    "jual posisi milik scope · /flatten akun sasaran confirm",
+		"finish":     "akhiri eksperimen · /finish akun sasaran retain|flatten confirm",
+		"kill":       "hentikan entry dan minta tutup posisi · /kill akun sasaran confirm",
+		"killswitch": "alias /kill · /killswitch akun sasaran confirm",
+		"reset":      "reset penghentian risiko · /reset akun sasaran confirm",
+		"archive":    "arsipkan instance kosong · /archive akun sasaran confirm",
+	}
+	for _, op := range []string{"pause", "resume", "cancel", "flatten", "finish", "kill", "killswitch", "reset", "archive"} {
 		tg.Handle(op, help[op], func(ctx context.Context, args []string) string {
 			if len(args) < 2 {
-				return "Gunakan /" + op + " akun scope; scope = account, ID instance, atau instance/strategi. Aksi dana memerlukan confirm."
+				return "Gunakan /" + op + " akun sasaran; sasaran = account (semua instance), ID instance, atau instance/strategi. Penjualan/pembatalan memerlukan confirm."
 			}
 			rt := runtimes[args[0]]
 			if rt == nil {
@@ -447,10 +447,13 @@ func registerManagedTelegram(tg *telegram.Bot, runtimes map[string]*managed.Runt
 				}
 			}
 			c := managed.Command{ID: fmt.Sprintf("telegram-%d", time.Now().UnixNano()), Operation: op, Scope: args[1], Policy: policy, Confirm: slices.Contains(args[2:], "confirm")}
-			if err := rt.Command(ctx, c); err != nil {
-				return "Belum diterapkan: " + html.EscapeString(err.Error())
+			if op == "killswitch" {
+				c.Operation = "kill"
 			}
-			return "Perintah diterima. Periksa /status; penutupan menunggu konfirmasi order."
+			if err := rt.Command(ctx, c); err != nil {
+				return "⚠️ Perintah belum diterapkan untuk " + esc(args[0]+" / "+args[1]) + ": " + managedControlError(err)
+			}
+			return managedControlReply(c, args[0])
 		})
 	}
 	tg.Handle("resolve", "verifikasi order tak pasti ke exchange · /resolve akun order confirm", func(ctx context.Context, args []string) string {
@@ -463,15 +466,15 @@ func registerManagedTelegram(tg *telegram.Bot, runtimes map[string]*managed.Runt
 		}
 		c := managed.Command{ID: fmt.Sprintf("telegram-%d", time.Now().UnixNano()), Operation: "resolve_order", Order: args[1], Confirm: slices.Contains(args[2:], "confirm")}
 		if err := rt.Command(ctx, c); err != nil {
-			return "Belum diselesaikan: " + html.EscapeString(err.Error())
+			return "Pemeriksaan belum selesai: " + managedControlError(err)
 		}
-		return "Order diverifikasi ke exchange dan ledger diperbarui. Periksa /status."
+		return "✅ Pemeriksaan order " + esc(args[1]) + " pada akun " + esc(args[0]) + " selesai. Catatan bot diperbarui. Periksa /orders " + esc(args[0]) + "."
 	})
 	tg.Handle("stop", "stop proses untuk resume; posisi dan order tetap · /stop confirm", func(_ context.Context, args []string) string {
 		if !slices.Contains(args, "confirm") {
-			return "Order dan posisi tetap ada di exchange. Untuk stop proses kirim /stop confirm."
+			return "Posisi dan order akan dipertahankan. Untuk mematikan proses bot, kirim /stop confirm."
 		}
 		stop()
-		return "Proses dihentikan untuk resume; posisi dan order tetap dipertahankan."
+		return "🛑 Permintaan mematikan proses bot diterima. Posisi dan order dipertahankan; proses menyimpan data sebelum keluar."
 	})
 }

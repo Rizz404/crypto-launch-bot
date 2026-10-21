@@ -472,7 +472,7 @@ func (s *session) onTrade(t domain.Trade) {
 	s.metrics.RealizedPnL.WithLabelValues(t.Strategy).Set(pnl)
 
 	if s.tg != nil {
-		s.tg.Notify(msgTradeClosed(t, s.base(t.PositionKey), s.money()))
+		s.tg.Notify(msgTradeClosed(t, s.base(t.PositionKey), s.money(), decimal.Zero))
 	}
 }
 
