@@ -10,12 +10,19 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
   `tradingbot_research_stage_two`, wallet `paper:research-stage-two`, enam
   instance/18 binding: tiga Tren + EMA dasar 1m/filter 1m/filter 4h.
   Modal 747,83957456237531 USDT virtual (Rp13,5 juta pada kurs pembanding lama),
-  CPU bot 1 core. Image runtime tetap source `37ffd6a`, tidak ada commit/push
-  baru. Config/manifest deployment diperbarui dengan izin user; file lokal
-  belum di-commit. Tahap satu dihentikan untuk periode bersama dan seluruh
+  CPU bot 1 core. Source terbaru `25a3ad5` sudah di-push; CI lengkap lulus dan
+  image koreksi `sha256:1cc0cdecc604ea7c602998f4e0c161dd45904ee9fb16ac8d8f05ba976fb45a8f`
+  dipasang pukul20:21 WIB. Fix `740c475` mengurangi pembacaan ulang ledger
+  pada drain idle setelah observer menemukan feed tertinggal; sampel sehat
+  saat start bukan bukti operasi berkelanjutan. Tahap satu dihentikan dan seluruh
   DB/ledger/backup lama dipertahankan; jangan memakai checkpoint tahap satu
   di bawah sebagai status aktif. Target riset 44/132 belum seluruhnya aktif.
   Detail dan bukti terbaru: [handover VPS](handover-vps.md#tahap-dua--pembanding-frekuensi).
+  Pascarilis 20:26 WIB: dua fill SOL di EMA dasar/filter 1m, masing-masing 0,265 SOL
+  dengan stop loss/take profit aktif, pending 0 dan tidak halted/attention.
+  Dua penolakan ETH sesuai batas satu posisi yang sudah terisi SOL. Observer
+  sehat, feed 1m maju tanpa gap; 28 container lain identik. Bukti rilis terbaru
+  [di sini](testing/research-stage-two-release.json); belum ada bukti exit/profit.
   Test config terkait lulus, restore backup sebelum start dan restart tanpa
   posisi/order mempertahankan saldo; backup akhir checksum cocok. Sampel31,79
   detik CPU bot34,53% dari satu core tanpa throttling baru. Temuan terbuka:

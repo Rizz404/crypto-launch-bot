@@ -7,6 +7,47 @@ Checkpoint diperbarui **22 Oktober 2026**. Prosedur perubahan ada di
 
 ### Tahap dua — pembanding frekuensi
 
+**Rilis koreksi 22 Oktober 20:21 WIB:** source `25a3ad5` (perbaikan runtime
+`740c475`) sudah di-push, [CI lengkap sukses](https://github.com/Rizz404/trading-bot/actions/runs/39785037592)
+dan image `sha256:1cc0cdecc604ea7c602998f4e0c161dd45904ee9fb16ac8d8f05ba976fb45a8f`
+dipasang lewat pull GHCR dan checkout GitHub. Manifest CPU1 kini berasal dari
+commit, bukan edit server yang belum di-commit. Config privat/hash/modal dan
+T0 ledger tetap sama. Image `37ffd6a` pada tabel berikut adalah versi saat start,
+bukan image terkini.
+
+Sesudah sampel start awal, observer mendeteksi feed tertinggal: proses/health
+tetap aktif, tetapi candle1m terakhir13:03 UTC tidak mengikuti waktu pasar.
+Jalur `drain` memuat dan mengurai seluruh ledger lagi untuk setiap binding
+directional, dipanggil berulang pada loop binding tiap update. Perbaikan memakai
+snapshot yang sudah dimuat untuk pemeriksaan idle, dan memuat ulang setelah
+close yang dapat mengubah dana/eksekusi. Pemeriksaan proteksi tetap dijalankan.
+Regression membuktikan satu pembacaan ledger pada drain idle serta saldo view
+tetap mengikuti transfer; tes managed/config dan seluruh CI lulus.
+
+Backup sebelum koreksi `backup-20261022T131455Z` lolos checksum dan restore ke
+DB scratch (6/18, capital747,83957456237531, schema5); image baru memeriksa
+status migrasi scratch sebelum target disentuh. Scratch dihapus. Tidak ada
+migrasi baru, reset modal, perubahan parameter atau penghapusan history.
+Mulai observasi kapasitas berkelanjutan setelah rilis ini; pemeriksaan awal
+beberapa menit sebelumnya bukan kelulusan24jam. Bukti rilis terbaru:
+[research-stage-two-release.json](testing/research-stage-two-release.json).
+
+Pemeriksaan pascarilis 20:25–20:26 WIB: observer `problems: []`, semua seri
+gap 0; candle 1m BTC/ETH/SOL maju dari open 13:21 ke 13:24 UTC, tanpa restart/OOM.
+Sampel 30,31 detik: bot CPU 56,30% dari satu core/RAM 78,44 MiB, tanpa throttling
+baru; DB CPU 54,56%/RAM 221,58 MiB dan tiga periode throttled. Ini beban singkat,
+bukan batas puncak teruji. Masih ada akses DB/no-op yang perlu dikurangi sebelum
+skala besar. Dashboard auth 200, health ok, 28 container lain identik dan lima
+service host tetap aktif. Backup akhir `backup-20261022T132410Z` checksum cocok.
+
+Ledger 20:26 WIB membuktikan dua fill simulasi SOLUSDT pada `ema-base-1m` dan
+`ema-trend-1m`, masing-masing 0,265 SOL, dengan stop loss dan take profit open.
+Pending 0, halted false dan attention kosong. Dua log `order rejected` ETHUSDT
+beralasan `parent position count limit exceeded`, sesuai batas satu posisi
+per instance yang sudah terisi SOL; bukan error koneksi exchange. Siklus exit
+lengkap dan profitabilitas belum diverifikasi. Entry ini sesudah sampel awal
+yang mencatat nol order, jadi jangan memakai snapshot start sebagai status kini.
+
 User menyetujui penerapan rencana pada 22 Oktober setelah pemeriksaan kapasitas
 host/saldo. **Tahap dua aktif sejak 22 Oktober 2026 19:58:45 WIB**
 (`12:58:45.651873337 UTC`), container mulai `12:58:42.822178305 UTC`.

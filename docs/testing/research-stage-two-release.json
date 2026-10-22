@@ -1,0 +1,319 @@
+{
+  "released_at_utc": "2026-10-22T13:21:27.329551+00:00",
+  "source_commit": "25a3ad5ecfa79e6cec40e7331c27bec2edfc3f9d",
+  "image": "ghcr.io/rizz404/trading-bot@sha256:1cc0cdecc604ea7c602998f4e0c161dd45904ee9fb16ac8d8f05ba976fb45a8f",
+  "configuration_hash": "af4c6a5018dfac769769c92cb7b88b95a0000e5fbfebf57e78e09117c2bb4b36",
+  "trial_start_utc": "2026-10-22T12:58:45.651873337Z",
+  "financial_state_unchanged_at_stop": true,
+  "backup_before": "backup-20261022T131455Z",
+  "ci_url": "https://github.com/Rizz404/trading-bot/actions/runs/39785037592",
+  "ci_conclusion": "success",
+  "scratch_migration_status_ok": true,
+  "checked_at_utc": "2026-10-22T13:22:49.385081+00:00",
+  "load_sample": {
+    "duration_seconds": 30.31,
+    "ledger_revisions_per_minute": 17.82,
+    "db_commits_per_second": 285.61,
+    "containers": {
+      "trading-bot-paper-bot-1": {
+        "cpu_pct_of_one_core": 56.3,
+        "memory_mib": 78.44,
+        "throttled_periods_delta": 0,
+        "restarts": 0
+      },
+      "trading-bot-paper-db-1": {
+        "cpu_pct_of_one_core": 54.56,
+        "memory_mib": 221.58,
+        "throttled_periods_delta": 3,
+        "restarts": 0
+      }
+    }
+  },
+  "series_first_check": [
+    {
+      "symbol": "BTCUSDT",
+      "timeframe": "1m",
+      "bars": 324,
+      "last_open": "2026-10-22T13:21:00+00:00",
+      "age_seconds": 110
+    },
+    {
+      "symbol": "BTCUSDT",
+      "timeframe": "4h",
+      "bars": 300,
+      "last_open": "2026-10-22T08:00:00+00:00",
+      "age_seconds": 19370
+    },
+    {
+      "symbol": "ETHUSDT",
+      "timeframe": "1m",
+      "bars": 324,
+      "last_open": "2026-10-22T13:21:00+00:00",
+      "age_seconds": 110
+    },
+    {
+      "symbol": "ETHUSDT",
+      "timeframe": "4h",
+      "bars": 300,
+      "last_open": "2026-10-22T08:00:00+00:00",
+      "age_seconds": 19370
+    },
+    {
+      "symbol": "SOLUSDT",
+      "timeframe": "1m",
+      "bars": 324,
+      "last_open": "2026-10-22T13:21:00+00:00",
+      "age_seconds": 110
+    },
+    {
+      "symbol": "SOLUSDT",
+      "timeframe": "4h",
+      "bars": 300,
+      "last_open": "2026-10-22T08:00:00+00:00",
+      "age_seconds": 19370
+    }
+  ],
+  "instances": 6,
+  "bindings": 18,
+  "halted": false,
+  "attention": "",
+  "orders": 6,
+  "holdings": 2,
+  "executions": 2,
+  "cash": {
+    "tren-500k": "27.69776202082872",
+    "tren-2000k": "110.79104808331486",
+    "tren-5000k": "276.97762020828715",
+    "ema-base-1m": "83.07592426693486",
+    "ema-trend-1m": "83.07592426693486",
+    "ema-trend-4h": "110.79104808331486"
+  },
+  "restore_check": {
+    "scratch_database": "tradingbot_stage_two_releasecheck",
+    "backup": "backup-20261022T131455Z",
+    "restore_ok": true,
+    "capital": "747.83957456237531",
+    "instances": 6,
+    "bindings": 18,
+    "candles": "1818",
+    "journal_entries": "3",
+    "schema_version": "5"
+  },
+  "backup_after": "backup-20261022T132410Z",
+  "backup_checksums_ok": true,
+  "other_project_containers_unchanged": 28,
+  "host_services": {
+    "psa": "active",
+    "nginx": "active",
+    "httpd": "active",
+    "sw-cp-server": "active",
+    "docker": "active"
+  },
+  "dashboard_authenticated_status": 200,
+  "private_config_sha256": "8687ca0ca42629b642920c2d27cacbaf2cc3533cb1d5ad48673c3b027822d893",
+  "health": "ok",
+  "not_verified": [
+    "24h or seven-day operation after the corrective release",
+    "profitability, a post-release 4h close, and a completed simulated exit cycle",
+    "44-instance capacity and the 38 still-pending instances",
+    "Telegram client receipt/digest",
+    "post-release backup restore; pre-release restore/migration check succeeded",
+    "exchange account balance; the paper ledger is internal"
+  ],
+  "known_limitations": [
+    "same-server backups",
+    "controlled shutdown may log context canceled and mark its run interrupted",
+    "remaining database round-trips and no-op transactions still limit scaling"
+  ],
+  "last_check_utc": "2026-10-22T13:25:20.496711+00:00",
+  "latest_observer_utc": "2026-10-22T13:25:19.540933+00:00",
+  "latest_observer_problems": [],
+  "series_final_check": [
+    {
+      "exchange": "binance",
+      "market": "spot",
+      "symbol": "BTCUSDT",
+      "timeframe": "4h",
+      "tf_seconds": 14400,
+      "bars": 11,
+      "last_open": "2026-10-22T08:00:00+00:00",
+      "age_seconds": 19520,
+      "gaps": 0
+    },
+    {
+      "exchange": "binance",
+      "market": "spot",
+      "symbol": "ETHUSDT",
+      "timeframe": "4h",
+      "tf_seconds": 14400,
+      "bars": 11,
+      "last_open": "2026-10-22T08:00:00+00:00",
+      "age_seconds": 19520,
+      "gaps": 0
+    },
+    {
+      "exchange": "binance",
+      "market": "spot",
+      "symbol": "SOLUSDT",
+      "timeframe": "1m",
+      "tf_seconds": 60,
+      "bars": 327,
+      "last_open": "2026-10-22T13:24:00+00:00",
+      "age_seconds": 80,
+      "gaps": 0
+    },
+    {
+      "exchange": "binance",
+      "market": "spot",
+      "symbol": "ETHUSDT",
+      "timeframe": "1m",
+      "tf_seconds": 60,
+      "bars": 327,
+      "last_open": "2026-10-22T13:24:00+00:00",
+      "age_seconds": 80,
+      "gaps": 0
+    },
+    {
+      "exchange": "binance",
+      "market": "spot",
+      "symbol": "BTCUSDT",
+      "timeframe": "1m",
+      "tf_seconds": 60,
+      "bars": 327,
+      "last_open": "2026-10-22T13:24:00+00:00",
+      "age_seconds": 80,
+      "gaps": 0
+    },
+    {
+      "exchange": "binance",
+      "market": "spot",
+      "symbol": "SOLUSDT",
+      "timeframe": "4h",
+      "tf_seconds": 14400,
+      "bars": 11,
+      "last_open": "2026-10-22T08:00:00+00:00",
+      "age_seconds": 19520,
+      "gaps": 0
+    }
+  ],
+  "container_started_at_utc": "2026-10-22T13:21:26.908560167Z",
+  "container_restarts": 0,
+  "oom_killed": false,
+  "cpu_quota_cores": 1.0,
+  "initial_financial_state_preserved": true,
+  "post_release_warn_error_logs": [
+    {
+      "time": "2026-10-22T13:24:09.994810683Z",
+      "level": "ERROR",
+      "msg": "order rejected"
+    },
+    {
+      "time": "2026-10-22T13:24:10.073485918Z",
+      "level": "ERROR",
+      "msg": "order rejected"
+    }
+  ],
+  "latest_ledger": {
+    "time": "2026-10-22T13:26:22.979586+00:00",
+    "halted": false,
+    "attention": "",
+    "pending": 0,
+    "holdings": {
+      "ema-base-1m/sol-ema:SOLUSDT": {
+        "Cost": "27.71512381638",
+        "Owner": "ema-base-1m/sol-ema",
+        "Symbol": "SOLUSDT",
+        "Quantity": "0.265"
+      },
+      "ema-trend-1m/sol-ema:SOLUSDT": {
+        "Cost": "27.71512381638",
+        "Owner": "ema-trend-1m/sol-ema",
+        "Symbol": "SOLUSDT",
+        "Quantity": "0.265"
+      }
+    },
+    "orders": [
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "type": "market",
+        "state": "terminal",
+        "tag": "entry"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "type": "stop_market",
+        "state": "open",
+        "tag": "stop_loss"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "type": "take_profit_market",
+        "state": "open",
+        "tag": "take_profit"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "type": "market",
+        "state": "terminal",
+        "tag": "entry"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "type": "stop_market",
+        "state": "open",
+        "tag": "stop_loss"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "type": "take_profit_market",
+        "state": "open",
+        "tag": "take_profit"
+      }
+    ],
+    "executions": 2,
+    "cash": {
+      "tren-500k": "27.69776202082872",
+      "tren-2000k": "110.79104808331486",
+      "tren-5000k": "276.97762020828715",
+      "ema-base-1m": "83.07592426693486",
+      "ema-trend-1m": "83.07592426693486",
+      "ema-trend-4h": "110.79104808331486"
+    },
+    "binding_notices": {}
+  },
+  "post_release_order_rejection_reason": "Two ETHUSDT entries rejected because each fast EMA instance already had its single allowed SOLUSDT position/order; expected risk enforcement",
+  "first_post_release_counts": {
+    "orders": 0,
+    "holdings": 0,
+    "executions": 0
+  },
+  "open_orders": 4,
+  "verified_paper_entries": [
+    {
+      "owner": "ema-base-1m/sol-ema",
+      "symbol": "SOLUSDT",
+      "quantity": "0.265",
+      "stop_loss_open": true,
+      "take_profit_open": true
+    },
+    {
+      "owner": "ema-trend-1m/sol-ema",
+      "symbol": "SOLUSDT",
+      "quantity": "0.265",
+      "stop_loss_open": true,
+      "take_profit_open": true
+    }
+  ]
+}
