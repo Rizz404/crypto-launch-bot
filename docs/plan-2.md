@@ -270,6 +270,14 @@ Plafon rencana 6.528 backtest serial; paper bertahap sampai 24 instance dengan
 tiga binding per instance (72 binding), bukan ribuan strategi aktif sekaligus.
 Jumlah akhir mengikuti kelayakan koin/data dan pengukuran, bukan kuota wajib.
 
+- [ ] Permintaan 22 Oktober: [daftar perluasan dan pembanding EMA](strategy-2.md#perluasan-daftar-dan-izin-cpu-terbaru).
+  Target riset terbaru 44 instance/132 binding termasuk 6/18 aktif; 28/84 memakai
+  keluarga strategi tersedia, 16/48 menunggu implementasi. User mengizinkan
+  kenaikan limit CPU jika menghambat lalu menyetujui penerapan. Tahap dua 6/18
+  aktif 22 Oktober 19:58:45 WIB pada DB baru, CPU1, modal 747,83957456237531
+  USDT virtual; ledger lama dipertahankan. Sisa 38/114 belum diaktifkan.
+  Lanjutkan gerbang kapasitas/operasi dan implementasi strategi yang belum ada.
+
 - [ ] Verifikasi universe top 20/Spot, bekukan aturan tujuh keluarga strategi,
   empat timeframe, empat modal virtual, biaya dan komposisi modal bersama.
 - [ ] Implementasikan rotasi, squeeze dan mean reversion sideways; adaptasi

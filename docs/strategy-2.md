@@ -2,15 +2,14 @@
 
 ## Keputusan terbaru
 
-**Pembaruan 22 Oktober:** setelah persetujuan user, paper riset baru dimulai
-21 Oktober 23:58:57 WIB: tiga instance Tren/sembilan binding BTC/ETH/SOL,
-Rp7,5 juta virtual total pada DB baru. Ini uji operasional dua mode strategi
-yang sudah tersedia, bukan hasil seleksi dari matriks backtest di bawah;
-backtest portofolio baru belum dijalankan. Rancangan 24/72 tidak diaktifkan.
-Sampel awal CPU bot mendekati batas 0,5 core; jangan naik tahap sebelum
-mengurangi akses ledger berulang dan mengukur ulang. Detail, hash dan jadwal
-review ada di [handover VPS](handover-vps.md). Riwayat penarikan berikut tetap berlaku
-untuk ledger ETH lama saja.
+**Pembaruan 22 Oktober:** tahap dua aktif sejak **19:58:45 WIB**, enam
+instance/18 binding BTC/ETH/SOL: tiga Tren dan tiga pembanding EMA, modal
+747,83957456237531 USDT virtual pada DB baru. Kuota bot dinaikkan ke 1 core
+dengan izin user. Tahap satu dihentikan tanpa transaksi dan ledger/backup
+dipertahankan. Target riset terbaru 44/132 belum seluruhnya diimplementasikan
+atau diaktifkan. Tidak ada backtest portofolio baru atau bukti profit dari
+start ini. Detail, hash dan jadwal review ada di [handover VPS](handover-vps.md).
+Riwayat penarikan berikut tetap berlaku untuk ledger ETH lama saja.
 
 User meminta menarik strategi yang berjalan dan kembali melakukan riset serta
 mengelola pilihan strategi. **Trial P2-9 ETH momentum 4h sudah dihentikan di VPS
@@ -102,6 +101,171 @@ riset, bukan karena bukti statistik kegagalan strategi.
 Target historis user sekitar 50% per tahun tetap dicatat sebagai **aspirasi yang
 belum terbukti konsisten**. Jangan mengejar target dengan menaikkan leverage,
 risiko, atau frekuensi tanpa bukti tambahan.
+
+## Pembanding frekuensi EMA — 22 Oktober 2026
+
+### Perluasan daftar dan izin CPU terbaru
+
+**Hasil penerapan:** user kemudian menyetujui eksekusi. Tahap dua sudah aktif
+6/18 pada DB/wallet baru dengan CPU1, tiga Tren + EMA dasar1m/filter1m/filter4h.
+Angka 3/9 aktif dan larangan deploy pada paragraf rancangan historis di bawah
+merupakan checkpoint sebelum eksekusi. Target akhir tetap 44/132 termasuk
+6/18 aktif: sisa 38 instance/114 binding, terdiri dari 22/66 dengan logika
+tersedia dan 16/48 menunggu implementasi. Semua detail start/verifikasi ada
+di [handover VPS](handover-vps.md#tahap-dua--pembanding-frekuensi).
+
+Arahan user sesudah usulan tiga pembanding: limit CPU boleh dinaikkan jika
+menghambat; perbanyak instance/strategi paper, tetapi **daftarkan semuanya
+terlebih dahulu**. Belum ada perubahan kuota, config aktif atau deployment.
+Izin ini menggantikan larangan menaikkan kuota di rancangan kapasitas lama;
+batas tidak mengganggu layanan lain, tidak menyentuh proyek lain dan paper-only
+tetap berlaku. Usulan operasional: ukur headroom host lalu naikkan bot dari
+0,5 ke 1 core dahulu; pertimbangkan 2 core bila hasil pengukuran memerlukan.
+Ini usulan kuota, bukan perubahan yang sudah diterapkan atau kapasitas teruji.
+Pengurangan transaksi ledger tetap berguna, tetapi bukan prasyarat mutlak
+sebelum kenaikan kuota yang kini diizinkan user.
+
+Preflight read-only 22 Oktober 19.51 WIB atas permintaan cek kapasitas/saldo:
+host 8 logical CPU, load 2,48/2,55/2,48, CPU busy 11,93% pada sampel 3 detik
+(iowait 0,17%, steal 1,45%); RAM available 18,80 GiB dari 31,09 GiB, tanpa swap;
+disk free 135,41 GiB. Bot kuota 0,5 core/512 MiB, penggunaan sesaat CPU 31,72%
+dari satu core dan RAM 59,6 MiB; DB kuota 1 core/1 GiB, CPU 30,65% dan RAM
+128,6 MiB. CPU cgroup bot mencatat 444.130 periode throttled dari 644.866
+periode sejak container berjalan; ini hitungan historis, bukan persentase waktu
+CPU hilang. Headroom snapshot mendukung percobaan kenaikan bot ke 1 core,
+bukan bukti host mampu 44 instance atau beban puncak. Kuota belum diubah.
+
+Ledger aktif `paper:research-stage-one`: capital/kas total tepat
+415,46643031243073 USDT, seluruhnya dialokasikan ke tiga instance lama;
+reserve nol, holdings/order/eksekusi kosong, tidak halted/attention. Paper
+memakai modal konfigurasi dan broker simulasi, tidak memakai saldo akun
+Binance Testnet. Angka US$100.000 yang diingat user belum diverifikasi sebagai
+saldo testnet saat ini dan bukan modal ledger aktif. Target Rp192,5 juta pada
+kurs pembanding historis Rp18.052 setara sekitar 10.663,64 USDT virtual,
+di bawah plafon US$100.000 yang disebut user, tetapi tetap memerlukan sumber
+modal virtual eksplisit pada konfigurasi trial baru/ekspansi; jangan membuat
+alokasi di luar capital atau mengedit saldo ledger aktif via SQL.
+
+Daftar diperluas menjadi **11 komposisi × empat modal = 44 instance/132
+binding sebagai target riset**, termasuk tiga instance/9 binding aktif;
+tambahan bersih 41 instance/123 binding. Ini menggantikan plafon rencana 24/72,
+bukan izin menjalankan 44 sekaligus tanpa pemeriksaan kapasitas. Tiap instance
+berisi tiga binding; empat modal Rp500 ribu/Rp2 juta/Rp5 juta/Rp10 juta.
+Lima komposisi EMA di bawah menambah 20 instance/60 binding terhadap rancangan
+enam komposisi lama. Usulan tiga EMA pada bagian berikut menjadi subset dari
+daftar ini, bukan ditambahkan lagi dalam hitungan.
+
+| Komposisi | Binding/koin | Timeframe | Jumlah akhir | Status |
+|---|---|---|---:|---|
+| Tren | Momentum BTC, momentum ETH, pullback SOL | 4h | 4 | 3 aktif; tambah varian Rp10 juta |
+| EMA dasar | EMA12/26 BTC/ETH/SOL, tanpa EMA tren | 1m | 4 | Logika tersedia; konfigurasi belum dibuat |
+| EMA filter cepat | EMA12/26 + EMA100 BTC/ETH/SOL | 1m | 4 | Logika tersedia; konfigurasi belum dibuat |
+| EMA filter pendek | EMA12/26 + EMA100 BTC/ETH/SOL | 15m | 4 | Logika tersedia; konfigurasi belum dibuat |
+| EMA filter menengah | EMA12/26 + EMA100 BTC/ETH/SOL | 1h | 4 | Logika tersedia; konfigurasi belum dibuat |
+| EMA filter lambat | EMA12/26 + EMA100 BTC/ETH/SOL | 4h | 4 | Logika tersedia; konfigurasi belum dibuat |
+| Pullback | Pullback BTC/ETH/LINK | 4h | 4 | Logika tersedia; parameter/data belum dibekukan |
+| Breakout | Squeeze BTC/ETH, channel breakout BNB | 4h | 4 | Squeeze belum diimplementasikan |
+| Sideways | Mean reversion BTC/ETH/XRP | 4h | 4 | Strategi belum diimplementasikan |
+| Rotasi dan tren | Rotasi universe mingguan, momentum BTC, pullback ETH | 1d/1d/4h | 4 | Rotasi belum diimplementasikan |
+| Campuran | Momentum BTC, squeeze ETH, mean reversion DOGE | 1d/4h/1h | 4 | Squeeze/mean reversion belum diimplementasikan |
+
+Ringkasan: tujuh komposisi memakai logika tersedia = **28 instance/84 binding**
+termasuk yang aktif, sehingga 25 instance/75 binding tambahan dapat disiapkan
+tanpa keluarga strategi baru. Empat komposisi sisanya = **16 instance/48 binding**
+masih memerlukan implementasi. Tersedianya logika tidak membuktikan kelayakan
+modal/order, parameter, performa, atau kapasitas deploy. Tujuh keluarga sinyal
+unik: EMA crossover, momentum, pullback, channel breakout, squeeze, mean
+reversion dan rotasi; empat sudah tersedia, tiga belum. DCA/grid/MM tersedia
+di registry tetapi tidak ditambahkan dalam daftar profit ini; funding/xspread
+tetap di luar cakupan Spot Binance.
+
+Jika seluruh target dijalankan, modal laboratorium menjadi **Rp192,5 juta
+virtual** = 11 × Rp17,5 juta, termasuk Rp7,5 juta virtual aktif, bukan dana riil
+atau satu akun Rp2 juta. Modal kecil tetap dapat gagal minimum order. Stream
+berbagi per koin/timeframe; perluasan EMA BTC/ETH/SOL menambah enam stream unik
+15m/1h, bukan koneksi baru per binding. Universe rotasi belum final sehingga
+jumlah stream seluruh 44 instance belum bisa dipastikan. Listing/top-20 dan
+data koin rencana perlu diverifikasi lagi sebelum start.
+
+Tahap awal tetap menyelesaikan kelompok pembanding Rp2 juta yang sebanding,
+lalu menambah varian modal/kelompok berikutnya berdasarkan CPU/DB/lag dan
+headroom layanan host. Laporan frekuensi memakai keluarga EMA filter yang sama
+pada 1m/15m/1h/4h, dengan biaya/risk/jendela evaluasi bersama. Jumlah instance
+bukan jumlah eksperimen independen; empat modal tidak menambah bukti sinyal.
+
+User meminta tambahan instance paper memakai strategi awal yang sedikit diubah
+untuk membandingkan hasil trading sering dan jarang pada pasar crypto volatil.
+Status: **rancangan eksperimen; belum ditambahkan ke konfigurasi aktif atau
+dijalankan**. Tidak mengubah parameter/modal/ledger trial yang sedang berjalan.
+
+Pemeriksaan read-only sekitar 19.35 WIB: bot berjalan tanpa restart, 238 sampel
+setelah startup tanpa masalah monitoring, tiga instance/sembilan binding running,
+tanpa halt, holding, order atau eksekusi. Rekonstruksi lima candle 4h sejak T0
+tidak memenuhi entry BTC/ETH momentum maupun SOL pullback. Ini pemeriksaan
+syarat sinyal dari candle tersimpan, bukan replay penuh engine.
+
+Paper awal memakai EMA 12/26 pada 1m untuk BTC/ETH; checkpoint 18 Oktober
+mencatat 45 trade di DB dan equity di bawah modal awal. Aktivitas tersebut
+bukan bukti profit. Tiga tambahan yang diusulkan memakai `emacross` yang sudah
+tersedia, tanpa strategi/dependensi baru:
+
+| Instance usulan | Timeframe | EMA cepat/lambat | Filter tambahan |
+|---|---|---|---|
+| `ema-base-1m` | 1m | 12/26 | Tidak ada EMA tren |
+| `ema-trend-1m` | 1m | 12/26 | Entry hanya di atas EMA100 |
+| `ema-trend-4h` | 4h | 12/26 | Entry hanya di atas EMA100 |
+
+Aturan bersama dibekukan sebelum start: Spot long-only BTC/ETH/SOL, RSI14
+entry maksimum 70, ATR14, stop 2 ATR, target 3 ATR, tanpa trailing, exit pada
+cross berlawanan. Baseline mengadaptasi aturan awal ke universe bersama;
+penambahan SOL dan risk sizing bersama berarti ini bukan reproduksi persis
+run lama. Filter EMA100 adalah hipotesis untuk mengurangi entry melawan tren,
+**belum terbukti meningkatkan profit**. Jangan mencoba banyak parameter lalu
+hanya melaporkan pemenangnya.
+
+Setiap instance tambahan mendapat Rp2 juta virtual = 110,79104808331486 USDT
+pada kurs historis pembanding Rp18.052. Modal tambahan total
+332,37314424994458 USDT; jika digabung dengan trial lama, modal laboratorium
+menjadi 747,83957456237531 USDT (Rp13,5 juta virtual). Ini usulan alokasi
+eksperimen, bukan saldo sekarang, dana riil, atau izin mengubah saldo via SQL.
+Total menjadi enam instance/18 binding dengan enam stream unik yang sama
+(BTC/ETH/SOL 1m/4h); tidak memerlukan koin/timeframe/WebSocket baru.
+
+Untuk perbandingan gunakan `tren-2000k` sebagai pembanding strategi lama,
+bukan menjumlahkan tiga modal Tren. Risiko per instance/binding sama dengan
+trial aktif: risk 1%, posisi maksimum 25%, satu posisi per instance, exposure
+25%, daily loss 5%, drawdown 20%, leverage 1 dan close-on-kill. Fee 0,1% per
+sisi dan slippage 2 bps. Batas akun/pendanaan saat ekspansi harus ditinjau agar
+instance tidak berebut plafon tiga posisi akun lama dan membiasakan hasil.
+Semua tetap tunduk filter minimum order; catat penolakan dan sinyal tak terdanai.
+
+Bandingkan `ema-base-1m` dengan `ema-trend-1m` untuk pengaruh filter;
+`ema-trend-1m` dengan `ema-trend-4h` untuk pengaruh timeframe pada keluarga
+aturan yang sama. EMA100/ATR14 pada timeframe berbeda juga mempunyai horizon
+waktu berbeda: ini perbandingan konfigurasi, bukan eksperimen yang mengisolasi
+jumlah transaksi saja. Perbandingan terhadap Tren turut mengubah logika sinyal.
+Volatilitas tidak menjamin profit setelah biaya dan sinyal palsu.
+
+Mulai jendela evaluasi bersama saat semua pembanding siap; catat equity awal
+`tren-2000k`, posisi/reservasi yang sudah ada dan perubahan rilis, tanpa mereset
+history. Jika kondisi awal tidak sebanding, gunakan trial pembanding baru
+dengan prosedur ledger/DB baru, bukan menimpa trial lama. Laporan mencakup
+return bersih mark-to-market termasuk posisi terbuka, fee/slippage, drawdown,
+turnover, jumlah trade tutup, exposure, penolakan order, dan benchmark tunai
+serta buy-and-hold pada koin/periode yang sama. Selisih harga fill simulasi
+bukan validasi spread/depth/fill exchange nyata. Hari 1/3/7 untuk operasi;
+review kinerja awal 30 hari dengan jumlah trade/durasi exposure dilaporkan.
+Jika strategi lambat belum cukup bertransaksi, hasilnya belum cukup bukti;
+tidak memaksa entry atau mengubah aturan di tengah evaluasi.
+
+**Gerbang kapasitas pada kuota lama belum lolos.** Sampel `docker stats` sesi ini menunjukkan
+CPU bot 51,13% dari satu core dengan kuota 0,5 core, RAM 59,42/512 MiB;
+DB CPU 36,13% dari satu core. Sampel sesaat ini bukan benchmark rata-rata,
+tetapi konsisten dengan tekanan CPU saat start. Arahan CPU terbaru di atas
+mengizinkan kenaikan kuota setelah headroom host diperiksa, lalu pengukuran
+ulang sebelum ekspansi; perbaikan ledger tetap pekerjaan terbuka. Jangan
+menjalankan worker backtest paralel atau menjanjikan kapasitas berdasarkan RAM
+yang masih kosong.
 
 ## Daftar strategi untuk dikelola
 
@@ -339,8 +503,10 @@ ditaksir dari ukuran CSV saja.
 ke 6/18, 12/36, dan paling banyak 24/72. Tahan tiap tahap minimal 24 jam operasi
 normal termasuk satu restart terkontrol sebelum menambah; ini kelulusan operasi,
 bukan validasi profit. Koordinator bot tetap satu, bukan 24 container. Batas
-awal bot 0,5 CPU/512 MiB dan DB 1 CPU/1 GiB mengikuti manifest sekarang; jangan
-menaikkan limit atau menambah DB/monitoring hanya agar target jumlah terpenuhi.
+awal bot 0,5 CPU/512 MiB dan DB 1 CPU/1 GiB mengikuti manifest sekarang.
+Arahan user 22 Oktober pada bagian pembanding EMA mengizinkan kenaikan kuota
+CPU dan target daftar 44/132; tahapan 24/72 di sini adalah rancangan lama.
+Jangan menambah DB/monitoring hanya agar target jumlah terpenuhi.
 Awali tanpa backtest paralel; jalankan bersamaan hanya setelah headroom diukur.
 
 Gerbang sebelum naik: tidak ada OOM/restart tak terencana, feed gap, backlog

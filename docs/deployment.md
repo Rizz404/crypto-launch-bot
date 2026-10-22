@@ -1,8 +1,8 @@
 # Deployment
 
 Prosedur rilis dan operasi untuk project `trading-bot-paper`. Status server ada
-di [handover VPS](handover-vps.md); **paper riset tahap awal aktif** sejak
-21 Oktober 2026 23:58:57 WIB. Panduan ini tidak memberi izin trial tambahan
+di [handover VPS](handover-vps.md); **paper pembanding tahap dua aktif** sejak
+22 Oktober 2026 19:58:45 WIB. Panduan ini tidak memberi izin trial tambahan
 atau transaksi mainnet dengan uang asli.
 
 ## Rilis dan persiapan
@@ -50,7 +50,7 @@ Semua perintah berikut dari `/opt/trading-bot-paper/repo` di VPS:
 dc() { docker compose --env-file .env.vps -f deploy/compose.vps.yml "$@" </dev/null; }
 ```
 
-DB 1 GiB/1 CPU; bot, Prometheus dan Grafana masing-masing 512 MiB/0,5 CPU;
+DB 1 GiB/1 CPU; bot 512 MiB/1 CPU; Prometheus dan Grafana masing-masing 512 MiB/0,5 CPU;
 DNS 128 MiB/0,25 CPU. Batas aktual mengikuti manifest. Log 3 × 10 MB/container;
 Prometheus retensi 7 hari/1 GB tidak membatasi seluruh pemakaian disk/WAL.
 DB/monitoring memakai volume persisten. Port loopback: web 18080, metrics 19100,

@@ -1,0 +1,137 @@
+# Paper frequency comparison; the stage-one ledger is retained separately.
+# First expansion: six instances, eighteen bindings, no live exchange orders.
+app: {mode: paper, allow_live: false, log_level: info, log_format: json}
+database: {max_conns: 6}
+exchanges:
+  binance: {enabled: true, testnet: false}
+marketdata:
+  exchange: binance
+  markets: [spot]
+  symbols: [BTCUSDT, ETHUSDT, SOLUSDT]
+  timeframes: [1m, 4h]
+  initial_backfill: 300
+web: {enabled: true, listen: '127.0.0.1:18081'}
+metrics: {enabled: true, listen: '127.0.0.1:19101'}
+# Deployment enables Telegram with the existing private whitelist and token.
+telegram: {enabled: false, notify_level: info, daily_summary: true, fx: true}
+strategies: []
+backtest:
+  slippage_bps: 2
+  fees:
+    spot: {maker: 0.001, taker: 0.001}
+wallets:
+  - id: research-stage-two
+    exchange: binance
+    quote: USDT
+    # Rp13.5 million virtual total at the historical comparison rate Rp18,052.
+    capital: '747.83957456237531'
+    risk: &account_risk
+      risk_per_trade: 0.01
+      position_pct: 0.10
+      max_position_pct: 0.25
+      max_leverage: 1
+      max_open_positions: 6
+      max_exposure_pct: 0.75
+      daily_loss_limit: 0.05
+      max_drawdown: 0.20
+      close_on_kill: true
+    instances:
+      - id: tren-500k
+        name: Tren Rp500 ribu
+        allocation: '27.69776202082872'
+        risk: &instance_risk
+          <<: *account_risk
+          max_open_positions: 1
+          max_exposure_pct: 0.25
+        notify: info
+        strategies: &trend_bindings
+          - id: btc-momentum
+            name: trendspot
+            symbols: [BTCUSDT]
+            risk: *instance_risk
+            params: {mode: momentum, timeframe: 4h, entry_period: 84, trend_period: 100, atr_period: 14, stop_atr: 3, trail_atr: 3, target_atr: 0, momentum_min: 0.05}
+          - id: eth-momentum
+            name: trendspot
+            symbols: [ETHUSDT]
+            risk: *instance_risk
+            params: {mode: momentum, timeframe: 4h, entry_period: 84, trend_period: 100, atr_period: 14, stop_atr: 3, trail_atr: 3, target_atr: 0, momentum_min: 0.05}
+          - id: sol-pullback
+            name: trendspot
+            symbols: [SOLUSDT]
+            risk: *instance_risk
+            params: {mode: pullback, timeframe: 4h, entry_period: 55, exit_period: 20, trend_period: 200, rsi_period: 14, rsi_entry: 40, rsi_exit: 65, atr_period: 14, stop_atr: 2.5, target_atr: 5, trail_atr: 0}
+      - id: tren-2000k
+        name: Tren Rp2 juta
+        allocation: '110.79104808331486'
+        risk: *instance_risk
+        notify: info
+        strategies: *trend_bindings
+      - id: tren-5000k
+        name: Tren Rp5 juta
+        allocation: '276.97762020828715'
+        risk: *instance_risk
+        notify: info
+        strategies: *trend_bindings
+      - id: ema-base-1m
+        name: ema-base-1m Rp2 juta
+        allocation: '110.79104808331486'
+        risk: *instance_risk
+        notify: info
+        strategies:
+          - id: btc-ema
+            name: emacross
+            symbols: [BTCUSDT]
+            risk: *instance_risk
+            params: {timeframe: 1m, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 0, exit_on_cross: true}
+          - id: eth-ema
+            name: emacross
+            symbols: [ETHUSDT]
+            risk: *instance_risk
+            params: {timeframe: 1m, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 0, exit_on_cross: true}
+          - id: sol-ema
+            name: emacross
+            symbols: [SOLUSDT]
+            risk: *instance_risk
+            params: {timeframe: 1m, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 0, exit_on_cross: true}
+      - id: ema-trend-1m
+        name: ema-trend-1m Rp2 juta
+        allocation: '110.79104808331486'
+        risk: *instance_risk
+        notify: info
+        strategies:
+          - id: btc-ema
+            name: emacross
+            symbols: [BTCUSDT]
+            risk: *instance_risk
+            params: {timeframe: 1m, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 100, exit_on_cross: true}
+          - id: eth-ema
+            name: emacross
+            symbols: [ETHUSDT]
+            risk: *instance_risk
+            params: {timeframe: 1m, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 100, exit_on_cross: true}
+          - id: sol-ema
+            name: emacross
+            symbols: [SOLUSDT]
+            risk: *instance_risk
+            params: {timeframe: 1m, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 100, exit_on_cross: true}
+      - id: ema-trend-4h
+        name: ema-trend-4h Rp2 juta
+        allocation: '110.79104808331486'
+        risk: *instance_risk
+        notify: info
+        strategies:
+          - id: btc-ema
+            name: emacross
+            symbols: [BTCUSDT]
+            risk: *instance_risk
+            params: {timeframe: 4h, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 100, exit_on_cross: true}
+          - id: eth-ema
+            name: emacross
+            symbols: [ETHUSDT]
+            risk: *instance_risk
+            params: {timeframe: 4h, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 100, exit_on_cross: true}
+          - id: sol-ema
+            name: emacross
+            symbols: [SOLUSDT]
+            risk: *instance_risk
+            params: {timeframe: 4h, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 100, exit_on_cross: true}

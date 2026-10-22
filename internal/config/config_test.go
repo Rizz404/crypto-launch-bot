@@ -29,7 +29,7 @@ exchanges:
 `
 
 func TestManagedExamplesRemainPaperAndSingleCapital(t *testing.T) {
-	for _, name := range []string{"managed.example.yaml", "managed.eth-paper.yaml", "managed.research-stage-one.yaml"} {
+	for _, name := range []string{"managed.example.yaml", "managed.eth-paper.yaml", "managed.research-stage-one.yaml", "managed.research-stage-two.yaml"} {
 		cfg, err := load(filepath.Join("..", "..", "configs", name), []string{"TB_DATABASE__URL=postgres://unused@localhost/unused"})
 		require.NoError(t, err)
 		require.Equal(t, ModePaper, cfg.App.Mode)
@@ -57,6 +57,38 @@ func TestResearchStageOneUsesBoundedSharedCapital(t *testing.T) {
 	}
 	require.True(t, remaining.IsZero(), "allocations must use one wallet capital without duplication")
 	require.Equal(t, []string{"BTCUSDT", "ETHUSDT", "SOLUSDT"}, cfg.MarketData.Symbols)
+}
+
+func TestResearchStageTwoUsesComparableRiskAndExplicitCapital(t *testing.T) {
+	cfg, err := load(filepath.Join("..", "..", "configs", "managed.research-stage-two.yaml"), []string{"TB_DATABASE__URL=postgres://unused@localhost/unused"})
+	require.NoError(t, err)
+	require.False(t, cfg.Telegram.Enabled)
+	w := cfg.Wallets[0]
+	require.Equal(t, "research-stage-two", w.ID)
+	require.Equal(t, "747.83957456237531", w.Capital.String())
+	require.Len(t, w.Instances, 6)
+	require.Equal(t, 6, w.Risk.MaxOpenPositions)
+	remaining := w.Capital
+	for _, i := range w.Instances {
+		remaining = remaining.Sub(i.Allocation)
+		require.Len(t, i.Strategies, 3)
+		require.Equal(t, 1, i.Risk.MaxOpenPositions)
+		for _, b := range i.Strategies {
+			require.Equal(t, i.Risk, b.Risk)
+			require.Equal(t, 1, b.Risk.MaxLeverage)
+		}
+	}
+	require.True(t, remaining.IsZero(), "every allocation must come from the explicit virtual capital")
+	for _, i := range w.Instances[3:] {
+		require.True(t, i.Allocation.Equal(w.Instances[1].Allocation))
+		require.Equal(t, w.Instances[1].Risk, i.Risk)
+		for _, b := range i.Strategies {
+			require.Equal(t, "emacross", b.Name)
+			require.Equal(t, false, b.Params["allow_short"])
+		}
+	}
+	require.Equal(t, []string{"BTCUSDT", "ETHUSDT", "SOLUSDT"}, cfg.MarketData.Symbols)
+	require.Equal(t, []string{"1m", "4h"}, cfg.MarketData.Timeframes)
 }
 
 func TestLoadDefaultsAndEnvOverride(t *testing.T) {

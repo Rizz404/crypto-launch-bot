@@ -1,0 +1,259 @@
+{
+  "recorded_at_utc": "2026-10-22T13:04:12.283152+00:00",
+  "trial_start_utc": "2026-10-22T12:58:45.651873337Z",
+  "trial_start_wib": "2026-10-22T19:58:45+07:00",
+  "mode": "paper",
+  "allow_live": false,
+  "runtime_source": "37ffd6a798bbe0d14bb8b96decfc60c52dfc1ddc",
+  "runtime_image_digest": "sha256:fc47df3e382be6e746a4b5b3658291c1330d3d4dc911b6fb8b777945c6411b72",
+  "runtime_code_changed": false,
+  "committed_or_pushed": false,
+  "deployment_changes": [
+    "new config from existing server configuration; six instances/eighteen bindings",
+    "bot CPU quota 0.5 to 1.0 in Compose",
+    "BOT_DB_NAME changed via existing helper"
+  ],
+  "database": "tradingbot_research_stage_two",
+  "wallet": "paper:research-stage-two",
+  "public_config": "configs/managed.research-stage-two.yaml",
+  "private_config_sha256": "8687ca0ca42629b642920c2d27cacbaf2cc3533cb1d5ad48673c3b027822d893",
+  "ledger_configuration_hash": "af4c6a5018dfac769769c92cb7b88b95a0000e5fbfebf57e78e09117c2bb4b36",
+  "capital_usdt": "747.83957456237531",
+  "reserve_usdt": "0",
+  "instances": [
+    {
+      "ID": "tren-500k",
+      "Cash": "27.69776202082872",
+      "Funded": "27.69776202082872",
+      "Status": "running",
+      "Halted": false
+    },
+    {
+      "ID": "tren-2000k",
+      "Cash": "110.79104808331486",
+      "Funded": "110.79104808331486",
+      "Status": "running",
+      "Halted": false
+    },
+    {
+      "ID": "tren-5000k",
+      "Cash": "276.97762020828715",
+      "Funded": "276.97762020828715",
+      "Status": "running",
+      "Halted": false
+    },
+    {
+      "ID": "ema-base-1m",
+      "Cash": "110.79104808331486",
+      "Funded": "110.79104808331486",
+      "Status": "running",
+      "Halted": false
+    },
+    {
+      "ID": "ema-trend-1m",
+      "Cash": "110.79104808331486",
+      "Funded": "110.79104808331486",
+      "Status": "running",
+      "Halted": false
+    },
+    {
+      "ID": "ema-trend-4h",
+      "Cash": "110.79104808331486",
+      "Funded": "110.79104808331486",
+      "Status": "running",
+      "Halted": false
+    }
+  ],
+  "bindings": 18,
+  "orders": 0,
+  "holdings": 0,
+  "executions": 0,
+  "warmup": "300 closed bars each BTC/ETH/SOL 1m/4h; new 1m bars verified",
+  "cpu_quota_cores": 1,
+  "memory_limit_mib": 512,
+  "backup_before": "backup-20261022T125650Z",
+  "backup_after": "backup-20261022T130313Z",
+  "backup_checksums_ok": true,
+  "restore_check": {
+    "restored_db": "tradingbot_research_stage_two_restorecheck",
+    "financial_state_matches_source": true,
+    "source_wallet": "research-stage-one",
+    "restored_capital": "415.46643031243073",
+    "restored_candles": "5409"
+  },
+  "restart_check": {
+    "checked_at": "2026-10-22T13:02:10.051923+00:00",
+    "initial_started_at": "2026-10-22T12:58:45.651873337Z",
+    "same_financial_state": true,
+    "runs": [
+      {
+        "id": "62335158a8e7412da4801afa681d8258",
+        "status": "interrupted",
+        "started": "2026-10-22T12:58:45.651873597Z",
+        "ended": "2026-10-22T13:02:06.196055379Z"
+      },
+      {
+        "id": "59d3cfdc65c7975c4c189f77b77eedb3",
+        "status": "running",
+        "started": "2026-10-22T13:02:09.444875983Z",
+        "ended": "0001-01-01T00:00:00Z"
+      }
+    ]
+  },
+  "load_sample": {
+    "duration_seconds": 31.79,
+    "ledger_revisions_per_minute": 9.44,
+    "db_commits_per_second": 237.05,
+    "containers": {
+      "trading-bot-paper-bot-1": {
+        "cpu_pct_of_one_core": 34.53,
+        "throttled_periods_delta": 0,
+        "memory_mib": 75.2,
+        "restarts": 0
+      },
+      "trading-bot-paper-db-1": {
+        "cpu_pct_of_one_core": 32.89,
+        "throttled_periods_delta": 0,
+        "memory_mib": 220.16,
+        "restarts": 0
+      }
+    }
+  },
+  "old_stage_one_ledger_unchanged_after_stop": true,
+  "old_run_shutdown_status": "interrupted",
+  "other_project_containers_unchanged": 28,
+  "latest_observer_utc": "2026-10-22T13:03:13.954591+00:00",
+  "latest_observer_problems": [],
+  "warn_error_logs": [
+    {
+      "time": "2026-10-22T13:02:06.190671095Z",
+      "level": "ERROR",
+      "msg": "store candle"
+    },
+    {
+      "time": "2026-10-22T13:02:06.190782393Z",
+      "level": "ERROR",
+      "msg": "store candle"
+    },
+    {
+      "time": "2026-10-22T13:02:06.190794932Z",
+      "level": "ERROR",
+      "msg": "store candle"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191169026Z",
+      "level": "ERROR",
+      "msg": "store candle"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191190087Z",
+      "level": "ERROR",
+      "msg": "store candle"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191202045Z",
+      "level": "ERROR",
+      "msg": "store candle"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191526573Z",
+      "level": "ERROR",
+      "msg": "store candle"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191540103Z",
+      "level": "ERROR",
+      "msg": "store candle"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191548316Z",
+      "level": "ERROR",
+      "msg": "store candle"
+    }
+  ],
+  "reviews_wib": {
+    "day_1": "2026-10-23T19:58:45+07:00",
+    "day_3": "2026-10-25T19:58:45+07:00",
+    "day_7": "2026-10-29T19:58:45+07:00"
+  },
+  "pending": {
+    "target_instances": 44,
+    "target_bindings": 132,
+    "remaining_instances": 38,
+    "remaining_bindings": 114,
+    "remaining_with_existing_logic": 22,
+    "remaining_requiring_new_strategy_implementation": 16,
+    "automatic_expansion": false
+  },
+  "not_verified": [
+    "24h/seven-day reliability or peak capacity",
+    "A new 4h boundary after this deployment or profitability",
+    "Restart recovery with open positions/orders in this specific trial",
+    "Telegram client rendering/receipt and next daily digest",
+    "Restore of the post-start backup; pre-start stage-one backup restore passed",
+    "Exchange balance of 100000 USD; paper capital is internal and explicitly configured"
+  ],
+  "known_limitations": [
+    "controlled shutdown records interrupted; financial state unchanged on restart",
+    "same-server backups",
+    "published runtime image retained; deploy config and quota changes are not committed",
+    "nine store candle errors during controlled shutdown contain context canceled; latest observer has no gaps, post-restart state healthy"
+  ],
+  "runtime_image": "ghcr.io/rizz404/trading-bot@sha256:fc47df3e382be6e746a4b5b3658291c1330d3d4dc911b6fb8b777945c6411b72",
+  "shutdown_log_classification": [
+    {
+      "time": "2026-10-22T13:02:06.190671095Z",
+      "msg": "store candle",
+      "context_canceled": true,
+      "error_type": "context_canceled"
+    },
+    {
+      "time": "2026-10-22T13:02:06.190782393Z",
+      "msg": "store candle",
+      "context_canceled": true,
+      "error_type": "context_canceled"
+    },
+    {
+      "time": "2026-10-22T13:02:06.190794932Z",
+      "msg": "store candle",
+      "context_canceled": true,
+      "error_type": "context_canceled"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191169026Z",
+      "msg": "store candle",
+      "context_canceled": true,
+      "error_type": "context_canceled"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191190087Z",
+      "msg": "store candle",
+      "context_canceled": true,
+      "error_type": "context_canceled"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191202045Z",
+      "msg": "store candle",
+      "context_canceled": true,
+      "error_type": "context_canceled"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191526573Z",
+      "msg": "store candle",
+      "context_canceled": true,
+      "error_type": "context_canceled"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191540103Z",
+      "msg": "store candle",
+      "context_canceled": true,
+      "error_type": "context_canceled"
+    },
+    {
+      "time": "2026-10-22T13:02:06.191548316Z",
+      "msg": "store candle",
+      "context_canceled": true,
+      "error_type": "context_canceled"
+    }
+  ]
+}

@@ -5,6 +5,79 @@ Checkpoint diperbarui **22 Oktober 2026**. Prosedur perubahan ada di
 
 ## Status terakhir
 
+### Tahap dua — pembanding frekuensi
+
+User menyetujui penerapan rencana pada 22 Oktober setelah pemeriksaan kapasitas
+host/saldo. **Tahap dua aktif sejak 22 Oktober 2026 19:58:45 WIB**
+(`12:58:45.651873337 UTC`), container mulai `12:58:42.822178305 UTC`.
+Ini menggantikan trial aktif tahap satu di bawah; histori tersebut tetap disimpan.
+
+| Item | Tahap dua |
+|---|---|
+| Konfigurasi publik | `configs/managed.research-stage-two.yaml` |
+| DB / wallet | `tradingbot_research_stage_two` / `paper:research-stage-two` |
+| Instance | `tren-500k`, `tren-2000k`, `tren-5000k`, `ema-base-1m`, `ema-trend-1m`, `ema-trend-4h` |
+| Binding / stream | 18 binding; enam stream BTC/ETH/SOL 1m/4h |
+| Modal | 747,83957456237531 USDT virtual; Rp13,5 juta pada kurs pembanding Rp18.052 |
+| Risiko | 1%/trade, posisi 25% dan satu posisi per instance; enam posisi akun |
+| Biaya simulasi | 0,1%/sisi, slippage 2 bps |
+| Kuota bot | 1 core / 512 MiB; DB tetap 1 core / 1 GiB |
+| Source/image | Image terbit `37ffd6a`, digest `sha256:fc47df3e382be6e746a4b5b3658291c1330d3d4dc911b6fb8b777945c6411b72` dipertahankan |
+| Config privat SHA256 | `8687ca0ca42629b642920c2d27cacbaf2cc3533cb1d5ad48673c3b027822d893` |
+| Config ledger hash | `af4c6a5018dfac769769c92cb7b88b95a0000e5fbfebf57e78e09117c2bb4b36` |
+| Backup sebelum | `backup-20261022T125650Z`, seluruh checksum cocok |
+
+Aturan EMA memakai 12/26, RSI14 <=70, ATR14 stop2/target3, exit cross lawan,
+tanpa short/trailing. Filter EMA100 pada dua pembanding, tanpa filter pada
+baseline. Seluruh instance baru Rp2 juta virtual; bandingkan dengan Tren
+Rp2 juta sejak T0 bersama. Tidak mereproduksi persis saldo/universe paper awal.
+
+Preflight: restore backup tahap satu ke DB scratch berhasil, modal/config/kas
+cocok dengan sumber dan tidak ada holding/order/eksekusi; scratch dihapus.
+Migrasi target kosong 1–5 memakai image yang sama berhasil. Source runtime
+tidak disalin/dibangun ulang; konfigurasi trial dibuat dari konfigurasi server
+yang sudah ada. Manifest Compose server memiliki perubahan kuota bot 0,5 →1,
+sama dengan diff lokal; jangan menghilangkannya pada checkout/deploy berikut.
+`.env.vps` memilih DB tahap dua, config aktif UID65532 mode600. Tidak ada
+commit/push baru. Backup pasca-start `backup-20261022T130313Z` memuat empat
+database proyek dan config, seluruh checksum cocok.
+
+Awal start: enam instance dan 18 binding running, tidak halted/attention,
+reserve/order/holding/eksekusi kosong, alokasi tepat. Snapshot 28 container
+proyek lain identik sebelum/sesudah. Observer pertama `12:59:19 UTC` tidak
+melaporkan masalah; health DB dan startup stream berhasil. Ini pemeriksaan awal,
+bukan bukti operasi 24 jam atau profitabilitas. Sampel 31,79 detik sebelum
+restart: CPU bot 34,53% dari satu core, RAM75,2MiB, DB CPU32,89%/RAM220,16MiB,
+tidak ada periode throttled baru; 9,44 revisi ledger/menit dan 237,05 commit
+DB/detik. Enam seri masing-masing punya 300 candle warmup dan candle1m baru
+tersimpan. Dashboard dengan auth200. Pengukuran ini bukan benchmark puncak.
+
+Restart terkontrol pukul20:02 WIB memulihkan enam instance/18 binding, saldo,
+spec dan waktu awal ledger tanpa reset. Belum menguji recovery dengan order
+atau posisi terbuka pada trial ini. Observer20:03 WIB `problems: []`; snapshot
+akhir 28 container lain identik, hash ledger tahap satu sesudah stop tetap sama.
+Log shutdown memuat sembilan `store candle` dengan `context canceled`, dan
+run ditandai `interrupted`. Feed pulih tanpa gap terdeteksi; klasifikasi run
+dan log saat penghentian tetap temuan terbuka, bukan alasan mengedit history.
+Bukti lengkap: [start tahap dua](testing/research-stage-two-start.json).
+
+Tahap satu dihentikan setelah dipastikan tidak ada posisi/order; kas tetap
+415,46643031243073 USDT, config disimpan sebagai
+`configs/config.research-stage-one-stopped.yaml`, DB lama tidak dihapus/diubah
+untuk alokasi baru. Run lama mencatat `interrupted` pada penghentian terkontrol
+`12:58:41 UTC`; penyebab klasifikasi shutdown perlu ditinjau, jangan mengubah
+label via SQL atau menyebutnya crash yang sudah dibuktikan. Review tahap satu
+22/24/28 Oktober digantikan review tahap dua **23/25/29 Oktober 19:58:45 WIB**.
+Tidak ada reminder AI atau ekspansi otomatis yang dibuat.
+
+Target riset 44 instance/132 binding tetap bertahap. Yang berjalan sekarang
+6/18; EMA15m/1h, varian modal lain dan kelompok pullback belum diaktifkan;
+squeeze, mean reversion dan rotasi belum diimplementasikan. Kenaikan berikutnya
+menunggu pengukuran kapasitas dan minimal 24 jam tahap ini termasuk pemeriksaan
+persistence/restart sesuai protokol; bukan izin menjalankan 44 sekaligus.
+
+### Arsip checkpoint tahap satu
+
 **Paper riset tahap awal sudah berjalan** setelah user menyetujui push dan
 start VPS. T0 ledger **21 Oktober 2026 23:58:57 WIB** (`16:58:57 UTC`);
 container mulai dua detik sebelumnya. Ini uang virtual dengan data pasar publik

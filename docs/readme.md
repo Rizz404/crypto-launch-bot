@@ -16,10 +16,11 @@ Mulai dari [handover agent](handover-agent.md), lalu pilih panduan yang diperluk
 | [Bukti pengujian](testing/readme.md) | Indeks laporan dan data pendukung |
 | [Plan](plan.md) | Arsip siklus pertama; bukan backlog aktif |
 
-Checkpoint 22 Oktober 2026: paper riset VPS aktif sejak 21 Oktober 23:58:57 WIB,
-tiga instance Tren/sembilan binding BTC/ETH/SOL pada DB baru, Rp7,5 juta virtual.
-Trial ETH lama tetap dihentikan dan ledger/backup dipertahankan. Review user
-22/24/28 Oktober pada jam yang sama; transaksi uang asli belum diizinkan.
+Checkpoint 22 Oktober 2026: paper pembanding tahap dua aktif sejak 19:58:45 WIB,
+enam instance/18 binding BTC/ETH/SOL pada DB baru, Rp13,5 juta virtual.
+Tren tiga modal ditambah EMA dasar 1m, EMA filter 1m dan EMA filter 4h.
+Kuota CPU bot 1 core; ledger tahap satu dan ETH lama dipertahankan.
+Review user 23/25/29 Oktober pada jam yang sama; transaksi uang asli belum diizinkan.
 Ini checkpoint terdokumentasi, bukan status server real-time.
 
 ## Aturan dokumentasi
