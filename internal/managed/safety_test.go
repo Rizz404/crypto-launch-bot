@@ -53,6 +53,38 @@ type failRepo struct {
 	fail bool
 }
 
+type countedLoads struct {
+	Repository
+	loads int
+}
+
+func (r *countedLoads) Load(ctx context.Context) (*State, error) {
+	r.loads++
+	return r.Repository.Load(ctx)
+}
+
+func TestIdleDirectionalDrainSharesOneLedgerSnapshot(t *testing.T) {
+	sp := spec()
+	for i := range sp.Instances {
+		sp.Instances[i].Strategies[0].Name = "emacross"
+		sp.Instances[i].Strategies[0].Params = nil
+	}
+	mem, err := NewMemory(sp)
+	require.NoError(t, err)
+	repo := &countedLoads{Repository: mem}
+	rt, err := NewRuntime(t.Context(), repo, broker.NewSim(broker.SimConfig{Exchange: "sim"}), testInstruments(), d("0.001"), nil, nil)
+	require.NoError(t, err)
+	require.NoError(t, rt.Start(t.Context()))
+	require.NoError(t, mem.Update(t.Context(), "transfer", "transfer", nil, func(s *State) error {
+		return s.Transfer("a", "b", d("50"))
+	}))
+	repo.loads = 0
+	require.NoError(t, rt.drain(t.Context()))
+	require.Equal(t, 1, repo.loads, "idle checks must not reread the full ledger for each binding")
+	require.Equal(t, "450", rt.accounts["a/one"].Snapshot().Balance.String())
+	require.Equal(t, "450", rt.accounts["b/two"].Snapshot().Balance.String())
+}
+
 func (f *failRepo) Update(ctx context.Context, id, op string, payload any, fn func(*State) error) error {
 	if f.fail && op == "event_checkpoint" {
 		return errors.New("injected DB outage")

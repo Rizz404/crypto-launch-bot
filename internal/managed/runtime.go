@@ -303,6 +303,10 @@ func (r *Runtime) syncView(ctx context.Context, owner string) error {
 	if err != nil {
 		return err
 	}
+	r.syncState(s, owner)
+	return nil
+}
+func (r *Runtime) syncState(s *State, owner string) {
 	b := s.Bindings[owner]
 	i := s.Instances[b.InstanceID]
 	a := r.accounts[owner]
@@ -335,7 +339,6 @@ func (r *Runtime) syncView(ctx context.Context, owner string) error {
 	pending, _ := s.Reserved("", owner, "")
 	a.SetBalance(s.FreeCash(i.ID).Add(pending).Add(cost))
 	r.engines[owner].SetPaused(i.Status != "running" || b.Status != "running" || i.Halted || b.Halted || s.Halted || s.Attention != "" || Hash(b.Spec.Config(r.physical.Exchange(), owner)) != r.revisions[owner])
-	return nil
 }
 func (r *Runtime) Record(ctx context.Context, c domain.Candle, closed bool) error {
 	r.mu.Lock()
@@ -541,12 +544,15 @@ func (r *Runtime) drain(ctx context.Context) error {
 				if b.Spec.Name != "trendspot" && b.Spec.Name != "emacross" {
 					continue
 				}
-				if err := r.syncView(ctx, owner); err != nil {
-					return err
-				}
+				r.syncState(s, owner)
 				if len(r.engines[owner].Unprotected()) > 0 {
 					r.engines[owner].CloseAll(ctx, "recovered position lacks required protection")
 					if err := r.save(ctx, owner); err != nil {
+						return err
+					}
+					// Closing can reserve funds or stage an execution for the next owner.
+					s, err = r.repo.Load(ctx)
+					if err != nil {
 						return err
 					}
 				}
