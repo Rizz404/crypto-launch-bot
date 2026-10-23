@@ -257,6 +257,9 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 			}
 		}
 		runtimes[spec.ID] = rt
+		if tg != nil {
+			configureManagedNotifications(ctx, rt, spec.ID, moneyFor, tg.Notify, log)
+		}
 		if err = rt.Start(ctx); err != nil {
 			return err
 		}
@@ -273,35 +276,6 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 					}
 				}
 			})
-		}
-		if tg != nil {
-			last := map[string]time.Time{}
-			rt.OnNotice = func(owner string, level slog.Level, msg string) {
-				key := owner + msg
-				if time.Since(last[key]) < time.Minute {
-					return
-				}
-				last[key] = time.Now()
-				s, err := rt.Snapshot(ctx)
-				if err != nil {
-					return
-				}
-				b := s.Bindings[owner]
-				if b == nil {
-					return
-				}
-				pref := s.Instances[b.InstanceID].Notify
-				if pref == "off" {
-					return
-				}
-				threshold := slog.LevelWarn
-				if pref != "" {
-					_ = threshold.UnmarshalText([]byte(pref))
-				}
-				if level >= threshold {
-					tg.Notify("<b>" + html.EscapeString(spec.ID+" / "+owner) + "</b>\n" + html.EscapeString(msg))
-				}
-			}
 		}
 		feed := &marketdata.Feed{Source: source, Store: store, Market: domain.Spot, Subs: subs, InitialBackfill: cfg.MarketData.InitialBackfill, Log: log, Metrics: feedMetrics, OnCandle: func(c domain.Candle) { fail(rt.Record(ctx, c, true)) }, OnUpdate: func(c domain.Candle) { fail(rt.Record(ctx, c, false)) }}
 		wg.Go(func() { fail(feed.Run(ctx)) })
@@ -378,7 +352,7 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 			if today.After(day) {
 				day = today
 				if tg != nil && cfg.Telegram.DailySummary {
-					tg.Notify(managedStatus(ctx, runtimes, moneyFor()))
+					tg.Notify(managedDaily(ctx, runtimes, today.Add(-24*time.Hour), moneyFor()))
 				}
 			}
 		case <-reconcile.C:

@@ -55,7 +55,22 @@ gunakan HTTPS bila diproxy. JSON `POST /control?wallet=ID` memakai
 `GET /api/state` berisi ledger/run tanpa credentials, tetap harus dilindungi.
 
 Telegram memakai satu long-poller, whitelist, notifikasi info/warn/error/off per
-instance, dedup satu menit dan menu `/`. Contoh format:
+instance, dedup per tingkat peringatan selama satu menit dan menu `/`.
+Kode lokal kini melaporkan setiap eksekusi beli/jual setelah checkpoint engine
+dan acknowledgement inbox tersimpan; notifikasi transaksi memerlukan level
+`info`. Pesan mencantumkan akun/binding, jumlah eksekusi (termasuk parsial),
+komisi, sisa posisi dan waktu. Penjualan memakai hasil realisasi ledger,
+bukan menghitung ulang dari posisi engine. MM tetap hanya muncul di ringkasan.
+Ringkasan harian pukul 07.00 WIB mencakup eksekusi periode 07.00–07.00 WIB,
+realisasi pada eksekusi, komisi, PnL sejak awal dan status terkini. Komisi yang
+belum diketahui atau dibayar dengan aset ketiga ditandai belum lengkap pada
+data eksekusi; penilaian terlambat mengikuti total ledger sejak awal.
+Notifikasi bersifat best effort: crash antara commit dan pengiriman atau
+antrean Telegram penuh dapat menghilangkan pesan. Riwayat yang sudah selesai
+tidak dikirim ulang saat restart. Perubahan ini belum menyatakan sudah dirilis
+ke VPS; lihat checkpoint deployment pada handover.
+
+Contoh format:
 
 ```text
 /pause wallet instance

@@ -96,9 +96,19 @@ func TestRestartReplaysDurableInboxWithoutDuplicateDebit(t *testing.T) {
 	now := time.Date(2026, 10, 20, 0, 0, 0, 0, time.UTC)
 	mem, _ := NewMemory(spec())
 	repo := &failRepo{Repository: mem}
+	var notified []Execution
 	newRuntime := func() *Runtime {
 		r, err := NewRuntime(t.Context(), repo, broker.NewSim(broker.SimConfig{Exchange: "sim", Clock: func() time.Time { return now }}), testInstruments(), d("0.001"), func() time.Time { return now }, slog.New(slog.NewTextHandler(io.Discard, nil)))
 		require.NoError(t, err)
+		r.OnExecution = func(e Execution, o domain.Order) {
+			s, err := mem.Load(t.Context())
+			require.NoError(t, err)
+			for _, pending := range s.Pending {
+				require.NotEqual(t, e.Fill, pending.Fill, "notification must follow durable inbox acknowledgement")
+			}
+			require.Equal(t, e.Fill.OrderClientID, o.ClientID)
+			notified = append(notified, e)
+		}
 		require.NoError(t, r.Start(t.Context()))
 		return r
 	}
@@ -111,6 +121,7 @@ func TestRestartReplaysDurableInboxWithoutDuplicateDebit(t *testing.T) {
 	repo.fail = true
 	now = now.Add(time.Minute)
 	require.Error(t, rt.Record(t.Context(), bar(), true))
+	require.Empty(t, notified, "failed checkpoint must not announce an execution")
 	s, _ := mem.Load(t.Context())
 	require.NotEmpty(t, s.Pending)
 	before := s.Instances["a"].Cash
@@ -121,6 +132,10 @@ func TestRestartReplaysDurableInboxWithoutDuplicateDebit(t *testing.T) {
 	require.True(t, before.Equal(s.Instances["a"].Cash))
 	require.Equal(t, "0.2", s.Holding("a/one", "ETHUSDT").Quantity.String())
 	require.Equal(t, "1000", s.Equity().String())
+	require.NotEmpty(t, notified, "durable inbox replay must announce recovered executions")
+	count := len(notified)
+	rt = newRuntime()
+	require.Len(t, notified, count, "settled history must not be announced again on restart")
 }
 
 func testInstruments() []domain.Instrument {

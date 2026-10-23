@@ -69,6 +69,9 @@ type Runtime struct {
 	failure      error
 	ready        bool
 	OnNotice     func(string, slog.Level, string)
+	// OnExecution observes a fill after its engine checkpoint and inbox ack commit.
+	// Delivery is best effort; a crash after commit can omit a notification.
+	OnExecution func(Execution, domain.Order)
 }
 
 func NewRuntime(ctx context.Context, repo Repository, physical broker.Broker, ins []domain.Instrument, fee decimal.Decimal, clock func() time.Time, log *slog.Logger) (*Runtime, error) {
@@ -603,7 +606,7 @@ func (r *Runtime) deliver(ctx context.Context, ev broker.Event) error {
 	if err != nil {
 		return err
 	}
-	return r.repo.Update(ctx, nonce(), "event_checkpoint", map[string]any{"owner": o.Owner, "event": ev}, func(s *State) error {
+	err = r.repo.Update(ctx, nonce(), "event_checkpoint", map[string]any{"owner": o.Owner, "event": ev}, func(s *State) error {
 		if len(s.Pending) == 0 {
 			return errors.New("durable inbox empty")
 		}
@@ -611,6 +614,15 @@ func (r *Runtime) deliver(ctx context.Context, ev broker.Event) error {
 		s.Pending = s.Pending[1:]
 		return nil
 	})
+	if err == nil && ev.Kind == broker.EventFill && r.OnExecution != nil {
+		for _, execution := range s.Executions {
+			if execution.Fill.OrderClientID == id && execution.Fill.TradeID == ev.Fill.TradeID {
+				r.OnExecution(execution, o.Order)
+				break
+			}
+		}
+	}
+	return err
 }
 func (r *Runtime) Reconcile(ctx context.Context) error {
 	r.mu.Lock()
