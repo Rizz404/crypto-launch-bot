@@ -1,5 +1,14 @@
 # Penarikan trial dan pengelolaan riset strategi — 21 Oktober 2026
 
+**Pembaruan rencana 23 Oktober:** [Plan 3](plan-3.md) menjadi rencana aktif;
+Plan 2 selesai sebagai siklus/arsip. Riset/ekspansi di sini diteruskan melalui
+P3-R1–P3-R6, operasi/review melalui P3-O. Checkpoint terbaru mengikuti
+[handover VPS](handover-vps.md). Strategi katalis/AI adalah eksperimen terpisah
+dengan hold berbasis tesis, termasuk memecoin; belum mengubah trial pembanding.
+Target 44/132 dan protokol pembanding di bawah tetap referensi, bukan kewajiban
+mengaktifkan seluruhnya sebelum pengembangan AI. Cakupan baru tidak dibatasi
+top-20; batas top-20 di sini khusus riset pembanding lama.
+
 ## Keputusan terbaru
 
 **Pembaruan 22 Oktober:** tahap dua aktif sejak **19:58:45 WIB**, enam
@@ -595,6 +604,10 @@ backtest atau keamanan target 24 instance.
   Kita belum menghitung PBO/CSCV pada hasil proyek ini.
 
 ## Tindak lanjut terbuka
+
+Pemilik backlog aktif: [P3-R](plan-3.md#p3-r--riset-dan-ekspansi-pembanding-lama)
+dan [P3-O](plan-3.md#p3-o--penerimaan-operasi-dan-tindak-lanjut-audit).
+Checklist berikut mempertahankan riwayat, bukan antrean tugas terpisah.
 
 - [x] Tarik proses trial, simpan data dan backup, hentikan observasi trial.
 - [x] Catat saldo, order/eksekusi/arsip, gangguan observasi dan syarat momentum.

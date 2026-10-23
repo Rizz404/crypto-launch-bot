@@ -1,7 +1,9 @@
 # Multi-instance
 
-Model modal dan ownership Plan 2 untuk Binance Spot. Kontrak penggunaan ada di
-[runtime managed](managed-runtime.md); penerimaan dan backlog di [Plan 2](plan-2.md).
+Model modal dan ownership Binance Spot yang dibangun pada [Plan 2](plan-2.md).
+Kontrak penggunaan ada di [runtime managed](managed-runtime.md); penerimaan dan
+backlog aktif di [Plan 3](plan-3.md). Strategi AI harus menjaga invarian yang
+sama, dengan modal/ledger paper terpisah dari eksperimen pembanding.
 
 ## Struktur dan identitas
 
@@ -94,7 +96,9 @@ Uji DB salinan dahulu. Legacy masuk status review; ownership/dust/order ambigu
 memerlukan pemetaan eksplisit. Jangan menganggap 10.000 USDT testnet sebagai
 modal riil Rp2 juta. Simpan riwayat dan batas rollback.
 
-[Penerimaan Plan 2](plan-2.md#p2-7--testing-menyeluruh) mencakup transaksi
+[Penerimaan historis Plan 2](plan-2.md#p2-7--testing-menyeluruh) mencakup transaksi
 serentak, dua pemilik koin sama, partial/replay/cancel ambigu/crash, risk scoped,
 lease/restart, fee/arus eksternal, serta backtest satu modal bersama. Hasil akun
 simulasi Rp2 juta per kombinasi tidak boleh dijumlahkan sebagai satu portofolio.
+Penerimaan lanjutan mengikuti [P3-O](plan-3.md#p3-o--penerimaan-operasi-dan-tindak-lanjut-audit)
+dan fase P3-3–P3-6; hasil historis tidak otomatis membuktikan integrasi AI.

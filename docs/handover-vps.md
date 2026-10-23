@@ -1,7 +1,16 @@
 # Handover VPS
 
 Checkpoint diperbarui **23 Oktober 2026**. Prosedur perubahan ada di
-[deployment](deployment.md); keputusan aktif di [Strategi 2](strategy-2.md).
+[deployment](deployment.md); rencana aktif di [Plan 3](plan-3.md), dengan
+pembanding lama tetap mengikuti [Strategi 2](strategy-2.md).
+
+## Pergantian rencana 23 Oktober
+
+Plan 2 ditutup sebagai siklus atas permintaan user; backlog operasi/review
+diteruskan ke [P3-O](plan-3.md#p3-o--penerimaan-operasi-dan-tindak-lanjut-audit),
+ekspansi ke P3-R, dan live/exchange bersyarat ke P3-LIVE/P3-D. Pergantian plan
+tidak mengubah proses, ledger, modal, parameter atau T0 tahap dua. Strategi AI
+belum aktif; pilotnya kelak membutuhkan DB/wallet terpisah dan izin start.
 
 ## Status terakhir
 
@@ -228,6 +237,10 @@ start sebelumnya mengalami crash loop warmup dan tidak dihitung.
 
 ### Permintaan pengujian berikutnya dan review hari 1/3/7
 
+Backlog aktif: P3-O1–P3-O3. Bagian berikut merekam permintaan tahap satu dan
+protokol review; angka konfigurasi tahap satu adalah arsip. Jadwal aktif tahap
+dua dari T0 22 Oktober 19:58:45 WIB: **23/25/29 Oktober 19:58:45 WIB**.
+
 Pada 21 Oktober 2026 user meminta commit semua perubahan, memulai "tes live",
 dan akan kembali melapor pada hari 1, 3 dan 7. **User kemudian mengonfirmasi
 paper di VPS: harga pasar asli dengan uang virtual, tanpa transaksi uang asli.**
@@ -294,7 +307,7 @@ pelindung/`perlu diperiksa`, atau ringkasan 07.00 WIB hilang dua hari berturut.
 Pada review, cocokkan bukti VPS dengan Telegram dan timestamp harga; pesan
 "proses aktif" atau `healthz` sendiri tidak membuktikan seluruh feed sehat.
 Jangan memaksa entry jika sinyal belum muncul. Tanggal kalender review baru diisi
-setelah T0 tercatat. Jadwal trial aktif (WIB):
+setelah T0 tercatat. Jadwal tahap satu yang sudah digantikan (WIB):
 
 | Review | Waktu |
 |---|---|
@@ -302,7 +315,8 @@ setelah T0 tercatat. Jadwal trial aktif (WIB):
 | Hari 3 | 24 Oktober 2026 23:58:57 |
 | Hari 7 | 28 Oktober 2026 23:58:57 |
 
-Ini waktu referensi saat user kembali, bukan reminder AI terjadwal.
+Jadwal di tabel sudah dibatalkan/digantikan tahap dua, bukan reminder AI
+terjadwal atau instruksi untuk mengaktifkan kembali tahap satu.
 
 ### Temuan trial sebelumnya
 

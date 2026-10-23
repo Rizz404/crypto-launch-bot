@@ -2,12 +2,15 @@
 
 Laporan di sini merekam pengujian pada waktunya; bukan status real-time,
 kelulusan fitur sesudahnya, holdout baru atau izin live. Tanggal tetap ada di
-isi laporan/payload. Arah aktif: [Strategi 2](../strategy-2.md), [Plan 2](../plan-2.md).
+isi laporan/payload. Rencana aktif: [Plan 3](../plan-3.md); pembanding lama:
+[Strategi 2](../strategy-2.md). Plan 2 sudah selesai sebagai siklus/arsip.
+Penerimaan tersisa dan risiko laporan historis dipetakan ke P3-O/P3-R/P3-LIVE.
 
 ## Operasi dan Plan 2
 
 | Bukti | Isi |
 |---|---|
+| [Rilis notifikasi 23 Oktober](telegram-notification-release.json) | Source/digest, snapshot ledger, restore pra-rilis, feed dan batas penerimaan Telegram/backup pascarilis |
 | [Start pembanding tahap dua](research-stage-two-start.json) | Ekspansi 6/18, CPU1, modal virtual eksplisit, DB baru dan pemeriksaan awal |
 | [Rilis koreksi tahap dua](research-stage-two-release.json) | Commit/push/CI, koreksi pembacaan ledger berulang setelah feed tertinggal, dan pemeriksaan VPS setelah rilis |
 | [Start riset tahap awal](research-stage-one-start.json) | Paper VPS 3 instance/9 binding, DB baru, T0/review 1/3/7, pemeriksaan rilis/ledger/menu dan batas CPU |

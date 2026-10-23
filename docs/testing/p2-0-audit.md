@@ -1,7 +1,8 @@
 # Audit awal transaksi dan akuntansi
 
 Audit historis **20 Oktober 2026**, tahap P2-0. Dua fix reconciliation lokal dan
-regression tersedia saat audit; kelanjutan implementasinya ada di [Plan 2](../plan-2.md).
+regression tersedia saat audit; implementasi historis ada di [Plan 2](../plan-2.md),
+kelanjutan aktif di [P3-O4](../plan-3.md#p3-o--penerimaan-operasi-dan-tindak-lanjut-audit).
 Laporan ini bukan daftar bug terkini atau izin live.
 
 ## Bukti dan metode

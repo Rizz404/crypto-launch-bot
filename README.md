@@ -1,16 +1,18 @@
 # trading-bot
 
 Bot trading crypto otomatis dalam Go (Binance dan Bybit; spot + futures).
-Rencana aktif dan progres ada di [Plan 2](docs/plan-2.md): multi-instance dengan
-modal terpisah dalam satu akun dan beberapa strategi per instance.
-Runtime managed Binance Spot sudah dirilis dan sempat menjalani trial VPS.
-Trial ETH paper dihentikan user pada 21 Oktober. Paper riset baru aktif sejak
-21 Oktober 23:58:57 WIB: tiga instance Tren/sembilan binding BTC/ETH/SOL,
-Rp7,5 juta virtual total. Status dan review hari 1/3/7: [handover VPS](docs/handover-vps.md).
+Rencana aktif dan progres ada di [Plan 3](docs/plan-3.md): riset katalis/AI,
+hold berbasis tesis, proteksi dan pekerjaan tersisa dari platform multi-instance.
+Strategi AI belum diimplementasikan atau diaktifkan. Runtime managed Binance
+Spot sudah dirilis; checkpoint 23 Oktober mencatat paper pembanding tahap dua
+6 instance/18 binding BTC/ETH/SOL dengan T0 22 Oktober 19:58:45 WIB, modal awal
+747,83957456237531 USDT virtual. Rilis notifikasi terbaru tidak mereset T0.
+Status dan review hari 1/3/7: [handover VPS](docs/handover-vps.md).
 [Panduan penggunaan](docs/managed-runtime.md) dan
 [handover agent](docs/handover-agent.md) mencatat fitur, hasil tes, dan batasnya.
-[Plan 1](docs/plan.md) sudah selesai sebagai siklus pertama dan menjadi arsip;
-pekerjaan tertunda dipindahkan ke Plan 2. [Indeks dokumentasi](docs/readme.md).
+[Plan 1](docs/plan.md) dan [Plan 2](docs/plan-2.md) selesai sebagai siklus dan
+menjadi arsip; seluruh pekerjaan terbuka diteruskan ke Plan 3.
+[Indeks dokumentasi](docs/readme.md).
 
 Rilis dan deploy VPS mengikuti alur GitHub Actions → GHCR → image dengan digest
 tetap. Panduan: [docs/deployment.md](docs/deployment.md). Konfigurasi VPS memakai
@@ -70,8 +72,8 @@ podman compose -f deploy/compose.yml --profile bot up -d --build
 | `trendspot` | eksperimen Spot: breakout, momentum, atau pullback dalam tren naik |
 
 Contoh konfigurasi ada di [configs/config.example.yaml](configs/config.example.yaml). Unit/contract test lokal dan integration paper dengan restart sudah berjalan. Bukti siklus pertama ada di [Plan 1](docs/plan.md#hasil-testing-2026-10-17);
-pekerjaan lanjutan ada di [Plan 2](docs/plan-2.md). Pilihan kandidat pengujian
-berikutnya tercatat di [riset strategi terbaru](docs/strategy-2.md).
+pekerjaan lanjutan ada di [Plan 3](docs/plan-3.md). Pembanding lama dan matriks
+ekspansinya tetap tercatat di [riset strategi](docs/strategy-2.md).
 
 Riset lima kandidat Spot (belum diaktifkan untuk trading) ada di
 [ringkasan pengujian](docs/testing/candidates/summary.txt).

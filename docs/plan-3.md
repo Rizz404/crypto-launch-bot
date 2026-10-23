@@ -1,0 +1,522 @@
+# Plan 3 — Riset katalis dan hold berbasis tesis
+
+**Rencana aktif sejak 23 Oktober 2026 atas permintaan user.** Plan 2 ditutup
+sebagai siklus pengembangan; pekerjaan yang belum terlaksana diteruskan ke sini.
+Penutupan bukan kelulusan semua pengujian atau izin uang asli. Pekerjaan sesi
+ini hanya dokumentasi; belum ada implementasi atau aktivasi strategi AI.
+
+Plan 3 mencakup dua jalur: menyelesaikan penerimaan/riset platform lama dan
+membangun eksperimen katalis dengan hold berbasis tesis. Paper pembanding lama
+tetap memakai ledger, parameter dan T0 sendiri; tidak dihentikan, diubah atau
+digabung modalnya hanya karena pergantian plan. Sumber status operasi:
+[handover VPS](handover-vps.md); bukti lama: [Plan 2](plan-2.md) dan
+[indeks pengujian](testing/readme.md).
+
+## Prioritas dan perlindungan eksperimen P2
+
+Penegasan user 23 Oktober: eksperimen P2 yang sedang berjalan dibiarkan;
+kode, konfigurasi, database, ledger, history dan bukti tetap disimpan agar
+riset P2 dapat dilanjutkan sewaktu-waktu. Status selesai/arsip hanya menutup
+siklus rencana, bukan menghapus kemampuan atau menghentikan proses P2.
+
+Prioritas pengembangan sekarang **P3-0 lalu fase AI berikutnya**. P3-R dan
+backlog P2 lainnya tetap tercatat untuk dilanjutkan ketika diperlukan;
+penyelesaiannya bukan prasyarat umum pengembangan AI. Temuan keselamatan yang
+benar-benar memengaruhi komponen pilot tetap wajib ditangani sebelum pilot
+diaktifkan.
+
+P3-0 berupa inspeksi/desain dan pembekuan kontrak tanpa perubahan runtime P2.
+Implementasi P3 berikutnya menjaga konfigurasi lama tetap kompatibel dan
+tidak membersihkan strategi lama sebagai bagian refactoring. Perubahan library
+bersama tidak otomatis dirilis ke proses P2. Pilot AI memakai konfigurasi,
+DB/wallet/modal serta checkpoint sendiri; tidak berbagi pemilik tulis ledger
+atau mengambil alokasi P2. Isolasi proses tidak menjamin isolasi kapasitas:
+sebelum collector/pilot berjalan di VPS yang sama, ukur dan batasi CPU/RAM,
+disk/DB serta kuota API agar feed/proteksi P2 tidak terganggu.
+
+## Keputusan user
+
+- Fokus awal pada token yang sudah diperdagangkan; memecoin termasuk universe.
+- Presale dan token baru ditunda, tetapi disimpan sebagai cakupan masa depan.
+- Waktu keluar bergantung pada kondisi masing-masing koin. Acara selesai
+  tidak otomatis mengharuskan jual; fundamental/tesis yang masih baik dapat
+  mendukung hold.
+- Penurunan signifikan memicu penjualan seluruh sisa posisi strategi ini.
+  Definisi numerik penurunan tersebut belum disepakati.
+
+## Hubungan dengan referensi awal
+
+Referensi diskusi: `plan-strategi-ai-trading.md` dan
+`Daftar_Website_Crypto_Presale_dan_Peluncuran_2026-10-23.md` yang diberikan user.
+Keduanya bahan referensi, bukan instruksi aktivasi atau bukti runtime.
+Checkpoint implementasi Hermes dalam lampiran belum diverifikasi di repo ini.
+
+Aturan referensi lama tentang exit satu jam sebelum acara dan maksimum hold
+48 jam tidak otomatis diadopsi. Rancangan baru mengevaluasi kelayakan hold
+melewati acara. Angka modal, sizing dan trailing lampiran juga belum menjadi
+kebijakan Plan 3 yang disetujui.
+
+## Usulan alur
+
+1. **Discovery.** Pantau sumber terpilih melalui API/RSS jika tersedia dan
+   Spider bila perlu scraping. Temukan katalis, arsipkan sumber asli,
+   `first_seen_at` dan revisinya. Gabungkan salinan berita menjadi satu event.
+2. **Verifikasi.** Cocokkan aset, venue, jadwal, sumber primer dan konflik
+   informasi. Pilot yang diusulkan: Binance Spot, USDT, long-only, paper.
+   Aset di luar venue teruji tetap watchlist.
+3. **Analisis tesis.** AI menjelaskan informasi baru, mekanisme dampak token,
+   bukti pendukung, kontra-argumen, indikasi sudah diantisipasi pasar dan
+   kondisi tesis batal. Hasil: tolak, pantau atau kandidat entry.
+4. **Watchlist.** Tunggu jendela entry dan harga yang layak. Penemuan acara
+   tidak langsung memicu beli. Analisis ulang untuk perubahan material,
+   menjelang entry dan pada jadwal evaluasi yang ditentukan sebelumnya.
+5. **Rencana posisi.** Sebelum entry, simpan versi tesis, batas harga entry,
+   stop awal, aturan trailing, ukuran posisi, kondisi exit dan tenggat review.
+   Profil risiko mengikuti volatilitas dan likuiditas dalam batas kebijakan;
+   AI tidak dapat memperbesar batas risiko.
+6. **Validasi dan entry.** Program memeriksa bukti, freshness, spread, depth,
+   biaya, saldo, reservasi, exposure dan identitas keputusan. Semua lolos
+   baru order paper. Harga keburu melampaui batas berarti tunggu atau lewatkan.
+7. **Hold dan pantau.** Program menjaga proteksi harga independen dari AI.
+   Collector memantau revisi katalis, sedangkan AI menilai perubahan tesis.
+   Saat acara berlangsung/selesai, evaluasi apakah alasan hold masih valid;
+   hold lanjutan perlu bukti baru/terkini dan tenggat review berikutnya.
+8. **Full exit.** Stop/trailing tersentuh, tesis batal yang tervalidasi atau
+   aturan risiko dapat memicu jual seluruh sisa posisi milik strategi.
+   Fundamental yang dianggap baik tidak mengalahkan proteksi harga.
+9. **Rekonsiliasi dan rotasi.** Pastikan fill, fee, sisa posisi dan reservasi
+   selesai sebelum dana dipakai lagi. Kandidat baru harus lolos semua gate;
+   tetap tunai diperbolehkan. Re-entry perlu evaluasi baru, bukan langsung
+   membeli kembali posisi yang baru terkena stop.
+10. **Evaluasi eksperimen.** Catat seluruh kandidat, penolakan, keputusan,
+    perubahan tesis, fill, biaya dan hasil. Bandingkan AI dengan aturan event
+    sederhana tanpa AI serta benchmark dengan modal/risiko yang sebanding.
+
+## Fundamental dan memecoin
+
+Usulan: pisahkan bukti penggunaan produk/permintaan token dan tokenomics dari
+indikator komunitas, narasi dan perhatian pasar. Untuk memecoin, aktivitas
+komunitas tidak otomatis membuktikan fundamental produk atau permintaan yang
+bertahan. Klaim penggunaan tetap perlu diverifikasi pada tiap aset.
+
+Kandidat memecoin tetap dapat dipelajari berdasarkan katalis/narasi, dengan
+bukti yang sesuai, likuiditas memadai dan batas exposure lebih kecil yang
+ditetapkan sebelum pilot. Tren harga atau popularitas saja tidak cukup untuk
+menyimpulkan aset aman di-hold. Data yang tidak tersedia dicatat sebagai
+ketidakpastian, bukan diisi oleh model.
+
+## Proteksi penurunan yang diusulkan
+
+- Stop awal membatasi risiko sejak entry; trailing mengikuti puncak harga
+  valid setelah entry untuk membatasi pengembalian laba belum terealisasi.
+- Batas harga proteksi hanya naik atau tetap, tidak dilonggarkan karena AI
+  masih optimistis. Parameter dibekukan sebelum entry; pergantian versi
+  kebijakan harus tercatat dan tidak otomatis diterapkan pada posisi lama.
+- Jarak stop/trailing mempertimbangkan volatilitas dan likuiditas. Jika ruang
+  yang dibutuhkan melampaui batas risiko, kecilkan ukuran atau tolak entry.
+- Trigger penurunan memakai data venue yang tervalidasi. Sumber harga, ambang,
+  frekuensi pemantauan dan perlakuan data basi belum diputuskan.
+- Jual semua adalah target exit, bukan jaminan fill penuh atau harga tertentu.
+  Gap, slippage, partial fill, minimum order dan kegagalan jual harus ditangani.
+- Usulan fail-safe: timeout AI tidak mematikan stop; tesis kedaluwarsa tidak
+  diperpanjang otomatis. Kebijakan review terlambat/data basi harus dibekukan
+  sebelum aktivasi, termasuk kapan menutup posisi.
+
+## Keputusan yang masih terbuka
+
+- Definisi katalis yang layak dan syarat khusus kandidat memecoin.
+- Definisi terukur fundamental/tesis yang cukup untuk hold setelah acara.
+- Rumus jarak stop/trailing, batas entry dan validasi harga pemicu.
+- Jadwal review, kedaluwarsa tesis dan perlakuan kesempatan yang stagnan.
+- Modal paper, sizing, batas posisi/exposure dan sleeve memecoin.
+- Model fill, biaya, kondisi pasar tidak tersedia dan recovery.
+- Pembagian collector/AI/engine serta penggunaan ulang komponen repo.
+
+## Cakupan masa depan
+
+**Presale, TGE dan token yang baru mulai diperdagangkan** merupakan eksperimen
+terpisah yang ditunda. Alurnya kelak perlu membedakan pembelian sale, alokasi,
+vesting, claim dan awal perdagangan; memeriksa syarat partisipasi, kontrak,
+likuiditas serta rute jual. TGE tidak otomatis berarti aset dapat dijual.
+Eksekusi DEX, risiko kontrak/transfer, gas dan MEV memerlukan adapter dan model
+risiko tersendiri. Daftar website lampiran dapat menjadi referensi discovery.
+
+## Arsitektur dan penggunaan ulang
+
+Alur tanggung jawab: collector → arsip bukti → paket event terverifikasi →
+analisis AI terstruktur → validator deterministik → engine paper → ledger →
+laporan. Collector tidak memiliki hak order; model tidak diberi shell,
+kredensial trading atau hak mengubah deployment/risk. Teks halaman dan keluaran
+model adalah input tidak tepercaya, bukan instruksi sistem.
+
+| Komponen yang ada | Penggunaan dalam Plan 3 | Batas saat ini |
+|---|---|---|
+| `internal/marketdata`, adapter Binance | Instrumen, candle, feed dan backfill | Book/depth historis dan fill berbasis antrean belum dibuktikan |
+| `internal/managed` | Ownership, reservasi, jurnal, batas akun dan reconciliation | Jangan membuat ledger finansial kedua dari keputusan AI |
+| `internal/engine/checkpoint.go` | Pemulihan entry/proteksi/trailing dan exit | State event/tesis dan kontrak strategi baru masih perlu dirancang |
+| `internal/risk` | Sizing desimal dan pembatas exposure | Biaya/price impact untuk pilot harus dikalibrasi; jangan menganggap buffer lama cukup |
+| `internal/broker/sim.go` | Baseline simulasi yang sudah tersedia | Fill berbasis candle, bukan simulator order book; tidak cukup membuktikan eksekusi pasar tipis |
+| Web, metrics, recorder, Telegram | Kontrol, observasi dan notifikasi | Tampilkan alasan keputusan, bukti, freshness dan proteksi; satu poller per token |
+
+Usulan implementasi minimum: collector/analisis terpisah dari jalur proteksi,
+dengan kontrak keputusan sempit menuju engine. Pilihan proses sidecar atau
+modul Go dibekukan pada P3-0 setelah memeriksa titik integrasi. Lampiran Hermes
+bukan mandat membuat engine SQLite baru. Pilot AI memakai DB/wallet/modal
+paper terpisah dari eksperimen lama; library yang ada boleh digunakan ulang.
+Jangan menambah bahasa/service/vector database bila kebutuhan belum terbukti.
+
+Spider adalah opsi collector untuk halaman yang perlu crawling/rendering,
+bukan syarat mengambil setiap sumber. Utamakan API/RSS resmi yang tersedia;
+batasi domain, redirect, ukuran respons, kedalaman, concurrency dan waktu.
+Tolak akses loopback/private network melalui URL hasil crawling untuk mencegah
+SSRF. Hormati kebijakan sumber dan robots; kegagalan akses dicatat sebagai gap.
+HTTP-first dan browser hanya bila perlu; ukur beban terpisah dari bot lama.
+Referensi: [Spider](https://github.com/spider-rs/spider),
+[dokumentasi](https://docs.rs/spider/latest/spider/).
+
+## Kontrak data dan keputusan
+
+Ini kontrak konseptual, bukan keharusan satu tabel per entitas.
+
+| Catatan | Isi minimum |
+|---|---|
+| Bukti | URL asal/final, domain, waktu terima, waktu publikasi bila tersedia, hash, konten yang dapat diarsipkan, status fetch dan revisi |
+| Event | ID stabil, aset/venue, tipe katalis, waktu/zona waktu/kepastian, tautan bukti, konflik, status aktif/ditunda/dicabut |
+| Tesis | Versi, mekanisme dampak, kontra-argumen, kondisi batal, alasan hold setelah acara, waktu review/kedaluwarsa |
+| Keputusan AI | ID unik, versi model/prompt/input, versi event/tesis/policy, waktu, aksi, alasan dan referensi bukti, masa berlaku |
+| Rencana posisi | Scope wallet/instance/binding, batas harga, stop/trailing, sizing, biaya dan batas risiko yang dihitung validator |
+| Eksekusi/evaluasi | Order, fill, fee, reservasi, peak/stop, alasan exit, latency, biaya inference dan keputusan yang ditolak |
+
+Aksi model dibatasi `REJECT`, `WATCH`, `PROPOSE_ENTRY`, `HOLD`, `PROPOSE_EXIT`.
+Model tidak menulis saldo/kuantitas final atau memperpanjang tesis tanpa batas.
+Schema menolak field asing, nilai nonfinite, bukti yang tidak ada dan scope
+yang salah. Bukti kutipan harus cocok dengan paket input; confidence model
+bukan probabilitas keuntungan terkalibrasi.
+
+Validator menolak keputusan basi, versi event berubah, event dicabut, harga
+melampaui batas atau instrumen tidak layak. Validasi ulang sesaat sebelum
+reservasi/kirim order. Decision ID dan pembaruan posisi diproses idempoten;
+dua worker atau retry tidak boleh menghasilkan dua entry. Revisi yang datang
+setelah fill memicu evaluasi posisi, bukan membatalkan fakta fill yang terjadi.
+
+## State posisi dan urutan keselamatan
+
+Urutan konseptual: discovered → verified/watchlist → eligible → entry pending
+→ holding → closing → closed. Ditolak/kedaluwarsa/dicabut tetap tersimpan.
+`needs_attention` dapat menahan kemajuan saat status dana/order belum pasti.
+
+Sebelum entry, proteksi terencana wajib tersimpan. Setelah fill parsial,
+proteksi mengikuti kuantitas yang benar-benar dimiliki. Exit prioritas:
+proteksi harga/risk → pencabutan tesis tervalidasi → review hold. Hold dari AI
+tidak boleh membatalkan exit yang sudah dipicu. Entry baru ditahan saat ada
+status order/ownership ambigu; proteksi posisi yang aman tetap berjalan.
+
+Full exit memerlukan cancel/resync order yang mengunci aset, lalu menjual sisa
+kuantitas milik binding dengan mempertimbangkan fee base dan lot/minimum order.
+Partial fill diproses sekali; sisa gagal jual tetap `closing`/attention dan
+di-retry menurut kebijakan terbatas. Dust tidak dihapus untuk membuat flat.
+Tidak ada rotasi dana yang masih reserved atau penjualan aset eksperimen lain.
+
+## Rancangan trailing dan hold lanjutan
+
+Usulan awal untuk diuji: bekukan jarak trailing persentase `d` dari volatilitas
+candle tertutup sebelum entry; simpan puncak harga valid `H` sesudah entry.
+Untuk long, kandidat stop `H × (1 − d)` dan stop efektif adalah nilai tertinggi
+antara stop sebelumnya, stop awal dan kandidat tersebut. Ini konsisten dengan
+trailing persentase yang sudah dikenal engine; bukan trailing ATR dinamis yang
+diam-diam diperlebar ketika volatilitas naik.
+
+Pemicu memakai harga venue dan jenis quote/trade yang dibekukan dalam policy.
+Cadence, validasi outlier, stale threshold, batas `d` dan pembulatan tick wajib
+ditentukan sebelum pilot. Tidak menunggu candle tutup atau jawaban AI untuk
+menjalankan proteksi yang sudah terpenuhi. Native order dan paper trigger perlu
+dibedakan; [mekanisme trailing Binance](https://developers.binance.com/en/docs/products/spot/faqs/trailing-stop-faq)
+tidak membuktikan adapter repo sudah mendukung setiap jenis order tersebut.
+
+Hold sesudah acara memerlukan evaluasi bukti aktual: apa hasil acaranya, apakah
+mekanisme manfaat token terjadi, apa risiko baru dan kapan review berikutnya.
+Untuk memecoin, gunakan bukti katalis/narasi dan kualitas pasar yang relevan,
+bukan mengarang fundamental produk. AI tidak boleh mengganti alasan awal dengan
+cerita baru hanya untuk menghindari realisasi rugi. Perubahan tesis diberi versi
+dan tunduk batas policy; stop harga tetap tidak turun.
+
+Tidak ada maksimum hold 48 jam atau exit sebelum acara yang otomatis berlaku.
+Namun setiap tesis memiliki tenggat review dan kedaluwarsa terbatas. P3-0 wajib
+menentukan jendela review, grace period saat layanan gagal dan aturan keluar
+saat bukti tidak dapat diperbarui. Hold tanpa evaluasi tidak menjadi default.
+
+## Kebijakan yang harus dibekukan sebelum pilot
+
+| Kelompok | Keputusan wajib | Status |
+|---|---|---|
+| Universe | Venue/pair, jenis event, sumber, pengecualian, syarat memecoin | Usulan Binance Spot USDT; belum config final |
+| Discovery | Horizon, frekuensi polling, revisi/dedup, kuota sumber | Belum dibekukan; 2–14 hari lampiran hanya referensi |
+| Entry | Jendela entry, deviasi maksimum, spread, depth dan batas price impact | Belum dibekukan |
+| Proteksi | Rumus/TF volatilitas, stop/trailing minimum-maksimum, sumber pemicu | Belum dibekukan |
+| Hold | Interval review, masa berlaku tesis, event tertunda, stagnasi dan re-entry | Belum dibekukan |
+| Risiko | Modal virtual, risiko per trade, nominal/posisi/exposure dan konsentrasi | Belum dibekukan; batas memecoin perlu lebih kecil |
+| Halt | Rugi harian/drawdown, zona waktu, pemulihan/reset oleh operator | Belum dibekukan |
+| Kegagalan | Quote basi, feed putus, timeout AI, DB outage, gagal exit | Belum dibekukan |
+| Biaya | Fee akun/simbol, slippage, book/depth dan biaya model/data | Belum dikalibrasi |
+| Operasi | Batas CPU/RAM/disk/API, alert dan backup/restore | Harus diukur; headroom historis bukan kapasitas pilot |
+
+Parameter lampiran (termasuk 1.000 USDT, risk 0,5%, 2 ATR/1%, sleeve memecoin)
+belum disetujui sebagai konfigurasi final. Stop bukan jaminan batas rugi saat
+gap; sizing harus memperhitungkan biaya dan kerugian total yang mungkin pada
+aset kehilangan likuiditas. Mainnet tetap dilarang sampai keputusan P3-LIVE.
+
+## Migrasi pekerjaan Plan 2
+
+Seluruh **14 checkbox terbuka** P2-6/P2-7/P2-9/P2-10 dipetakan di bawah,
+ditambah dependensi D-01–D-03, tindak lanjut audit dan batas laporan. Checkbox
+arsip Plan 2 tidak dicentang agar tidak mengklaim pekerjaan sudah dilaksanakan.
+ID C lama dipertahankan sebagai provenance, bukan antrean duplikat.
+
+### P3-R — Riset dan ekspansi pembanding lama
+
+- [ ] **P3-R1 (P2-6 komisi, C-04/C-13):** periksa tarif maker/taker aktual
+  akun/simbol saat relevan, diskon BNB opsional dan stress fee/slippage. Fixture
+  base/quote/BNB tetap bukan bukti fee riil; order uang asli menunggu P3-LIVE.
+- [ ] **P3-R2 (P2-6 ekspansi 22 Oktober):** teruskan target 44 instance/132
+  binding dalam [matriks](strategy-2.md#perluasan-daftar-dan-izin-cpu-terbaru).
+  Checkpoint terdokumentasi 6/18 aktif; sisa 38/114. Dari target, 28/84 memakai
+  keluarga tersedia dan 16/48 menunggu implementasi. Bukan kuota wajib aktif.
+- [ ] **P3-R3 (P2-6 universe, C-08):** verifikasi top-20/Spot dan kelayakan
+  histori, bekukan tujuh keluarga strategi, empat timeframe, empat modal,
+  trade-off frekuensi/return/drawdown dan komposisi satu modal bersama.
+- [ ] **P3-R4 (P2-6 implementasi):** spesifikasi/implementasi rotasi, squeeze
+  dan mean reversion; antrean VPS, resource guard dan anggaran API/reconnect.
+  Jangan menamai strategi pengganti sebagai strategi yang belum tersedia.
+- [ ] **P3-R5 (P2-6 batch):** kalibrasi throughput/ukuran data, evaluasi
+  individual dan portofolio bersama serta simpan semua kegagalan. Plafon lama
+  6.528 job serial tetap batas rancangan, bukan pekerjaan sudah berjalan atau
+  eksperimen independen; data yang pernah dilihat bukan holdout baru.
+- [ ] **P3-R6 (P2-6 trial bertahap):** lanjutkan hanya dari tahap yang sudah
+  terdokumentasi, tanpa mengulang start 3/9 atau reset T0. Skala setelah minimal
+  24 jam observasi tahap berjalan dan gerbang kapasitas/operasi sesuai
+  [protokol](strategy-2.md#perluasan-riset-multi-instance--21-oktober-2026).
+  DB/wallet baru untuk eksperimen baru; target 44/132 menggantikan plafon lama
+  24/72, tetapi tahapan antara tetap mengikuti hasil ukur dan cakupan izin.
+
+Riset lama tetap menjadi pembanding terpisah; bukan prasyarat menyelesaikan
+semua 44 instance sebelum mengembangkan collector AI.
+
+### P3-O — Penerimaan operasi dan tindak lanjut audit
+
+- [ ] **P3-O1 (P2-7 Telegram, C-06):** bukti penerimaan nyata scoped,
+  whitelist chat lain, digest 07.00 WIB, shutdown dan pesan fill alami.
+  Rilis 23 Oktober sudah memasang perbaikan notifikasi; penerimaan aplikasi,
+  fill berikutnya dan digest 24 Oktober masih terbuka pada checkpoint
+  [rilis](testing/telegram-notification-release.json). Tinjau poll/send failure;
+  demo/API sukses bukan bukti penerimaan semua alur.
+- [ ] **P3-O2 (P2-9 verifikasi, C-07/C-14/C-16/C-19):** restart dengan
+  posisi/order/reservasi aktif, proteksi, feed/reconnect/gap backfill, recorder
+  retry/flush saat storage outage; migrasi/restore DB salinan, backup terjadwal,
+  memori Grafana dan disk. Restart tanpa posisi serta restore pra-rilis sudah
+  terdokumentasi; jangan diulang sebagai syarat baru tanpa perubahan/risiko.
+  Restore backup pascarilis 23 Oktober belum diverifikasi. Verifikasi namespace
+  ID/mode dan market-data publik pada rilis yang relevan tanpa order mainnet.
+- [ ] **P3-O3 (P2-9 tujuh hari, C-08/C-18):** review operasi prospektif
+  trial tahap dua pada 23/25/29 Oktober 19:58:45 WIB (hari 1/3/7 dari T0
+  22 Oktober). Jadwal ETH dan tahap satu dibatalkan, bukan kelulusan yang
+  dipindahkan. Nilai strategi dengan sampel memadai; 30 hari dapat menjadi
+  evaluasi awal, diperpanjang bila transaksi sedikit. Tidak ada reminder AI baru.
+- [ ] **P3-O4 (P2-0/P2-8 lanjutan, C-01/C-02/C-03/C-05):** tutup atau
+  klasifikasikan ketidakpastian tick penolakan OCO, cancel ambigu dan proteksi
+  expired; batas rekonstruksi realized PnL/equity/dust; audit terminal saat
+  finish. Pertahankan bukti lama dan regression yang sudah ada. Grid/MM
+  partial fill, order balasan per level dan reservasi base diuji ulang saat
+  jalur terkait berubah, bukan menganggap audit lama belum pernah dilakukan.
+- [ ] **P3-O5 (risiko review P2-8):** rekonsiliasi status lima temuan
+  [review kode](testing/plan-2-code-review.md#risiko-terbuka-belum-diubah).
+  Resolusi order tak pasti dan kompaksi state telah mendapat implementasi
+  lanjutan (`/resolve`, `managed_archive`); ukur kecukupan/pertumbuhannya,
+  jangan membangun ulang. Periksa attention transien snapshot/fill, pemulihan
+  paper order `canceling` dan konsistensi idempotency no-op PG/Memory sebelum
+  menyebut tiga temuan lain selesai.
+- [ ] **P3-O6 (temuan VPS lanjutan):** telusuri label run `interrupted`
+  saat shutdown terkontrol dan log `store candle/context canceled`; klasifikasi
+  WARN persist. Akar restart Docker bersama sudah dikaitkan ke penghentian
+  service, pemicu administratif tetap belum diketahui. Kurangi akses DB/no-op
+  jika pengukuran skala membutuhkannya; sampel pascarilis singkat bukan bukti
+  kapasitas panjang. Jangan restart Docker atau mengedit history untuk merapikan.
+
+C-15 dipenuhi sebagai inventaris/reuse test historis, bukan kewajiban menjalankan
+ulang semua tes. C-17 (pengecualian saham tokenisasi, pesan stop terdahulu,
+backup terdahulu) tetap selesai. C-18 target 72 jam tetap dibatalkan. C-16 punya
+checkpoint proteksi pada kode/laporan lokal; penerimaan recovery VPS mengikuti
+P3-O2. Perangkat fisik/Safari dan migrasi inventori legacy nyata belum menjadi
+bukti selesai; lakukan bila target perangkat atau kebutuhan migrasi memerlukannya.
+
+### P3-LIVE — Keputusan uang asli yang tetap bersyarat
+
+Meneruskan seluruh P2-10/C-09 dan bagian live C-04/C-14; **belum disetujui**.
+
+- [ ] Tinjau bukti strategi, operasi dan temuan terbuka bersama user.
+- [ ] Tetapkan modal riil, loss/drawdown, leverage dan scope akun/strategi,
+  lalu dapatkan persetujuan eksplisit sebelum transaksi uang asli.
+- [ ] Hanya bila disetujui, uji kecil fee riil dan ledger vs exchange; siapkan
+  penghentian aman, tanpa kenaikan modal otomatis.
+- [ ] Jadwalkan backup luar server pada tahap live sesuai keputusan user;
+  backup satu server tetap memiliki risiko kehilangan bersama VPS.
+- [ ] Tinjau akses/legal/pajak terkini saat deployment riil relevan; catatan
+  lama bukan verifikasi aturan yang sedang berlaku.
+
+### P3-D — Pekerjaan bersyarat dan future reference
+
+- [ ] **P3-D1 (D-01/C-10):** Binance Futures menunggu Demo key dan keputusan
+  memakai futures. Order/algo SL/TP, listenKey/reconnect/expiry, event/partial
+  fill, leverage/margin/one-way, reconciliation, fixture dan ownership net
+  position memerlukan pengujian/desain sendiri. Subledger Spot tidak cukup.
+- [ ] **P3-D2 (D-02/C-11):** Bybit private API dan xspread menunggu akses.
+  Signing/WS, shared contract test, spot/linear, unified wallet, conditional
+  stop/filter/base fee, partial/cancel, namespace ID dan efek margin account-wide
+  tetap dibawa. Arbitrase nyata perlu kedua venue teruji; tetap nonaktif.
+- [ ] **P3-D3 (D-03/C-12/C-13):** histori funding, backtest dua kaki
+  tersinkron, hedge exposure, leg timpang/cooldown/repair dan multi-akun.
+  Tambahkan L2/queue/latency MM serta aturan instrumen historis sesuai kebutuhan
+  data; jangan mengklaim simulator candle sudah mencakupnya.
+- [ ] **P3-D4:** presale/TGE/token baru dan DEX sesuai cakupan masa depan
+  di atas. Bukan bagian pilot dan tidak diaktifkan oleh daftar website.
+
+OKX tetap dihapus; saham tokenisasi tetap dikecualikan, bukan backlog untuk
+diaktifkan kembali. Penundaan exchange lain tidak menahan pilot Spot.
+
+## Fase implementasi baru dan kriteria penerimaan
+
+Urutan: kontrak → collector → analisis → entry/hold/exit → laporan → pengujian
+dan fixing → trial prospektif. Perubahan dana/proteksi tetap memerlukan
+regression kecil ketika diimplementasikan. Daftar verifikasi di bawah adalah
+rencana, bukan izin menjalankan tes/server pada sesi dokumentasi ini.
+
+### P3-0 — Kontrak pilot dan desain integrasi
+
+- [ ] Bekukan seluruh kebijakan pada tabel di atas, versi eksperimen,
+  benchmark dan kriteria evaluasi; identifikasi keputusan user yang dibutuhkan.
+- [ ] Petakan titik integrasi dan caller/test/config/migrasi yang terdampak;
+  pilih reuse engine, batas proses dan kontrak collector/model/validator.
+- [ ] Tetapkan modal virtual terpisah, isolasi DB/wallet dan resource budget
+  tanpa mengubah parameter/modal eksperimen pembanding.
+
+Selesai bila ada spesifikasi implementasi tanpa parameter keselamatan yang
+masih ambigu, beserta batas pengujian dan aktivasi yang jelas.
+
+### P3-1 — Collector dan arsip prospektif
+
+- [ ] Mulai dari sedikit sumber terpilih, daftar sumber primer dan aturan
+  polling/cache/diff/retry/backoff; evaluasi kebutuhan Spider pada sumber nyata.
+- [ ] Simpan bukti/revisi/dedup dan identitas event/asset; TBA tetap TBA,
+  konflik material menahan entry. Catat sumber gagal dan cakupan yang hilang.
+- [ ] Terapkan batas URL/redirect/ukuran/waktu, sanitasi dan redaksi secret,
+  retensi arsip serta resource/cost metrics.
+
+Selesai bila event yang sama tidak berlipat, perubahan/pencabutan dapat
+ditelusuri dan waktu informasi tersedia dapat direkonstruksi tanpa model.
+
+### P3-2 — Analisis tesis dan shadow evaluation
+
+- [ ] Bentuk paket bukti terbatas; panggil model tanpa tools untuk kandidat
+  atau perubahan material, dengan batas token/timeout/biaya dan cache berversi.
+- [ ] Validasi schema, evidence, scope dan freshness; simpan input/output,
+  versi serta penolakan. JSON rusak/hallucination/timeout berarti tidak entry.
+- [ ] Rekam keputusan shadow, termasuk HOLD sah, bersama pembanding event
+  sederhana tanpa AI dengan akses informasi dan waktu yang sama.
+
+Selesai bila keputusan dapat diaudit, biaya terukur dan model tidak bisa
+mengubah policy atau mengirim order sendiri. Shadow belum membuka posisi.
+
+### P3-3 — Entry paper dan ledger
+
+- [ ] Hubungkan keputusan tervalidasi ke koordinator order/ownership yang
+  ada; reservasi, dedup dan checkpoint sebelum I/O, tanpa menduplikasi saldo.
+- [ ] Validasi quote/spread/depth dan sizing setelah fee/slippage, aturan
+  instrumen serta batas memecoin/konsentrasi. Entry di luar batas ditolak.
+- [ ] Tetapkan model fill yang memadai: jika masih memakai candle Sim,
+  labeli batasnya dan batasi universe; dukungan book/depth harus benar-benar
+  tersedia sebelum mengklaim simulasi realistis untuk pasar tipis.
+
+Selesai bila retry/concurrency tidak menggandakan entry, posisi dapat
+ditelusuri ke keputusan/bukti dan dana eksperimen lama tidak tersentuh.
+
+### P3-4 — Proteksi, hold, full exit dan recovery
+
+- [ ] Persist puncak, stop, thesis version dan review deadline; trailing
+  monoton dan bekerja tanpa menunggu AI. Jangan mengubah proteksi posisi lama
+  karena parameter default berubah.
+- [ ] Review sebelum/sesudah acara dan material update; terapkan expiry,
+  stale-data serta outage policy. HOLD tidak mengalahkan exit yang sudah dipicu.
+- [ ] Full exit milik binding, cancel/resync, partial fee/fill/dust, retry
+  terbatas dan closing/attention; rotasi hanya dari dana yang telah bebas.
+- [ ] Pulihkan state setelah restart/crash, keputusan bersamaan, fill terlambat
+  dan koneksi putus tanpa stop turun, order ganda atau inventori hilang.
+
+Selesai bila skenario proteksi/tesis/exit/recovery deterministik dan posisi
+tidak dinyatakan closed sebelum status aset/order benar-benar selesai.
+
+### P3-5 — Kontrol, laporan dan observasi
+
+- [ ] Reuse dashboard/Telegram: tampilkan event, alasan entry/HOLD/exit,
+  URL bukti, waktu review, stop/peak, posisi/dana, biaya serta kesehatan layanan.
+- [ ] Pause entry terpisah dari flatten; otorisasi scope dan satu poller
+  Telegram. Model tidak dapat reset halt atau menaikkan modal/batas risiko.
+- [ ] Metrics discovery→decision→fill, umur quote/tesis, gap sumber, model
+  error/cost, proteksi, backlog/retry serta resource collector/DB/engine.
+
+Selesai bila operator mengetahui mengapa bot menunggu atau menutup posisi,
+dan proses hidup dibedakan dari feed/proteksi yang benar-benar sehat.
+
+### P3-6 — Pengujian dan fixing
+
+- [ ] Unit/fixture: dedup/revisi/konflik, asset mapping, schema, prompt
+  injection/SSRF, keputusan basi dan versi policy/event berubah.
+- [ ] Dana/proteksi: double submission, partial fill/base fee, cancel ambigu,
+  gap/outlier/stale quote, stop monoton, stop bersamaan pencabutan tesis,
+  gagal jual/dust dan larangan menjual aset binding lain.
+- [ ] Recovery: crash setelah reservasi/fill sebelum checkpoint, expiry saat
+  model mati, DB/feed outage, replay dan shutdown; DB sementara terisolasi.
+- [ ] End-to-end collector→model nyata→validator→paper→ledger→notifikasi;
+  HOLD sah tidak memaksa transaksi, fixture terkontrol menguji jalur fill/exit.
+- [ ] Review auth/control/UI, CI wajib dan perbaiki temuan material dengan
+  regression. Simpan bukti dan batasnya di `docs/testing/`, tanpa menimpa JSON lama.
+
+Selesai bila seluruh jalur kritis punya bukti, temuan penghalang aktivasi ditutup,
+dan klaim integrasi nyata dibedakan dari fixture. Verifikasi dijalankan saat
+tugas implementasi/pengujian mengizinkannya, bukan otomatis saat membaca plan.
+
+### P3-7 — Trial paper prospektif dan evaluasi
+
+- [ ] Tinjau hasil P3-0–P3-6, isolasi dan kapasitas dengan beban collector/model;
+  sajikan rencana deployment, backup/rollback dan jadwal sebelum meminta izin start.
+- [ ] Sesudah izin yang sesuai, rilis lewat GitHub/CI/GHCR/digest, DB/wallet
+  baru, policy hash, capital dan T0 aktual. Jangan menumpang ledger tahap dua.
+- [ ] Review operasi hari 1/3/7 dari T0 pilot sendiri; interval ini tidak
+  menjadwalkan agent otomatis atau mengganti review pembanding lama.
+- [ ] Evaluasi prospective bersih setelah biaya trading/model/data, drawdown,
+  exposure, turnover, rejection/no-fill, latency serta reliabilitas proteksi.
+  Bandingkan tunai, buy-and-hold, aturan event tanpa AI dan strategi lama
+  dengan normalisasi modal/risiko/exposure serta jendela waktu yang jelas.
+- [ ] Tentukan lanjut/perbaiki/hentikan atau belum cukup bukti berdasarkan
+  kriteria P3-0; jangan memilih hanya event pemenang. Tidak ada auto-promosi live.
+
+Berita historis yang direvisi dan pengetahuan model tentang peristiwa lama
+dapat membocorkan masa depan. Backtest berita lama hanya eksplorasi kecuali
+tersedia snapshot point-in-time yang memadai; forward/shadow archive menjadi
+bukti utama. Target return 50% tetap aspirasi historis, bukan janji Plan 3.
+
+## Panduan melanjutkan dan log
+
+1. Baca handover agent/VPS, cek working tree dan pertahankan perubahan user.
+2. Prioritaskan P3-0 lalu fase AI berikutnya tanpa menunggu seluruh backlog P2.
+   Gunakan P3-R/P3-O saat tugas terkait pembanding atau penerimaan platform;
+   pertahankan eksperimen P2 untuk riset berikutnya. Instruksi arsip tidak
+   mengaktifkan ulang trial yang telah dihentikan.
+3. Catat progres pada ID di sini, bukti dan keterbatasannya; sinkronkan dokumen
+   operasional jika kontrak atau deployment benar-benar berubah.
+4. Commit/push/deploy dan uang asli memerlukan cakupan izin masing-masing.
+   VPS Plesk tetap dibatasi proyek bot; trial di laptop tetap dilarang.
+
+| Tanggal | Keputusan/perubahan | Status |
+|---|---|---|
+| 23 Oktober 2026 | Katalis, hold sesuai tesis, memecoin dan full exit; presale/token baru ditunda | Arah user; angka policy belum dibekukan |
+| 23 Oktober 2026 | Plan 2 ditutup, backlog dipindah dan Plan 3 dirinci sebagai rencana aktif | Dokumentasi; tidak mengubah kode, VPS, trial atau izin live |
+| 23 Oktober 2026 | User menegaskan P2 berjalan dan seluruh aset riset dipertahankan; prioritaskan P3-0 dan fase AI tanpa menunggu backlog P2 | Pengembangan terpisah; aktivasi tetap mengikuti gerbang isolasi/kapasitas |

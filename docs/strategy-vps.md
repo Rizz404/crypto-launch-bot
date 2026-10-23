@@ -11,14 +11,15 @@ dan belum disetujui untuk live**. User meminta tidak menjalankan eksperimen ini
 di laptop; VPS boleh dipakai bila tidak mengganggu instance yang sudah berjalan.
 Jika belum siap, simpan referensi untuk sesudah pengujian VPS selesai.
 
-## Hubungan dengan Plan 2
+## Hubungan dengan rencana aktif
 
-[Plan 2](plan-2.md) adalah rencana aktif; [Plan 1](plan.md) menjadi arsip.
-Audit dan kesiapan trial diteruskan lewat P2-0 sampai P2-9. Istilah project
+[Plan 3](plan-3.md) adalah rencana aktif; Plan 1/2 menjadi arsip.
+Audit/penerimaan lama diteruskan ke P3-O; P2-0 sampai P2-9 di bawah adalah
+referensi historis. Pilot AI tidak otomatis mewarisi aturan ETH. Istilah project
 Compose/instance kedua pada runbook ini menjelaskan isolasi deployment
 eksperimen, berbeda dari [instance virtual dalam satu akun](multi-instance.md).
 Jangan membuat beberapa proses trading pada wallet yang sama untuk meniru
-fitur multi-instance yang belum tersedia.
+fitur multi-instance; runtime managed sudah tersedia, backlog mengikuti Plan 3.
 
 ## Pembaruan keputusan 20 Oktober 2026
 

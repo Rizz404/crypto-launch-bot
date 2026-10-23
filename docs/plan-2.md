@@ -1,4 +1,37 @@
-# Plan 2 — Multi-instance dan pengembangan platform trading
+# Plan 2 — Selesai dan diarsipkan
+
+**Ditutup 23 Oktober 2026 atas permintaan user sebagai siklus pengembangan.**
+Rencana aktif sekarang [Plan 3](plan-3.md). Semua pekerjaan yang belum selesai
+dipindahkan ke [backlog Plan 3](plan-3.md#migrasi-pekerjaan-plan-2), termasuk
+riset, penerimaan operasi, keputusan live dan pekerjaan exchange bersyarat.
+Penutupan ini bukan klaim semua checkbox lulus, strategi profit atau izin live.
+
+## Ringkasan penutupan
+
+| Area | Status akhir dan tujuan lanjutan |
+|---|---|
+| P2-0–P2-5, P2-7/P2-8 lokal | Implementasi/audit dan bukti tersedia; tindak lanjut masuk P3-O |
+| P2-6 | Baseline/smoke tersedia; komisi, riset dan ekspansi tersisa masuk P3-R1–P3-R6 |
+| P2-9 ETH | Ditutup dini 21 Oktober; review tujuh hari dibatalkan, tidak diulang pada ledger lama |
+| Paper pembanding tahap dua | Checkpoint 6/18, T0 22 Oktober 19:58:45 WIB; penerimaan/review masuk P3-O1–P3-O3 |
+| P2-10 | Belum disetujui; dipindahkan seluruhnya ke P3-LIVE |
+| D-01/D-02/D-03 | Tetap ditunda; diteruskan sebagai P3-D1/P3-D2/P3-D3 |
+
+Status source/digest terbaru dan batas bukti mengikuti [handover VPS](handover-vps.md).
+Pergantian plan tidak menghentikan trial atau mengubah parameter/modal/T0.
+User menegaskan eksperimen yang berjalan, kode, konfigurasi, DB dan bukti P2
+tetap dipertahankan agar risetnya dapat dilanjutkan sewaktu-waktu. Prioritas
+P3-0 dan fase AI tidak menunggu backlog P2 selesai; lihat
+[batas isolasi](plan-3.md#prioritas-dan-perlindungan-eksperimen-p2).
+
+## Batas pembacaan arsip
+
+Isi, ID fase, checkbox dan log di bawah merekam riwayat Plan 2. Checkbox kosong
+adalah provenance pekerjaan yang dipindahkan, bukan antrean aktif kedua;
+checkbox selesai bukan bukti penerimaan runtime di semua lingkungan. Instruksi
+melanjutkan fase/start/live di arsip tidak memberikan izin tindakan baru.
+
+## Riwayat multi-instance dan pengembangan platform trading
 
 > **Status terbaru, 22 Oktober 2026:** P2-9 sudah dirilis dan trial ETH paper
 > dihentikan atas permintaan user pukul 20.30 WIB, sebelum review tujuh hari.
@@ -388,19 +421,15 @@ Prioritas ini tidak menghalangi fondasi multi-instance Spot.
 
 ## Panduan melanjutkan
 
-1. Baca Plan 2, [rancangan](multi-instance.md), keputusan strategi dan handoff VPS.
-2. Audit awal P2-0 sudah tersedia; lanjut P2-1/P2-2 dan tindak lanjut laporan.
-   Jangan membangun multi-instance dengan
-   menggandakan `bot run` pada wallet/DB lama.
-3. Catat progres di fase/ID yang sama, tautkan bukti, dan perbarui dokumen lain
-   hanya bila kontrak, status atau prosedurnya berubah.
-4. Gunakan Plan 1 sebagai bukti sejarah, bukan antrean tugas aktif. Jangan
-   menjalankan worker riset selesai, tes lama, atau live dari instruksi arsip.
+Gunakan [panduan Plan 3](plan-3.md#panduan-melanjutkan-dan-log).
+P2-1/P2-2 sudah memiliki implementasi; jangan membangun ulang atau menggandakan
+`bot run` pada wallet yang sama. Status dan checklist di atas tetap arsip.
 
 ## Log progres
 
 | Tanggal | Perubahan | Bukti/status |
 |---|---|---|
+| 2026-10-23 | Plan 2 ditutup sebagai siklus; seluruh pekerjaan terbuka dan bersyarat diteruskan ke Plan 3 | Dokumentasi saja; tidak mengubah trial atau memberi izin live |
 | 2026-10-20 | Plan 1 ditutup; backlog dan fitur baru dipetakan ke Plan 2; rancangan dan navigasi diperbarui | Dokumentasi; belum implementasi kode/deploy |
 | 2026-10-20 | P2-0: klasifikasi log read-only, dua bug reconciliation diperbaiki, regression OCO dan audit reproducible | [Audit](testing/p2-0-audit.md); unit/race/lint/vet/build dan integration DB sementara lolos; belum deploy |
 | 2026-10-20 | P2-7 QA browser fixture (Claude): desktop/mobile light/dark dan aksi form; empat perbaikan dashboard dengan regression | [QA browser](testing/plan-2-browser-qa.md); race/lint/vet/build lolos; belum deploy |

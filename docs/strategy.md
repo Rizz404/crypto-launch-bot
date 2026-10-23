@@ -9,8 +9,10 @@
 
 ## Hubungan dengan rencana aktif
 
-Pengembangan aplikasi dan pekerjaan tersisa mengikuti [Plan 2](plan-2.md).
-[Plan 1](plan.md) sudah selesai/arsip. Fitur pembagian modal antar-instance di
+Pengembangan aplikasi dan pekerjaan tersisa mengikuti [Plan 3](plan-3.md).
+[Plan 1](plan.md) dan [Plan 2](plan-2.md) sudah selesai sebagai siklus/arsip.
+Aturan ETH di dokumen ini adalah referensi historis, bukan policy pilot AI.
+Fitur pembagian modal antar-instance di
 [rancangan baru](multi-instance.md) tidak mengubah modal trial ETH menjadi
 Rp2 juta per instance. ETH tetap kandidat utama, BTC pembanding; tidak ada
 kewajiban menjalankan keduanya atau membagi dana di antara keduanya.
@@ -158,7 +160,7 @@ Pajak, transfer dan perubahan kurs belum dimodelkan dalam hasil historis itu.
 ## Rujukan sesi mendatang
 
 Baca dokumen keputusan ini dahulu untuk pilihan strategi; gunakan
-[Plan 2](plan-2.md) untuk progres dan [handoff VPS](handover-vps.md) untuk status server.
+[Plan 3](plan-3.md) untuk progres dan [handoff VPS](handover-vps.md) untuk status server.
 Bukti tambahan: [baseline](testing/backtest/summary.txt),
 [kandidat awal](testing/candidates/summary.txt),
 [riset lanjutan](testing/research-analysis.json),

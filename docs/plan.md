@@ -1,8 +1,10 @@
 # Plan 1 — Selesai dan diarsipkan
 
 **Ditutup 20 Oktober 2026 atas permintaan user. Rencana aktif sekarang adalah
-[Plan 2](plan-2.md).** Semua pekerjaan yang belum selesai diteruskan melalui
-[daftar pemindahan C-01–C-19](plan-2.md#pemindahan-pekerjaan-dari-plan-1).
+[Plan 3](plan-3.md).** Pekerjaan tersisa pernah diteruskan melalui
+[daftar pemindahan C-01–C-19](plan-2.md#pemindahan-pekerjaan-dari-plan-1)
+di Plan 2, lalu dipindahkan ke [backlog Plan 3](plan-3.md#migrasi-pekerjaan-plan-2)
+saat Plan 2 ditutup sebagai siklus pada 23 Oktober.
 Penutupan siklus ini tidak menyatakan seluruh checklist lulus, target profit
 tercapai, atau mainnet diizinkan.
 
@@ -19,7 +21,7 @@ tercapai, atau mainnet diizinkan.
 | Kandidat strategi | ETH momentum 4h untuk paper, BTC momentum harian sebagai pembanding; belum ada trial baru |
 | Kondisi VPS terakhir | Bot mati; observasi nonaktif, DB/DNS/monitoring/backup aktif; detail di handoff |
 
-Dokumen utama berikutnya: [Plan 2](plan-2.md),
+Dokumen utama berikutnya: [Plan 3](plan-3.md), arsip [Plan 2](plan-2.md),
 [rancangan multi-instance](multi-instance.md),
 [keputusan strategi](strategy.md),
 [handoff VPS](handover-vps.md), dan
@@ -32,11 +34,11 @@ lama dan konteks implementasi. Checkbox kosong adalah catatan historis, bukan
 antrean aktif kedua. Tugas yang sudah diselesaikan belakangan tidak dibuka ulang
 hanya karena checkbox lama kosong; lihat C-17 pada Plan 2. Instruksi menunggu
 21 Oktober, resume worker riset, trial lokal ETH dan Fase 11 di bagian lama
-sudah digantikan status penutupan serta Plan 2.
+sudah digantikan status penutupan; pekerjaan aktif mengikuti Plan 3.
 
 ## Handoff siklus pertama — arsip
 
-> Arsip Plan 1. Status, instruksi fase, jadwal dan checklist di bawah merekam kondisi pada waktunya. Untuk pekerjaan selanjutnya gunakan [Plan 2](plan-2.md); jadwal lama tidak mengaktifkan worker, trial, atau live.
+> Arsip Plan 1. Status, instruksi fase, jadwal dan checklist di bawah merekam kondisi pada waktunya. Untuk pekerjaan selanjutnya gunakan [Plan 3](plan-3.md); jadwal lama tidak mengaktifkan worker, trial, atau live.
 
 ## Status saat ini (2026-10-20)
 

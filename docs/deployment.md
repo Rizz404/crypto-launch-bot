@@ -5,6 +5,11 @@ di [handover VPS](handover-vps.md); **paper pembanding tahap dua aktif** sejak
 22 Oktober 2026 19:58:45 WIB. Panduan ini tidak memberi izin trial tambahan
 atau transaksi mainnet dengan uang asli.
 
+Rencana aktif [Plan 3](plan-3.md); Plan 2 sudah diarsipkan. Strategi AI belum
+memiliki deployment. P3-7 memerlukan kesiapan/izin start sendiri, DB/wallet baru
+dan pemeriksaan resource collector; runbook ini tidak mengizinkan perubahan
+trial pembanding hanya karena plan berganti.
+
 ## Rilis dan persiapan
 
 - Source dari repo private `Rizz404/trading-bot`; image dari CI/GHCR dengan
@@ -33,7 +38,7 @@ Paper memakai harga publik tanpa key perdagangan.
 | `BOT_IMAGE` | `ghcr.io/rizz404/trading-bot@sha256:<digest>` dari CI |
 | `BOT_DB_NAME` | Database trial yang tepat; trial baru menggunakan DB baru |
 | `TB_APP__MODE` | `paper` / `testnet`, harus cocok dengan config |
-| `TB_APP__ALLOW_LIVE` | Dipaksa `false` oleh manifest; live memerlukan P2-10 |
+| `TB_APP__ALLOW_LIVE` | Dipaksa `false` oleh manifest; live memerlukan P3-LIVE |
 | `TB_TELEGRAM__TOKEN` | Secret via environment; whitelist di YAML server |
 | `TB_WEB__PASSWORD` | Auth dashboard; jangan buka port publik |
 

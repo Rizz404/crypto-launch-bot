@@ -3,6 +3,8 @@
 Panduan konfigurasi dan kontrol multi-instance Binance Spot. Status deployment
 di [handover VPS](handover-vps.md), desain di [multi-instance](multi-instance.md).
 Trial ETH sudah dihentikan; contoh perintah di sini bukan izin memulainya lagi.
+Backlog aktif mengikuti [Plan 3](plan-3.md); Plan 2 sudah diarsipkan. Panduan
+ini menjelaskan runtime yang tersedia, bukan klaim dukungan strategi AI.
 
 ## Konfigurasi dan modal
 
@@ -14,12 +16,16 @@ lewat environment, bukan YAML/state/laporan; paper tidak perlu key trading.
   bukan keputusan alokasi strategi.
 - `configs/managed.eth-paper.yaml`: profil historis ETH-only 110,79104808331486
   USDT total, risk 3%, posisi 75%, daily kill 8%, drawdown 30%, leverage 1.
-  Parameter lengkap di [Strategi](strategy.md); arah terbaru di [Strategi 2](strategy-2.md).
-- `configs/managed.research-stage-one.yaml`: trial aktif di VPS, tiga instance
+  Parameter lengkap di [Strategi](strategy.md); pembanding di [Strategi 2](strategy-2.md).
+- `configs/managed.research-stage-one.yaml`: trial tahap satu yang sudah dihentikan, tiga instance
   Tren Rp500 ribu/2 juta/5 juta virtual; masing-masing BTC/ETH momentum 4h dan
   SOL pullback 4h. Modal dibagi sekali, sembilan binding tidak berarti sembilan
   saldo baru. Risk 1%, posisi maksimal 25%, satu posisi per instance. T0 dan
   hash deployment tercatat di [handover VPS](handover-vps.md).
+- `configs/managed.research-stage-two.yaml`: sumber konfigurasi tahap dua 6/18,
+  tiga Tren dan EMA dasar 1m/filter 1m/filter 4h. Config privat/hash serta
+  source/digest yang benar-benar dipasang mengikuti handover VPS. Modal dan
+  parameter tahap dua tidak menjadi default pilot AI Plan 3.
 - `allocation` instance berasal modal wallet. Binding berbagi cash; `cap`
   opsional mencakup inventori dan reserved buy, tanpa saldo baru.
 - Default risk berlaku jika blok dihilangkan; blok nonzero harus valid lengkap.

@@ -1,62 +1,54 @@
 # Handover agent
 
-Untuk Codex, Claude dan agent berikutnya. Checkpoint **22 Oktober 2026**;
+Untuk Codex, Claude dan agent berikutnya. Checkpoint dokumentasi **23 Oktober 2026**;
 verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirilis.
 
 ## Status dan prioritas
 
-- **Pembaruan terbaru 22 Oktober:** user menyetujui penerapan ekspansi dan
-  kenaikan kuota CPU. Tahap dua dimulai **22 Oktober 19:58:45 WIB**, DB
-  `tradingbot_research_stage_two`, wallet `paper:research-stage-two`, enam
-  instance/18 binding: tiga Tren + EMA dasar 1m/filter 1m/filter 4h.
-  Modal 747,83957456237531 USDT virtual (Rp13,5 juta pada kurs pembanding lama),
-  CPU bot 1 core. Source terbaru `25a3ad5` sudah di-push; CI lengkap lulus dan
-  image koreksi `sha256:1cc0cdecc604ea7c602998f4e0c161dd45904ee9fb16ac8d8f05ba976fb45a8f`
-  dipasang pukul20:21 WIB. Fix `740c475` mengurangi pembacaan ulang ledger
-  pada drain idle setelah observer menemukan feed tertinggal; sampel sehat
-  saat start bukan bukti operasi berkelanjutan. Tahap satu dihentikan dan seluruh
-  DB/ledger/backup lama dipertahankan; jangan memakai checkpoint tahap satu
-  di bawah sebagai status aktif. Target riset 44/132 belum seluruhnya aktif.
-  Detail dan bukti terbaru: [handover VPS](handover-vps.md#tahap-dua--pembanding-frekuensi).
-  Pascarilis 20:26 WIB: dua fill SOL di EMA dasar/filter 1m, masing-masing 0,265 SOL
-  dengan stop loss/take profit aktif, pending 0 dan tidak halted/attention.
-  Dua penolakan ETH sesuai batas satu posisi yang sudah terisi SOL. Observer
-  sehat, feed 1m maju tanpa gap; 28 container lain identik. Bukti rilis terbaru
-  [di sini](testing/research-stage-two-release.json); belum ada bukti exit/profit.
-  Test config terkait lulus, restore backup sebelum start dan restart tanpa
-  posisi/order mempertahankan saldo; backup akhir checksum cocok. Sampel31,79
-  detik CPU bot34,53% dari satu core tanpa throttling baru. Temuan terbuka:
-  shutdown terkontrol mencatat run `interrupted` dan sembilan `store candle`
-  karena `context canceled`; setelah pulih observer tanpa gap/masalah.
-
-- Permintaan terbaru sudah dilaksanakan: commit/push, CI sukses, **paper VPS
-  dengan uang virtual aktif sejak 21 Oktober 2026 23:58:57 WIB**. Baca
-  [protokol review dan prasyarat start](handover-vps.md#permintaan-pengujian-berikutnya-dan-review-hari-137).
-  DB `tradingbot_research_stage_one`, wallet `paper:research-stage-one`, image
-  source `37ffd6a`; jangan menganggap commit docs sesudahnya sebagai versi image.
-  Komposisi 24/72 belum runnable dan mainnet belum diizinkan. Konfigurasi aktif
-  berasal `configs/managed.research-stage-one.yaml`,
-  tiga instance Tren (Rp500 ribu/2 juta/5 juta virtual), sembilan binding pada
-  BTC/ETH/SOL, satu posisi per instance. Bukan semua 24/72 sekaligus. Load dan
-  invariant modal/risk config serta preflight/migrasi/cek awal VPS lulus.
-  Review user: 22/24/28 Oktober pukul 23:58:57 WIB (hari 1/3/7). Observe 5 menit
-  dan backup aktif; tidak ada reminder AI atau recovery otomatis.
-
-- Implementasi managed P2-1–P2-6 serta pengujian/fixing P2-7/P2-8 tersedia.
-  Rincian penerimaan dan pekerjaan terbuka ada di [Plan 2](plan-2.md).
-- P2-9 sempat berjalan di VPS, lalu ditarik user pada 21 Oktober 20.30 WIB.
-  Bot exited 0; kas virtual tetap 110,791048 USDT; posisi/order/eksekusi kosong.
-  Review ETH tujuh hari dibatalkan, bukan lulus. Ledger lama tetap dipertahankan.
-- Fokus: [riset strategi terbaru](strategy-2.md). ETH momentum lama menjadi
-  referensi; BTC harian dan pullback BTC/ETH masih kandidat evaluasi.
-- User memperluas riset ke top 20, variasi modal/timeframe dan multi-strategi.
-  [Matriks dan kapasitas](strategy-2.md#perluasan-riset-multi-instance--21-oktober-2026):
-  plafon 6.528 backtest serial, paper bertahap maksimal 24 instance/72 binding.
-  Baru rancangan; tiga strategi, antrean VPS/guard dan throughput belum siap.
-  Inspeksi VPS read-only 21 Okt sekitar 21.53 WIB: 8 CPU, available RAM 19,6 GiB,
-  disk free 137 GiB. Ini snapshot, bukan kapasitas teruji untuk 72 binding.
-- Mainnet/P2-10 belum disetujui. Futures menunggu Demo key; Bybit/xspread
-  ditunda, OKX dihapus dan saham tokenisasi tetap dikecualikan.
+- **Rencana aktif: [Plan 3](plan-3.md).** User menutup Plan 2 sebagai siklus
+  pada 23 Oktober; seluruh pekerjaan terbuka dipetakan ke P3-R/P3-O/P3-LIVE/
+  P3-D. Plan 1/2 menjadi arsip, bukan antrean kedua atau bukti seluruh tes lulus.
+  Arah baru: katalis terverifikasi, memecoin yang sudah diperdagangkan, hold
+  selama tesis valid dan full exit saat proteksi/tesis mengharuskan. Presale/
+  token baru ditunda sebagai future reference. Mulai dari kontrak P3-0;
+  parameter numerik belum dibekukan, strategi AI belum diimplementasikan.
+- **Penegasan prioritas:** P2 yang berjalan dibiarkan dan seluruh kode/config/
+  data/bukti dipertahankan untuk riset berikutnya. Kerjakan P3-0 lalu fase AI
+  tanpa menunggu backlog P2 selesai. Jangan menghapus strategi lama, mengubah
+  runtime P2 atau merilis perubahan shared code ke P2 hanya untuk memasang AI.
+  Pilot memakai ledger/modal terpisah; sebelum berjalan di VPS yang sama,
+  gerbang kapasitas/API dan temuan keselamatan terkait tetap berlaku.
+- **Checkpoint operasi terbaru dari dokumen VPS, 23 Oktober 20.52 WIB:**
+  runtime `9c18962`, perbaikan notifikasi `afdab52`, image digest/source serta
+  bukti di [handover VPS](handover-vps.md#rilis-notifikasi-transaksi--23-oktober-2026)
+  dan [rilis notifikasi](testing/telegram-notification-release.json).
+  Snapshot mencatat enam instance/18 binding, kas 746,92125354748169 USDT,
+  22 eksekusi, tanpa posisi/pending/halt/attention. Ini checkpoint historis,
+  bukan pemeriksaan server saat membaca handover.
+- **T0 tahap dua tetap 22 Oktober 19:58:45 WIB**, DB
+  `tradingbot_research_stage_two`, wallet `paper:research-stage-two`:
+  tiga Tren + EMA dasar 1m/filter 1m/filter 4h, BTC/ETH/SOL. Modal awal
+  747,83957456237531 USDT virtual dan CPU1. Review user 23/25/29 Oktober
+  pukul 19:58:45 WIB, tanpa reminder AI otomatis. Pergantian plan tidak
+  mengubah trial, modal, parameter atau T0. Strategi AI kelak memakai ledger
+  dan modal terpisah; jangan mengganti trial berjalan dengan pilot AI.
+- Tahap satu sudah dihentikan, ledger/backup dipertahankan; jadwal
+  22/24/28 Oktober digantikan jadwal tahap dua. ETH P2-9 dihentikan 21 Oktober
+  sebelum tujuh hari, tanpa trade; review tujuh harinya dibatalkan, bukan lulus.
+- **Penerimaan tersisa:** pesan fill alami/digest 24 Oktober 07.00 WIB dan
+  whitelist, restore backup pascarilis, recovery posisi/order aktif, outage,
+  operasi panjang dan klasifikasi shutdown. Tindak lanjut ada di
+  [P3-O](plan-3.md#p3-o--penerimaan-operasi-dan-tindak-lanjut-audit).
+  Restore pra-rilis/restart tanpa posisi sudah punya bukti; jangan menyatakan
+  semua penerimaan selesai hanya karena CI/health awal lulus.
+- Ekspansi pembanding tetap target 44/132, termasuk 6/18 pada checkpoint;
+  sisa 38/114 dan tiga keluarga strategi belum diimplementasikan. Riset
+  top-20, plafon 6.528 job serial serta guard kapasitas/API masuk P3-R.
+  [Strategi 2](strategy-2.md) menyimpan rincian; snapshot host lama bukan
+  kapasitas terbukti untuk target penuh.
+- Mainnet/P3-LIVE belum disetujui. Futures, Bybit/xspread dan funding/L2
+  masuk P3-D1–P3-D3 dengan dependensi lama. OKX tetap dihapus dan saham
+  tokenisasi tetap dikecualikan.
 - Perbaikan Telegram lokal: runtime managed memulihkan `/balance`, `/pnl`,
   `/positions`, `/orders`, `/strategies`, menambah alias `/killswitch` dan
   mendaftarkan `/help`/`/start` pada menu yang sama. Tes command dan payload
@@ -87,8 +79,9 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
    yang belum di-commit. Jangan commit/push tanpa permintaan user.
    User sudah mengizinkan commit dan push/deploy untuk trial ini; perubahan
    strategi/modal atau deployment berikutnya tetap harus mengikuti cakupan izin.
-2. Baca [Strategi 2](strategy-2.md) dan [Plan 2](plan-2.md). Bekukan aturan,
-   benchmark, biaya, periode dan risiko sebelum backtest berikutnya.
+2. Baca [Plan 3](plan-3.md); mulai P3-0 untuk kontrak AI atau ID P3-R/P3-O
+   untuk pembanding/operasi. [Strategi 2](strategy-2.md) menyimpan protokol lama.
+   Bekukan aturan, benchmark, biaya, periode dan risiko sebelum eksperimen baru.
 3. Saat user kembali, review trial aktif dari T0 tersebut dan bandingkan bukti
    VPS/Telegram dengan [handover VPS](handover-vps.md). Restart bersama lama
    terbukti berkaitan penghentian service Docker, bukan reboot host; pemicunya
