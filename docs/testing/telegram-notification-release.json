@@ -1,0 +1,194 @@
+{
+  "verified_at_utc": "2026-10-23T13:53:19.469515+00:00",
+  "restart": {
+    "at": "2026-10-23T13:52:29.552891+00:00",
+    "bot": {
+      "image": "sha256:02376651f56e2291c41fef664a44691a9279686b4a89288a2dba020528e097ca",
+      "started": "2026-10-23T13:52:17.164470608Z",
+      "status": "running",
+      "restarts": 0,
+      "oom": false
+    },
+    "config_sha256": "8687ca0ca42629b642920c2d27cacbaf2cc3533cb1d5ad48673c3b027822d893",
+    "instances": 6,
+    "bindings": 18,
+    "executions": 22,
+    "pending": 0,
+    "holdings_open": 0,
+    "cash": "746.92125354748169",
+    "halted": false,
+    "attention": "",
+    "trial_start": "2026-10-22T12:58:45.651873337Z",
+    "financial_state_matches_stopped": true,
+    "config_unchanged": true,
+    "other_containers_unchanged": true,
+    "other_containers_count": 32
+  },
+  "preflight": {
+    "image": "ghcr.io/rizz404/trading-bot@sha256:02376651f56e2291c41fef664a44691a9279686b4a89288a2dba020528e097ca",
+    "version": "9c189624907981ad0e4a02325d83762e1be665fb",
+    "scratch_migration_status_ok": true,
+    "target_migration_status_ok": true,
+    "schema_changed": false,
+    "scratch_removed": true
+  },
+  "restore": {
+    "restored": true,
+    "scratch_database": "tradingbot_telegram_restorecheck_20261023",
+    "config_hash": "af4c6a5018dfac769769c92cb7b88b95a0000e5fbfebf57e78e09117c2bb4b36",
+    "started_at": "2026-10-22T12:58:45.651873337Z",
+    "executions": 22,
+    "instances": 6,
+    "bindings": 18,
+    "backup": "backup-20261023T134412Z"
+  },
+  "observer": {
+    "time": "2026-10-23T13:54:04.809663+00:00",
+    "problems": [],
+    "series": [
+      {
+        "exchange": "binance",
+        "market": "spot",
+        "symbol": "BTCUSDT",
+        "timeframe": "4h",
+        "tf_seconds": 14400,
+        "bars": 11,
+        "last_open": "2026-10-23T08:00:00+00:00",
+        "age_seconds": 21245,
+        "gaps": 0
+      },
+      {
+        "exchange": "binance",
+        "market": "spot",
+        "symbol": "ETHUSDT",
+        "timeframe": "4h",
+        "tf_seconds": 14400,
+        "bars": 11,
+        "last_open": "2026-10-23T08:00:00+00:00",
+        "age_seconds": 21245,
+        "gaps": 0
+      },
+      {
+        "exchange": "binance",
+        "market": "spot",
+        "symbol": "SOLUSDT",
+        "timeframe": "4h",
+        "tf_seconds": 14400,
+        "bars": 11,
+        "last_open": "2026-10-23T08:00:00+00:00",
+        "age_seconds": 21245,
+        "gaps": 0
+      },
+      {
+        "exchange": "binance",
+        "market": "spot",
+        "symbol": "SOLUSDT",
+        "timeframe": "1m",
+        "tf_seconds": 60,
+        "bars": 1795,
+        "last_open": "2026-10-23T13:52:00+00:00",
+        "age_seconds": 125,
+        "gaps": 0
+      },
+      {
+        "exchange": "binance",
+        "market": "spot",
+        "symbol": "BTCUSDT",
+        "timeframe": "1m",
+        "tf_seconds": 60,
+        "bars": 1795,
+        "last_open": "2026-10-23T13:52:00+00:00",
+        "age_seconds": 125,
+        "gaps": 0
+      },
+      {
+        "exchange": "binance",
+        "market": "spot",
+        "symbol": "ETHUSDT",
+        "timeframe": "1m",
+        "tf_seconds": 60,
+        "bars": 1795,
+        "last_open": "2026-10-23T13:52:00+00:00",
+        "age_seconds": 125,
+        "gaps": 0
+      }
+    ]
+  },
+  "services": {
+    "psa": "active",
+    "nginx": "active",
+    "httpd": "active",
+    "sw-cp-server": "active",
+    "docker": "active"
+  },
+  "post_release_warn_error_counts": {},
+  "build_info": [
+    "tradingbot_build_info{mode=\"paper\",version=\"9c189624907981ad0e4a02325d83762e1be665fb\"} 1"
+  ],
+  "ci_url": "https://github.com/Rizz404/trading-bot/actions/runs/39963665890",
+  "ci_conclusion": "success",
+  "mode": "paper",
+  "changes": [
+    "managed execution notifications after durable checkpoint",
+    "daily execution activity and PnL summary",
+    "bounded severity-aware notice deduplication"
+  ],
+  "not_verified": [
+    "Telegram client receipt until user confirmation",
+    "new post-release execution notification until next natural fill",
+    "next daily summary at 24 October 2026 07:00 WIB",
+    "long-term stability and profitability",
+    "post-release backup restore"
+  ],
+  "containers_final": [
+    {
+      "service": "bot",
+      "id": "3f23ba24395e36741323861a0467bb7587ec18a67cfc8da1cde191cc2dce05c4",
+      "status": "running",
+      "started": "2026-10-23T13:52:17.164470608Z",
+      "restarts": 0,
+      "oom_killed": false,
+      "image": "sha256:02376651f56e2291c41fef664a44691a9279686b4a89288a2dba020528e097ca"
+    },
+    {
+      "service": "db",
+      "id": "9d17669ad57f5464342b9b8698c1fa0682eb050b92a00a4710c542b60daf27bc",
+      "status": "running",
+      "started": "2026-10-21T03:23:55.415320801Z",
+      "restarts": 0,
+      "oom_killed": false,
+      "image": "sha256:b346edcdb51a1fd6020e3965e0bd1c9f3406fa6d5fbce1e28f4852587ef934e2"
+    },
+    {
+      "service": "dns",
+      "id": "f8fc1aff6e9684bafd5369341d83bcd458ef8fa9d3119209527decf11ccc321a",
+      "status": "running",
+      "started": "2026-10-21T03:23:55.224504156Z",
+      "restarts": 0,
+      "oom_killed": false,
+      "image": "sha256:7efd3c635b03efd68c4e8398fc45f0d993d0e9ab016f72c1cefb0fd6d01aa286"
+    },
+    {
+      "service": "grafana",
+      "id": "68725b655f631640219ab2311a108a40ff9a1e031fc9cbf7d9b16c0eca7b4cee",
+      "status": "running",
+      "started": "2026-10-21T03:23:55.330100569Z",
+      "restarts": 0,
+      "oom_killed": false,
+      "image": "sha256:dbbc38ea21103cefb50396340cd88afec779c7e070b0a7bf5a75b4ce46651d3f"
+    },
+    {
+      "service": "prometheus",
+      "id": "c035c4825fe446313430e2766a8ef5733ba053270e2308ba084abc23b7a1267f",
+      "status": "running",
+      "started": "2026-10-21T03:23:55.396261519Z",
+      "restarts": 0,
+      "oom_killed": false,
+      "image": "sha256:efd719c99d83b060d9daefdcf00360461adf279f45ef5391f8d111892118753e"
+    }
+  ],
+  "pre_release_backup": "backup-20261023T134412Z",
+  "post_release_backup": "backup-20261023T135257Z",
+  "post_release_backup_checksums_ok": true,
+  "new_1m_bars_after_restart_verified": true
+}

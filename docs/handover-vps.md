@@ -1,9 +1,45 @@
 # Handover VPS
 
-Checkpoint diperbarui **22 Oktober 2026**. Prosedur perubahan ada di
+Checkpoint diperbarui **23 Oktober 2026**. Prosedur perubahan ada di
 [deployment](deployment.md); keputusan aktif di [Strategi 2](strategy-2.md).
 
 ## Status terakhir
+
+### Rilis notifikasi transaksi — 23 Oktober 2026
+
+**Aktif sejak 20.52 WIB:** runtime `9c18962` memasang perbaikan notifikasi
+`afdab52` dan koreksi lint tes. [CI lengkap sukses](https://github.com/Rizz404/trading-bot/actions/runs/39963665890),
+image `ghcr.io/rizz404/trading-bot@sha256:02376651f56e2291c41fef664a44691a9279686b4a89288a2dba020528e097ca`.
+Image ini menggantikan versi pada checkpoint 22 Oktober di bawah.
+
+Notifikasi beli/jual mengikuti eksekusi yang sudah tersimpan, termasuk parsial;
+level instance `info` diperlukan. Penjualan memakai realisasi ledger. Ringkasan
+07.00 WIB kini mencakup aktivitas periode 07.00–07.00 WIB, realisasi pada
+eksekusi, komisi serta PnL sejak awal. Koreksi komisi terlambat mengikuti total
+ledger; MM tetap diringkas. Cache dedup peringatan dibatasi satu menit dan
+memisahkan tingkat pesan sehingga warning tidak menahan error berteks sama.
+
+Backup pra-rilis `backup-20261023T134412Z` lolos checksum dan restore ke DB
+sementara. Image baru cocok dengan source; status migrasi 1–5 pada salinan dan
+target sudah applied. DB sementara telah dihapus. Hanya container bot yang
+diganti dengan `up -d --no-deps bot`; tidak ada perubahan schema, strategi,
+alokasi atau penghapusan history. Config privat/hash tetap sama.
+
+Snapshot sebelum/sesudah restart cocok persis: **6 instance/18 binding**, kas
+**746,92125354748169 USDT**, 22 eksekusi tersimpan, tanpa posisi terbuka/pending,
+halt false dan attention kosong. T0 eksperimen tetap 22 Oktober 19.58.45 WIB.
+Sebanyak 32 container selain bot (28 proyek lain + empat infrastruktur bot)
+tidak berubah dan lima service host tetap active. Health dan build-info cocok
+dengan mode paper/versi baru; pemeriksaan awal tidak menemukan WARN/ERROR baru.
+Observer 20.54 WIB `problems: []`; candle 1m BTC/ETH/SOL setelah restart
+tersimpan tanpa gap. Backup pascarilis `backup-20261023T135257Z` disimpan
+terpisah dari pra-rilis dan checksum cocok.
+
+Bukti: [rilis notifikasi](testing/telegram-notification-release.json). Ini
+pemeriksaan awal, bukan bukti operasi jangka panjang. Penerimaan di aplikasi
+Telegram, pesan eksekusi alami berikutnya, ringkasan 24 Oktober 07.00 WIB dan
+restore backup pascarilis belum diverifikasi. Pesan Telegram tetap best effort;
+history lama yang sudah selesai tidak dikirim ulang saat restart.
 
 ### Tahap dua — pembanding frekuensi
 

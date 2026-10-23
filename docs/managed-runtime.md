@@ -56,7 +56,7 @@ gunakan HTTPS bila diproxy. JSON `POST /control?wallet=ID` memakai
 
 Telegram memakai satu long-poller, whitelist, notifikasi info/warn/error/off per
 instance, dedup per tingkat peringatan selama satu menit dan menu `/`.
-Kode lokal kini melaporkan setiap eksekusi beli/jual setelah checkpoint engine
+Sejak rilis VPS 23 Oktober 2026, bot melaporkan setiap eksekusi beli/jual setelah checkpoint engine
 dan acknowledgement inbox tersimpan; notifikasi transaksi memerlukan level
 `info`. Pesan mencantumkan akun/binding, jumlah eksekusi (termasuk parsial),
 komisi, sisa posisi dan waktu. Penjualan memakai hasil realisasi ledger,
@@ -67,8 +67,8 @@ belum diketahui atau dibayar dengan aset ketiga ditandai belum lengkap pada
 data eksekusi; penilaian terlambat mengikuti total ledger sejak awal.
 Notifikasi bersifat best effort: crash antara commit dan pengiriman atau
 antrean Telegram penuh dapat menghilangkan pesan. Riwayat yang sudah selesai
-tidak dikirim ulang saat restart. Perubahan ini belum menyatakan sudah dirilis
-ke VPS; lihat checkpoint deployment pada handover.
+tidak dikirim ulang saat restart. Runtime `9c18962` sudah aktif di VPS; bukti
+pemeriksaan dan batas verifikasi ada di [handover](handover-vps.md).
 
 Contoh format:
 
