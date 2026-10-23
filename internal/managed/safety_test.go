@@ -134,7 +134,7 @@ func TestRestartReplaysDurableInboxWithoutDuplicateDebit(t *testing.T) {
 	require.Equal(t, "1000", s.Equity().String())
 	require.NotEmpty(t, notified, "durable inbox replay must announce recovered executions")
 	count := len(notified)
-	rt = newRuntime()
+	newRuntime()
 	require.Len(t, notified, count, "settled history must not be announced again on restart")
 }
 
