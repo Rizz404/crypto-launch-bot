@@ -206,3 +206,56 @@ func TestSpiderRefusesMissingOrWrongBinary(t *testing.T) {
 		})
 	}
 }
+
+func TestSpiderArticleLinksSeedOrderSameHost(t *testing.T) {
+	source := testPolicy().Sources[0]
+	source.ArticlePattern = `^/\d{4}/\d{2}/\d{2}/[a-z0-9-]+$`
+	seed := testSpiderPage()
+	seed.Content = `<a href="/2026/10/05/old">a</a><a href="/category/x">c</a>
+<a href="https://evil.example/2026/10/30/x">e</a><a href="http://example.org/2026/10/29/plain">p</a>
+<a href="/2026/10/22/new?utm=1#top">n</a><a href="/2026/10/22/new">dup</a>
+<a href="/2026/09/01/a">1</a><a href="/2026/09/02/b">2</a><a href="/2026/09/03/c">3</a>`
+	links, err := articleLinks(source, spiderJSON(t, seed))
+	require.NoError(t, err)
+	require.Equal(t, []string{"https://example.org/2026/10/05/old", "https://example.org/2026/10/22/new",
+		"https://example.org/2026/09/01/a", "https://example.org/2026/09/02/b"}, links)
+	seed.Content = `<a href="/category/x">c</a>`
+	_, err = articleLinks(source, spiderJSON(t, seed))
+	require.ErrorContains(t, err, "no article links")
+}
+
+func TestSpiderScrapesSelectedArticles(t *testing.T) {
+	dir := t.TempDir()
+	binary := filepath.Join(dir, "spider")
+	seed := testSpiderPage()
+	seed.Content = `<a href="/2026/10/22/new">n</a><a href="/category/x">c</a>`
+	article := testSpiderPage()
+	article.URL, article.Content = "https://example.org/2026/10/22/new", "<main>Upgrade article</main>"
+	script := `#!/bin/sh
+if [ "$1" = "--version" ]; then
+  printf 'spider_cli 2.53.9-p3.1\n'
+  exit 0
+fi
+[ "$7" = "1" ] || exit 15
+case "$2" in
+  https://example.org/events) printf '%s\n' '` + string(spiderJSON(t, seed)) + `' ;;
+  https://example.org/2026/10/22/new) printf '%s\n' '` + string(spiderJSON(t, article)) + `' ;;
+  *) exit 17 ;;
+esac
+`
+	require.NoError(t, os.WriteFile(binary, []byte(script), 0700))
+	p := testPolicy()
+	p.Sources[0].ArticlePattern = `^/\d{4}/\d{2}/\d{2}/[a-z0-9-]+$`
+	require.NoError(t, p.Validate())
+	c, err := NewSpiderCollector(p, Archive{Dir: filepath.Join(dir, "archive")}, binary)
+	require.NoError(t, err)
+	c.client = &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+		return response(404, "text/plain", ""), nil
+	})}
+	e, err := c.Collect(t.Context(), p.Sources[0])
+	require.NoError(t, err)
+	require.Contains(t, e.Body, "Fetched page: https://example.org/2026/10/22/new")
+	require.Contains(t, e.Body, "Upgrade article")
+	p.Sources[0].ArticlePattern = "("
+	require.ErrorContains(t, p.Validate(), "article pattern")
+}

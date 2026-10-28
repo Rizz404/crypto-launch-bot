@@ -1,5 +1,5 @@
-// catalyst performs bounded evidence collection and shadow analysis only.
-// Replay uses an in-memory Sim; it never submits real exchange orders.
+// catalyst performs bounded research and isolated virtual paper execution.
+// It never submits real exchange orders.
 package main
 
 import (
@@ -9,23 +9,28 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/rizz404/trading-bot/internal/catalyst"
 	"github.com/rizz404/trading-bot/internal/config"
+	"github.com/rizz404/trading-bot/internal/exchange/binance"
 )
 
 func run(ctx context.Context, args []string, out io.Writer) error {
 	flags := flag.NewFlagSet("catalyst", flag.ContinueOnError)
 	policyPath := flags.String("policy", "configs/catalyst.policy.json", "versioned research policy")
 	dir := flags.String("archive", "var/catalyst", "isolated research archive, never a financial ledger")
-	action := flags.String("action", "report", "collect, analyze, report or replay; never starts live trading")
+	action := flags.String("action", "report", "collect, analyze, market, report, replay, run (paper only) or health")
 	fixturePath := flags.String("fixture", "", "synthetic JSON fixture for replay; no network or database")
 	envFile := flags.String("env-file", ".env.catalyst", "optional Plan 3 env file; process environment takes precedence")
 	spiderBinary := flags.String("spider-binary", "spider", "pinned Spider CLI path for collect; no HTTP fallback")
+	listen := flags.String("listen", "0.0.0.0:8080", "pilot dashboard listener; publish only on host loopback")
 	if err := flags.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
 			return nil
@@ -68,6 +73,31 @@ func run(ctx context.Context, args []string, out io.Writer) error {
 	archive := catalyst.Archive{Dir: *dir}
 	encode := json.NewEncoder(out)
 	switch *action {
+	case "market":
+		market := catalyst.NewMarket(binance.New(binance.Options{HTTPClient: &http.Client{Timeout: 10 * time.Second}}))
+		for _, symbol := range p.Symbols {
+			quote, err := market.Snapshot(ctx, p, symbol)
+			if err != nil {
+				return err
+			}
+			if err = encode.Encode(quote); err != nil {
+				return err
+			}
+		}
+		return nil
+	case "run":
+		return runPilot(ctx, p, archive, *spiderBinary, *envFile, *listen, out)
+	case "health":
+		f, err := os.Open(filepath.Join(archive.Dir, "health.json"))
+		if err != nil {
+			return errors.New("pilot health unavailable")
+		}
+		defer func() { _ = f.Close() }()
+		var status catalyst.PilotStatus
+		if err = catalyst.Decode(f, &status, 64<<10); err != nil || !status.Healthy(p, time.Now()) {
+			return errors.New("pilot timer or public quote feed stale")
+		}
+		return nil
 	case "collect":
 		collector, err := catalyst.NewSpiderCollector(p, archive, *spiderBinary)
 		if err != nil {
@@ -115,11 +145,19 @@ func run(ctx context.Context, args []string, out io.Writer) error {
 		}
 		return encode.Encode(report)
 	default:
-		return errors.New("unknown action; use collect, analyze, report or replay")
+		return errors.New("unknown action; use collect, analyze, report, replay, run or health")
 	}
 }
 
 func loadAnalyst(path string) (*catalyst.Analyst, error) {
+	values, err := loadValues(path)
+	if err != nil {
+		return nil, err
+	}
+	return catalyst.NewAnalyst(values["TB_CATALYST_BASE_URL"], values["TB_CATALYST_MODEL"], values["TB_CATALYST_API_KEY"])
+}
+
+func loadValues(path string) (map[string]string, error) {
 	entries, err := config.ReadDotEnv(path)
 	if err != nil {
 		// Keep credential-file diagnostics generic; never echo file contents.
@@ -130,16 +168,16 @@ func loadAnalyst(path string) (*catalyst.Analyst, error) {
 		key, value, _ := strings.Cut(entry, "=")
 		values[key] = value
 	}
-	for _, key := range []string{"TB_CATALYST_BASE_URL", "TB_CATALYST_MODEL", "TB_CATALYST_API_KEY"} {
+	for _, key := range []string{"TB_CATALYST_BASE_URL", "TB_CATALYST_MODEL", "TB_CATALYST_API_KEY", "TB_CATALYST_DATABASE_URL", "TB_CATALYST_WEB_PASSWORD", "TB_CATALYST_TELEGRAM_TOKEN", "TB_CATALYST_TELEGRAM_CHATS"} {
 		if value, present := os.LookupEnv(key); present {
 			values[key] = value
 		}
 	}
-	return catalyst.NewAnalyst(values["TB_CATALYST_BASE_URL"], values["TB_CATALYST_MODEL"], values["TB_CATALYST_API_KEY"])
+	return values, nil
 }
 
 func main() {
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 	if err := run(ctx, os.Args[1:], os.Stdout); err != nil {
 		fmt.Fprintln(os.Stderr, err)

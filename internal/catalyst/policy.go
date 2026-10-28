@@ -27,6 +27,9 @@ type Source struct {
 	URL     string   `json:"url"`
 	Primary bool     `json:"primary"`
 	Symbols []string `json:"symbols"`
+	// ArticlePattern selects same-host article paths linked from the seed;
+	// Spider then scrapes those pages instead of an unordered crawl.
+	ArticlePattern string `json:"article_pattern,omitempty"`
 }
 
 // Policy is versioned input, not something the analyst may change.
@@ -70,6 +73,9 @@ func (p Policy) Validate() error {
 		}
 		if u.Hostname() == "" {
 			return errors.New("source hostname missing")
+		}
+		if _, err = regexp.Compile(s.ArticlePattern); err != nil || len(s.ArticlePattern) > 200 {
+			return errors.New("invalid source article pattern")
 		}
 		ids[s.ID], urls[s.URL] = true, true
 		for _, sym := range s.Symbols {

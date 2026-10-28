@@ -46,6 +46,21 @@ func TestExtractFeedAndHTML(t *testing.T) {
 	}
 }
 
+func TestExtractHTMLPublishedDateFormats(t *testing.T) {
+	for name, tc := range map[string]struct{ page, want string }{
+		"itemprop":  {`<meta itemprop=datePublished content="2025-04-10T00:00:00+00:00"><main>x</main>`, "2025-04-10T00:00:00+00:00"},
+		"json-ld":   {`<script type="application/ld+json">{"@type":"BlogPosting","datePublished":"2026-10-22T00:00:00+00:00"}</script><main>x</main>`, "2026-10-22T00:00:00+00:00"},
+		"time":      {`<main><time datetime="2026-09-16T00:00:00.000Z">September 16, 2026</time><time datetime="2020-01-01">old</time></main>`, "2026-09-16T00:00:00.000Z"},
+		"meta wins": {`<main><time datetime="2020-01-01">x</time></main><meta property="article:published_time" content="2026-10-26T00:00:00Z">`, "2026-10-26T00:00:00Z"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			d, err := extractHTML("<html><body>" + tc.page + "</body></html>")
+			require.NoError(t, err)
+			require.Equal(t, tc.want, d.PublishedText)
+		})
+	}
+}
+
 func TestExtractRejectsAmbiguousOrUnsafeFeeds(t *testing.T) {
 	source := testPolicy().Sources[0]
 	for name, raw := range map[string]string{

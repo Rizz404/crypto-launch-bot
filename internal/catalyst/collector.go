@@ -142,6 +142,7 @@ func (c *Collector) Collect(ctx context.Context, source Source) (Evidence, error
 			}
 			if old.ID == e.ID && old.FirstSeenAt.Before(e.FirstSeenAt) {
 				e.FirstSeenAt = old.FirstSeenAt
+				e.Raw = old.Raw // Volatile HTTP headers do not create another content revision.
 			}
 			for n := range e.Documents {
 				for _, doc := range old.Documents {
@@ -208,15 +209,26 @@ func (c *Collector) fetch(ctx context.Context, source Source) (Evidence, int, er
 // LatestEvidence uses observation order rather than first_seen: a page may
 // revert to an old body, or its latest fetch may have failed.
 func (a Archive) LatestEvidence(p Policy) ([]Evidence, error) {
+	out, _, err := a.latestEvidence(p, false)
+	return out, err
+}
+
+// AvailableEvidence records source gaps without discarding healthy assets.
+// Corrupt/unreadable archives remain fatal; missing sources cannot attest entry.
+func (a Archive) AvailableEvidence(p Policy) ([]Evidence, []string, error) {
+	return a.latestEvidence(p, true)
+}
+
+func (a Archive) latestEvidence(p Policy, partial bool) ([]Evidence, []string, error) {
 	ids, err := a.IDs("observations")
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	latest := map[string]Observation{}
 	for _, id := range ids {
 		var obs Observation
 		if err = a.Read("observations", id, &obs); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		if previous, ok := latest[obs.SourceID]; !ok || obs.At.After(previous.At) {
 			latest[obs.SourceID] = obs
@@ -224,20 +236,25 @@ func (a Archive) LatestEvidence(p Policy) ([]Evidence, error) {
 	}
 	ids, err = a.IDs("evidence")
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	var out []Evidence
+	var gaps []string
 	for _, source := range p.Sources {
 		obs := latest[source.ID]
 		if obs.Status != "ok" || time.Since(obs.At) > time.Duration(p.PollSeconds*2)*time.Second || obs.At.After(time.Now()) {
-			return nil, errors.New("source missing, stale or latest fetch failed: " + source.ID)
+			if partial {
+				gaps = append(gaps, source.ID)
+				continue
+			}
+			return nil, nil, errors.New("source missing, stale or latest fetch failed: " + source.ID)
 		}
 		found := false
 		var selected Evidence
 		for _, id := range ids {
 			var e Evidence
 			if err = a.Read("evidence", id, &e); err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			if e.SourceID == source.ID && e.URL == source.URL && e.ID == obs.Evidence {
 				if !found || e.FirstSeenAt.Before(selected.FirstSeenAt) {
@@ -247,10 +264,14 @@ func (a Archive) LatestEvidence(p Policy) ([]Evidence, error) {
 			}
 		}
 		if !found {
-			return nil, errors.New("source evidence missing")
+			if partial {
+				gaps = append(gaps, source.ID)
+				continue
+			}
+			return nil, nil, errors.New("source evidence missing")
 		}
 		out = append(out, selected)
 	}
 	slices.SortFunc(out, func(a, b Evidence) int { return strings.Compare(a.ID, b.ID) })
-	return out, nil
+	return out, gaps, nil
 }

@@ -1,11 +1,11 @@
 {
-  "version": "catalyst-shadow-v1",
+  "version": "catalyst-paper-v1",
   "symbols": ["ETHUSDT", "SOLUSDT", "DOGEUSDT"],
   "meme_symbols": ["DOGEUSDT"],
   "sources": [
-    {"id": "ethereum-blog", "url": "https://blog.ethereum.org/feed.xml", "primary": true, "symbols": ["ETHUSDT"]},
-    {"id": "solana-news", "url": "https://solana.com/news", "primary": true, "symbols": ["SOLUSDT"]},
-    {"id": "dogecoin-blog", "url": "https://foundation.dogecoin.com/blog/", "primary": true, "symbols": ["DOGEUSDT"]}
+    {"id": "ethereum-blog", "url": "https://blog.ethereum.org/en", "primary": true, "symbols": ["ETHUSDT"], "article_pattern": "^/\\d{4}/\\d{2}/\\d{2}/[a-z0-9-]+/?$"},
+    {"id": "anza-blog", "url": "https://www.anza.xyz/blog", "primary": true, "symbols": ["SOLUSDT"], "article_pattern": "^/blog/[^/]+$"},
+    {"id": "dogecoin-blog", "url": "https://foundation.dogecoin.com/blog/", "primary": true, "symbols": ["DOGEUSDT"], "article_pattern": "^/blog/\\d{4}-\\d{2}-\\d{2}-[^/]+/?$"}
   ],
   "max_calls_per_run": 1,
   "max_output_tokens": 2048,

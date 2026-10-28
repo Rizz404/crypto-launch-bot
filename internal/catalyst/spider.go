@@ -3,20 +3,22 @@ package catalyst
 import (
 	"bytes"
 	"context"
-	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"mime"
 	"os/exec"
+	"regexp"
 	"slices"
 	"strings"
 	"time"
+
+	"golang.org/x/net/html"
 )
 
 const SpiderVersion = "2.53.9-p3.1"
-const spiderExtractionVersion = ExtractionVersion + "/spider-" + SpiderVersion
+const spiderExtractionVersion = ExtractionVersion + "/content-v2/spider-" + SpiderVersion
 const spiderPages = 5
 const spiderOutputBytes = 8 << 20
 
@@ -75,22 +77,99 @@ func (c *Collector) fetchSpider(ctx context.Context, source Source) (Evidence, i
 	if err = check.Run(); err != nil || strings.TrimSpace(version.String()) != "spider_cli "+SpiderVersion {
 		return Evidence{}, 0, errors.New("spider version must be " + SpiderVersion)
 	}
+	output := &boundedOutput{cancel: cancel}
+	if source.ArticlePattern == "" {
+		if err = c.runSpider(ctx, source.URL, spiderPages, proxy, output); err != nil {
+			return Evidence{}, 0, err
+		}
+		return spiderEvidence(source, output.Bytes(), time.Now().UTC())
+	}
+	// Spider's depth counts path segments and its crawl order is concurrent, so
+	// dated article paths are selected from the seed and scraped one by one.
+	if err = c.runSpider(ctx, source.URL, 1, proxy, output); err != nil {
+		return Evidence{}, 0, err
+	}
+	links, err := articleLinks(source, output.Bytes())
+	if err != nil {
+		return Evidence{}, 0, err
+	}
+	for _, link := range links {
+		select {
+		case <-ctx.Done():
+			return Evidence{}, 0, errors.New("spider timed out between article pages")
+		case <-time.After(time.Second):
+		}
+		if err = c.runSpider(ctx, link, 1, proxy, output); err != nil {
+			return Evidence{}, 0, err
+		}
+	}
+	return spiderEvidence(source, output.Bytes(), time.Now().UTC())
+}
+
+// runSpider appends one scrape to output, whose limit spans every run of a fetch.
+func (c *Collector) runSpider(ctx context.Context, target string, limit int, proxy string, output *boundedOutput) error {
 	cmd := exec.CommandContext(ctx, c.spiderBinary,
-		"--url", source.URL, "--respect-robots-txt", "--http",
-		"--return-headers", "--limit", fmt.Sprint(spiderPages), "--depth", "2",
+		"--url", target, "--respect-robots-txt", "--http",
+		"--return-headers", "--limit", fmt.Sprint(limit), "--depth", "2",
 		"--delay", "1000",
 		"--agent", collectorAgent+"/1.0", "--proxy-url", proxy,
 		"scrape", "--output-html")
 	// Scraping receives no parent credentials, proxy settings or cloud keys.
 	cmd.Env = []string{"RUST_LOG=error"}
 	cmd.WaitDelay = time.Second
-	output := &boundedOutput{cancel: cancel}
 	cmd.Stdout = output
 	cmd.Stderr = io.Discard // Upstream diagnostics may contain untrusted URLs.
-	if err = cmd.Run(); err != nil {
-		return Evidence{}, 0, errors.New("spider failed, timed out or exceeded output limit")
+	if err := cmd.Run(); err != nil {
+		return errors.New("spider failed, timed out or exceeded output limit")
 	}
-	return spiderEvidence(source, output.Bytes(), time.Now().UTC())
+	return nil
+}
+
+// articleLinks returns up to spiderPages-1 same-host links from the seed page
+// whose path matches the source pattern, in seed-page order.
+func articleLinks(source Source, output []byte) ([]string, error) {
+	pattern, err := regexp.Compile(source.ArticlePattern)
+	if err != nil {
+		return nil, errors.New("invalid source article pattern")
+	}
+	var seed spiderPage
+	if err = json.NewDecoder(bytes.NewReader(output)).Decode(&seed); err != nil {
+		return nil, errors.New("invalid Spider JSON stream")
+	}
+	base, err := publicURL(seed.URL)
+	if err != nil {
+		return nil, err
+	}
+	doc, err := html.Parse(strings.NewReader(seed.Content))
+	if err != nil {
+		return nil, errors.New("seed page is not parseable HTML")
+	}
+	seen := map[string]bool{}
+	var links []string
+	for n := range doc.Descendants() {
+		if n.Type != html.ElementNode || n.Data != "a" {
+			continue
+		}
+		for _, a := range n.Attr {
+			if a.Key != "href" {
+				continue
+			}
+			u, err := base.Parse(strings.TrimSpace(a.Val))
+			if err != nil || u.Scheme != "https" || !strings.EqualFold(u.Hostname(), base.Hostname()) || !pattern.MatchString(u.Path) {
+				continue
+			}
+			u.RawQuery, u.Fragment = "", ""
+			if link := u.String(); !seen[link] {
+				seen[link] = true
+				links = append(links, link)
+			}
+		}
+	}
+	if len(links) == 0 {
+		return nil, errors.New("seed page has no article links; coverage incomplete")
+	}
+	// shortcut: seed order is trusted as newest first, as the configured index pages list posts; use published dates if a source does not.
+	return links[:min(len(links), spiderPages-1)], nil
 }
 
 func spiderEvidence(source Source, output []byte, now time.Time) (Evidence, int, error) {
@@ -136,6 +215,7 @@ func spiderEvidence(source Source, output []byte, now time.Time) (Evidence, int,
 	slices.SortFunc(pages, func(a, b spiderPage) int { return strings.Compare(a.URL, b.URL) })
 	e := Evidence{SourceID: source.ID, URL: source.URL, ContentType: "application/vnd.spider+json", FirstSeenAt: now, ExtractionVersion: spiderExtractionVersion}
 	var text strings.Builder
+	var content []string
 	documents := map[string]bool{}
 	for _, page := range pages {
 		var contentType string
@@ -154,7 +234,9 @@ func spiderEvidence(source Source, output []byte, now time.Time) (Evidence, int,
 		if err != nil {
 			return Evidence{}, 200, err
 		}
+		content = append(content, page.URL, media, body)
 		for _, d := range docs {
+			content = append(content, d.ID, d.Revision)
 			if documents[d.ID] {
 				return Evidence{}, 200, errors.New("overlapping Spider documents; narrow the source")
 			}
@@ -171,7 +253,7 @@ func spiderEvidence(source Source, output []byte, now time.Time) (Evidence, int,
 		return Evidence{}, 200, err
 	}
 	e.Raw, e.Body = string(raw), strings.TrimSpace(text.String())
-	e.BodyHash = fmt.Sprintf("%x", sha256.Sum256(raw))
+	e.BodyHash = Hash(content)
 	e.ID = Hash([]string{source.ID, source.URL, e.BodyHash, e.ExtractionVersion})
 	record, err := json.Marshal(e)
 	if err != nil || len(record) > maxArchiveBytes {

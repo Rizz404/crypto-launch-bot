@@ -13,6 +13,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY cmd/catalyst ./cmd/catalyst
 COPY internal ./internal
+COPY migrations ./migrations
 RUN CGO_ENABLED=0 go build -trimpath -ldflags '-s -w' -o /out/catalyst ./cmd/catalyst
 
 FROM docker.io/library/debian:bookworm-slim

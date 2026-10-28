@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -12,7 +13,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-const ExtractionVersion = "documents-v1"
+const ExtractionVersion = "documents-v2"
 const maxFeedDocuments = 200
 
 // Document identity tracks a publisher URL, not a verified asset or event.
@@ -129,6 +130,8 @@ func visibleText(n *html.Node) string {
 	return strings.Join(strings.Fields(out.String()), " ")
 }
 
+var ldPublished = regexp.MustCompile(`"datePublished"\s*:\s*"([^"]{1,64})"`)
+
 func extractHTML(raw string) (Document, error) {
 	root, err := html.Parse(strings.NewReader(raw))
 	if err != nil {
@@ -136,6 +139,7 @@ func extractHTML(raw string) (Document, error) {
 	}
 	d := Document{}
 	var mainNode, body *html.Node
+	var timeText string
 	for n := range root.Descendants() {
 		if n.Type != html.ElementNode {
 			continue
@@ -154,13 +158,30 @@ func extractHTML(raw string) (Document, error) {
 			if key == "" {
 				key = strings.ToLower(attr(n, "name"))
 			}
+			if key == "" {
+				key = strings.ToLower(attr(n, "itemprop"))
+			}
 			switch key {
 			case "article:published_time", "datepublished":
 				d.PublishedText = strings.TrimSpace(attr(n, "content"))
 			case "article:modified_time", "datemodified":
 				d.UpdatedText = strings.TrimSpace(attr(n, "content"))
 			}
+		case "script":
+			if strings.EqualFold(strings.TrimSpace(attr(n, "type")), "application/ld+json") && n.FirstChild != nil && d.PublishedText == "" {
+				if m := ldPublished.FindStringSubmatch(n.FirstChild.Data); m != nil {
+					d.PublishedText = m[1]
+				}
+			}
+		case "time":
+			if timeText == "" {
+				timeText = strings.TrimSpace(attr(n, "datetime"))
+			}
 		}
+	}
+	// The first <time> is only a fallback; structured metadata names the publish date explicitly.
+	if d.PublishedText == "" {
+		d.PublishedText = timeText
 	}
 	if mainNode != nil {
 		body = mainNode

@@ -1,0 +1,82 @@
+# Overlay on compose.catalyst.yml for the explicitly approved virtual pilot.
+services:
+  db:
+    image: docker.io/timescale/timescaledb:2.30.2-pg17
+    environment:
+      POSTGRES_USER: catalyst
+      POSTGRES_DB: tradingbot_catalyst_paper_v1
+      POSTGRES_PASSWORD: ${CATALYST_DB_PASSWORD:?set a dedicated database password}
+      TIMESCALEDB_TELEMETRY: "off"
+      TS_TUNE_MEMORY: 1GB
+      TS_TUNE_NUM_CPUS: "1"
+    command: ["postgres", "-c", "max_connections=24", "-c", "max_wal_size=256MB"]
+    mem_limit: 1g
+    cpus: "0.50"
+    pids_limit: 128
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U catalyst -d tradingbot_catalyst_paper_v1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    logging: &logging
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+  dns:
+    image: docker.io/coredns/coredns:1.14.7
+    command: ["-conf", "/etc/coredns/Corefile"]
+    mem_limit: 128m
+    cpus: "0.25"
+    pids_limit: 64
+    volumes:
+      - ./coredns/Corefile:/etc/coredns/Corefile:ro
+    networks:
+      resolver:
+        ipv4_address: 172.31.252.2
+    user: "0:0"
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    logging: *logging
+
+  catalyst:
+    command: ["-action", "run", "-archive", "/var/lib/catalyst"]
+    env_file: ../.env.catalyst
+    environment:
+      TB_CATALYST_DATABASE_URL: postgres://catalyst:${CATALYST_DB_PASSWORD:?set a dedicated database password}@db:5432/tradingbot_catalyst_paper_v1?sslmode=disable
+      GOMEMLIMIT: 384MiB
+    restart: unless-stopped
+    stop_grace_period: 30s
+    ports:
+      - "127.0.0.1:18081:8080"
+    dns: [172.31.252.2]
+    networks:
+      default:
+        gw_priority: 1
+      resolver: {}
+    depends_on:
+      db:
+        condition: service_healthy
+      dns:
+        condition: service_started
+    healthcheck:
+      test: [CMD, /app/catalyst, -action, health, -archive, /var/lib/catalyst]
+      start_period: 90s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging: *logging
+
+volumes:
+  db-data:
+
+networks:
+  resolver:
+    ipam:
+      config:
+        - subnet: 172.31.252.0/29

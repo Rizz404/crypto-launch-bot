@@ -83,3 +83,33 @@ func TestSpiderBinaryProtocol(t *testing.T) {
 	require.NoError(t, archive.Read("evidence", id, &restored))
 	require.Equal(t, evidence, restored)
 }
+
+func TestSpiderBinaryDoesNotBypassDeniedProxy(t *testing.T) {
+	binary := os.Getenv("TB_TEST_SPIDER_BINARY")
+	if binary == "" {
+		t.Skip("requires pinned binary in network-none container")
+	}
+	ctx, cancel := context.WithTimeout(t.Context(), 15*time.Second)
+	defer cancel()
+	var originCalls, proxyCalls atomic.Int32
+	origin := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		originCalls.Add(1)
+		_, _ = w.Write([]byte("must not be reached"))
+	}))
+	defer origin.Close()
+	proxy := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		proxyCalls.Add(1)
+		http.Error(w, "denied", http.StatusForbidden)
+	}))
+	defer proxy.Close()
+	cmd := exec.CommandContext(ctx, binary, "--url", origin.URL, "--respect-robots-txt", "--http", "--return-headers", "--limit", "5", "--depth", "2", "--delay", "1000", "--agent", collectorAgent+"/1.0", "--proxy-url", proxy.URL, "--accept-invalid-certs", "scrape", "--output-html")
+	cmd.Env = []string{"RUST_LOG=error"}
+	cmd.WaitDelay = time.Second
+	output := &boundedOutput{cancel: cancel}
+	cmd.Stdout = output
+	_ = cmd.Run()
+	require.NoError(t, ctx.Err(), "proxy denial must complete without a fallback or hang")
+	require.Positive(t, proxyCalls.Load())
+	require.Zero(t, originCalls.Load(), "the real binary must not bypass an explicitly denied proxy")
+	require.NotContains(t, output.String(), "must not be reached")
+}
