@@ -101,6 +101,10 @@ func (b *Bot) Run(ctx context.Context) {
 	wg.Wait()
 }
 
+// RunSender shares notification delivery without polling updates or replacing
+// another process's command menu for the same Telegram token.
+func (b *Bot) RunSender(ctx context.Context) { b.sendLoop(ctx) }
+
 var commandName = regexp.MustCompile(`^[a-z0-9_]{1,32}$`)
 
 // publishCommands registers the command list with Telegram (setMyCommands),

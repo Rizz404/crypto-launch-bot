@@ -23,6 +23,20 @@ func (f transportFunc) RoundTrip(r *http.Request) (*http.Response, error) { retu
 func newBot() *Bot {
 	return New("fake-token", []int64{42}, slog.New(slog.NewTextHandler(io.Discard, nil)))
 }
+
+func TestRunSenderNeverPollsOrChangesCommands(t *testing.T) {
+	b := newBot()
+	var methods []string
+	b.http.Transport = transportFunc(func(r *http.Request) (*http.Response, error) {
+		methods = append(methods, r.URL.Path)
+		return response(`{"ok":true,"result":{}}`), nil
+	})
+	b.Notify("fixture paper notification")
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	b.RunSender(ctx)
+	require.Equal(t, []string{"/botfake-token/sendMessage"}, methods)
+}
 func response(body string) *http.Response {
 	return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(body)), Header: make(http.Header)}
 }
