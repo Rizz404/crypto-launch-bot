@@ -99,6 +99,15 @@ type Ticker struct {
 	Ask         decimal.Decimal
 }
 
+// BookQuote is a received top-of-book observation, not a candle range.
+type BookQuote struct {
+	Exchange                 string
+	Market                   Market
+	Symbol                   string
+	Bid, Ask, BidQty, AskQty decimal.Decimal
+	At                       time.Time
+}
+
 // SpreadBps returns the bid/ask spread in basis points of the mid price,
 // and false if bid or ask is missing.
 func (t Ticker) SpreadBps() (float64, bool) {
