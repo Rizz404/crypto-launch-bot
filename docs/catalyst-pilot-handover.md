@@ -216,7 +216,7 @@ Putaran berikutnya (28 Oktober malam, setelah user meminta lanjut sampai selesai
 
 **Rilis dan start pilot selesai 28 Oktober 22.53 WIB** atas izin user; detail
 operasi, digest, kuota dan jadwal review ada di [handover VPS](handover-vps.md).
-Masih terbuka: Telegram P3, backup/observer P3, QA browser, review hari 1/3/7,
+Masih terbuka: backup/observer P3, QA browser, review hari 1/3/7,
 sumber tambahan (ICO Analytics hanya konteks; listing Binance tahap terpisah)
 sumber tambahan lain. Spider kini image artefak terpisah (`Dockerfile.spider`,
 workflow `spider.yml`); `Dockerfile.catalyst` menyalin binary dari digest ter-pin.

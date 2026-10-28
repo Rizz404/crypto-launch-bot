@@ -14,8 +14,8 @@ sungguhan. P2 tidak direstart; identitas container P2 identik sebelum/sesudah.
 
 | Item | Nilai |
 |---|---|
-| Source berjalan | `05ce48a` (Spider dari image artefak ter-pin), sebelumnya `41d22b0`; start awal `43b6f61` 22.53 WIB |
-| Image | `ghcr.io/rizz404/trading-bot-catalyst@sha256:2477ab20a6c2d80cb3a454ddc79c1bdaddf1b8dc31b6667027202144cec72a21` (redeploy 23.22 WIB, Spider `spider_cli 2.53.9-p3.1`) |
+| Source berjalan | `1779878` (pesan start Telegram), sebelumnya `05ce48a`/`41d22b0`; start awal `43b6f61` 22.53 WIB |
+| Image | `ghcr.io/rizz404/trading-bot-catalyst@sha256:4579285aee19eeab366b4f87f6eb08d0340f8be8b1a5f2b4833b5ac3a3904cdf` (redeploy ±23.35 WIB, Spider `spider_cli 2.53.9-p3.1`) |
 | Spider artefak | `ghcr.io/rizz404/trading-bot-spider@sha256:480faea43abdb2b2e8bd6cf136ecd250e8c37039e925f0bdb38f14385a318e19`; CI katalis turun ±12 → ±1,7 menit |
 | CI | [40717858676](https://github.com/Rizz404/trading-bot/actions/runs/40717858676) dan [40720835367](https://github.com/Rizz404/trading-bot/actions/runs/40720835367) lulus seluruh job; [40724154160](https://github.com/Rizz404/trading-bot/actions/runs/40724154160) untuk `05ce48a` |
 | Wallet / DB | `paper:catalyst-catalyst-paper-v1` / `tradingbot_catalyst_paper_v1`, role `catalyst`, volume `trading-bot-catalyst_db-data` |
@@ -24,7 +24,8 @@ sungguhan. P2 tidak direstart; identitas container P2 identik sebelum/sesudah.
 | Policy hash | `b11fc4a1b144dd71c41dc1ffdf0a9f3e85edbd63b91bb1ec3f5d55899aa85f12` |
 | Sumber | Ethereum blog, Anza blog (SOL), Dogecoin blog; masing-masing seed + 4 artikel terbaru |
 | Dashboard | `127.0.0.1:18081` (SSH tunnel), user `pilot`; password di `.env.catalyst` VPS mode 600 |
-| Env | `.env.catalyst` (model + dashboard, Telegram kosong) dan `.env.catalyst-image` (digest + password DB dibangkitkan di VPS); tidak disalin dari P2 |
+| Telegram | Sender-only memakai bot dan chat ID P2 (pilihan user); tidak polling/menu, pesan berawalan `P3 paper`; start dan setiap eksekusi |
+| Env | `.env.catalyst` (model, dashboard, token/chat Telegram disalin dari env/config P2 di VPS) dan `.env.catalyst-image` (digest + password DB dibangkitkan di VPS); tidak disalin dari P2 |
 
 Preflight dengan image baru: `market` membaca ETH/SOL/DOGE book + ATR nyata,
 `collect` sukses tiga sumber. Siklus riset pertama memanggil model sekali
@@ -35,7 +36,7 @@ entry/hold tetap wajib bukti primer aset sendiri. Setelah redeploy, siklus
 berjalan tanpa error dan tanpa panggilan baru (bukti tidak berubah); kuota
 terpakai 1/12 pada 28 Oktober.
 
-Belum: Telegram P3, backup/restore DB dan arsip P3, observer/alert P3, QA browser
+Belum: backup/restore DB dan arsip P3, observer/alert P3, QA browser
 dashboard. Review pilot hari 1/3/7: **29 Oktober / 31 Oktober / 4 November
 22.53 WIB**. Tidak ada entry sampai sumber primer memuat jadwal mainnet/produk
 eksplisit (event Hoodi sekarang testnet dan ditunda).
