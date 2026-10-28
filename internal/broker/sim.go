@@ -52,9 +52,10 @@ type Sim struct {
 }
 
 type simOrder struct {
-	order    domain.Order
-	placedAt time.Time
-	seq      int64
+	order     domain.Order
+	placedAt  time.Time
+	seq       int64
+	triggered bool
 }
 
 func NewSim(cfg SimConfig) *Sim {
@@ -151,7 +152,37 @@ func (s *Sim) OnCandle(c domain.Candle) {
 // considering another candidate (e.g. cancel the other protective leg).
 func (s *Sim) MatchCandle(c domain.Candle, settle func() error) error {
 	for _, id := range s.candidates(c) {
-		s.tryFill(id, c)
+		s.tryFill(id, c, nil)
+		if settle != nil {
+			if err := settle(); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// MatchBook executes on the correct spread side, with at most 10% of each
+// observed best level shared across orders. It does not simulate queue/L2.
+func (s *Sim) MatchBook(q domain.BookQuote, step decimal.Decimal, settle func() error) error {
+	if q.Exchange != s.cfg.Exchange || !step.IsPositive() || q.At.IsZero() || q.At.After(s.cfg.Clock()) || s.cfg.Clock().Sub(q.At) > 5*time.Second || !q.Bid.IsPositive() || !q.Ask.IsPositive() || q.Bid.GreaterThan(q.Ask) || q.BidQty.IsNegative() || q.AskQty.IsNegative() {
+		return errors.New("sim: invalid or stale book quote")
+	}
+	bidDepth, askDepth := q.BidQty.Div(decimal.NewFromInt(10)), q.AskQty.Div(decimal.NewFromInt(10))
+	bidDepth, askDepth = bidDepth.Div(step).Floor().Mul(step), askDepth.Div(step).Floor().Mul(step)
+	c := domain.Candle{Exchange: q.Exchange, Market: q.Market, Symbol: q.Symbol, OpenTime: q.At}
+	for _, id := range s.candidates(c) {
+		s.mu.Lock()
+		o := s.orders[id]
+		buy := o != nil && o.order.Side == domain.Buy
+		s.mu.Unlock()
+		price, depth := q.Bid, &bidDepth
+		if buy {
+			price, depth = q.Ask, &askDepth
+		}
+		c.Open, c.High, c.Low, c.Close = price, price, price, price
+		filled := s.tryFill(id, c, depth)
+		*depth = depth.Sub(filled)
 		if settle != nil {
 			if err := settle(); err != nil {
 				return err
@@ -201,20 +232,34 @@ func (s *Sim) candidates(c domain.Candle) []string {
 	return ids
 }
 
-func (s *Sim) tryFill(id string, c domain.Candle) {
+func (s *Sim) tryFill(id string, c domain.Candle, depth *decimal.Decimal) decimal.Decimal {
 	s.mu.Lock()
 	so, ok := s.orders[id]
 	if !ok { // canceled by the handler of an earlier fill
 		s.mu.Unlock()
-		return
+		return decimal.Zero
 	}
 	price, maker, hit := s.match(so.order, c)
+	if depth != nil && so.order.Type.IsConditional() && (so.triggered || so.order.FilledQty.IsPositive()) {
+		price, maker, hit = s.slip(c.Open, so.order.Side == domain.Buy), false, true
+	}
 	if !hit {
 		s.mu.Unlock()
-		return
+		return decimal.Zero
 	}
 	o := so.order
-	delete(s.orders, id)
+	if depth != nil && o.Type.IsConditional() {
+		so.triggered = true
+	}
+	quantity := o.Remaining()
+	if depth != nil {
+		quantity = decimal.Min(quantity, *depth)
+	}
+	if !quantity.IsPositive() {
+		s.mu.Unlock()
+		return decimal.Zero
+	}
+	filled := o.FilledQty.Add(quantity)
 
 	fee := s.cfg.Fees[o.Market]
 	rate := fee.Taker
@@ -224,26 +269,33 @@ func (s *Sim) tryFill(id string, c domain.Candle) {
 	now := s.cfg.Clock()
 	fill := domain.Fill{
 		OrderClientID: o.ClientID,
-		TradeID:       o.ExchangeID + "-" + o.Quantity.String(),
+		TradeID:       o.ExchangeID + "-" + filled.String(),
 		Exchange:      s.cfg.Exchange,
 		Market:        o.Market,
 		Symbol:        o.Symbol,
 		Side:          o.Side,
 		Price:         price,
-		Quantity:      o.Remaining(),
-		Fee:           price.Mul(o.Remaining()).Mul(decimal.NewFromFloat(rate)),
+		Quantity:      quantity,
+		Fee:           price.Mul(quantity).Mul(decimal.NewFromFloat(rate)),
 		FeeAsset:      "QUOTE",
 		Maker:         maker,
 		Time:          now,
 	}
-	o.AvgPrice = o.AvgPrice.Mul(o.FilledQty).Add(price.Mul(o.Remaining())).Div(o.Quantity)
-	o.Status, o.FilledQty, o.UpdatedAt = domain.OrderFilled, o.Quantity, now
+	o.AvgPrice = o.AvgPrice.Mul(o.FilledQty).Add(price.Mul(quantity)).Div(filled)
+	o.Status, o.FilledQty, o.UpdatedAt = domain.OrderPartiallyFilled, filled, now
+	if o.Remaining().IsZero() {
+		o.Status = domain.OrderFilled
+		delete(s.orders, id)
+	} else {
+		so.order = o
+	}
 	h := s.handler
 	s.mu.Unlock()
 
 	if h != nil {
 		h(Event{Kind: EventFill, Order: o, Fill: fill})
 	}
+	return quantity
 }
 
 // match decides whether o fills on c and at what price.
