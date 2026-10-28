@@ -7,11 +7,12 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
 
 **Izin rilis 28 Oktober:** user mengizinkan commit, push dan deploy. Perubahan
 config diekspor pada `c8a3439`, implementasi/image/CI P3 pada `1afbd80`.
-Rilis disiapkan ke `/opt/trading-bot-catalyst`, proyek terpisah dengan default
-`report` sekali jalan; belum aktivasi runner/pilot atau perubahan runtime P2.
-Publikasi GHCR khusus kini disiapkan sesudah gate checks/integration/monitoring
-dan protokol binary lulus. Status CI/digest/deployment harus diverifikasi;
-persetujuan ini tidak berarti semua gate pilot atau uang asli telah selesai.
+**Rilis komponen terverifikasi 21.00 WIB**, source `2998f38`: seluruh CI lulus,
+image GHCR dipasang di `/opt/trading-bot-catalyst`, default `report` exited 0.
+Metadata 35 container lama tetap identik; P2 tidak direstart. Ini bukan aktivasi
+runner/pilot atau izin uang asli. Source/digest, isolasi dan batas bukti:
+[handover VPS](handover-vps.md#rilis-komponen-p3--28-oktober) dan
+[bukti rilis](testing/catalyst-release.json).
 
 **Handover terbaru — Spider, 28 Oktober:** user meluruskan alur menjadi daftar
 website → Spider → AI + data pasar menentukan buy/hold/sell → validator/paper,
@@ -21,10 +22,9 @@ failure ekstraksi, cache/arsip dan proxy ditutup dengan tes fixture lokal.
 Image khusus berhasil dibangun/smoke lokal; binary 2.53.9 memerlukan patch
 flush stdout (versi 2.53.9-p3.1) agar JSON halaman terakhir tidak hilang.
 Protokol dua dokumen melalui proxy lulus tiga kali dalam container tanpa jaringan
-keluar; egress adversarial/situs publik belum diverifikasi. CI disiapkan tetapi
-belum berjalan di GitHub; belum ada instalasi VPS.
-Inspeksi VPS hanya baca; penempatan yang diusulkan memakai container/project
-P3 tersendiri. Jangan meneruskan desain yang menjadikan Spider opsional atau
+keluar; egress adversarial/situs publik belum diverifikasi. CI dan pemasangan
+komponen/report VPS sudah lulus, tanpa worker AI atau trial. Container/project
+P3 terpisah sudah tersedia. Jangan meneruskan desain yang menjadikan Spider opsional atau
 mengklaim checkout terbaru sudah lulus tes lama.
 
 
@@ -143,8 +143,10 @@ mengklaim checkout terbaru sudah lulus tes lama.
   `var/paper-eth/`; jangan memakai `bot run` untuk mencoba dashboard.
 - Jangan menjalankan test, build, server atau verifikasi runtime otomatis
   kecuali diminta atau tugasnya memang pengujian/verifikasi tersebut.
-- VPS Plesk berbagi layanan produksi. Sentuh hanya project `trading-bot-paper`
-  di `/opt/trading-bot-paper`; jangan restart host/Docker atau mengubah proyek lain.
+- VPS Plesk berbagi layanan produksi. Batasi perubahan ke `trading-bot-paper`
+  di `/opt/trading-bot-paper` atau P3 `trading-bot-catalyst` di
+  `/opt/trading-bot-catalyst`, sesuai scope tugas; jangan restart host/Docker
+  atau mengubah proyek lain. Rilis P3 tidak menjadi alasan merilis ulang P2.
 - Rilis lewat GitHub → CI/GHCR → digest tetap; jangan salin source laptop.
   Secret lokal/VPS tetap di file env masing-masing dan tidak masuk chat, repo,
   log atau shared memory. Uji pesan Telegram memakai env lokal sesuai arahan

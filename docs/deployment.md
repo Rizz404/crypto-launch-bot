@@ -5,44 +5,60 @@ di [handover VPS](handover-vps.md); **paper pembanding tahap dua aktif** sejak
 22 Oktober 2026 19:58:45 WIB. Panduan ini tidak memberi izin trial tambahan
 atau transaksi mainnet dengan uang asli.
 
-Rencana aktif [Plan 3](plan-3.md); Plan 2 sudah diarsipkan. Strategi AI belum
-memiliki deployment. P3-7 memerlukan kesiapan/izin start sendiri, DB/wallet baru
+Rencana aktif [Plan 3](plan-3.md); Plan 2 sudah diarsipkan. Komponen/report P3
+terpasang terpisah, worker/pilot AI belum aktif. P3-7 memerlukan kesiapan/izin start sendiri, DB/wallet baru
 dan pemeriksaan resource collector; runbook ini tidak mengizinkan perubahan
 trial pembanding hanya karena plan berganti.
 
-## Rencana penempatan Spider
+## Penempatan komponen Spider
 
 **28 Oktober — izin terbaru:** user mengizinkan commit, push dan deploy.
 Rilis awal hanya memasang komponen CLI/image dan menjalankan default `report`
 sekali di proyek P3 terpisah. Runner/pilot trading belum tersedia/diterima.
-CI kini menyiapkan publikasi `ghcr.io/rizz404/trading-bot-catalyst:sha-<commit>`
-setelah checks/integration/monitoring serta smoke/protokol khusus lulus.
-Pasang hasil CI melalui digest tetap; jangan mengganti runtime P2.
+CI mempublikasikan `ghcr.io/rizz404/trading-bot-catalyst:sha-<commit>` setelah
+checks/integration/monitoring serta smoke/protokol khusus lulus. Rilis source
+`2998f38` dan pemasangan VPS **28 Oktober 21.00 WIB** sudah terverifikasi;
+report exited 0 dan 35 container lama tetap identik. Gunakan digest tetap pada
+[bukti rilis](testing/catalyst-release.json); jangan mengganti runtime P2.
 
 User menetapkan Spider sebagai collector utama P3 pada 26 Oktober. Inspeksi
 kapasitas VPS hanya baca sudah dilakukan; rencana awal memakai project/path
 `trading-bot-catalyst` / `/opt/trading-bot-catalyst` yang terpisah dari P2.
 `Dockerfile.catalyst` dan `deploy/compose.catalyst.yml` disiapkan 28 Oktober,
 build/smoke image linux/amd64 serta binary/protokol fixture tanpa jaringan lulus.
-CI job image/protokol disiapkan tanpa publikasi, belum dijalankan di GitHub;
-belum ada publikasi image khusus, instalasi, rilis atau start P3 di VPS.
-`podman compose ... config` lulus untuk manifest khusus;
-ini validasi konfigurasi, bukan menjalankan container. Jangan memasang draft
-langsung ke runtime P2. [Handover Spider](catalyst-spider-handover.md)
-memuat pekerjaan dan bukti yang harus diselesaikan sebelum rilis.
+CI image/protokol, publikasi GHCR dan deployment komponen/report sudah lulus.
+Manifest serta batas resource diverifikasi pada container VPS yang exited 0.
+[Handover Spider](catalyst-spider-handover.md) memuat gate collector/pilot yang
+masih terbuka; komponen terpasang tidak mengaktifkan gate tersebut otomatis.
 
 Image khusus memakai crate CLI tepat `2.53.9`, checksum terverifikasi dan
 Cargo.lock upstream (`--locked`), features `headers,status_code` dan tanpa
 default Chrome/cloud. Patch `build/spider-cli.patch` mem-flush stdout sebelum
 shutdown agar halaman terakhir tidak hilang; binary mengaku versi `2.53.9-p3.1`
 dan collector menolak versi tanpa patch. Compose meminta
-`CATALYST_IMAGE` dari image **khusus P3** yang kelak dipublikasikan dengan digest;
+`CATALYST_IMAGE` dari image **khusus P3** dengan digest GHCR tetap;
 image bot P2 tidak menyertakan Spider. Default adalah `report`, volume arsip
 sendiri, non-root/read-only, tanpa port/restart otomatis, 0,5 CPU/512 MiB/pids
 128. File ini tidak memasang worker/model/DB atau mengaktifkan pilot.
-Sebelum rilis: uji egress adversarial/situs publik, resource dan batas container,
-lalu jalankan CI dan lengkapi publikasi GHCR/digest khusus P3. Dua halaman fixture
+Sebelum aktivasi collector/pilot: uji egress adversarial/situs publik, retensi,
+input pasar/event dan resource dengan beban sebenarnya. Dua halaman fixture
 berhasil dalam budget, tetapi belum membuktikan kapasitas situs/beban pilot.
+
+Checkout server berada di `/opt/trading-bot-catalyst/repo`; image digest ada di
+`.env.catalyst-image` root mode 600. File itu hanya menyimpan referensi image,
+bukan key OmniRoute/trading. Bukti server ada di direktori `../evidence`.
+Untuk mengulang pemeriksaan report pada rilis yang sama:
+
+```sh
+cd /opt/trading-bot-catalyst/repo
+docker compose --env-file .env.catalyst-image -f deploy/compose.catalyst.yml up --abort-on-container-exit --exit-code-from catalyst </dev/null
+```
+
+Status `exited 0` adalah hasil normal aksi sekali jalan, bukan worker mati.
+Rollback komponen awal: `docker compose --env-file .env.catalyst-image -f deploy/compose.catalyst.yml stop catalyst`;
+pertahankan volume arsip dan bukti, jangan `down -v`. Tidak ada DB P3 yang
+dimigrasikan atau perlu dikembalikan. Pembaruan berikutnya tetap mengunci
+checkout/source label/digest yang sama dan menyimpan bukti sebelum/sesudah.
 
 ## Rilis dan persiapan
 
@@ -50,14 +66,15 @@ berhasil dalam budget, tetapi belum membuktikan kapasitas situs/beban pilot.
   pasangan commit dan digest tetap. Jangan salin source laptop atau pakai `latest`.
 - CI memeriksa format, modul, vet/lint, race test, build lima CLI, integrasi DB/
   migrasi/restart, alert Prometheus dan smoke image. Publikasi hanya dari `main`;
-  PR membangun tanpa publikasi. Rilis mendukung amd64/arm64.
+  PR membangun tanpa publikasi. Image bot mendukung amd64/arm64; image katalis
+  saat ini amd64 untuk VPS yang sudah diverifikasi.
 - Binary catalyst ditambahkan untuk development/report/replay; entrypoint bot
   dan manifest P2 tidak berubah. Adapter AI/runner prospective belum diterima;
   adanya binary di image bukan izin mengaktifkan worker baru.
 - Gunakan deploy key read-only dan akses GHCR `read:packages`. Jangan mencetak
   token/password atau memasukkannya ke argumen perintah, repo maupun chat.
-- VPS Plesk bersama: hanya `/opt/trading-bot-paper`, project Compose
-  `trading-bot-paper`. Jangan mengubah service/port proyek lain, Plesk, firewall,
+- VPS Plesk bersama: scope bot P2 di `/opt/trading-bot-paper` dan P3 terpisah
+  di `/opt/trading-bot-catalyst`. Jangan mengubah service/port proyek lain, Plesk, firewall,
   DNS host atau Docker daemon; jangan restart host/Docker, prune atau `down -v`.
 - Periksa resource/disk, port loopback, subnet resolver dan baseline sebelum
   perubahan. Jika baseline historis berbeda, simpan penyebab/selisih dan snapshot

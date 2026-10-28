@@ -1,13 +1,14 @@
 # Handover implementasi Spider dan Plan 3
 
-Checkpoint terbaru **28 Oktober 2026**. Integrasi lokal Spider dilanjutkan;
-**belum siap dideploy**. Riwayat 26 Oktober di bawah dipertahankan untuk konteks.
+Checkpoint terbaru **28 Oktober 2026**. Komponen/report P3 sudah terpasang di
+VPS; **runner/pilot belum aktif**. Riwayat 26 Oktober dipertahankan untuk konteks.
 Mulai dari [handover agent](handover-agent.md) dan [Plan 3](plan-3.md).
 
 **Pembaruan izin setelah checkpoint implementasi:** user mengizinkan commit,
 push dan deploy pada 28 Oktober. Commit config `c8a3439` dan implementasi
-`1afbd80`; publikasi GHCR khusus ditambahkan setelah gate CI. Rilis awal
-komponen/report terisolasi, bukan aktivasi runner/pilot trading. Bagian
+`1afbd80`; source rilis `2998f38`. Seluruh CI/publikasi GHCR dan deployment
+report sekali jalan lulus 21.00 WIB, dengan 35 container lama tetap identik.
+[Bukti/digest rilis](testing/catalyst-release.json). Ini bukan aktivasi runner/pilot. Bagian
 "tanpa commit/push/deploy" di bawah merekam checkpoint sebelum izin ini.
 
 ## Hasil lanjutan 28 Oktober
@@ -43,13 +44,13 @@ komponen/report terisolasi, bukan aktivasi runner/pilot trading. Bagian
   tanpa restart otomatis/port publik; budget 0,5 CPU/512 MiB/pids 128.
   **Build lokal linux/amd64 dan smoke tanpa jaringan lulus.** Protokol binary
   patched lulus tiga kali pada server TLS fixture melalui proxy, termasuk dua
-  dokumen dan round-trip arsip. CI job image/protokol disiapkan tanpa publikasi;
-  belum dijalankan di GitHub. Compose config lulus, belum ada deployment.
+  dokumen dan round-trip arsip. CI image/protokol/publikasi serta pemasangan
+  VPS report lulus setelah izin user; runner trading tetap belum aktif.
 - Race test tiga paket terkait, vet dan lint lokal lulus; rincian dan batas di
   [hasil lokal](testing/plan-3-local.md#lanjutan-spider-28-oktober).
   Unit subprocess memakai shell fixture; tes container tambahan memakai binary
-  Spider asli dengan patch flush. Tidak ada crawl publik,
-  inference baru, instalasi VPS, commit, push atau perubahan runtime P2.
+  Spider asli dengan patch flush. Tidak ada crawl publik, inference baru atau
+  perubahan runtime P2; commit/push/deployment komponen tercatat di bukti rilis.
 
 Gate berikutnya: uji egress/redirect adversarial, kontrak situs, retensi arsip
 dan input pasar/registry event. Binary/protokol jalur fixture sudah terbukti.
@@ -88,9 +89,10 @@ daftar website crypto → scraping/crawling dengan Spider
 - P2 yang berjalan dipertahankan: tidak mengubah container, parameter, ledger,
   database, modal, T0, history maupun strategi lamanya.
 
-User sudah mengizinkan implementasi serta inspeksi VPS untuk menentukan lokasi
-Spider. Izin push/deploy P2 yang lama tidak otomatis berlaku untuk rilis P3.
-Tidak ada commit/push/deploy/install/start worker pada sesi implementasi ini.
+Pada 26 Oktober user mengizinkan implementasi serta inspeksi VPS untuk menentukan
+lokasi Spider. Saat itu belum ada izin rilis P3 dan tidak ada commit/push/deploy/
+install/start worker. Izin dan rilis komponen 28 Oktober tercatat di atas;
+worker/pilot tetap belum aktif.
 
 ## Inspeksi VPS yang benar-benar dilakukan
 
@@ -214,9 +216,9 @@ Temuan statis yang sudah terlihat, belum diperbaiki:
 1. Baca aturan user/global dan status Git; jangan reset/hapus file WIP atau env.
    Pertahankan hasil lokal 28 Oktober; jangan mengulang failure lama sebagai
    blocker yang masih aktif atau menganggap seluruh Plan 3 sudah selesai.
-2. Pertahankan pin crate 2.53.9 + patch flush p3.1; image/protokol lokal sudah
-   lulus. CI baru belum dijalankan di GitHub; jangan menganggap image lokal
-   sebagai digest rilis. Jangan memasang Rust/Chromium ke host VPS atau image P2.
+2. Pertahankan pin crate 2.53.9 + patch flush p3.1; image/protokol lokal dan CI
+   sudah lulus. Gunakan digest GHCR rilis, bukan image lokal. Jangan memasang
+   Rust/Chromium ke host VPS atau image P2.
 3. Buktikan perilaku proxy/robots/redirect/egress binary pinned di lingkungan
    terisolasi, termasuk tidak ada bypass. Verifikasi situs nyata dan cakupan
    artikel; implementasikan retensi/quota disk sebelum collector jangka panjang.
@@ -225,7 +227,7 @@ Temuan statis yang sudah terlihat, belum diperbaiki:
    dan registry bukti, tanpa flag fixture sebagai bukti event nyata.
 5. Perbarui Plan 3/runtime/hasil pengujian setelah bukti baru. Saat melanjutkan
    implementasi, pengujian terkait diperlukan. Jangan memulai bot/trial di laptop.
-6. Validasi batas/resource Compose saat deployment dan lengkapi rilis image khusus. Deployment
+6. Pada rilis berikutnya validasi batas/resource Compose dan digest image khusus. Deployment
    mengikuti sumber GitHub/CI/GHCR/digest; jangan menyalin source WIP ke VPS atau
    mengubah P2. Izin commit/push/start harus sesuai permintaan user pada saat rilis.
 

@@ -4,7 +4,8 @@
 failure ekstraksi, cache dan batas arsip telah diperbaiki. Adapter/proxy memiliki
 race test fixture lokal yang lulus. Image khusus dibangun/smoke lokal; binary
 patched/protokol/proxy lulus tiga kali pada TLS fixture tanpa jaringan keluar.
-Egress adversarial dan situs publik belum diuji; belum ada deployment/pilot.
+Egress adversarial dan situs publik belum diuji. Komponen/report terpasang di
+VPS 28 Oktober 21.00 WIB; worker/pilot belum aktif. [Bukti rilis](testing/catalyst-release.json).
 Lihat [handover Spider](catalyst-spider-handover.md) sebelum memakai checkout ini.
 Penjelasan komponen di bawah bukan klaim seluruh integrasi sudah diterima.
 

@@ -1,9 +1,37 @@
 # Handover VPS
 
-Checkpoint operasi P2 **23 Oktober 2026**, ditambah inspeksi kapasitas read-only
-untuk Spider pada **26 Oktober**. Prosedur perubahan ada di
+Checkpoint operasi P2 **23 Oktober 2026**, deployment komponen P3 **28 Oktober
+21.00 WIB**. Prosedur perubahan ada di
 [deployment](deployment.md); rencana aktif di [Plan 3](plan-3.md), dengan
 pembanding lama tetap mengikuti [Strategi 2](strategy-2.md).
+
+## Rilis komponen P3 — 28 Oktober
+
+User mengizinkan commit, push dan deploy. [Seluruh CI lulus](https://github.com/Rizz404/trading-bot/actions/runs/40699358329),
+termasuk race/vet/lint/build, integrasi DB/recovery, monitoring serta image/
+protokol Spider. Image khusus ditarik dari GHCR; source label dan checkout cocok.
+
+| Item | Hasil terverifikasi |
+|---|---|
+| Source rilis | `2998f386f5aead3cc19e0f2dee1c0abe735c2618` |
+| Image khusus | `ghcr.io/rizz404/trading-bot-catalyst@sha256:cee992d6f6cd908569e072d98d07831d04b2efab26f006bf74e2a3e2997ce79d` |
+| Project / direktori | `trading-bot-catalyst` / `/opt/trading-bot-catalyst` |
+| Container | `trading-bot-catalyst-catalyst-1`, exited 0 sesuai aksi sekali jalan |
+| Start / selesai | 28 Oktober 21:00:44,059 / 21:00:44,575 WIB |
+| Batas / isolasi | 0,5 CPU, 512 MiB, pids 128; UID 65532, read-only, cap-drop ALL, no-new-privileges, tanpa port publik |
+| State P3 | Volume arsip sendiri; default report shadow, tiga sumber `missing` karena belum pernah collect |
+| Bukti server | `evidence/release.json`, `report.json`, `deployment.log`, `containers-before.txt`, `containers-after.txt` |
+
+**Ini pemasangan komponen/report, bukan worker AI atau start trial.** Tidak ada
+crawl publik, inference, scheduler, DB/wallet/modal P3 atau T0 pilot. Gate situs,
+egress adversarial, retensi, input pasar/event, runner dan penerimaan pilot tetap
+terbuka. Dua halaman fixture CI bukan benchmark kapasitas situs nyata.
+
+Metadata **35 container yang sudah ada identik** sebelum/sesudah. Bot P2 tetap
+image `02376651f56e...`, started `2026-10-23T13:52:17.164470608Z`, restart 0.
+Tidak restart P2/Docker/host, mengubah env/config/ledger/T0 P2, migrasi database
+atau menyalin secret laptop. Ini pemeriksaan identitas/isolasi, bukan audit
+saldo/feed terkini P2. Bukti lengkap: [rilis P3](testing/catalyst-release.json).
 
 ## Pergantian rencana 23 Oktober
 
@@ -26,7 +54,7 @@ Plesk, gateway, Docker daemon atau layanan lain. Bukti:
 [preflight kapasitas](testing/catalyst-vps-preflight.json); detail dan pekerjaan
 sisa: [handover Spider](catalyst-spider-handover.md).
 
-## Status terakhir
+## Status terakhir P2
 
 ### Rilis notifikasi transaksi — 23 Oktober 2026
 
@@ -349,9 +377,10 @@ terjadwal atau instruksi untuk mengaktifkan kembali tahap satu.
 
 ## Akses dan batas
 
-`ssh -o BatchMode=yes plesk` menuju server Plesk bersama. Hanya project Compose
-`trading-bot-paper` di `/opt/trading-bot-paper` yang boleh dikelola dalam cakupan
-bot. Jangan mengubah Plesk/domain/firewall/web server/Docker daemon, restart host,
+`ssh -o BatchMode=yes plesk` menuju server Plesk bersama. Cakupan bot adalah
+project `trading-bot-paper` di `/opt/trading-bot-paper` dan komponen P3 terpisah
+`trading-bot-catalyst` di `/opt/trading-bot-catalyst`. Jangan mengubah
+Plesk/domain/firewall/web server/Docker daemon, restart host,
 prune global atau menghapus volume. Mainnet belum diizinkan; manifest memaksa
 `TB_APP__ALLOW_LIVE=false`.
 

@@ -1,0 +1,103 @@
+{
+  "verified_at_utc": "2026-10-28T14:00:45.102781+00:00",
+  "source_commit": "2998f386f5aead3cc19e0f2dee1c0abe735c2618",
+  "image": "ghcr.io/rizz404/trading-bot-catalyst@sha256:cee992d6f6cd908569e072d98d07831d04b2efab26f006bf74e2a3e2997ce79d",
+  "project": "trading-bot-catalyst",
+  "path": "/opt/trading-bot-catalyst",
+  "action": "one-shot report; no collector, model or trading worker",
+  "container": {
+    "image": "sha256:cee992d6f6cd908569e072d98d07831d04b2efab26f006bf74e2a3e2997ce79d",
+    "status": "exited",
+    "exit_code": 0,
+    "oom_killed": false,
+    "restart_count": 0,
+    "started_at": "2026-10-28T14:00:44.059779229Z",
+    "finished_at": "2026-10-28T14:00:44.574684056Z",
+    "memory_bytes": 536870912,
+    "nano_cpus": 500000000,
+    "pids_limit": 128,
+    "read_only": true,
+    "user": "65532:65532",
+    "privileged": false,
+    "port_bindings": {},
+    "cap_drop": [
+      "ALL"
+    ],
+    "security_opt": [
+      "no-new-privileges:true"
+    ]
+  },
+  "report_policy_hash": "25f62269ecffda8298f58ff1378948a98d59b119d7fed9c5173dc881b8f6758b",
+  "source_statuses": [
+    {
+      "source_id": "ethereum-blog",
+      "at": "0001-01-01T00:00:00Z",
+      "status": "missing"
+    },
+    {
+      "source_id": "solana-news",
+      "at": "0001-01-01T00:00:00Z",
+      "status": "missing"
+    },
+    {
+      "source_id": "dogecoin-blog",
+      "at": "0001-01-01T00:00:00Z",
+      "status": "missing"
+    }
+  ],
+  "existing_containers_compared": 35,
+  "existing_containers_changed": [],
+  "pilot_started": false,
+  "p2_restart_performed": false,
+  "verified_at_wib": "2026-10-28T21:00:45+07:00",
+  "ci": {
+    "run_id": 40699358329,
+    "url": "https://github.com/Rizz404/trading-bot/actions/runs/40699358329",
+    "conclusion": "success",
+    "jobs": [
+      "Go checks and unit tests",
+      "Database and paper recovery",
+      "Prometheus alerts",
+      "Build and publish container",
+      "Isolated Spider image and protocol"
+    ]
+  },
+  "preflight": {
+    "architecture": "x86_64",
+    "mem_available_kib": 15791976,
+    "disk_available_gib_rounded": 115,
+    "load_1_5_15": [
+      2.2,
+      2.62,
+      2.59
+    ],
+    "cgroup_version": 2,
+    "docker_version": "29.9.2",
+    "capacity_benchmark": false
+  },
+  "p2_identity_unchanged": {
+    "container": "trading-bot-paper-bot-1",
+    "image": "sha256:02376651f56e2291c41fef664a44691a9279686b4a89288a2dba020528e097ca",
+    "started_at": "2026-10-23T13:52:17.164470608Z",
+    "restart_count": 0
+  },
+  "spider_version": "2.53.9-p3.1",
+  "remote_evidence_directory": "/opt/trading-bot-catalyst/evidence",
+  "not_performed": [
+    "public crawling",
+    "model inference",
+    "worker scheduling",
+    "pilot trading start",
+    "P2 ledger/feed audit",
+    "P2 restart or deployment",
+    "database migrations",
+    "secret copying from laptop"
+  ],
+  "remaining_gates": [
+    "adversarial binary proxy/redirect tests",
+    "real website and TLS contracts",
+    "archive retention and disk quota",
+    "trusted market/event input and runner",
+    "pilot resource and policy acceptance"
+  ]
+}

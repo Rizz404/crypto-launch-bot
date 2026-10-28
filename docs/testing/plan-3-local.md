@@ -1,5 +1,11 @@
 # Checkpoint development lokal Plan 3
 
+Pembaruan setelah izin commit/push/deploy: **seluruh CI dan rilis komponen/report
+VPS lulus 28 Oktober 21.00 WIB**, source `2998f38`. Hasil lokal di bawah adalah
+checkpoint sebelum rilis, bukan pembatalan bukti CI. Source/digest, batas runtime
+dan perbandingan 35 container ada di [bukti rilis](catalyst-release.json).
+Tidak ada worker/pilot P3 yang aktif atau restart P2.
+
 ## Lanjutan Spider 28 Oktober
 
 Perubahan lokal: perbaikan assertion extractor, Spider default CLI dengan

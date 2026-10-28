@@ -5,7 +5,7 @@ Mulai dari [handover agent](handover-agent.md), lalu pilih panduan yang diperluk
 | Dokumen | Isi |
 |---|---|
 | [Handover agent](handover-agent.md) | Status terbaru, batas kerja dan langkah lanjut untuk Codex/Claude/agent lain |
-| [Handover Spider](catalyst-spider-handover.md) | Arah website→Spider→AI, draft parsial, failure terakhir dan penempatan VPS |
+| [Handover Spider](catalyst-spider-handover.md) | Arah website→Spider→AI, patch/protokol, rilis komponen VPS dan gate pilot |
 | [Plan 3](plan-3.md) | Rencana aktif: katalis/AI, hold berbasis tesis, proteksi dan seluruh backlog Plan 2 |
 | [Plan 2](plan-2.md) | Siklus multi-instance selesai/arsip; checklist dan bukti historis |
 | [Strategi 2](strategy-2.md) | Keputusan terbaru: tarik trial ETH, kandidat dan protokol riset |
@@ -22,7 +22,10 @@ Mulai dari [handover agent](handover-agent.md), lalu pilih panduan yang diperluk
 Checkpoint development 28 Oktober: CLI collect kini Spider default dan race
 test/vet/lint komponen lokal lulus. Image P3 dibangun/smoke; binary patched
 2.53.9-p3.1 lulus TLS fixture/proxy terisolasi tiga kali. Egress adversarial/
-situs publik dan pilot masih terbuka. Lanjutkan dari [handover Spider](catalyst-spider-handover.md).
+situs publik dan pilot masih terbuka. **Seluruh CI dan deployment komponen/report
+VPS lulus 28 Oktober 21.00 WIB**, source `2998f38`; worker/pilot belum aktif dan
+P2 tidak direstart. [Bukti rilis](testing/catalyst-release.json).
+Lanjutkan dari [handover Spider](catalyst-spider-handover.md).
 
 Plan 2 ditutup 23 Oktober sebagai siklus; seluruh sisa pekerjaan ada di Plan 3.
 Komponen collector/validator dan replay paper lokal tersedia; worker/pilot AI
@@ -30,7 +33,7 @@ belum aktif. [Evaluasi OmniRoute](testing/catalyst-model-evaluation.md) 26 Oktob
 memilih Luna; combo/failover dan shadow prospektif masih terbuka. Presale/token baru menjadi
 future reference; memecoin yang sudah diperdagangkan termasuk universe riset.
 
-Checkpoint operasi terbaru 23 Oktober 20.52 WIB: rilis notifikasi `9c18962`
+Checkpoint operasi P2 23 Oktober 20.52 WIB: rilis notifikasi `9c18962`
 pada paper pembanding tahap dua, enam instance/18 binding BTC/ETH/SOL. T0 tetap
 22 Oktober 19:58:45 WIB, modal awal 747,83957456237531 USDT virtual dan CPU1.
 Review user 23/25/29 Oktober pukul 19:58:45 WIB; ledger lama dipertahankan.

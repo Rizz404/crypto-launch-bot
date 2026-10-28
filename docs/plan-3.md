@@ -23,7 +23,9 @@ Implementasi dijeda untuk handover 26 Oktober lalu dilanjutkan 28 Oktober.
 CLI kini memakai Spider; extractor/cache/arsip/proxy memiliki race test fixture
 lokal yang lulus. Image khusus dibangun/smoke; binary dengan patch flush stdout
 (2.53.9-p3.1) lulus protokol/proxy TLS fixture tiga kali tanpa jaringan keluar.
-CI disiapkan, egress adversarial/situs publik belum diuji. Tidak ada instalasi/start P3 di VPS.
+Seluruh CI kemudian lulus dan komponen/report dipasang di VPS 28 Oktober
+21.00 WIB pada source `2998f38`. Egress adversarial/situs publik belum diuji;
+worker/pilot belum dimulai. [Bukti rilis komponen](testing/catalyst-release.json).
 
 [Handover implementasi dan urutan lanjut](catalyst-spider-handover.md) mencatat
 hasil inspeksi kapasitas VPS, usulan container/project tersendiri, file WIP,
@@ -48,7 +50,7 @@ cukup untuk jalur awal, dengan validasi deterministik sebelum aksi paper.
 | Area | Hasil lokal | Penerimaan yang masih terbuka |
 |---|---|---|
 | P3-0 | Kontrak development, batas proses dan titik integrasi ditetapkan | Freeze policy pilot dan resource budget nyata |
-| P3-1 | Spider default CLI; extractor/cache/arsip/proxy fixture dan image/binary patched lulus lokal; Compose config lulus, CI disiapkan | Egress adversarial, kontrak situs nyata, event dan retensi; CI belum dijalankan di GitHub |
+| P3-1 | Spider default CLI; fixture, image/binary patched dan seluruh CI lulus; komponen/report VPS terpasang terpisah | Egress adversarial, kontrak situs nyata, event, retensi dan collector prospektif |
 | P3-2 | Adapter OmniRoute tanpa tools, strict JSON Schema dan evaluasi model nyata pada tujuh kasus sintetis | Shadow prospektif, baseline tanpa AI, combo/failover dan biaya nyata |
 | P3-3/P3-4 | Gate entry, reuse managed/Sim, checkpoint, trailing, expiry/revocation dan full exit diuji sintetis | Registry verifikasi tepercaya, feed/book/ATR nyata, durability/outage dan runner |
 | P3-5 | CLI report keputusan/sumber/token dan replay berlabel fixture | Dashboard/Telegram/metrics AI dan kontrol pilot |
@@ -547,6 +549,9 @@ tugas implementasi/pengujian mengizinkannya, bukan otomatis saat membaca plan.
 
 ### P3-7 — Trial paper prospektif dan evaluasi
 
+Pemasangan komponen/report 28 Oktober bukan start trial: tidak ada worker,
+DB/wallet/modal P3 atau T0 pilot. Checkbox penerimaan berikut tetap terbuka.
+
 - [ ] Tinjau hasil P3-0–P3-6, isolasi dan kapasitas dengan beban collector/model;
   sajikan rencana deployment, backup/rollback dan jadwal sebelum meminta izin start.
 - [ ] Sesudah izin yang sesuai, rilis lewat GitHub/CI/GHCR/digest, DB/wallet
@@ -587,3 +592,4 @@ bukti utama. Target return 50% tetap aspirasi historis, bukan janji Plan 3.
 | 26 Oktober 2026 | User mengisi key dan mengizinkan evaluasi model; Luna menjadi utama, Haiku kandidat fallback | Tujuh kasus sintetis, strict schema v3; combo/pilot belum aktif, P2 tetap |
 | 26 Oktober 2026 | User meluruskan Spider sebagai collector utama dan mengizinkan implementasi/inspeksi VPS, lalu meminta handover | Draft belum tuntas; inspeksi read-only; tidak install/deploy/start P3 atau mengubah P2 |
 | 28 Oktober 2026 | Integrasi lokal Spider: CLI, lima halaman, cache/arsip/proxy, image terpisah dan patch stdout p3.1; CI disiapkan | Race/vet/lint, build/smoke image, Compose config dan tiga putaran binary TLS fixture lulus; egress adversarial/situs publik terbuka; tanpa commit/push/deploy atau perubahan runtime P2 |
+| 28 Oktober 2026 | User mengizinkan commit, push dan deploy; source `2998f38`, seluruh CI dan pemasangan GHCR komponen/report VPS lulus 21.00 WIB | Report exited 0, isolasi/batas container cocok, 35 container lama identik; worker/pilot/T0 belum dimulai, P2 tidak direstart |
