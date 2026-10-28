@@ -1,0 +1,16 @@
+{
+  "version": "catalyst-shadow-v1",
+  "symbols": ["ETHUSDT", "SOLUSDT", "DOGEUSDT"],
+  "meme_symbols": ["DOGEUSDT"],
+  "sources": [
+    {"id": "ethereum-blog", "url": "https://blog.ethereum.org/feed.xml", "primary": true, "symbols": ["ETHUSDT"]},
+    {"id": "solana-news", "url": "https://solana.com/news", "primary": true, "symbols": ["SOLUSDT"]},
+    {"id": "dogecoin-blog", "url": "https://foundation.dogecoin.com/blog/", "primary": true, "symbols": ["DOGEUSDT"]}
+  ],
+  "max_calls_per_run": 1,
+  "max_output_tokens": 2048,
+  "review_hours": 6,
+  "decision_ttl_seconds": 300,
+  "event_horizon_days": 14,
+  "poll_seconds": 900
+}

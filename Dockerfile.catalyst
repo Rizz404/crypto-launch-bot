@@ -1,0 +1,27 @@
+FROM docker.io/library/rust:1.99.1-bookworm AS spider
+RUN apt-get update && apt-get install -y --no-install-recommends pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://crates.io/api/v1/crates/spider_cli/2.53.9/download -o /tmp/spider-cli.crate \
+    && echo 'bc25ae89df2472723dd93fe5b941a05c423c4b3741cfe7f2b7d4301b8f45e4b0  /tmp/spider-cli.crate' | sha256sum -c - \
+    && mkdir /src && tar -xzf /tmp/spider-cli.crate -C /src --strip-components=1
+COPY build/spider-cli.patch /tmp/spider-cli.patch
+RUN cd /src && patch -p1 < /tmp/spider-cli.patch \
+    && cargo install --path . --locked --no-default-features --features headers,status_code --root /out
+
+FROM docker.io/library/golang:1.27.2-bookworm AS build
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY cmd/catalyst ./cmd/catalyst
+COPY internal ./internal
+RUN CGO_ENABLED=0 go build -trimpath -ldflags '-s -w' -o /out/catalyst ./cmd/catalyst
+
+FROM docker.io/library/debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libssl3 && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /var/lib/catalyst && chown 65532:65532 /var/lib/catalyst
+WORKDIR /app
+COPY --from=spider /out/bin/spider /usr/local/bin/spider
+COPY --from=build /out/catalyst /app/catalyst
+COPY configs/catalyst.policy.json /app/configs/catalyst.policy.json
+USER 65532:65532
+ENTRYPOINT ["/app/catalyst"]
+CMD ["-action", "report", "-archive", "/var/lib/catalyst"]

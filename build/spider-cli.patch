@@ -1,0 +1,22 @@
+--- a/src/options/args.rs
++++ b/src/options/args.rs
+@@ -11,7 +11,7 @@
+ ///
+ /// Sign up at <https://spider.cloud> to get an API key.
+ #[derive(Parser)]
+-#[clap(author, version, about, long_about = None)]
++#[clap(author, version = "2.53.9-p3.1", about, long_about = None)]
+ #[command(arg_required_else_help = true)]
+ pub struct Cli {
+     /// Build main sub commands
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -580,6 +580,8 @@
+                             Err(e) =>  eprintln!("{:?}", e)
+                         }
+                     }
++                    // Flush buffered stdout before the Tokio runtime shuts down.
++                    stdout.flush().await.expect("flush Spider output");
+                 }
+                 Some(Commands::AUTHENTICATE { .. }) => {},
+                 None => ()
