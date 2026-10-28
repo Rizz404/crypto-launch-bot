@@ -1,0 +1,16 @@
+# Pinned Spider CLI artifact image. Rebuilt only when this file or the patch
+# changes (.github/workflows/spider.yml); Dockerfile.catalyst copies the binary
+# from it by digest instead of compiling Rust on every CI run.
+FROM docker.io/library/rust:1.99.1-bookworm AS build
+RUN apt-get update && apt-get install -y --no-install-recommends pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://crates.io/api/v1/crates/spider_cli/2.53.9/download -o /tmp/spider-cli.crate \
+    && echo 'bc25ae89df2472723dd93fe5b941a05c423c4b3741cfe7f2b7d4301b8f45e4b0  /tmp/spider-cli.crate' | sha256sum -c - \
+    && mkdir /src && tar -xzf /tmp/spider-cli.crate -C /src --strip-components=1
+COPY build/spider-cli.patch /tmp/spider-cli.patch
+RUN cd /src && patch -p1 < /tmp/spider-cli.patch \
+    && cargo install --path . --locked --no-default-features --features headers,status_code --root /out \
+    && test "$(/out/bin/spider --version)" = "spider_cli 2.53.9-p3.1"
+
+# Artifact only: the binary links libssl3 and runs inside the bookworm-based catalyst image.
+FROM scratch
+COPY --from=build /out/bin/spider /spider
