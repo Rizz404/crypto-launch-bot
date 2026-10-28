@@ -214,12 +214,14 @@ func (p Policy) ValidateAnalysis(a Analysis, evidence []Evidence, now time.Time)
 				return errors.New("citation does not match archived evidence")
 			}
 			for _, s := range p.Sources {
-				if s.ID == e.SourceID && s.URL == e.URL && slices.Contains(s.Symbols, a.Symbol) {
-					found = true
-					if s.Primary {
-						primary = true
-						dateFound = dateFound || (a.EventDateText != "" && strings.Contains(c.Quote, a.EventDateText))
-					}
+				// WATCH may cite any policy source; only same-asset sources can support entry/hold.
+				if s.ID != e.SourceID || s.URL != e.URL {
+					continue
+				}
+				found = true
+				if s.Primary && slices.Contains(s.Symbols, a.Symbol) {
+					primary = true
+					dateFound = dateFound || (a.EventDateText != "" && strings.Contains(c.Quote, a.EventDateText))
 				}
 			}
 		}

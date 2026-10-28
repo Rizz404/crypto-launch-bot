@@ -174,3 +174,17 @@ func TestArchiveQuotaPreservesExistingEvidence(t *testing.T) {
 	require.NoError(t, a.Read("records", id, &restored))
 	require.Equal(t, value, restored)
 }
+
+func TestWatchMayCiteOtherAssetsButEntryNeedsSameAsset(t *testing.T) {
+	p := testPolicy()
+	p.Symbols = append(p.Symbols, "DOGEUSDT")
+	e := scheduledEvidence(t, "The upgrade is scheduled for 2026-10-24T12:00:00Z.")
+	watch := Analysis{Action: "WATCH", Symbol: "DOGEUSDT", Reason: "no DOGE catalyst", Citations: []Citation{{EvidenceID: e.ID, Quote: "The upgrade is scheduled for 2026-10-24T12:00:00Z."}}}
+	require.NoError(t, p.ValidateAnalysis(watch, []Evidence{e}, fixtureNow))
+	entry := watch
+	entry.Action, entry.EventKey, entry.EventType, entry.EventAt, entry.EventDateText = "PROPOSE_ENTRY", "eth-upgrade", "upgrade", time.Date(2026, 10, 24, 12, 0, 0, 0, time.UTC), "2026-10-24T12:00:00Z"
+	entry.Thesis, entry.Counterargument, entry.Invalidation, entry.HoldRationale = "t", "c", "i", "h"
+	require.ErrorContains(t, p.ValidateAnalysis(entry, []Evidence{e}, fixtureNow), "primary evidence")
+	entry.Symbol = "ETHUSDT"
+	require.NoError(t, p.ValidateAnalysis(entry, []Evidence{e}, fixtureNow))
+}
