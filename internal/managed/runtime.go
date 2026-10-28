@@ -344,6 +344,23 @@ func (r *Runtime) syncState(s *State, owner string) {
 	r.engines[owner].SetPaused(i.Status != "running" || b.Status != "running" || i.Halted || b.Halted || s.Halted || s.Attention != "" || Hash(b.Spec.Config(r.physical.Exchange(), owner)) != r.revisions[owner])
 }
 func (r *Runtime) Record(ctx context.Context, c domain.Candle, closed bool) error {
+	return r.record(ctx, c, closed, nil)
+}
+
+// RecordBook keeps prospective paper fills on real bid/ask, not on a fabricated
+// candle range. The legacy candle path remains the backtest/P2 contract.
+func (r *Runtime) RecordBook(ctx context.Context, q domain.BookQuote) error {
+	if q.At.IsZero() || q.At.After(r.clock()) || r.clock().Sub(q.At) > 5*time.Second || q.Exchange != r.physical.Exchange() || q.Market != domain.Spot || !q.Bid.IsPositive() || !q.Ask.IsPositive() || q.Bid.GreaterThan(q.Ask) || q.BidQty.IsNegative() || q.AskQty.IsNegative() {
+		return errors.New("invalid or stale managed book quote")
+	}
+	if _, ok := r.physical.(*broker.Sim); !ok {
+		return errors.New("book simulation requires Sim")
+	}
+	c := domain.Candle{Exchange: q.Exchange, Market: q.Market, Symbol: q.Symbol, Timeframe: "1m", OpenTime: q.At, Open: q.Bid, High: q.Bid, Low: q.Bid, Close: q.Bid}
+	return r.record(ctx, c, false, &q)
+}
+
+func (r *Runtime) record(ctx context.Context, c domain.Candle, closed bool, book *domain.BookQuote) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if !r.ready {
@@ -381,6 +398,9 @@ func (r *Runtime) Record(ctx context.Context, c domain.Candle, closed bool) erro
 		if err := r.repo.Update(ctx, nonce(), "mark", c, func(s *State) error {
 			s.Mark(c.Symbol, c.Close)
 			s.PriceAt[c.Symbol] = c.CloseTime()
+			if book != nil {
+				s.PriceAt[c.Symbol] = book.At
+			}
 			s.Observe(r.clock())
 			return nil
 		}); err != nil {
@@ -389,7 +409,13 @@ func (r *Runtime) Record(ctx context.Context, c domain.Candle, closed bool) erro
 		r.markedAt[c.Symbol] = r.clock()
 	}
 	if sim, ok := r.physical.(*broker.Sim); ok && c.Timeframe == "1m" {
-		if err := sim.MatchCandle(c, func() error { return r.drain(ctx) }); err != nil {
+		var err error
+		if book != nil {
+			err = sim.MatchBook(*book, r.instruments[c.Symbol].StepSize, func() error { return r.drain(ctx) })
+		} else {
+			err = sim.MatchCandle(c, func() error { return r.drain(ctx) })
+		}
+		if err != nil {
 			return err
 		}
 	}
