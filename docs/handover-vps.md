@@ -1,6 +1,7 @@
 # Handover VPS
 
-Checkpoint diperbarui **23 Oktober 2026**. Prosedur perubahan ada di
+Checkpoint operasi P2 **23 Oktober 2026**, ditambah inspeksi kapasitas read-only
+untuk Spider pada **26 Oktober**. Prosedur perubahan ada di
 [deployment](deployment.md); rencana aktif di [Plan 3](plan-3.md), dengan
 pembanding lama tetap mengikuti [Strategi 2](strategy-2.md).
 
@@ -11,6 +12,19 @@ diteruskan ke [P3-O](plan-3.md#p3-o--penerimaan-operasi-dan-tindak-lanjut-audit)
 ekspansi ke P3-R, dan live/exchange bersyarat ke P3-LIVE/P3-D. Pergantian plan
 tidak mengubah proses, ledger, modal, parameter atau T0 tahap dua. Strategi AI
 belum aktif; pilotnya kelak membutuhkan DB/wallet terpisah dan izin start.
+
+## Inspeksi penempatan Spider — 26 Oktober
+
+Atas izin user dilakukan inspeksi read-only kapasitas dan container. Host 8 vCPU,
+RAM tersedia ~15,7 GiB, disk kosong 121,23 GiB; sampel CPU bot P2 68,42% dari
+satu core, DB 52,77%. Bot container restart 0/OOM false. Ini bukan audit ledger,
+feed atau benchmark puncak; tidak memperbarui saldo/T0 historis di bawah.
+
+Usulan: container/Compose project `trading-bot-catalyst` dan direktori
+`/opt/trading-bot-catalyst` terpisah, belum dibuat/diinstal. Tidak mengubah P2,
+Plesk, gateway, Docker daemon atau layanan lain. Bukti:
+[preflight kapasitas](testing/catalyst-vps-preflight.json); detail dan pekerjaan
+sisa: [handover Spider](catalyst-spider-handover.md).
 
 ## Status terakhir
 

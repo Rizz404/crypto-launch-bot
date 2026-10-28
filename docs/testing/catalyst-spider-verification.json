@@ -1,0 +1,75 @@
+{
+  "checkpoint_date_wib": "2026-10-28",
+  "scope": "plan-3 isolated local Spider integration; no public crawl or trading",
+  "unit_race": {
+    "command": "go test -race ./internal/catalyst ./cmd/catalyst ./scripts/catalyst-model-eval",
+    "result": "passed",
+    "binary_test_requires_explicit_env": true
+  },
+  "vet": "passed for the same three packages",
+  "lint": "0 issues for the same three packages",
+  "compose": {
+    "command": "CATALYST_IMAGE=localhost/trading-bot-catalyst:dev podman compose -f deploy/compose.catalyst.yml config",
+    "result": "passed",
+    "stack_started": false
+  },
+  "image": {
+    "command": "podman build -f Dockerfile.catalyst -t localhost/trading-bot-catalyst:dev .",
+    "result": "passed",
+    "platform": "linux/amd64",
+    "local_image_id": "569964a4f7023e4005cf7befb94e2791cd97daac215e84d1f6c8a3ad46a25af2",
+    "size_bytes": 124053284,
+    "spider_version": "2.53.9-p3.1",
+    "upstream_crate": "spider_cli 2.53.9",
+    "crate_sha256": "bc25ae89df2472723dd93fe5b941a05c423c4b3741cfe7f2b7d4301b8f45e4b0",
+    "patch": "build/spider-cli.patch",
+    "features": ["headers", "status_code"],
+    "default_features": false,
+    "locked_dependencies": true,
+    "published": false,
+    "smoke_network": "none",
+    "smoke_read_only": true,
+    "smoke_passed": ["spider --version", "catalyst -h", "catalyst default report"]
+  },
+  "regression": {
+    "upstream_binary_2_53_9": "failed: robots and two pages fetched, only seed JSON emitted",
+    "fix": "flush Tokio stdout after the scrape stream before runtime shutdown",
+    "version_guard": "rejects unpatched 2.53.9 and other versions",
+    "patched_binary": "passed TestSpiderBinaryProtocol in three consecutive runs"
+  },
+  "binary_protocol": {
+    "test": "TestSpiderBinaryProtocol",
+    "runs": 3,
+    "result": "passed",
+    "durations_seconds": [2.09, 2.09, 2.11],
+    "container_network": "none; loopback fixtures only",
+    "cpu_limit": 0.5,
+    "memory_limit_mib": 512,
+    "pids_limit": 128,
+    "read_only": true,
+    "capabilities": "all dropped",
+    "no_new_privileges": true,
+    "requests_per_run": ["/robots.txt", "/events", "/article"],
+    "documents_per_run": 2,
+    "archive_round_trip": "passed",
+    "tls_fixture_exception": "test invocation uses --accept-invalid-certs for a self-signed fixture; production collector does not",
+    "test_dns_dial": "configured origin mapped to the loopback TLS fixture by the test proxy"
+  },
+  "ci": "dedicated build/protocol job prepared; no GitHub run or P3 publication",
+  "not_verified": [
+    "public source contracts and certificate chains",
+    "adversarial redirect and proxy failure/bypass scenarios with the real binary",
+    "TLS path/query enforcement",
+    "archive retention and disk quotas",
+    "pilot capacity under real site and model workloads",
+    "market/event registry integration",
+    "AI prompt v4 with real inference",
+    "full repository and database integration tests",
+    "arm64 image",
+    "VPS deployment or pilot activation"
+  ],
+  "commit_created": false,
+  "push_performed": false,
+  "vps_accessed": false,
+  "p2_runtime_changed": false
+}

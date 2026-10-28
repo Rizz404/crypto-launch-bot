@@ -10,6 +10,10 @@ Penerimaan tersisa dan risiko laporan historis dipetakan ke P3-O/P3-R/P3-LIVE.
 
 | Bukti | Isi |
 |---|---|
+| [Verifikasi Spider](catalyst-spider-verification.json) | Build/smoke image, regression stdout p3.1 dan tiga putaran binary TLS fixture tanpa jaringan keluar; batas egress/situs publik |
+| [Preflight VPS Spider](catalyst-vps-preflight.json) | Sampel kapasitas read-only 26 Oktober, usulan penempatan terpisah; belum instalasi/pilot |
+| [Evaluasi model OmniRoute](catalyst-model-evaluation.md) / [JSON](catalyst-model-evaluation.json) | Inference nyata pada tujuh kasus sintetis, model utama dan kandidat fallback; bukan shadow prospektif |
+| [Development Plan 3](plan-3-local.md) | Collector/adapter/validator, Spider CLI/proxy fixture 28 Oktober, paper replay dan batas penerimaan nyata |
 | [Rilis notifikasi 23 Oktober](telegram-notification-release.json) | Source/digest, snapshot ledger, restore pra-rilis, feed dan batas penerimaan Telegram/backup pascarilis |
 | [Start pembanding tahap dua](research-stage-two-start.json) | Ekspansi 6/18, CPU1, modal virtual eksplisit, DB baru dan pemeriksaan awal |
 | [Rilis koreksi tahap dua](research-stage-two-release.json) | Commit/push/CI, koreksi pembacaan ledger berulang setelah feed tertinggal, dan pemeriksaan VPS setelah rilis |

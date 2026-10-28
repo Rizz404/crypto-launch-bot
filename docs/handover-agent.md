@@ -1,9 +1,46 @@
 # Handover agent
 
-Untuk Codex, Claude dan agent berikutnya. Checkpoint dokumentasi **23 Oktober 2026**;
+Untuk Codex, Claude dan agent berikutnya. Checkpoint dokumentasi **28 Oktober 2026**;
 verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirilis.
 
 ## Status dan prioritas
+
+**Izin rilis 28 Oktober:** user mengizinkan commit, push dan deploy. Perubahan
+config diekspor pada `c8a3439`, implementasi/image/CI P3 pada `1afbd80`.
+Rilis disiapkan ke `/opt/trading-bot-catalyst`, proyek terpisah dengan default
+`report` sekali jalan; belum aktivasi runner/pilot atau perubahan runtime P2.
+Publikasi GHCR khusus kini disiapkan sesudah gate checks/integration/monitoring
+dan protokol binary lulus. Status CI/digest/deployment harus diverifikasi;
+persetujuan ini tidak berarti semua gate pilot atau uang asli telah selesai.
+
+**Handover terbaru — Spider, 28 Oktober:** user meluruskan alur menjadi daftar
+website → Spider → AI + data pasar menentukan buy/hold/sell → validator/paper,
+lalu meminta handover sebelum melanjutkan. **Mulai dari
+[handover Spider](catalyst-spider-handover.md).** CLI collect sudah memakai Spider;
+failure ekstraksi, cache/arsip dan proxy ditutup dengan tes fixture lokal.
+Image khusus berhasil dibangun/smoke lokal; binary 2.53.9 memerlukan patch
+flush stdout (versi 2.53.9-p3.1) agar JSON halaman terakhir tidak hilang.
+Protokol dua dokumen melalui proxy lulus tiga kali dalam container tanpa jaringan
+keluar; egress adversarial/situs publik belum diverifikasi. CI disiapkan tetapi
+belum berjalan di GitHub; belum ada instalasi VPS.
+Inspeksi VPS hanya baca; penempatan yang diusulkan memakai container/project
+P3 tersendiri. Jangan meneruskan desain yang menjadikan Spider opsional atau
+mengklaim checkout terbaru sudah lulus tes lama.
+
+
+- **26 Oktober — OmniRoute:** key sudah diisi user pada `.env.catalyst` privat
+  (0600, diabaikan Git), endpoint `https://route-gateway.fbe.co.id/v1`.
+  Atas izin user, katalog dan inference nyata dievaluasi dengan bukti sintetis.
+  Model env dipilih `cx/gpt-6-luna-low` (7/7); fallback yang direkomendasikan
+  `openrouter/anthropic/claude-haiku-5.5` (6/7, satu HTTP 403).
+  Combo priority `p3-research` belum dibuat/diuji failover. Lihat
+  [evaluasi model](testing/catalyst-model-evaluation.md). Evaluasi memakai prompt
+  `catalyst-v3`/strict JSON Schema; local Qwen masih HTTP 400, kualitas belum dinilai.
+  Checkout kini prompt v4; race/vet/lint komponen lokal lulus pada 28 Oktober,
+  tetapi inference v4 belum diuji. Binary patched diuji pada TLS fixture
+  terisolasi, bukan situs publik; lihat handover terbaru.
+  Jangan menampilkan key atau isi env.
+  Ini bukan aktivasi worker/trial atau perubahan P2.
 
 - **Rencana aktif: [Plan 3](plan-3.md).** User menutup Plan 2 sebagai siklus
   pada 23 Oktober; seluruh pekerjaan terbuka dipetakan ke P3-R/P3-O/P3-LIVE/
@@ -11,7 +48,15 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
   Arah baru: katalis terverifikasi, memecoin yang sudah diperdagangkan, hold
   selama tesis valid dan full exit saat proteksi/tesis mengharuskan. Presale/
   token baru ditunda sebagai future reference. Mulai dari kontrak P3-0;
-  parameter numerik belum dibekukan, strategi AI belum diimplementasikan.
+  kontrak development tersedia, policy aktivasi pilot belum final.
+- **Checkpoint development P3:** baseline docs di-commit `bc321b8`.
+  `internal/catalyst`/`cmd/catalyst` menambah collector berarsip, adapter chat-completions,
+  validator, strategi paper dan replay menggunakan managed/Sim. Penundaan AI awal
+  digantikan izin evaluasi OmniRoute pada 26 Oktober; hasil terbaru ada di atas.
+  [Kontrak](catalyst-runtime.md), [hasil lokal](testing/plan-3-local.md) dan
+  [tabel progres](plan-3.md#checkpoint-development-23-oktober) memisahkan fixture
+  dari penerimaan pilot. Gate verifikasi event/book nyata, runner, durability,
+  UI/Telegram dan operasi belum selesai; jangan mencentang seluruh fase.
 - **Penegasan prioritas:** P2 yang berjalan dibiarkan dan seluruh kode/config/
   data/bukti dipertahankan untuk riset berikutnya. Kerjakan P3-0 lalu fase AI
   tanpa menunggu backlog P2 selesai. Jangan menghapus strategi lama, mengubah
@@ -79,9 +124,12 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
    yang belum di-commit. Jangan commit/push tanpa permintaan user.
    User sudah mengizinkan commit dan push/deploy untuk trial ini; perubahan
    strategi/modal atau deployment berikutnya tetap harus mengikuti cakupan izin.
-2. Baca [Plan 3](plan-3.md); mulai P3-0 untuk kontrak AI atau ID P3-R/P3-O
-   untuk pembanding/operasi. [Strategi 2](strategy-2.md) menyimpan protokol lama.
-   Bekukan aturan, benchmark, biaya, periode dan risiko sebelum eksperimen baru.
+2. Baca [handover Spider](catalyst-spider-handover.md), [Plan 3](plan-3.md) dan
+   runtime katalis. Verifikasi egress adversarial/kontrak situs Spider, lalu kontrak sumber/event,
+   verifikasi tepercaya serta adapter pasar/runner terisolasi. Setup OmniRoute
+   dan evaluasi sintetis selesai; combo/failover dan shadow prospektif masih terbuka.
+   P3-R/P3-O tetap untuk pembanding/operasi bila diperlukan. Bekukan policy
+   pilot dan evaluasi sebelum aktivasi, tanpa mengubah eksperimen P2.
 3. Saat user kembali, review trial aktif dari T0 tersebut dan bandingkan bukti
    VPS/Telegram dengan [handover VPS](handover-vps.md). Restart bersama lama
    terbukti berkaitan penghentian service Docker, bukan reboot host; pemicunya

@@ -10,13 +10,50 @@ memiliki deployment. P3-7 memerlukan kesiapan/izin start sendiri, DB/wallet baru
 dan pemeriksaan resource collector; runbook ini tidak mengizinkan perubahan
 trial pembanding hanya karena plan berganti.
 
+## Rencana penempatan Spider
+
+**28 Oktober — izin terbaru:** user mengizinkan commit, push dan deploy.
+Rilis awal hanya memasang komponen CLI/image dan menjalankan default `report`
+sekali di proyek P3 terpisah. Runner/pilot trading belum tersedia/diterima.
+CI kini menyiapkan publikasi `ghcr.io/rizz404/trading-bot-catalyst:sha-<commit>`
+setelah checks/integration/monitoring serta smoke/protokol khusus lulus.
+Pasang hasil CI melalui digest tetap; jangan mengganti runtime P2.
+
+User menetapkan Spider sebagai collector utama P3 pada 26 Oktober. Inspeksi
+kapasitas VPS hanya baca sudah dilakukan; rencana awal memakai project/path
+`trading-bot-catalyst` / `/opt/trading-bot-catalyst` yang terpisah dari P2.
+`Dockerfile.catalyst` dan `deploy/compose.catalyst.yml` disiapkan 28 Oktober,
+build/smoke image linux/amd64 serta binary/protokol fixture tanpa jaringan lulus.
+CI job image/protokol disiapkan tanpa publikasi, belum dijalankan di GitHub;
+belum ada publikasi image khusus, instalasi, rilis atau start P3 di VPS.
+`podman compose ... config` lulus untuk manifest khusus;
+ini validasi konfigurasi, bukan menjalankan container. Jangan memasang draft
+langsung ke runtime P2. [Handover Spider](catalyst-spider-handover.md)
+memuat pekerjaan dan bukti yang harus diselesaikan sebelum rilis.
+
+Image khusus memakai crate CLI tepat `2.53.9`, checksum terverifikasi dan
+Cargo.lock upstream (`--locked`), features `headers,status_code` dan tanpa
+default Chrome/cloud. Patch `build/spider-cli.patch` mem-flush stdout sebelum
+shutdown agar halaman terakhir tidak hilang; binary mengaku versi `2.53.9-p3.1`
+dan collector menolak versi tanpa patch. Compose meminta
+`CATALYST_IMAGE` dari image **khusus P3** yang kelak dipublikasikan dengan digest;
+image bot P2 tidak menyertakan Spider. Default adalah `report`, volume arsip
+sendiri, non-root/read-only, tanpa port/restart otomatis, 0,5 CPU/512 MiB/pids
+128. File ini tidak memasang worker/model/DB atau mengaktifkan pilot.
+Sebelum rilis: uji egress adversarial/situs publik, resource dan batas container,
+lalu jalankan CI dan lengkapi publikasi GHCR/digest khusus P3. Dua halaman fixture
+berhasil dalam budget, tetapi belum membuktikan kapasitas situs/beban pilot.
+
 ## Rilis dan persiapan
 
 - Source dari repo private `Rizz404/trading-bot`; image dari CI/GHCR dengan
   pasangan commit dan digest tetap. Jangan salin source laptop atau pakai `latest`.
-- CI memeriksa format, modul, vet/lint, race test, build empat CLI, integrasi DB/
+- CI memeriksa format, modul, vet/lint, race test, build lima CLI, integrasi DB/
   migrasi/restart, alert Prometheus dan smoke image. Publikasi hanya dari `main`;
   PR membangun tanpa publikasi. Rilis mendukung amd64/arm64.
+- Binary catalyst ditambahkan untuk development/report/replay; entrypoint bot
+  dan manifest P2 tidak berubah. Adapter AI/runner prospective belum diterima;
+  adanya binary di image bukan izin mengaktifkan worker baru.
 - Gunakan deploy key read-only dan akses GHCR `read:packages`. Jangan mencetak
   token/password atau memasukkannya ke argumen perintah, repo maupun chat.
 - VPS Plesk bersama: hanya `/opt/trading-bot-paper`, project Compose

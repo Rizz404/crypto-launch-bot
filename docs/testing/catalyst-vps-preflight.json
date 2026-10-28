@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-26",
+  "scope": "read-only VPS inspection for isolated Spider placement",
+  "ssh_alias": "plesk",
+  "cpu_count": 8,
+  "architecture": "x86_64",
+  "loadavg": [
+    1.71,
+    2.01,
+    2.38
+  ],
+  "memory_kb": {
+    "total": 32597976,
+    "available": 16503844,
+    "swap_total": 0,
+    "swap_free": 0
+  },
+  "disk_opt_gib": {
+    "total": 398.74,
+    "free": 121.23
+  },
+  "running_container_count": 27,
+  "docker_version": "29.9.2",
+  "p2_bot": {
+    "cpu_percent_sample": 68.42,
+    "memory_mib_sample": 82.86,
+    "cpu_limit": 1,
+    "memory_limit_mib": 512,
+    "pids_limit": 256,
+    "started_at": "2026-10-23T13:52:17.164470608Z",
+    "restart_count": 0,
+    "oom_killed": false
+  },
+  "p2_db": {
+    "cpu_percent_sample": 52.77,
+    "memory_mib_sample": 138.7,
+    "cpu_limit": 1,
+    "memory_limit_mib": 1024
+  },
+  "proposed_placement": {
+    "path": "/opt/trading-bot-catalyst",
+    "compose_project": "trading-bot-catalyst",
+    "path_existed": false,
+    "cpu_limit_proposal": 0.5,
+    "memory_limit_mib_proposal": 512,
+    "pids_limit_proposal": 128,
+    "public_ports": false,
+    "installed": false
+  },
+  "limitations": [
+    "single short resource sample, not peak-load capacity acceptance",
+    "no current ledger, market-feed or trading-state audit",
+    "no Spider binary/container installed or run",
+    "no VPS service, credentials, Docker daemon, firewall, P2 configuration or database changed",
+    "placement and resource limits are proposals, not applied configuration"
+  ]
+}

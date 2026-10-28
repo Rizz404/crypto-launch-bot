@@ -2,8 +2,9 @@
 
 **Rencana aktif sejak 23 Oktober 2026 atas permintaan user.** Plan 2 ditutup
 sebagai siklus pengembangan; pekerjaan yang belum terlaksana diteruskan ke sini.
-Penutupan bukan kelulusan semua pengujian atau izin uang asli. Pekerjaan sesi
-ini hanya dokumentasi; belum ada implementasi atau aktivasi strategi AI.
+Penutupan bukan kelulusan semua pengujian atau izin uang asli. Dokumentasi
+baseline sudah di-commit sebagai `bc321b8`; development komponen katalis dan
+replay paper lokal dimulai sesudahnya. Belum ada worker/pilot AI yang aktif.
 
 Plan 3 mencakup dua jalur: menyelesaikan penerimaan/riset platform lama dan
 membangun eksperimen katalis dengan hold berbasis tesis. Paper pembanding lama
@@ -11,6 +12,53 @@ tetap memakai ledger, parameter dan T0 sendiri; tidak dihentikan, diubah atau
 digabung modalnya hanya karena pergantian plan. Sumber status operasi:
 [handover VPS](handover-vps.md); bukti lama: [Plan 2](plan-2.md) dan
 [indeks pengujian](testing/readme.md).
+
+## Klarifikasi alur dan handover 26 Oktober
+
+User menegaskan **daftar website crypto → scraping/crawling dengan Spider →
+AI dengan konteks data pasar menentukan kapan buy/hold/sell → validasi risiko
+→ eksekusi paper**. Spider menjadi collector utama. Universe riset tidak
+terkunci ke tiga simbol contoh; proteksi tetap berjalan independen dari AI.
+Implementasi dijeda untuk handover 26 Oktober lalu dilanjutkan 28 Oktober.
+CLI kini memakai Spider; extractor/cache/arsip/proxy memiliki race test fixture
+lokal yang lulus. Image khusus dibangun/smoke; binary dengan patch flush stdout
+(2.53.9-p3.1) lulus protokol/proxy TLS fixture tiga kali tanpa jaringan keluar.
+CI disiapkan, egress adversarial/situs publik belum diuji. Tidak ada instalasi/start P3 di VPS.
+
+[Handover implementasi dan urutan lanjut](catalyst-spider-handover.md) mencatat
+hasil inspeksi kapasitas VPS, usulan container/project tersendiri, file WIP,
+temuan cache/ukuran arsip/proxy serta batas bukti model v3 versus kode v4.
+
+## Checkpoint development 23 Oktober
+
+**Pembaruan 26 Oktober:** user mengisi key OmniRoute dan mengizinkan evaluasi
+model nyata di `https://route-gateway.fbe.co.id/v1`. `.env.catalyst` privat
+(0600, diabaikan Git) sekarang memilih `cx/gpt-6-luna-low`. CLI `analyze`
+membaca env tersebut atau `-env-file`, dengan environment proses lebih tinggi.
+Evaluasi tujuh kasus sintetis memakai inference nyata: Luna 7/7, cadangan
+`openrouter/anthropic/claude-haiku-5.5` 6/7 (satu HTTP 403). Rekomendasi combo
+`p3-research` memakai urutan priority; combo belum dibuat atau diuji failover.
+[Bukti dan batas evaluasi](testing/catalyst-model-evaluation.md).
+Tidak mengubah proses/config/ledger P2 atau memasang layanan baru.
+
+Pilihan awal 9router dan penundaan AI pada 23 Oktober merupakan riwayat;
+arahan evaluasi OmniRoute di atas menggantikannya. Satu inference per keputusan
+cukup untuk jalur awal, dengan validasi deterministik sebelum aksi paper.
+
+| Area | Hasil lokal | Penerimaan yang masih terbuka |
+|---|---|---|
+| P3-0 | Kontrak development, batas proses dan titik integrasi ditetapkan | Freeze policy pilot dan resource budget nyata |
+| P3-1 | Spider default CLI; extractor/cache/arsip/proxy fixture dan image/binary patched lulus lokal; Compose config lulus, CI disiapkan | Egress adversarial, kontrak situs nyata, event dan retensi; CI belum dijalankan di GitHub |
+| P3-2 | Adapter OmniRoute tanpa tools, strict JSON Schema dan evaluasi model nyata pada tujuh kasus sintetis | Shadow prospektif, baseline tanpa AI, combo/failover dan biaya nyata |
+| P3-3/P3-4 | Gate entry, reuse managed/Sim, checkpoint, trailing, expiry/revocation dan full exit diuji sintetis | Registry verifikasi tepercaya, feed/book/ATR nyata, durability/outage dan runner |
+| P3-5 | CLI report keputusan/sumber/token dan replay berlabel fixture | Dashboard/Telegram/metrics AI dan kontrol pilot |
+| P3-6 | Pengujian lokal komponen serta regression repo | E2E pasar/model nyata, DB sementara pilot dan review operasional |
+| P3-7 | Belum dimulai | Kesiapan, izin deployment/start, T0 baru dan pengamatan prospektif |
+
+Kode: `internal/catalyst`, CLI `cmd/catalyst`, policy contoh
+`configs/catalyst.policy.json`. [Kontrak dan penggunaan](catalyst-runtime.md),
+[bukti/checkpoint pengujian](testing/plan-3-local.md). Tabel ini tidak menandai
+seluruh fase selesai hanya karena fixture berjalan. P3-R/P3-O P2 belum dikerjakan.
 
 ## Prioritas dan perlindungan eksperimen P2
 
@@ -53,13 +101,14 @@ Checkpoint implementasi Hermes dalam lampiran belum diverifikasi di repo ini.
 
 Aturan referensi lama tentang exit satu jam sebelum acara dan maksimum hold
 48 jam tidak otomatis diadopsi. Rancangan baru mengevaluasi kelayakan hold
-melewati acara. Angka modal, sizing dan trailing lampiran juga belum menjadi
-kebijakan Plan 3 yang disetujui.
+melewati acara. Angka modal, sizing dan trailing lampiran tidak otomatis menjadi
+kebijakan pilot. Sebagian dipilih sebagai kontrak development/fixture yang
+tercatat di [runtime katalis](catalyst-runtime.md), tanpa mengubah konfigurasi P2.
 
 ## Usulan alur
 
-1. **Discovery.** Pantau sumber terpilih melalui API/RSS jika tersedia dan
-   Spider bila perlu scraping. Temukan katalis, arsipkan sumber asli,
+1. **Discovery.** Ambil daftar website terkonfigurasi melalui Spider sebagai
+   engine scraping/crawling utama. Temukan kandidat, arsipkan sumber asli,
    `first_seen_at` dan revisinya. Gabungkan salinan berita menjadi satu event.
 2. **Verifikasi.** Cocokkan aset, venue, jadwal, sumber primer dan konflik
    informasi. Pilot yang diusulkan: Binance Spot, USDT, long-only, paper.
@@ -165,9 +214,10 @@ bukan mandat membuat engine SQLite baru. Pilot AI memakai DB/wallet/modal
 paper terpisah dari eksperimen lama; library yang ada boleh digunakan ulang.
 Jangan menambah bahasa/service/vector database bila kebutuhan belum terbukti.
 
-Spider adalah opsi collector untuk halaman yang perlu crawling/rendering,
-bukan syarat mengambil setiap sumber. Utamakan API/RSS resmi yang tersedia;
-batasi domain, redirect, ukuran respons, kedalaman, concurrency dan waktu.
+Spider adalah engine collector utama sesuai klarifikasi user 26 Oktober.
+Gunakan halaman/API/RSS resmi sebagai bahan bila tersedia melalui jalur koleksi
+yang terukur; jangan mengganti Spider diam-diam dengan crawler Go. Batasi domain,
+redirect, ukuran respons, kedalaman, concurrency dan waktu.
 Tolak akses loopback/private network melalui URL hasil crawling untuk mencegah
 SSRF. Hormati kebijakan sumber dan robots; kegagalan akses dicatat sebagai gap.
 HTTP-first dan browser hanya bila perlu; ukur beban terpisah dari bot lama.
@@ -249,19 +299,20 @@ saat bukti tidak dapat diperbarui. Hold tanpa evaluasi tidak menjadi default.
 
 | Kelompok | Keputusan wajib | Status |
 |---|---|---|
-| Universe | Venue/pair, jenis event, sumber, pengecualian, syarat memecoin | Usulan Binance Spot USDT; belum config final |
-| Discovery | Horizon, frekuensi polling, revisi/dedup, kuota sumber | Belum dibekukan; 2–14 hari lampiran hanya referensi |
-| Entry | Jendela entry, deviasi maksimum, spread, depth dan batas price impact | Belum dibekukan |
-| Proteksi | Rumus/TF volatilitas, stop/trailing minimum-maksimum, sumber pemicu | Belum dibekukan |
-| Hold | Interval review, masa berlaku tesis, event tertunda, stagnasi dan re-entry | Belum dibekukan |
-| Risiko | Modal virtual, risiko per trade, nominal/posisi/exposure dan konsentrasi | Belum dibekukan; batas memecoin perlu lebih kecil |
-| Halt | Rugi harian/drawdown, zona waktu, pemulihan/reset oleh operator | Belum dibekukan |
-| Kegagalan | Quote basi, feed putus, timeout AI, DB outage, gagal exit | Belum dibekukan |
-| Biaya | Fee akun/simbol, slippage, book/depth dan biaya model/data | Belum dikalibrasi |
+| Universe | Venue/pair, jenis event, sumber, pengecualian, syarat memecoin | Development ETH/SOL/DOGE; validasi pilot masih terbuka |
+| Discovery | Horizon, frekuensi polling, revisi/dedup, kuota sumber | Kontrak dev 14 hari/900 detik; adapter event belum selesai |
+| Entry | Jendela entry, deviasi maksimum, spread, depth dan batas price impact | Gate dev tersedia; kalibrasi book/price impact nyata terbuka |
+| Proteksi | Rumus/TF volatilitas, stop/trailing minimum-maksimum, sumber pemicu | Kontrak dev 2 ATR, 1–15%; ingestion ATR/quote nyata terbuka |
+| Hold | Interval review, masa berlaku tesis, event tertunda, stagnasi dan re-entry | Dev review 6 jam, TTL 300 detik, expiry tanpa grace; registry nyata terbuka |
+| Risiko | Modal virtual, risiko per trade, nominal/posisi/exposure dan konsentrasi | Kontrak dev 1.000 USDT, risk 0,5%, cap 20%/40%, meme 2%/4% |
+| Halt | Rugi harian/drawdown, zona waktu, pemulihan/reset oleh operator | Dev 2%/8%, hari UTC, sticky; tidak mengubah P2 |
+| Kegagalan | Quote basi, feed putus, timeout AI, DB outage, gagal exit | Fail-closed dasar diuji; outage proses/DB pilot belum diuji |
+| Biaya | Fee akun/simbol, slippage, book/depth dan biaya model/data | Dev fee 0,1%/sisi, slip 2 bps; tarif nyata belum dikalibrasi |
 | Operasi | Batas CPU/RAM/disk/API, alert dan backup/restore | Harus diukur; headroom historis bukan kapasitas pilot |
 
-Parameter lampiran (termasuk 1.000 USDT, risk 0,5%, 2 ATR/1%, sleeve memecoin)
-belum disetujui sebagai konfigurasi final. Stop bukan jaminan batas rugi saat
+Kontrak development rinci ada di [runtime katalis](catalyst-runtime.md).
+Nilai development belum menjadi persetujuan aktivasi atau konfigurasi final
+pilot; perubahan mendapat versi/hash baru. Stop bukan jaminan batas rugi saat
 gap; sizing harus memperhitungkan biaya dan kerugian total yang mungkin pada
 aset kehilangan likuiditas. Mainnet tetap dilarang sampai keputusan P3-LIVE.
 
@@ -386,14 +437,15 @@ diaktifkan kembali. Penundaan exchange lain tidak menahan pilot Spot.
 
 Urutan: kontrak → collector → analisis → entry/hold/exit → laporan → pengujian
 dan fixing → trial prospektif. Perubahan dana/proteksi tetap memerlukan
-regression kecil ketika diimplementasikan. Daftar verifikasi di bawah adalah
-rencana, bukan izin menjalankan tes/server pada sesi dokumentasi ini.
+regression kecil ketika diimplementasikan. User sudah meminta pelaksanaan
+development; pengujian komponen/repo dijalankan pada checkpoint implementasi.
+Tidak ada izin menjalankan trial laptop, deploy atau aktivasi pilot dari daftar ini.
 
 ### P3-0 — Kontrak pilot dan desain integrasi
 
 - [ ] Bekukan seluruh kebijakan pada tabel di atas, versi eksperimen,
   benchmark dan kriteria evaluasi; identifikasi keputusan user yang dibutuhkan.
-- [ ] Petakan titik integrasi dan caller/test/config/migrasi yang terdampak;
+- [x] Petakan titik integrasi dan caller/test/config/migrasi yang terdampak;
   pilih reuse engine, batas proses dan kontrak collector/model/validator.
 - [ ] Tetapkan modal virtual terpisah, isolasi DB/wallet dan resource budget
   tanpa mengubah parameter/modal eksperimen pembanding.
@@ -403,8 +455,12 @@ masih ambigu, beserta batas pengujian dan aktivasi yang jelas.
 
 ### P3-1 — Collector dan arsip prospektif
 
-- [ ] Mulai dari sedikit sumber terpilih, daftar sumber primer dan aturan
-  polling/cache/diff/retry/backoff; evaluasi kebutuhan Spider pada sumber nyata.
+- [x] Bangun collector untuk sedikit URL terkonfigurasi dengan daftar primary,
+  interval/cache/revisi/backoff dan arsip immutable; diuji transport fixture.
+- [ ] Selesaikan integrasi Spider sebagai engine utama, uji kontrak binary/proxy
+  dan ekstraksi artikel; wiring CLI/image/binary patched lulus fixture lokal
+  28 Oktober. Egress adversarial/situs publik masih terbuka; belum penerimaan penuh.
+- [ ] Verifikasi kontrak sumber nyata dan kebutuhan rendering per situs.
 - [ ] Simpan bukti/revisi/dedup dan identitas event/asset; TBA tetap TBA,
   konflik material menahan entry. Catat sumber gagal dan cakupan yang hilang.
 - [ ] Terapkan batas URL/redirect/ukuran/waktu, sanitasi dan redaksi secret,
@@ -415,10 +471,12 @@ ditelusuri dan waktu informasi tersedia dapat direkonstruksi tanpa model.
 
 ### P3-2 — Analisis tesis dan shadow evaluation
 
-- [ ] Bentuk paket bukti terbatas; panggil model tanpa tools untuk kandidat
-  atau perubahan material, dengan batas token/timeout/biaya dan cache berversi.
-- [ ] Validasi schema, evidence, scope dan freshness; simpan input/output,
+- [x] Bentuk paket bukti terbatas dan adapter model tanpa tools dengan batas
+  token/timeout serta dedup berversi; fixture dan inference nyata dengan bukti sintetis diuji.
+- [x] Validasi schema, evidence, scope dan freshness; simpan input/output,
   versi serta penolakan. JSON rusak/hallucination/timeout berarti tidak entry.
+- [x] Pilih model utama dari evaluasi gateway nyata; hasil dan kandidat fallback
+  dicatat di laporan model. Ini belum evaluasi prospektif atau uji combo.
 - [ ] Rekam keputusan shadow, termasuk HOLD sah, bersama pembanding event
   sederhana tanpa AI dengan akses informasi dan waktu yang sama.
 
@@ -427,10 +485,12 @@ mengubah policy atau mengirim order sendiri. Shadow belum membuka posisi.
 
 ### P3-3 — Entry paper dan ledger
 
-- [ ] Hubungkan keputusan tervalidasi ke koordinator order/ownership yang
-  ada; reservasi, dedup dan checkpoint sebelum I/O, tanpa menduplikasi saldo.
-- [ ] Validasi quote/spread/depth dan sizing setelah fee/slippage, aturan
+- [x] Hubungkan keputusan fixture tervalidasi ke koordinator managed/Sim;
+  reservasi/dedup/checkpoint memakai komponen lama tanpa saldo baru per binding.
+- [x] Validasi snapshot quote/spread/depth dan sizing setelah fee/slippage, aturan
   instrumen serta batas memecoin/konsentrasi. Entry di luar batas ditolak.
+- [ ] Hubungkan registry attestation/event dan adapter pasar/ATR nyata;
+  jangan memakai flag fixture atau output model sebagai bukti verifikasi.
 - [ ] Tetapkan model fill yang memadai: jika masih memakai candle Sim,
   labeli batasnya dan batasi universe; dukungan book/depth harus benar-benar
   tersedia sebelum mengklaim simulasi realistis untuk pasar tipis.
@@ -440,7 +500,7 @@ ditelusuri ke keputusan/bukti dan dana eksperimen lama tidak tersentuh.
 
 ### P3-4 — Proteksi, hold, full exit dan recovery
 
-- [ ] Persist puncak, stop, thesis version dan review deadline; trailing
+- [x] Persist puncak, stop, thesis version dan review deadline; trailing
   monoton dan bekerja tanpa menunggu AI. Jangan mengubah proteksi posisi lama
   karena parameter default berubah.
 - [ ] Review sebelum/sesudah acara dan material update; terapkan expiry,
@@ -455,6 +515,8 @@ tidak dinyatakan closed sebelum status aset/order benar-benar selesai.
 
 ### P3-5 — Kontrol, laporan dan observasi
 
+- [x] CLI report sumber/keputusan/model/token dan replay dengan label fixture;
+  dollar cost belum diketahui ditampilkan null, bukan nol.
 - [ ] Reuse dashboard/Telegram: tampilkan event, alasan entry/HOLD/exit,
   URL bukti, waktu review, stop/peak, posisi/dana, biaya serta kesehatan layanan.
 - [ ] Pause entry terpisah dari flatten; otorisasi scope dan satu poller
@@ -520,3 +582,8 @@ bukti utama. Target return 50% tetap aspirasi historis, bukan janji Plan 3.
 | 23 Oktober 2026 | Katalis, hold sesuai tesis, memecoin dan full exit; presale/token baru ditunda | Arah user; angka policy belum dibekukan |
 | 23 Oktober 2026 | Plan 2 ditutup, backlog dipindah dan Plan 3 dirinci sebagai rencana aktif | Dokumentasi; tidak mengubah kode, VPS, trial atau izin live |
 | 23 Oktober 2026 | User menegaskan P2 berjalan dan seluruh aset riset dipertahankan; prioritaskan P3-0 dan fase AI tanpa menunggu backlog P2 | Pengembangan terpisah; aktivasi tetap mengikuti gerbang isolasi/kapasitas |
+| 23 Oktober 2026 | Commit baseline docs `bc321b8`; mulai development komponen/CLI terpisah dan replay managed/Sim; urusan AI nyata ditunda user | Bukti lokal di testing/plan-3-local.md; P2 tidak diubah, pilot belum aktif |
+| 26 Oktober 2026 | User memilih OmniRoute; env terpisah dan pembacaan env CLI disiapkan | HTTPS API 401 tanpa key; model/key kosong, belum inference/deploy |
+| 26 Oktober 2026 | User mengisi key dan mengizinkan evaluasi model; Luna menjadi utama, Haiku kandidat fallback | Tujuh kasus sintetis, strict schema v3; combo/pilot belum aktif, P2 tetap |
+| 26 Oktober 2026 | User meluruskan Spider sebagai collector utama dan mengizinkan implementasi/inspeksi VPS, lalu meminta handover | Draft belum tuntas; inspeksi read-only; tidak install/deploy/start P3 atau mengubah P2 |
+| 28 Oktober 2026 | Integrasi lokal Spider: CLI, lima halaman, cache/arsip/proxy, image terpisah dan patch stdout p3.1; CI disiapkan | Race/vet/lint, build/smoke image, Compose config dan tiga putaran binary TLS fixture lulus; egress adversarial/situs publik terbuka; tanpa commit/push/deploy atau perubahan runtime P2 |

@@ -3,7 +3,8 @@
 Bot trading crypto otomatis dalam Go (Binance dan Bybit; spot + futures).
 Rencana aktif dan progres ada di [Plan 3](docs/plan-3.md): riset katalis/AI,
 hold berbasis tesis, proteksi dan pekerjaan tersisa dari platform multi-instance.
-Strategi AI belum diimplementasikan atau diaktifkan. Runtime managed Binance
+Collector/validator dan replay paper lokal tersedia; worker/pilot AI belum
+aktif. [Development katalis](docs/catalyst-runtime.md). Runtime managed Binance
 Spot sudah dirilis; checkpoint 23 Oktober mencatat paper pembanding tahap dua
 6 instance/18 binding BTC/ETH/SOL dengan T0 22 Oktober 19:58:45 WIB, modal awal
 747,83957456237531 USDT virtual. Rilis notifikasi terbaru tidak mereset T0.
