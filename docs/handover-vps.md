@@ -14,9 +14,10 @@ sungguhan. P2 tidak direstart; identitas container P2 identik sebelum/sesudah.
 
 | Item | Nilai |
 |---|---|
-| Source berjalan | `41d22b0` (fix kutipan WATCH lintas aset), start awal `43b6f61` 22.53 WIB |
-| Image | `ghcr.io/rizz404/trading-bot-catalyst@sha256:337bb6b0f5437d687c7e1a7566e41aa07eb247d49aab663de8f14901c0f682b3` |
-| CI | [40717858676](https://github.com/Rizz404/trading-bot/actions/runs/40717858676) dan [40720835367](https://github.com/Rizz404/trading-bot/actions/runs/40720835367) lulus seluruh job |
+| Source berjalan | `05ce48a` (Spider dari image artefak ter-pin), sebelumnya `41d22b0`; start awal `43b6f61` 22.53 WIB |
+| Image | `ghcr.io/rizz404/trading-bot-catalyst@sha256:2477ab20a6c2d80cb3a454ddc79c1bdaddf1b8dc31b6667027202144cec72a21` (redeploy 23.22 WIB, Spider `spider_cli 2.53.9-p3.1`) |
+| Spider artefak | `ghcr.io/rizz404/trading-bot-spider@sha256:480faea43abdb2b2e8bd6cf136ecd250e8c37039e925f0bdb38f14385a318e19`; CI katalis turun ±12 → ±1,7 menit |
+| CI | [40717858676](https://github.com/Rizz404/trading-bot/actions/runs/40717858676) dan [40720835367](https://github.com/Rizz404/trading-bot/actions/runs/40720835367) lulus seluruh job; [40724154160](https://github.com/Rizz404/trading-bot/actions/runs/40724154160) untuk `05ce48a` |
 | Wallet / DB | `paper:catalyst-catalyst-paper-v1` / `tradingbot_catalyst_paper_v1`, role `catalyst`, volume `trading-bot-catalyst_db-data` |
 | Modal / risiko | 1.000 USDT virtual, 0,5%/trade, maks 2 posisi, halt harian 2% / drawdown 8% |
 | AI | `cx/gpt-6-luna-low` (served `gpt-6-luna`), prompt v5, maks 12 panggilan/hari WIB |
