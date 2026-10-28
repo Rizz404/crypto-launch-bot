@@ -9,10 +9,10 @@ import (
 	"strings"
 )
 
-// readDotEnv parses a minimal .env file (KEY=VALUE lines, # comments,
+// ReadDotEnv parses a minimal .env file (KEY=VALUE lines, # comments,
 // optional "export " prefix and surrounding quotes) into environ form.
 // A missing file is not an error.
-func readDotEnv(path string) ([]string, error) {
+func ReadDotEnv(path string) ([]string, error) {
 	if path == "" {
 		return nil, nil
 	}

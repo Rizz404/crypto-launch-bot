@@ -185,15 +185,15 @@ func TestSecretNeverPrints(t *testing.T) {
 
 func TestReadDotEnv(t *testing.T) {
 	path := writeFile(t, ".env", "# comment\n\nexport TB_A=1\nTB_B=\"two words\"\nTB_C='x=y'\n")
-	got, err := readDotEnv(path)
+	got, err := ReadDotEnv(path)
 	require.NoError(t, err)
 	assert.Equal(t, []string{"TB_A=1", "TB_B=two words", "TB_C=x=y"}, got)
 
-	got, err = readDotEnv(filepath.Join(t.TempDir(), "missing.env"))
+	got, err = ReadDotEnv(filepath.Join(t.TempDir(), "missing.env"))
 	require.NoError(t, err)
 	assert.Nil(t, got)
 
-	_, err = readDotEnv(writeFile(t, "bad.env", "NOEQUALS\n"))
+	_, err = ReadDotEnv(writeFile(t, "bad.env", "NOEQUALS\n"))
 	assert.Error(t, err)
 }
 

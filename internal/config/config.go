@@ -250,7 +250,7 @@ func defaults() Config {
 // Load reads the YAML file at path, then overlays envFile (skipped if it
 // does not exist) and the process environment, and validates the result.
 func Load(path, envFile string) (*Config, error) {
-	dotenv, err := readDotEnv(envFile)
+	dotenv, err := ReadDotEnv(envFile)
 	if err != nil {
 		return nil, err
 	}
