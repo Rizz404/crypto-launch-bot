@@ -116,6 +116,7 @@ func runPilot(ctx context.Context, policy catalyst.Policy, archive catalyst.Arch
 		runtime.OnExecution = func(e managed.Execution, order domain.Order) {
 			pilot.Notify(fmt.Sprintf("P3 paper • %s %s\nJumlah %s @ %s USDT\nKomisi %s %s\n%s", e.Fill.Side, e.Fill.Symbol, e.Fill.Quantity, e.Fill.Price, e.Fill.Fee, e.Fill.FeeAsset, order.Reason))
 		}
+		pilot.Notify(fmt.Sprintf("P3 paper aktif • uang virtual\nPolicy %s • maks %d panggilan AI/hari", policy.Version, catalyst.DailyInferenceLimit))
 	}
 	server := &http.Server{Handler: pilot.HTTP(values["TB_CATALYST_WEB_PASSWORD"]), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 30 * time.Second, IdleTimeout: time.Minute, MaxHeaderBytes: 16 << 10}
 	// Bind before the worker starts so a busy port fails startup instead of leaving an orphan worker.
