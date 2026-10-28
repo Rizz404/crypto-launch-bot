@@ -1,17 +1,53 @@
 # Handover VPS
 
-Checkpoint operasi P2 **23 Oktober 2026**, deployment komponen P3 **28 Oktober
-21.00 WIB**. Prosedur perubahan ada di
+Checkpoint operasi P2 **23 Oktober 2026**, pilot paper P3 aktif **28 Oktober
+22.53 WIB**. Prosedur perubahan ada di
 [deployment](deployment.md); rencana aktif di [Plan 3](plan-3.md), dengan
 pembanding lama tetap mengikuti [Strategi 2](strategy-2.md).
 
-**Pause development pilot 28 Oktober sekitar 22.12 WIB:** setelah pemasangan
-komponen, satu collect terbatas berhasil untuk Dogecoin dan gagal pada Ethereum
-feed/robots Solana. Tidak ada inference, worker atau DB pilot VPS yang diaktifkan.
-User memilih paper 1.000 USDT/12 panggilan AI per hari; implementasi lanjutan
-masih di working tree laptop, belum dirilis. [Handover pilot](catalyst-pilot-handover.md)
-memisahkan perubahan WIP, data arsip baru dan rilis komponen di bawah. Pause
-tidak menghentikan eksperimen P2 yang memang sedang berjalan.
+## Pilot paper P3 aktif — 28 Oktober 22.53 WIB
+
+User mengizinkan deploy setelah lanjutan pilot. Worker paper P3 berjalan
+terus-menerus (`restart: unless-stopped`) di project `trading-bot-catalyst`
+dengan DB, resolver DoT dan wallet sendiri. **Uang virtual saja**, tanpa order
+sungguhan. P2 tidak direstart; identitas container P2 identik sebelum/sesudah.
+
+| Item | Nilai |
+|---|---|
+| Source berjalan | `41d22b0` (fix kutipan WATCH lintas aset), start awal `43b6f61` 22.53 WIB |
+| Image | `ghcr.io/rizz404/trading-bot-catalyst@sha256:337bb6b0f5437d687c7e1a7566e41aa07eb247d49aab663de8f14901c0f682b3` |
+| CI | [40717858676](https://github.com/Rizz404/trading-bot/actions/runs/40717858676) dan [40720835367](https://github.com/Rizz404/trading-bot/actions/runs/40720835367) lulus seluruh job |
+| Wallet / DB | `paper:catalyst-catalyst-paper-v1` / `tradingbot_catalyst_paper_v1`, role `catalyst`, volume `trading-bot-catalyst_db-data` |
+| Modal / risiko | 1.000 USDT virtual, 0,5%/trade, maks 2 posisi, halt harian 2% / drawdown 8% |
+| AI | `cx/gpt-6-luna-low` (served `gpt-6-luna`), prompt v5, maks 12 panggilan/hari WIB |
+| Policy hash | `b11fc4a1b144dd71c41dc1ffdf0a9f3e85edbd63b91bb1ec3f5d55899aa85f12` |
+| Sumber | Ethereum blog, Anza blog (SOL), Dogecoin blog; masing-masing seed + 4 artikel terbaru |
+| Dashboard | `127.0.0.1:18081` (SSH tunnel), user `pilot`; password di `.env.catalyst` VPS mode 600 |
+| Env | `.env.catalyst` (model + dashboard, Telegram kosong) dan `.env.catalyst-image` (digest + password DB dibangkitkan di VPS); tidak disalin dari P2 |
+
+Preflight dengan image baru: `market` membaca ETH/SOL/DOGE book + ATR nyata,
+`collect` sukses tiga sumber. Siklus riset pertama memanggil model sekali
+(10.058 token input / 436 output): **WATCH DOGEUSDT**, tidak ada event terjadwal.
+Review itu ditolak validator (`citation source outside policy`) karena mengutip
+bukti ETH/SOL; `41d22b0` mengizinkan kutipan lintas aset hanya untuk WATCH,
+entry/hold tetap wajib bukti primer aset sendiri. Setelah redeploy, siklus
+berjalan tanpa error dan tanpa panggilan baru (bukti tidak berubah); kuota
+terpakai 1/12 pada 28 Oktober.
+
+Belum: Telegram P3, backup/restore DB dan arsip P3, observer/alert P3, QA browser
+dashboard. Review pilot hari 1/3/7: **29 Oktober / 31 Oktober / 4 November
+22.53 WIB**. Tidak ada entry sampai sumber primer memuat jadwal mainnet/produk
+eksplisit (event Hoodi sekarang testnet dan ditunda).
+
+### Temuan P2 untuk review hari ke-7 (29 Oktober 19.58 WIB)
+
+- Snapshot ledger 28 Oktober ~22.48 WIB: modal 747,84 USDT, ekuitas 741,10
+  (−6,74 USDT, −0,9%). Tren ×3 dan EMA 4h belum bertransaksi. EMA 1m dasar
+  5 menang/50 kalah (−3,82, komisi 2,97); EMA 1m tren 2/36 (−2,92, komisi 2,06).
+  Sebagian besar rugi adalah komisi; usulan: nonaktifkan dua EMA 1m saat review.
+- Websocket Binance P2 terputus ~9×/jam sejak 23 Oktober, mayoritas
+  `StatusPolicyViolation ... "Pong timeout"` dan gagal menulis pong; candle 1m
+  sempat tertinggal ±5 menit. Perlu perbaikan kode + restart P2 dengan izin user.
 
 ## Rilis komponen P3 — 28 Oktober
 

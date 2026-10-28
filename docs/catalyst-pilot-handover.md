@@ -214,8 +214,13 @@ Putaran berikutnya (28 Oktober malam, setelah user meminta lanjut sampai selesai
 - Kode di-commit lokal per scope `6e98705`..`2831c9e` (**belum di-push**). Commit
   docs dan push ditahan permission mode Claude Code; menunggu keputusan user.
 
-Masih terbuka: push + CI/GHCR digest, provisioning `.env.catalyst` pilot di VPS,
-deploy overlay, run bounded nyata, start paper, review hari 1/3/7.
+**Rilis dan start pilot selesai 28 Oktober 22.53 WIB** atas izin user; detail
+operasi, digest, kuota dan jadwal review ada di [handover VPS](handover-vps.md).
+Masih terbuka: Telegram P3, backup/observer P3, QA browser, review hari 1/3/7,
+sumber tambahan (ICO Analytics hanya konteks; listing Binance tahap terpisah)
+sumber tambahan lain. Spider kini image artefak terpisah (`Dockerfile.spider`,
+workflow `spider.yml`); `Dockerfile.catalyst` menyalin binary dari digest ter-pin.
+Build lokal tanpa login GHCR: `--build-arg SPIDER_IMAGE=<image lokal>`.
 
 ## Referensi yang dibaca
 
