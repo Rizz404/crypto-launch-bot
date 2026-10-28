@@ -5,6 +5,15 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
 
 ## Status dan prioritas
 
+**Checkpoint terbaru — pause 28 Oktober sekitar 22.12 WIB:** user meminta
+berhenti karena limit. **Mulai dari [handover pilot](catalyst-pilot-handover.md)**
+sebelum meneruskan rilis komponen/Spider di bawah. User memilih paper 1.000 USDT
+virtual dan maksimal 12 panggilan AI/hari, 2.048 token output/call. Runner,
+market/event/budget, book fills dan overlay pilot sudah ditulis sebagai WIP;
+belum di-commit/push/deploy dan belum ada pemeriksaan lengkap checkout akhir.
+DB fixture lokal sudah dihentikan; tidak ada worker/trial P3 yang aktif.
+P2 tetap dipertahankan. Jangan lanjut sampai user melanjutkan sesi.
+
 **Izin rilis 28 Oktober:** user mengizinkan commit, push dan deploy. Perubahan
 config diekspor pada `c8a3439`, implementasi/image/CI P3 pada `1afbd80`.
 **Rilis komponen terverifikasi 21.00 WIB**, source `2998f38`: seluruh CI lulus,
@@ -36,8 +45,9 @@ mengklaim checkout terbaru sudah lulus tes lama.
   Combo priority `p3-research` belum dibuat/diuji failover. Lihat
   [evaluasi model](testing/catalyst-model-evaluation.md). Evaluasi memakai prompt
   `catalyst-v3`/strict JSON Schema; local Qwen masih HTTP 400, kualitas belum dinilai.
-  Checkout kini prompt v4; race/vet/lint komponen lokal lulus pada 28 Oktober,
-  tetapi inference v4 belum diuji. Binary patched diuji pada TLS fixture
+  Checkpoint komponen memakai prompt v4; WIP pilot kini prompt v5, belum
+  inference nyata. Hasil race/vet/lint dan batas putaran terakhir dipisahkan di
+  [laporan pilot](testing/catalyst-pilot-local.md). Binary patched diuji pada TLS fixture
   terisolasi, bukan situs publik; lihat handover terbaru.
   Jangan menampilkan key atau isi env.
   Ini bukan aktivasi worker/trial atau perubahan P2.

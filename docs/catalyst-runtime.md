@@ -1,5 +1,12 @@
 # Development runtime katalis
 
+**WIP pilot sesudah rilis komponen, dijeda 28 Oktober 22.12 WIB:** user memilih
+paper 1.000 USDT virtual dan 12 panggilan AI per hari. Checkout kini menambah
+runner tiga loop, market/event/context v5, PG, book fills, quota dan overlay
+pilot. Ini belum image/rilis baru atau start worker. [Handover lengkap dan
+batas bukti](catalyst-pilot-handover.md), [checkpoint tes](testing/catalyst-pilot-local.md).
+Penjelasan checkpoint komponen di bawah adalah riwayat sebelum WIP tersebut.
+
 **Checkpoint 28 Oktober:** CLI `collect` memakai Spider sebagai engine utama;
 failure ekstraksi, cache dan batas arsip telah diperbaiki. Adapter/proxy memiliki
 race test fixture lokal yang lulus. Image khusus dibangun/smoke lokal; binary

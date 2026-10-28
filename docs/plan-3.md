@@ -1,5 +1,32 @@
 # Plan 3 — Riset katalis dan hold berbasis tesis
 
+## Checkpoint pause pilot 28 Oktober
+
+**User meminta pause sekitar 22.12 WIB karena limit percakapan.** Target pilot
+aktif malam ini belum tercapai; lanjut hanya setelah user melanjutkan.
+Mulai dari [handover pilot](catalyst-pilot-handover.md), bukan mengulang rilis
+komponen pukul 21.00 WIB. HEAD tetap `56c2a5c`; kode baru modified/untracked.
+
+User memilih **paper 1.000 USDT virtual**, risiko 0,5%/trade, maksimal dua posisi,
+halt harian 2%/drawdown 8%, serta **12 panggilan AI/hari**, output 2.048 token
+per panggilan. WIP memakai hari WIB untuk kuota AI; ledger risiko tetap UTC.
+Ini persetujuan profil paper, bukan uang asli atau kelulusan penerimaan.
+
+| Area | Progres sesudah rilis komponen | Belum selesai |
+|---|---|---|
+| P3-1 | Crawl nyata lama: Dogecoin berhasil, Ethereum feed terlalu banyak dokumen, Solana robots gagal; partial source gaps dan content identity v2 ditulis | Crawl Ethereum homepage baru/artikel dalam, robots Solana, source contract dan kuota operasi nyata |
+| P3-2 | Context pasar/posisi/event/consumed events, verifier UTC/alias primer dan 12 slot harian durable; prompt v5 | Evaluasi model nyata v5, audit grammar/negasi/mainnet-testnet dan identitas event |
+| P3-3/P3-4 | Public book/ATR, bid-ask/depth partial fills, PG lifecycle/lease, tiga loop runner dan guard HOLD ditulis; fixture beberapa checkpoint lulus | Checkout akhir/race/regression lengkap, actual worker/model outage/DB outage/quote/recovery/expiry/closing dan rollout |
+| P3-5 | Dashboard managed + research/auth/health dan sender-only Telegram ditulis | QA browser dan notifikasi nyata P3 |
+| P3-6/P3-7 | PG test lokal dan native proxy-denial test lulus; overlay/CI/cache disiapkan | Image/Compose/CI baru, secret provisioning, backup/restore, resource, pilot/T0 dan review prospektif |
+
+Tidak mencentang fase hanya karena fixture awal lulus. Detail commands,
+checkpoint yang belum diuji ulang dan cleanup test ada di
+[laporan lokal pilot](testing/catalyst-pilot-local.md). DB test lokal sementara
+sudah dihentikan, P2 tidak diubah dan worker pilot VPS belum dijalankan.
+
+---
+
 **Rencana aktif sejak 23 Oktober 2026 atas permintaan user.** Plan 2 ditutup
 sebagai siklus pengembangan; pekerjaan yang belum terlaksana diteruskan ke sini.
 Penutupan bukan kelulusan semua pengujian atau izin uang asli. Dokumentasi
@@ -593,3 +620,4 @@ bukti utama. Target return 50% tetap aspirasi historis, bukan janji Plan 3.
 | 26 Oktober 2026 | User meluruskan Spider sebagai collector utama dan mengizinkan implementasi/inspeksi VPS, lalu meminta handover | Draft belum tuntas; inspeksi read-only; tidak install/deploy/start P3 atau mengubah P2 |
 | 28 Oktober 2026 | Integrasi lokal Spider: CLI, lima halaman, cache/arsip/proxy, image terpisah dan patch stdout p3.1; CI disiapkan | Race/vet/lint, build/smoke image, Compose config dan tiga putaran binary TLS fixture lulus; egress adversarial/situs publik terbuka; tanpa commit/push/deploy atau perubahan runtime P2 |
 | 28 Oktober 2026 | User mengizinkan commit, push dan deploy; source `2998f38`, seluruh CI dan pemasangan GHCR komponen/report VPS lulus 21.00 WIB | Report exited 0, isolasi/batas container cocok, 35 container lama identik; worker/pilot/T0 belum dimulai, P2 tidak direstart |
+| 28 Oktober 2026 | User meminta pilot diselesaikan, memilih paper 1.000 USDT dan maksimal 12 panggilan AI/hari; kemudian meminta pause karena limit | Market/event/budget/runner/PG/book/dashboard/sender dan overlay masih WIP; tes beberapa checkpoint lulus, checkout akhir belum diverifikasi; belum commit/push/deploy/start pilot |

@@ -2,9 +2,15 @@
 
 Mulai dari [handover agent](handover-agent.md), lalu pilih panduan yang diperlukan.
 
+**Terbaru: development pilot dijeda 28 Oktober sekitar 22.12 WIB atas permintaan
+user.** Pilihan paper 1.000 USDT/12 panggilan AI per hari sudah dicatat; kode
+runner dan integrasi lanjutan masih WIP, belum rilis/start pilot. Mulai dari
+[handover pilot](catalyst-pilot-handover.md).
+
 | Dokumen | Isi |
 |---|---|
 | [Handover agent](handover-agent.md) | Status terbaru, batas kerja dan langkah lanjut untuk Codex/Claude/agent lain |
+| [Handover pilot](catalyst-pilot-handover.md) | Checkpoint pause, pilihan user, peta WIP, hasil tes/source nyata dan urutan lanjut |
 | [Handover Spider](catalyst-spider-handover.md) | Arah website→Spider→AI, patch/protokol, rilis komponen VPS dan gate pilot |
 | [Plan 3](plan-3.md) | Rencana aktif: katalis/AI, hold berbasis tesis, proteksi dan seluruh backlog Plan 2 |
 | [Plan 2](plan-2.md) | Siklus multi-instance selesai/arsip; checklist dan bukti historis |

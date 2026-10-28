@@ -1,5 +1,10 @@
 # Handover implementasi Spider dan Plan 3
 
+**Lanjutan terakhir dijeda 28 Oktober 22.12 WIB.** Runner/pilot baru masih WIP;
+mulai dari [handover pilot](catalyst-pilot-handover.md). Dokumen ini menyimpan
+checkpoint komponen yang sudah dirilis dan riwayat awal. Jangan menganggap
+kelulusan image/CI di bawah mencakup kode worker yang belum di-commit.
+
 Checkpoint terbaru **28 Oktober 2026**. Komponen/report P3 sudah terpasang di
 VPS; **runner/pilot belum aktif**. Riwayat 26 Oktober dipertahankan untuk konteks.
 Mulai dari [handover agent](handover-agent.md) dan [Plan 3](plan-3.md).

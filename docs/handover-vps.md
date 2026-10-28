@@ -5,6 +5,14 @@ Checkpoint operasi P2 **23 Oktober 2026**, deployment komponen P3 **28 Oktober
 [deployment](deployment.md); rencana aktif di [Plan 3](plan-3.md), dengan
 pembanding lama tetap mengikuti [Strategi 2](strategy-2.md).
 
+**Pause development pilot 28 Oktober sekitar 22.12 WIB:** setelah pemasangan
+komponen, satu collect terbatas berhasil untuk Dogecoin dan gagal pada Ethereum
+feed/robots Solana. Tidak ada inference, worker atau DB pilot VPS yang diaktifkan.
+User memilih paper 1.000 USDT/12 panggilan AI per hari; implementasi lanjutan
+masih di working tree laptop, belum dirilis. [Handover pilot](catalyst-pilot-handover.md)
+memisahkan perubahan WIP, data arsip baru dan rilis komponen di bawah. Pause
+tidak menghentikan eksperimen P2 yang memang sedang berjalan.
+
 ## Rilis komponen P3 — 28 Oktober
 
 User mengizinkan commit, push dan deploy. [Seluruh CI lulus](https://github.com/Rizz404/trading-bot/actions/runs/40699358329),

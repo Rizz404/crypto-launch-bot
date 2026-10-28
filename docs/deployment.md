@@ -1,5 +1,12 @@
 # Deployment
 
+**Pause terbaru 28 Oktober 22.12 WIB:** overlay
+`deploy/compose.catalyst.pilot.yml` dan CLI `run` masih WIP, belum dibangun/
+divalidasi/deploy. User memilih paper 1.000 USDT dan 12 panggilan AI/hari,
+kemudian meminta berhenti untuk handover. Ikuti
+[handover pilot](catalyst-pilot-handover.md) setelah user melanjutkan; jangan
+menjalankan overlay hanya karena rilis komponen/report di bawah sudah lulus.
+
 Prosedur rilis dan operasi untuk project `trading-bot-paper`. Status server ada
 di [handover VPS](handover-vps.md); **paper pembanding tahap dua aktif** sejak
 22 Oktober 2026 19:58:45 WIB. Panduan ini tidak memberi izin trial tambahan

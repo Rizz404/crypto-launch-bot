@@ -10,6 +10,7 @@ Penerimaan tersisa dan risiko laporan historis dipetakan ke P3-O/P3-R/P3-LIVE.
 
 | Bukti | Isi |
 |---|---|
+| [WIP pilot katalis](catalyst-pilot-local.md) | Checkpoint unit/PG/native binary sesudah rilis komponen; belum tes lengkap checkout akhir atau aktivasi pilot |
 | [Rilis komponen P3](catalyst-release.json) | Seluruh CI/GHCR dan deployment report VPS 28 Oktober; digest/source, batas isolasi dan 35 container lama tetap identik; bukan start pilot |
 | [Verifikasi Spider](catalyst-spider-verification.json) | Build/smoke image, regression stdout p3.1 dan tiga putaran binary TLS fixture tanpa jaringan keluar; batas egress/situs publik |
 | [Preflight VPS Spider](catalyst-vps-preflight.json) | Sampel kapasitas read-only 26 Oktober, usulan penempatan terpisah; belum instalasi/pilot |
