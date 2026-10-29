@@ -1,0 +1,11 @@
+[Unit]
+Description=Check the P3 paper pilot every five minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+AccuracySec=15s
+Unit=trading-bot-catalyst-observe.service
+
+[Install]
+WantedBy=timers.target

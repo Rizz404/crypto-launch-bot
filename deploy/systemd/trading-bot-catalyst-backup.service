@@ -1,0 +1,14 @@
+[Unit]
+Description=Back up only the P3 paper ledger, archive and private configuration
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/trading-bot-catalyst/repo
+ExecStart=/usr/bin/bash /opt/trading-bot-catalyst/repo/deploy/catalyst-backup.sh
+UMask=0077
+Nice=10
+IOSchedulingClass=idle
+CPUQuota=25%
+MemoryMax=128M
+TimeoutStartSec=15min

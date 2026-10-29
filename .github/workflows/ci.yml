@@ -34,6 +34,11 @@ jobs:
             exit 1
           fi
       - run: go mod verify
+      - name: Verify catalyst operational helpers
+        run: |
+          python3 -m unittest discover -s deploy -p test_catalyst_ops.py
+          bash -n deploy/catalyst-backup.sh
+          systemd-analyze verify deploy/systemd/trading-bot-catalyst-*.service deploy/systemd/trading-bot-catalyst-*.timer
       - run: go vet -tags integration ./...
       - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
