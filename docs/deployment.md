@@ -1,6 +1,6 @@
 # Deployment
 
-**Server pindah 29 Oktober 23:48 WIB:** stack berjalan di `plesk-newest` sebagai `ana-core`/`ana-scout` (`/opt/ana-*`); `plesk` hanya rollback. [Laporan migrasi](testing/server-migration.md).
+**Server pindah 29 Oktober 23:48 WIB:** seluruh runtime di `plesk-newest` sebagai `ana-core`/`ana-scout` (`/opt/ana-*`, source `e74a9af`); `plesk` hanya rollback sampai ±5 November. Detail akses di [handover agent](handover-agent.md). [Laporan migrasi](testing/server-migration.md).
 
 **Status 29 Oktober 2026:** P2 dan pilot AI P3 aktif pada binary `d30b93b`; helper/timer P3 terpasang. Dua EMA 1m P2 tetap pause. Lihat [rilis operasi](testing/paper-operations-release.md) dan [handover VPS](handover-vps.md). Bagian rilis komponen Spider di bawah adalah riwayat sebelum pilot aktif, bukan status worker saat ini.
 

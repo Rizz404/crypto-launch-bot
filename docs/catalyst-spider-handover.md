@@ -1,5 +1,7 @@
 # Handover implementasi Spider dan Plan 3
 
+**Catatan 30 Oktober:** runtime P3 kini di `plesk-newest` sebagai `ana-scout` (`/opt/ana-scout`). Rujukan `plesk`/`trading-bot-catalyst` di bawah adalah riwayat; lihat [handover agent](handover-agent.md).
+
 > **Status 29 Oktober:** pilot sudah aktif sejak 28 Oktober 22:53 WIB;
 > pause/WIP di bagian awal berikut adalah riwayat, bukan status checkout/VPS kini.
 > Gunakan [handover agent](handover-agent.md) dan [handover VPS](handover-vps.md)

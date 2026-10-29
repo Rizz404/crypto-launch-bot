@@ -1,12 +1,41 @@
 # Handover VPS
 
-**Server pindah 29 Oktober 23:48 WIB:** stack berjalan di `plesk-newest` sebagai `ana-core`/`ana-scout` (`/opt/ana-*`); `plesk` hanya rollback. [Laporan migrasi](testing/server-migration.md).
+**Runtime pindah ke `plesk-newest` 29 Oktober 23:48 WIB** sebagai `ana-core`/`ana-scout`; lihat bagian Server saat ini.
 
 **Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
 
 Checkpoint rilis P2/P3 **29 Oktober 2026 22:23 WIB**, pilot paper P3 aktif
 **28 Oktober 22:53 WIB**. Prosedur di [deployment](deployment.md), rencana
 aktif [Plan 3](plan-3.md), pembanding [Strategi 2](strategy-2.md).
+
+## Server saat ini — sejak 29 Oktober 23:48 WIB
+
+**Seluruh runtime sudah dimigrasi ke `plesk-newest`** (srv2088216, 187.124.139.72); bukan lagi `plesk`
+(srv1142454). [Laporan migrasi](testing/server-migration.md) memuat bukti salinan, ledger dan rollback.
+
+| Item | Nilai |
+|---|---|
+| Akses | `ssh -o BatchMode=yes plesk-newest` (root, login shell **zsh**; bungkus skrip dengan `bash -s`) |
+| Paper P2 + riset tahap tiga + monitoring | project Compose `ana-core`, `/opt/ana-core` |
+| Pilot katalis P3 | project Compose `ana-scout`, `/opt/ana-scout` |
+| Image | `ghcr.io/rizz404/ana-core` / `ghcr.io/rizz404/ana-scout`, source berjalan `e74a9af` |
+| Timer | `ana-core-{observe,backup}.timer`, `ana-scout-{observe,backup}.timer` |
+| Container | `ana-core-{db,bot,research,dns,prometheus,grafana}-1`, `ana-scout-{db,dns,catalyst}-1` |
+
+- Nama host-visible sengaja disamarkan (permintaan user, inisial Anastasia). Jangan memakai lagi
+  nama `trading-bot-paper`/`trading-bot-catalyst` untuk project, container, image, `/opt` atau unit.
+  Nama DB `tradingbot_*`, metrik dan modul Go tetap.
+- `plesk` hanya cadangan rollback: container `trading-bot-*` exited dengan restart `no`, timer disabled,
+  volume/image/backup disimpan. **Jangan menyalakannya** (dua poller Telegram, dua penulis ledger).
+  User memilih menahannya sampai ±5 November; tanya user sebelum menghapus.
+- Transfer antar server dilakukan langsung dari NEWEST
+  (`ssh -i /root/.ssh/id_rsa_plesk_migration root@31.97.109.89`), bukan lewat laptop.
+- Pasca-migrasi lulus: checksum volume, ledger, feed/backfill, health, observer, backup manual,
+  `sendMessage` Telegram dan `/help` P2 (dikonfirmasi user). Backup terjadwal pertama di NEWEST belum terjadi.
+- Migrasi whole-server agent lain (`/root/docker-migration-20261029/` di NEWEST) sudah
+  mengecualikan/melindungi `ana-*`; jangan memasukkan stack ini kembali ke script itu.
+- Bagian dokumen di bawah yang menyebut `plesk`, `trading-bot-*` atau source `d30b93b` adalah riwayat
+  sebelum migrasi; path/runbook sudah diganti ke nama `ana-*`.
 
 ## Rilis operasi P2/P3 — 29 Oktober 22:23 WIB
 

@@ -48,8 +48,7 @@ label image hanya `org.opencontainers.image.revision`.
   `run_end` 16:46:36 (plesk) lalu `run_start` 16:48:23 (NEWEST). Tahap tiga enam kasus `running`,
   StartedAt 16:14:26 UTC. P3 1.000 USDT flat, StartedAt 28 Okt 15:53:13 UTC.
 - Sesudah rilis `e74a9af`: health 200, versi log cocok, restart/WARN 0, observer sama seperti di atas.
-- Telegram: `sendMessage` dari NEWEST ke chat whitelist `ok=True`. Polling menu P2 belum diuji
-  interaktif.
+- Telegram: `sendMessage` dari NEWEST ke chat whitelist `ok=True`. `/help` P2 dibalas (dikonfirmasi user 30 Oktober).
 
 ## Rollback dan sisa
 
@@ -59,4 +58,4 @@ keduanya bersamaan (Telegram poller, ledger). User memilih menahan sisa plesk tu
 
 Objek `trading-bot-*` usang dari migrasi whole-server di NEWEST dihapus; script cutover-nya
 mengecualikan/melindungi `ana-*` (salinan asli `*.bak-pre-ana`). `/opt/ana-scout/deploy-pilot.sh` lama dihapus.
-Belum diuji: backup terjadwal pertama dan polling Telegram interaktif.
+Belum terjadi: backup terjadwal pertama di NEWEST.

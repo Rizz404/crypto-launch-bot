@@ -1,11 +1,40 @@
 # Handover agent
 
-**Server pindah 29 Oktober 23:48 WIB:** stack berjalan di `plesk-newest` sebagai `ana-core`/`ana-scout` (`/opt/ana-*`); `plesk` hanya rollback. [Laporan migrasi](testing/server-migration.md).
+**Runtime pindah ke `plesk-newest` 29 Oktober 23:48 WIB** sebagai `ana-core`/`ana-scout`; lihat bagian Server saat ini.
 
 **Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
 
-Untuk Codex, Claude dan agent berikutnya. Checkpoint **29 Oktober 2026**;
+Untuk Codex, Claude dan agent berikutnya. Checkpoint **30 Oktober 2026**;
 verifikasi checkout dan waktu bukti sebelum bekerja.
+
+## Server saat ini — sejak 29 Oktober 23:48 WIB
+
+**Seluruh runtime sudah dimigrasi ke `plesk-newest`** (srv2088216, 187.124.139.72); bukan lagi `plesk`
+(srv1142454). [Laporan migrasi](testing/server-migration.md) memuat bukti salinan, ledger dan rollback.
+
+| Item | Nilai |
+|---|---|
+| Akses | `ssh -o BatchMode=yes plesk-newest` (root, login shell **zsh**; bungkus skrip dengan `bash -s`) |
+| Paper P2 + riset tahap tiga + monitoring | project Compose `ana-core`, `/opt/ana-core` |
+| Pilot katalis P3 | project Compose `ana-scout`, `/opt/ana-scout` |
+| Image | `ghcr.io/rizz404/ana-core` / `ghcr.io/rizz404/ana-scout`, source berjalan `e74a9af` |
+| Timer | `ana-core-{observe,backup}.timer`, `ana-scout-{observe,backup}.timer` |
+| Container | `ana-core-{db,bot,research,dns,prometheus,grafana}-1`, `ana-scout-{db,dns,catalyst}-1` |
+
+- Nama host-visible sengaja disamarkan (permintaan user, inisial Anastasia). Jangan memakai lagi
+  nama `trading-bot-paper`/`trading-bot-catalyst` untuk project, container, image, `/opt` atau unit.
+  Nama DB `tradingbot_*`, metrik dan modul Go tetap.
+- `plesk` hanya cadangan rollback: container `trading-bot-*` exited dengan restart `no`, timer disabled,
+  volume/image/backup disimpan. **Jangan menyalakannya** (dua poller Telegram, dua penulis ledger).
+  User memilih menahannya sampai ±5 November; tanya user sebelum menghapus.
+- Transfer antar server dilakukan langsung dari NEWEST
+  (`ssh -i /root/.ssh/id_rsa_plesk_migration root@31.97.109.89`), bukan lewat laptop.
+- Pasca-migrasi lulus: checksum volume, ledger, feed/backfill, health, observer, backup manual,
+  `sendMessage` Telegram dan `/help` P2 (dikonfirmasi user). Backup terjadwal pertama di NEWEST belum terjadi.
+- Migrasi whole-server agent lain (`/root/docker-migration-20261029/` di NEWEST) sudah
+  mengecualikan/melindungi `ana-*`; jangan memasukkan stack ini kembali ke script itu.
+- Bagian dokumen di bawah yang menyebut `plesk`, `trading-bot-*` atau source `d30b93b` adalah riwayat
+  sebelum migrasi; path/runbook sudah diganti ke nama `ana-*`.
 
 ## Status dan prioritas
 
@@ -59,15 +88,15 @@ bukan berarti image dengan SHA docs itu sudah dibangun/dipasang.
 
 ## Lanjutkan dari sini
 
-1. Periksa `git status --short` dan source/runtime di handover VPS. Pertahankan
+1. Bekerja di `plesk-newest` (`ana-core`/`ana-scout`), bukan `plesk`. Periksa `git status --short` dan source/runtime di handover VPS. Pertahankan
    perubahan belum di-commit; jangan reset/clean atau menyalin aplikasi laptop.
-2. Monitor source `d30b93b`: freshness/gap, reconnect/Pong, CPU/DB dan observer.
+2. Monitor source `e74a9af` (Go sama dengan `d30b93b`): freshness/gap, reconnect/Pong, CPU/DB dan observer.
    Bukti awal rilis 22:30 belum mencakup penutupan 4h 23:00; checkpoint tahap tiga kemudian memeriksa delapan seri baru.
    Pause EMA 1m dipertahankan; jangan mengubah parameter/modal/T0/history.
 3. Checkpoint ringkas P3 setelah hari 1 ada di [aktivasi tahap tiga](testing/research-stage-three.md); lanjut 31 Oktober/4 November 22:53 WIB. Bedakan runtime/feed, sumber,
    keputusan valid dan performa. Periksa keputusan baru untuk menutup alert
    lama tanpa memaksa inference di luar dedup/kuota.
-4. Periksa backup terjadwal pertama dan observer sesuai kebutuhan. Timer sudah
+4. Periksa backup terjadwal pertama di NEWEST (`ana-core` ±10:20 WIB, `ana-scout` ±10:54 WIB 30 Oktober) dan observer sesuai kebutuhan. Timer sudah
    aktif; jangan memasangnya atau mengulang restore flat lagi tanpa perubahan/
    risiko baru. Recovery posisi/order aktif dan outage tetap pekerjaan lanjut.
 5. Enam kasus tahap tiga sudah diaktifkan dengan izin user; review D+1/3/7 pada 30 Oktober/1 November/5 November 23:14 WIB. Tidak mengaktifkan ulang ETH/tahap satu yang dihentikan, menambah kasus di luar enam ini atau mainnet. Eksperimen berikut memakai versi/periode dan
@@ -79,7 +108,7 @@ bukan berarti image dengan SHA docs itu sudah dibangun/dipasang.
   `var/paper-eth/`; jangan memakai `bot run` untuk mencoba dashboard.
 - Jangan menjalankan test, build, server atau verifikasi runtime otomatis
   kecuali diminta atau tugasnya memang pengujian/verifikasi tersebut.
-- VPS Plesk berbagi layanan produksi. Batasi perubahan ke `ana-core`
+- VPS `plesk-newest` berbagi layanan produksi (termasuk `mysql84`). Batasi perubahan ke `ana-core`
   di `/opt/ana-core` atau P3 `ana-scout` di
   `/opt/ana-scout`, sesuai scope tugas; jangan restart host/Docker
   atau mengubah proyek lain. Rilis P3 tidak menjadi alasan merilis ulang P2.
