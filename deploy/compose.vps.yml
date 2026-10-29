@@ -1,6 +1,6 @@
 # Run from the repository root with --env-file .env.vps.
 # BOT_IMAGE must identify an image published by the successful GitHub workflow.
-name: trading-bot-paper
+name: ana-core
 
 x-logging: &logging
   driver: json-file

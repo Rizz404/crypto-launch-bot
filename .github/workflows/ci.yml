@@ -38,7 +38,7 @@ jobs:
         run: |
           python3 -m unittest discover -s deploy -p 'test_*.py'
           bash -n deploy/catalyst-backup.sh
-          systemd-analyze verify deploy/systemd/trading-bot-catalyst-*.service deploy/systemd/trading-bot-catalyst-*.timer
+          systemd-analyze verify deploy/systemd/ana-scout-*.service deploy/systemd/ana-scout-*.timer
       - run: go vet -tags integration ./...
       - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
@@ -76,7 +76,7 @@ jobs:
           file: Dockerfile.catalyst
           platforms: linux/amd64
           load: true
-          tags: trading-bot-catalyst:ci
+          tags: ana-scout:ci
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
@@ -88,15 +88,15 @@ jobs:
           CGO_ENABLED=0 go test -c ./internal/catalyst -o /tmp/catalyst-spider-tests/catalyst.test
       - name: Smoke image and test binary with loopback fixtures only
         run: |
-          docker run --rm --network none --read-only --entrypoint /usr/local/bin/spider trading-bot-catalyst:ci --version
-          docker run --rm --network none --read-only trading-bot-catalyst:ci -h
-          docker run --rm --network none --read-only trading-bot-catalyst:ci
-          docker run --rm --network none --read-only --cpus 0.5 --memory 512m --pids-limit 128 --cap-drop all --security-opt no-new-privileges --tmpfs /tmp:size=16m,noexec,nosuid -v /tmp/catalyst-spider-tests:/test:ro -e TB_TEST_SPIDER_BINARY=/usr/local/bin/spider --entrypoint /test/catalyst.test trading-bot-catalyst:ci -test.run '^TestSpiderBinary' -test.v -test.timeout 45s
+          docker run --rm --network none --read-only --entrypoint /usr/local/bin/spider ana-scout:ci --version
+          docker run --rm --network none --read-only ana-scout:ci -h
+          docker run --rm --network none --read-only ana-scout:ci
+          docker run --rm --network none --read-only --cpus 0.5 --memory 512m --pids-limit 128 --cap-drop all --security-opt no-new-privileges --tmpfs /tmp:size=16m,noexec,nosuid -v /tmp/catalyst-spider-tests:/test:ro -e TB_TEST_SPIDER_BINARY=/usr/local/bin/spider --entrypoint /test/catalyst.test ana-scout:ci -test.run '^TestSpiderBinary' -test.v -test.timeout 45s
       - name: Publish dedicated catalyst image
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
-          image="ghcr.io/${GITHUB_REPOSITORY,,}-catalyst"
-          docker tag trading-bot-catalyst:ci "$image:sha-$GITHUB_SHA"
+          image=ghcr.io/rizz404/ana-scout
+          docker tag ana-scout:ci "$image:sha-$GITHUB_SHA"
           docker push "$image:sha-$GITHUB_SHA"
           digest=$(docker image inspect "$image:sha-$GITHUB_SHA" --format '{{index .RepoDigests 0}}')
           printf '### Catalyst image\n\n`%s`\n' "$digest" >> "$GITHUB_STEP_SUMMARY"
@@ -167,9 +167,9 @@ jobs:
         with:
           persist-credentials: false
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-      - name: Set lowercase image name
+      - name: Set image name
         id: image
-        run: printf 'name=ghcr.io/%s\n' "${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+        run: echo name=ghcr.io/rizz404/ana-core >> "$GITHUB_OUTPUT"
       - name: Build native image for smoke test
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:

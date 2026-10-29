@@ -1,11 +1,11 @@
 [Unit]
-Description=Sample trading-bot-paper every five minutes
+Description=Check the P3 paper pilot every five minutes
 
 [Timer]
 OnBootSec=2min
 OnUnitActiveSec=5min
 AccuracySec=15s
-Unit=trading-bot-paper-observe.service
+Unit=ana-scout-observe.service
 
 [Install]
 WantedBy=timers.target

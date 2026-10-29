@@ -5,7 +5,7 @@ Description=Daily local backup of the P3 paper pilot
 OnCalendar=*-*-* 03:45:00 UTC
 RandomizedDelaySec=10min
 Persistent=true
-Unit=trading-bot-catalyst-backup.service
+Unit=ana-scout-backup.service
 
 [Install]
 WantedBy=timers.target

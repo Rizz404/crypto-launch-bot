@@ -2,10 +2,10 @@
 """Set variables in .env.vps from KEY=VALUE lines on stdin, never printing values.
 
 Secrets travel from the laptop's .env through the SSH pipe only, e.g.:
-  grep -E '^TB_TELEGRAM__TOKEN=' .env | ssh plesk 'python3 /opt/trading-bot-paper/repo/deploy/vps-set-env.py'
+  grep -E '^TB_TELEGRAM__TOKEN=' .env | ssh plesk-newest 'python3 /opt/ana-core/repo/deploy/vps-set-env.py'
 Non-secret settings can be piped the same way:
-  echo TB_APP__MODE=testnet | ssh plesk 'python3 .../vps-set-env.py'
-  echo BOT_IMAGE=ghcr.io/rizz404/trading-bot@sha256:... | ssh plesk 'python3 .../vps-set-env.py'
+  echo TB_APP__MODE=testnet | ssh plesk-newest 'python3 .../vps-set-env.py'
+  echo BOT_IMAGE=ghcr.io/rizz404/ana-core@sha256:... | ssh plesk-newest 'python3 .../vps-set-env.py'
 The file is rewritten atomically with mode 600. Only TB_* names and
 BOT_IMAGE/BOT_DB_NAME are accepted.
 Takes effect when the bot container is recreated.

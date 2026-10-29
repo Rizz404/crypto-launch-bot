@@ -4,8 +4,8 @@ After=docker.service
 
 [Service]
 Type=oneshot
-WorkingDirectory=/opt/trading-bot-catalyst/repo
-ExecStart=/usr/bin/python3 /opt/trading-bot-catalyst/repo/deploy/catalyst-observe.py
+WorkingDirectory=/opt/ana-scout/repo
+ExecStart=/usr/bin/python3 /opt/ana-scout/repo/deploy/catalyst-observe.py
 UMask=0077
 Nice=10
 CPUQuota=10%

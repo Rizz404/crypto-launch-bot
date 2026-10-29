@@ -4,8 +4,8 @@ After=docker.service
 
 [Service]
 Type=oneshot
-WorkingDirectory=/opt/trading-bot-catalyst/repo
-ExecStart=/usr/bin/bash /opt/trading-bot-catalyst/repo/deploy/catalyst-backup.sh
+WorkingDirectory=/opt/ana-scout/repo
+ExecStart=/usr/bin/bash /opt/ana-scout/repo/deploy/catalyst-backup.sh
 UMask=0077
 Nice=10
 IOSchedulingClass=idle
