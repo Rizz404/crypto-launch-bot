@@ -53,10 +53,19 @@ func (p *Pilot) HTTP(password string) http.Handler {
 			http.Error(w, "Arsip riset tidak tersedia", http.StatusServiceUnavailable)
 			return
 		}
+		status := p.Status()
+		// A restart must not hide the last archived decision during inference dedup.
+		if status.DecisionID == "" && len(report.Reviews) > 0 {
+			last := report.Reviews[len(report.Reviews)-1]
+			status.DecisionID, status.Action, status.Symbol, status.Reason = last.ID, last.Action, last.Symbol, last.Reason
+			if status.Error == "" {
+				status.Error = last.Error
+			}
+		}
 		data := struct {
 			Status PilotStatus
 			Report Report
-		}{p.Status(), report}
+		}{status, report}
 		if r.URL.Path == "/research.json" {
 			w.Header().Set("Content-Type", "application/json")
 			_ = json.NewEncoder(w).Encode(data)

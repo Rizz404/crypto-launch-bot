@@ -10,7 +10,7 @@ var analysisResponseFormat = map[string]any{
 			"required": []string{"action", "symbol", "event_key", "event_type", "event_at", "event_date_text", "thesis", "counterargument", "invalidation", "hold_rationale", "reason", "citations"},
 			"properties": map[string]any{
 				"action":          map[string]any{"type": "string", "enum": []string{"REJECT", "WATCH", "PROPOSE_ENTRY", "HOLD", "PROPOSE_EXIT"}},
-				"symbol":          map[string]string{"type": "string"},
+				"symbol":          map[string]any{"type": "string", "minLength": 1},
 				"event_key":       map[string]string{"type": "string"},
 				"event_type":      map[string]string{"type": "string"},
 				"event_at":        map[string]string{"type": "string"},
