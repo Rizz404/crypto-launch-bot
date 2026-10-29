@@ -1,5 +1,13 @@
 # Handover pilot katalis
 
+> **Status 29 Oktober:** pilot sudah aktif sejak 28 Oktober 22:53 WIB;
+> pause/WIP di bagian awal berikut adalah riwayat, bukan status checkout/VPS kini.
+> Gunakan [handover agent](handover-agent.md) dan [handover VPS](handover-vps.md)
+> untuk pekerjaan berikutnya. Backup/restore flat dan QA Chromium awal selesai
+> 29 Oktober; observer diuji sekali jalan. Patch/helper/timer belum dirilis;
+> [status lanjutan](testing/operations-follow-up.md). Review hari 1/3/7 dan
+> recovery posisi aktif tetap terbuka. Plan 3 tetap roadmap repo ini.
+
 **Dijeda 28 Oktober 2026 sekitar 22.12 WIB, dilanjutkan user 22.18 WIB.**
 Putaran lanjutan (bagian [Lanjutan 28 Oktober malam](#lanjutan-28-oktober-malam))
 menutup cakupan artikel sumber, sumber SOL, bind listener dan regex CI native.

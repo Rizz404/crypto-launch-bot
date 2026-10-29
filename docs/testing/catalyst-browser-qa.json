@@ -1,0 +1,69 @@
+{
+  "at": "2026-10-29T14:23:35.928Z",
+  "browser": "headless Chromium via temporary Playwright installation; GET requests only; no project dependency added",
+  "results": [
+    {
+      "path": "/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "status": 200,
+      "title": "Portofolio bot",
+      "heading": "Portofolio bot",
+      "documentWidth": 1440,
+      "viewportWidth": 1440,
+      "bodyText": "Portofolio bot\ncatalyst\nEkspor status\n\nAkun catalyst \u00b7 paper \u00b7 binance\n\nNilai akun bot\n1000.0000 USDT\nCadangan belum dialokasikan\n0.0000 USDT\nMulai\n2026-10-28 15:53:13 UTC\nPnL net akun\n0.0000 USDT\nDrawdown saat ini: 0.00%\nGrafik equity per ",
+      "screenshot": "docs/testing/catalyst-browser/ledger-1440.png"
+    },
+    {
+      "path": "/research",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "status": 200,
+      "title": "Riset P3",
+      "heading": "Riset katalis \u00b7 paper",
+      "documentWidth": 1440,
+      "viewportWidth": 1440,
+      "bodyText": "Riset katalis \u00b7 paper\n\nDana, posisi, proteksi dan kontrol\n\nHanya uang virtual. Batas AI 12 panggilan per hari WIB.\n\nOperasi\n\nTimer terakhir: 2026-10-29 14:23:32.836078262 +0000 UTC. Riset terakhir: 2026-10-29 14:19:16.01631804 +0000 UTC.\n\nK",
+      "screenshot": "docs/testing/catalyst-browser/research-1440.png"
+    },
+    {
+      "path": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": 200,
+      "title": "Portofolio bot",
+      "heading": "Portofolio bot",
+      "documentWidth": 390,
+      "viewportWidth": 390,
+      "bodyText": "Portofolio bot\ncatalyst\nEkspor status\n\nAkun catalyst \u00b7 paper \u00b7 binance\n\nNilai akun bot\n1000.0000 USDT\nCadangan belum dialokasikan\n0.0000 USDT\nMulai\n2026-10-28 15:53:13 UTC\nPnL net akun\n0.0000 USDT\nDrawdown saat ini: 0.00%\nGrafik equity per ",
+      "screenshot": "docs/testing/catalyst-browser/ledger-390.png"
+    },
+    {
+      "path": "/research",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": 200,
+      "title": "Riset P3",
+      "heading": "Riset katalis \u00b7 paper",
+      "documentWidth": 390,
+      "viewportWidth": 390,
+      "bodyText": "Riset katalis \u00b7 paper\n\nDana, posisi, proteksi dan kontrol\n\nHanya uang virtual. Batas AI 12 panggilan per hari WIB.\n\nOperasi\n\nTimer terakhir: 2026-10-29 14:23:34.836080686 +0000 UTC. Riset terakhir: 2026-10-29 14:19:16.01631804 +0000 UTC.\n\nK",
+      "screenshot": "docs/testing/catalyst-browser/research-390.png"
+    }
+  ],
+  "source_image": "1779878 / sha256:4579285aee19eeab366b4f87f6eb08d0340f8be8b1a5f2b4833b5ac3a3904cdf",
+  "findings": [
+    "All four navigations returned 200; document scrollWidth equals viewport width.",
+    "Research decision is blank after worker restart despite archived reviews. Local HTTP fallback patch has a regression test; these screenshots show the currently deployed image.",
+    "Research page uses native unstyled HTML and verbose UTC timestamps; retained as cosmetic limitations.",
+    "No form was submitted; all non-GET and external-origin requests were blocked."
+  ]
+}

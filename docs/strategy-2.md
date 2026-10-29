@@ -1,5 +1,11 @@
 # Penarikan trial dan pengelolaan riset strategi — 21 Oktober 2026
 
+**Lanjutan 29 Oktober 2026:** review tujuh hari selesai; dua EMA 1m pause entry
+atas persetujuan user pada 21:10 WIB. Tren/EMA 4h dipertahankan. Dua belas
+replay biaya pada kandidat beku selesai; pullback BTC/ETH masuk shortlist
+riset, belum aktivasi strategi baru. [Review P2](testing/research-stage-two-review.md),
+[operasi](testing/operations-follow-up.md), [riset biaya](testing/strategy-cost-review/readme.md).
+
 **Pembaruan rencana 23 Oktober:** [Plan 3](plan-3.md) menjadi rencana aktif;
 Plan 2 selesai sebagai siklus/arsip. Riset/ekspansi di sini diteruskan melalui
 P3-R1–P3-R6, operasi/review melalui P3-O. Checkpoint terbaru mengikuti

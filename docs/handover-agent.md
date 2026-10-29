@@ -1,151 +1,88 @@
 # Handover agent
 
-Untuk Codex, Claude dan agent berikutnya. Checkpoint dokumentasi **28 Oktober 2026**;
-verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirilis.
+Untuk Codex, Claude dan agent berikutnya. Checkpoint **29 Oktober 2026**;
+verifikasi checkout dan waktu bukti sebelum bekerja.
 
 ## Status dan prioritas
 
-**Checkpoint terbaru — pause 28 Oktober sekitar 22.12 WIB:** user meminta
-berhenti karena limit. **Mulai dari [handover pilot](catalyst-pilot-handover.md)**
-sebelum meneruskan rilis komponen/Spider di bawah. User memilih paper 1.000 USDT
-virtual dan maksimal 12 panggilan AI/hari, 2.048 token output/call. Runner,
-market/event/budget, book fills dan overlay pilot sudah ditulis sebagai WIP;
-belum di-commit/push/deploy dan belum ada pemeriksaan lengkap checkout akhir.
-DB fixture lokal sudah dihentikan; tidak ada worker/trial P3 yang aktif.
-P2 tetap dipertahankan. Jangan lanjut sampai user melanjutkan sesi.
-
-**Izin rilis 28 Oktober:** user mengizinkan commit, push dan deploy. Perubahan
-config diekspor pada `c8a3439`, implementasi/image/CI P3 pada `1afbd80`.
-**Rilis komponen terverifikasi 21.00 WIB**, source `2998f38`: seluruh CI lulus,
-image GHCR dipasang di `/opt/trading-bot-catalyst`, default `report` exited 0.
-Metadata 35 container lama tetap identik; P2 tidak direstart. Ini bukan aktivasi
-runner/pilot atau izin uang asli. Source/digest, isolasi dan batas bukti:
-[handover VPS](handover-vps.md#rilis-komponen-p3--28-oktober) dan
-[bukti rilis](testing/catalyst-release.json).
-
-**Handover terbaru — Spider, 28 Oktober:** user meluruskan alur menjadi daftar
-website → Spider → AI + data pasar menentukan buy/hold/sell → validator/paper,
-lalu meminta handover sebelum melanjutkan. **Mulai dari
-[handover Spider](catalyst-spider-handover.md).** CLI collect sudah memakai Spider;
-failure ekstraksi, cache/arsip dan proxy ditutup dengan tes fixture lokal.
-Image khusus berhasil dibangun/smoke lokal; binary 2.53.9 memerlukan patch
-flush stdout (versi 2.53.9-p3.1) agar JSON halaman terakhir tidak hilang.
-Protokol dua dokumen melalui proxy lulus tiga kali dalam container tanpa jaringan
-keluar; egress adversarial/situs publik belum diverifikasi. CI dan pemasangan
-komponen/report VPS sudah lulus, tanpa worker AI atau trial. Container/project
-P3 terpisah sudah tersedia. Jangan meneruskan desain yang menjadikan Spider opsional atau
-mengklaim checkout terbaru sudah lulus tes lama.
+**Lanjutan yang disetujui user 29 Oktober:** dua EMA 1m sudah pause entry pada
+21:10 WIB. Backup/restore P3 dan QA Chromium desktop/mobile selesai; observer
+sekali jalan mendeteksi review invalid. Patch feed/health, schema simbol,
+tampilan keputusan arsip dan helper/timer P3 siap lokal, **belum commit/push/
+CI/deploy** pada checkpoint ini. User sudah mengizinkan commit/push/deploy dan
+pemasangan timer P3; lanjutkan rilis dalam scope tersebut. Dua belas replay
+biaya selesai, tanpa aktivasi strategi baru.
+Mulai dari [laporan lanjutan](testing/operations-follow-up.md) dan
+[riset terbatas](testing/strategy-cost-review/readme.md).
 
 
-- **26 Oktober — OmniRoute:** key sudah diisi user pada `.env.catalyst` privat
-  (0600, diabaikan Git), endpoint `https://route-gateway.fbe.co.id/v1`.
-  Atas izin user, katalog dan inference nyata dievaluasi dengan bukti sintetis.
-  Model env dipilih `cx/gpt-6-luna-low` (7/7); fallback yang direkomendasikan
-  `openrouter/anthropic/claude-haiku-5.5` (6/7, satu HTTP 403).
-  Combo priority `p3-research` belum dibuat/diuji failover. Lihat
-  [evaluasi model](testing/catalyst-model-evaluation.md). Evaluasi memakai prompt
-  `catalyst-v3`/strict JSON Schema; local Qwen masih HTTP 400, kualitas belum dinilai.
-  Checkpoint komponen memakai prompt v4; WIP pilot kini prompt v5, belum
-  inference nyata. Hasil race/vet/lint dan batas putaran terakhir dipisahkan di
-  [laporan pilot](testing/catalyst-pilot-local.md). Binary patched diuji pada TLS fixture
-  terisolasi, bukan situs publik; lihat handover terbaru.
-  Jangan menampilkan key atau isi env.
-  Ini bukan aktivasi worker/trial atau perubahan P2.
-
-- **Rencana aktif: [Plan 3](plan-3.md).** User menutup Plan 2 sebagai siklus
-  pada 23 Oktober; seluruh pekerjaan terbuka dipetakan ke P3-R/P3-O/P3-LIVE/
-  P3-D. Plan 1/2 menjadi arsip, bukan antrean kedua atau bukti seluruh tes lulus.
-  Arah baru: katalis terverifikasi, memecoin yang sudah diperdagangkan, hold
-  selama tesis valid dan full exit saat proteksi/tesis mengharuskan. Presale/
-  token baru ditunda sebagai future reference. Mulai dari kontrak P3-0;
-  kontrak development tersedia, policy aktivasi pilot belum final.
-- **Checkpoint development P3:** baseline docs di-commit `bc321b8`.
-  `internal/catalyst`/`cmd/catalyst` menambah collector berarsip, adapter chat-completions,
-  validator, strategi paper dan replay menggunakan managed/Sim. Penundaan AI awal
-  digantikan izin evaluasi OmniRoute pada 26 Oktober; hasil terbaru ada di atas.
-  [Kontrak](catalyst-runtime.md), [hasil lokal](testing/plan-3-local.md) dan
-  [tabel progres](plan-3.md#checkpoint-development-23-oktober) memisahkan fixture
-  dari penerimaan pilot. Gate verifikasi event/book nyata, runner, durability,
-  UI/Telegram dan operasi belum selesai; jangan mencentang seluruh fase.
-- **Penegasan prioritas:** P2 yang berjalan dibiarkan dan seluruh kode/config/
-  data/bukti dipertahankan untuk riset berikutnya. Kerjakan P3-0 lalu fase AI
-  tanpa menunggu backlog P2 selesai. Jangan menghapus strategi lama, mengubah
-  runtime P2 atau merilis perubahan shared code ke P2 hanya untuk memasang AI.
-  Pilot memakai ledger/modal terpisah; sebelum berjalan di VPS yang sama,
-  gerbang kapasitas/API dan temuan keselamatan terkait tetap berlaku.
-- **Checkpoint operasi terbaru dari dokumen VPS, 23 Oktober 20.52 WIB:**
-  runtime `9c18962`, perbaikan notifikasi `afdab52`, image digest/source serta
-  bukti di [handover VPS](handover-vps.md#rilis-notifikasi-transaksi--23-oktober-2026)
-  dan [rilis notifikasi](testing/telegram-notification-release.json).
-  Snapshot mencatat enam instance/18 binding, kas 746,92125354748169 USDT,
-  22 eksekusi, tanpa posisi/pending/halt/attention. Ini checkpoint historis,
-  bukan pemeriksaan server saat membaca handover.
-- **T0 tahap dua tetap 22 Oktober 19:58:45 WIB**, DB
-  `tradingbot_research_stage_two`, wallet `paper:research-stage-two`:
-  tiga Tren + EMA dasar 1m/filter 1m/filter 4h, BTC/ETH/SOL. Modal awal
-  747,83957456237531 USDT virtual dan CPU1. Review user 23/25/29 Oktober
-  pukul 19:58:45 WIB, tanpa reminder AI otomatis. Pergantian plan tidak
-  mengubah trial, modal, parameter atau T0. Strategi AI kelak memakai ledger
-  dan modal terpisah; jangan mengganti trial berjalan dengan pilot AI.
-- Tahap satu sudah dihentikan, ledger/backup dipertahankan; jadwal
-  22/24/28 Oktober digantikan jadwal tahap dua. ETH P2-9 dihentikan 21 Oktober
-  sebelum tujuh hari, tanpa trade; review tujuh harinya dibatalkan, bukan lulus.
-- **Penerimaan tersisa:** pesan fill alami/digest 24 Oktober 07.00 WIB dan
-  whitelist, restore backup pascarilis, recovery posisi/order aktif, outage,
-  operasi panjang dan klasifikasi shutdown. Tindak lanjut ada di
-  [P3-O](plan-3.md#p3-o--penerimaan-operasi-dan-tindak-lanjut-audit).
-  Restore pra-rilis/restart tanpa posisi sudah punya bukti; jangan menyatakan
-  semua penerimaan selesai hanya karena CI/health awal lulus.
-- Ekspansi pembanding tetap target 44/132, termasuk 6/18 pada checkpoint;
-  sisa 38/114 dan tiga keluarga strategi belum diimplementasikan. Riset
-  top-20, plafon 6.528 job serial serta guard kapasitas/API masuk P3-R.
-  [Strategi 2](strategy-2.md) menyimpan rincian; snapshot host lama bukan
-  kapasitas terbukti untuk target penuh.
-- Mainnet/P3-LIVE belum disetujui. Futures, Bybit/xspread dan funding/L2
-  masuk P3-D1–P3-D3 dengan dependensi lama. OKX tetap dihapus dan saham
-  tokenisasi tetap dikecualikan.
-- Perbaikan Telegram lokal: runtime managed memulihkan `/balance`, `/pnl`,
-  `/positions`, `/orders`, `/strategies`, menambah alias `/killswitch` dan
-  mendaftarkan `/help`/`/start` pada menu yang sama. Tes command dan payload
-  suggestion lulus; sudah dirilis dan 19 command menu chat diverifikasi API.
-  Bahasa laporan/kontrol sudah dirapikan, ringkasan dipisah dari rincian dan
-  daftar memakai halaman lima item. `/status` membedakan proses aktif dengan
-  izin entry menurut pengaturan; tidak mengklaim kesehatan feed/sinyal.
-  Revisi format setelah review user: bedakan belum tersedia/dijeda dari registry,
-  nama strategi manusiawi, PnL nol diringkas, presisi komisi dan timestamp,
-  label basis persentase serta estimasi rugi stop. Legacy belum menyediakan
-  modal acuan instance/alasan exit rinci; respons menyatakan keterbatasannya.
-  Implementasi dan fixture sudah di-commit sebagai `400e70a`. Pemeriksaan
-  persiapan commit: `go test -race ./...`, `go vet -tags integration ./...`,
-  lint (0 issues) dan `make build` lulus. Tes yang memerlukan socket localhost
-  diulang di luar sandbox setelah gagal karena izin, bukan karena assertion.
-  CI rilis `37ffd6a` kemudian lulus termasuk integrasi DB/pemulihan, monitoring,
-  race/vet/lint/build, smoke image dan publikasi GHCR.
-- Arahan uji Telegram 21 Oktober: gunakan `.env` lokal; user menyatakan env
-  lokal/VPS masih sama selama belum live. Token lokal tersedia; isi env tidak
-  dibandingkan/disinkronisasi. Sebanyak 32 contoh diterima API (11 dari VPS
-  sebelum arahan, 21 sisanya dari lokal; satu duplikat saat peralihan mungkin).
-  Izin lokal khusus pesan demo, bukan `bot run`/trial. Prosedur/ekspor contoh:
-  [runtime managed](managed-runtime.md#uji-format-telegram-dari-lokal).
+- **Plan 3 tetap roadmap aktif repo Rizz404/trading-bot.** User meluruskan
+  29 Oktober bahwa Plan 4 dari memori Windows adalah proyek/repo GitHub lain.
+  Fakta sumber Hindsight dikoreksi; jangan mengarsipkan Plan 3 karena memori itu.
+- **Review tujuh hari P2 selesai:** snapshot VPS 29 Oktober 20:34 WIB,
+  equity 740,40558347 USDT, modal 747,83957456, PnL −7,43399109 (−0,9941%).
+  EMA dasar/tren 1m merugi; tiga Tren dan EMA tren 4h belum bertransaksi.
+  Komisi 5,77387876 USDT sudah termasuk realized, jangan dikurangkan lagi.
+  [Analisis/metode/tindak lanjut](testing/research-stage-two-review.md),
+  [bukti 214 fill](testing/research-stage-two-review.json).
+- **Penerimaan operasi P2 belum lulus:** candle 1m tertinggal 450 detik,
+  mark ledger sekitar 31,5 menit; 140 baris `Pong timeout` pada log 24 jam.
+  Health proses tetap 200. Diagnosis feed/consumer dan health freshness prioritas
+  berikutnya; root cause belum dibuktikan. Pause dua EMA 1m sudah
+  disetujui/diterapkan pukul 21:10 WIB, snapshot setelahnya flat; empat instance
+  lain tetap running. Patch belum diuji pada beban VPS.
+- P2 source `9c18962`, start 23 Oktober 20:52 WIB, restart 0/OOM false.
+  Enam instance/18 binding, DB `tradingbot_research_stage_two`, wallet
+  `paper:research-stage-two`. **T0 tetap 22 Oktober 19:58:45 WIB.** Tidak
+  ada restart P2; pause entry adalah perubahan kontrol setelah review, tanpa
+  mengubah parameter/modal/T0 atau menghapus data.
+- **Pilot P3 sudah aktif sejak 28 Oktober 22:53 WIB**, bukan WIP yang belum
+  dirilis. Source `1779878`/digest dan identitas di [handover VPS](handover-vps.md).
+  Pemeriksaan 29 Oktober: container running, restart 0/OOM false, runtime/feed
+  health 200. Snapshot 21:14 WIB: modal/kas 1.000, tanpa fill/posisi, tiga sumber
+  sehat, kuota 4/12 hari ini; review formal hari 1 belum jatuh tempo.
+- P3: modal paper 1.000 USDT, risiko 0,5%/trade, maksimal dua posisi,
+  halt rugi harian 2%/drawdown 8%. Kuota AI **12 panggilan/hari WIB**, maksimal
+  2.048 token output/call; hari risiko ledger tetap UTC. DB/wallet/modal terpisah
+  dari P2. Model `cx/gpt-6-luna-low`, prompt v5. Sumber Ethereum/Anza/Dogecoin;
+  entry tetap memerlukan bukti primer/jadwal yang memenuhi validator.
+- **P3 tersisa:** pemasangan timer backup/observer dari rilis GitHub dan
+  review hari 1/3/7 pada **29 Oktober /31 Oktober /4 November 22:53 WIB**.
+  Backup/restore flat dan QA browser awal selesai; patch UI belum dirilis.
+  Jangan start ulang atau reset modal/T0 untuk meneruskan pekerjaan.
+- [Handover pilot](catalyst-pilot-handover.md) dan
+  [handover Spider](catalyst-spider-handover.md) menyimpan checkpoint historis
+  pause/WIP. Baca bagian lanjutan/start; instruksi menunggu resume lama sudah
+  digantikan resume user dan rilis/start malam 28 Oktober.
+- Telegram P3 sender-only memakai bot/chat P2, tanpa poller/menu tambahan.
+  Penerimaan fill alami/digest/whitelist P2 belum lengkap; startup P2 pernah
+  dikonfirmasi user. Restore backup pascarilis P2, recovery posisi/order aktif,
+  outage dan klasifikasi shutdown tetap di P3-O. Backup luar server ditunda
+  sampai live sesuai keputusan user.
+- Mainnet belum disetujui. Ekspansi pembanding 44/132, riset top-20 dan
+  strategi tambahan tetap P3-R; futures/Bybit/xspread/funding tetap bersyarat
+  P3-D. Tidak menghapus strategi/ledger lama untuk memberi tempat pada AI.
 
 ## Lanjutkan dari sini
 
-1. Periksa `git status --short` dan `git log -12 --oneline`; pertahankan perubahan
-   yang belum di-commit. Jangan commit/push tanpa permintaan user.
-   User sudah mengizinkan commit dan push/deploy untuk trial ini; perubahan
-   strategi/modal atau deployment berikutnya tetap harus mengikuti cakupan izin.
-2. Baca [handover Spider](catalyst-spider-handover.md), [Plan 3](plan-3.md) dan
-   runtime katalis. Verifikasi egress adversarial/kontrak situs Spider, lalu kontrak sumber/event,
-   verifikasi tepercaya serta adapter pasar/runner terisolasi. Setup OmniRoute
-   dan evaluasi sintetis selesai; combo/failover dan shadow prospektif masih terbuka.
-   P3-R/P3-O tetap untuk pembanding/operasi bila diperlukan. Bekukan policy
-   pilot dan evaluasi sebelum aktivasi, tanpa mengubah eksperimen P2.
-3. Saat user kembali, review trial aktif dari T0 tersebut dan bandingkan bukti
-   VPS/Telegram dengan [handover VPS](handover-vps.md). Restart bersama lama
-   terbukti berkaitan penghentian service Docker, bukan reboot host; pemicunya
-   belum ditelusuri. Jangan restart Docker untuk proyek bot.
-4. Jangan mengaktifkan ulang trial ETH lama atau mengubah parameter trial aktif.
-   Trial berikutnya memakai ledger/DB baru dan prosedur [deployment](deployment.md).
+1. Periksa `git status --short` dan `git log -12 --oneline`; pertahankan
+   perubahan belum di-commit. Jangan commit/push/deploy hanya karena izin
+   historis untuk rilis sebelumnya; ikuti cakupan permintaan saat ini.
+2. Baca [laporan lanjutan](testing/operations-follow-up.md). Patch lokal mengurangi
+   transaksi no-op dan routing simbol tak terkait, serta memasukkan freshness
+   consumer ke health. Race/vet/lint lulus. Setelah izin commit/push eksplisit,
+   rilis lewat CI/GHCR dan ukur ulang feed/Pong/beban di VPS; jangan mengklaim
+   gejala sudah sembuh sebelum rollout. Pause EMA 1m dipertahankan.
+3. Backup/restore P3 flat sudah lulus, worker yang sama kembali aktif pada
+   21:18:56 WIB tanpa reset T0. Helper/timer scoped sudah disiapkan dan observer
+   diuji sekali jalan. Pasang timer dari checkout GitHub sesudah izin rilis;
+   jangan mengulang restore sebagai syarat tanpa risiko baru. Pertahankan
+   keterbatasan recovery posisi/order aktif dan QA form/Safari.
+4. Review P3 hari 1 mulai 29 Oktober 22:53 WIB; bedakan feed/runtime dari
+   kesiapan riset, kuota model, keputusan validator dan eksekusi. Jangan
+   menganggap health 200 sebagai bukti seluruh pilot sehat.
+5. Tetap simpan ETH/tahap satu yang dihentikan. Jangan mengaktifkan ulang
+   trial lama; eksperimen baru memakai ledger/DB baru sesuai [deployment](deployment.md).
 
 ## Batas kerja
 

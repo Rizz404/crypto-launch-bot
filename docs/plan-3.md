@@ -1,29 +1,39 @@
 # Plan 3 — Riset katalis dan hold berbasis tesis
 
-## Checkpoint pause pilot 28 Oktober
+## Checkpoint 29 Oktober
 
-**User meminta pause sekitar 22.12 WIB karena limit percakapan.** Target pilot
-aktif malam ini belum tercapai; lanjut hanya setelah user melanjutkan.
-Mulai dari [handover pilot](catalyst-pilot-handover.md), bukan mengulang rilis
-komponen pukul 21.00 WIB. HEAD tetap `56c2a5c`; kode baru modified/untracked.
+**Pilot P3 sudah aktif sejak 28 Oktober 22:53 WIB.** Source berjalan `1779878`,
+DB/wallet terpisah; [source/digest, policy dan T0](handover-vps.md).
+Pause 22:12 WIB sudah dilanjutkan user malam 28 Oktober. Kode pilot sudah
+commit/push/CI/deploy; jangan memakai status WIP awal sebagai pekerjaan kini.
 
-User memilih **paper 1.000 USDT virtual**, risiko 0,5%/trade, maksimal dua posisi,
-halt harian 2%/drawdown 8%, serta **12 panggilan AI/hari**, output 2.048 token
-per panggilan. WIP memakai hari WIB untuk kuota AI; ledger risiko tetap UTC.
-Ini persetujuan profil paper, bukan uang asli atau kelulusan penerimaan.
+Profil: paper 1.000 USDT, risiko 0,5%/trade, maksimal dua posisi, halt harian
+2%/drawdown 8%, maksimal 12 panggilan AI/hari WIB dan 2.048 token output/call.
+Hari risiko ledger tetap UTC. Sumber Ethereum/Anza/Dogecoin sudah berhasil
+collect saat start. Worker memakai prompt v5 dan sender Telegram tanpa poller.
 
-| Area | Progres sesudah rilis komponen | Belum selesai |
-|---|---|---|
-| P3-1 | Crawl nyata lama: Dogecoin berhasil, Ethereum feed terlalu banyak dokumen, Solana robots gagal; partial source gaps dan content identity v2 ditulis | Crawl Ethereum homepage baru/artikel dalam, robots Solana, source contract dan kuota operasi nyata |
-| P3-2 | Context pasar/posisi/event/consumed events, verifier UTC/alias primer dan 12 slot harian durable; prompt v5 | Evaluasi model nyata v5, audit grammar/negasi/mainnet-testnet dan identitas event |
-| P3-3/P3-4 | Public book/ATR, bid-ask/depth partial fills, PG lifecycle/lease, tiga loop runner dan guard HOLD ditulis; fixture beberapa checkpoint lulus | Checkout akhir/race/regression lengkap, actual worker/model outage/DB outage/quote/recovery/expiry/closing dan rollout |
-| P3-5 | Dashboard managed + research/auth/health dan sender-only Telegram ditulis | QA browser dan notifikasi nyata P3 |
-| P3-6/P3-7 | PG test lokal dan native proxy-denial test lulus; overlay/CI/cache disiapkan | Image/Compose/CI baru, secret provisioning, backup/restore, resource, pilot/T0 dan review prospektif |
+**Lanjutan 29 Oktober disetujui user:** dua EMA 1m pause entry, backup/restore
+P3 saat flat dan QA Chromium desktop/mobile selesai, observer diuji sekali
+jalan. Patch feed/health P2, schema/UI P3 dan helper/timer lokal lulus race/vet/
+lint, belum commit/push/CI/deploy. [Bukti lanjutan](testing/operations-follow-up.md).
 
-Tidak mencentang fase hanya karena fixture awal lulus. Detail commands,
-checkpoint yang belum diuji ulang dan cleanup test ada di
-[laporan lokal pilot](testing/catalyst-pilot-local.md). DB test lokal sementara
-sudah dihentikan, P2 tidak diubah dan worker pilot VPS belum dijalankan.
+**Belum selesai:** pemasangan timer backup/observer, rollout dan pengukuran feed,
+review hari 1/3/7 (29 Oktober/31 Oktober/4 November 22:53 WIB), kecukupan
+sumber/event dan evaluasi prospektif. Snapshot P3 21:14 WIB: kas/modal 1.000,
+tanpa fill/posisi, kuota 4/12; tiga dari lima review valid. Ini belum kelulusan
+operasi/penerimaan hari 1 atau bukti profitabilitas.
+Fase detail di bawah tidak otomatis lulus hanya karena pilot sudah aktif.
+
+**P2 hari ke-7 sudah dianalisis**, snapshot 29 Oktober 20:34 WIB:
+−7,43399109 USDT (−0,9941%), dua EMA 1m negatif dan empat instance tanpa
+transaksi; ketertinggalan feed masih ada. [Analisis](testing/research-stage-two-review.md).
+P3-O3 tetap terbuka untuk penerimaan operasi/sampel lanjutan. Pause dua EMA 1m
+kemudian diterapkan pada 21:10 WIB; P2 tidak direstart.
+Dua belas replay biaya kandidat selesai di [riset terbatas](testing/strategy-cost-review/readme.md),
+tanpa aktivasi strategi baru.
+
+Klarifikasi user 29 Oktober: Plan 4 di memori Windows milik proyek/repo GitHub
+lain; **Plan 3 tetap aktif untuk repo ini**.
 
 ---
 
@@ -31,7 +41,8 @@ sudah dihentikan, P2 tidak diubah dan worker pilot VPS belum dijalankan.
 sebagai siklus pengembangan; pekerjaan yang belum terlaksana diteruskan ke sini.
 Penutupan bukan kelulusan semua pengujian atau izin uang asli. Dokumentasi
 baseline sudah di-commit sebagai `bc321b8`; development komponen katalis dan
-replay paper lokal dimulai sesudahnya. Belum ada worker/pilot AI yang aktif.
+replay paper lokal dimulai sesudahnya. Pilot kemudian aktif 28 Oktober; status
+terbaru mengikuti checkpoint di atas.
 
 Plan 3 mencakup dua jalur: menyelesaikan penerimaan/riset platform lama dan
 membangun eksperimen katalis dengan hold berbasis tesis. Paper pembanding lama
@@ -51,8 +62,9 @@ CLI kini memakai Spider; extractor/cache/arsip/proxy memiliki race test fixture
 lokal yang lulus. Image khusus dibangun/smoke; binary dengan patch flush stdout
 (2.53.9-p3.1) lulus protokol/proxy TLS fixture tiga kali tanpa jaringan keluar.
 Seluruh CI kemudian lulus dan komponen/report dipasang di VPS 28 Oktober
-21.00 WIB pada source `2998f38`. Egress adversarial/situs publik belum diuji;
-worker/pilot belum dimulai. [Bukti rilis komponen](testing/catalyst-release.json).
+21.00 WIB pada source `2998f38`. Pada checkpoint komponen itu worker/pilot
+belum dimulai; collect nyata dan start pilot kemudian tercatat di
+[handover VPS](handover-vps.md). [Bukti rilis komponen](testing/catalyst-release.json).
 
 [Handover implementasi dan urutan lanjut](catalyst-spider-handover.md) mencatat
 hasil inspeksi kapasitas VPS, usulan container/project tersendiri, file WIP,
@@ -396,11 +408,16 @@ semua 44 instance sebelum mengembangkan collector AI.
   terdokumentasi; jangan diulang sebagai syarat baru tanpa perubahan/risiko.
   Restore backup pascarilis 23 Oktober belum diverifikasi. Verifikasi namespace
   ID/mode dan market-data publik pada rilis yang relevan tanpa order mainnet.
+  **P3 29 Oktober:** backup DB/arsip + restore salinan flat sudah lulus,
+  271 record arsip diperiksa; [bukti](testing/catalyst-backup-restore.json).
+  Pemasangan timer/observer permanen dan recovery posisi aktif tetap terbuka.
 - [ ] **P3-O3 (P2-9 tujuh hari, C-08/C-18):** review operasi prospektif
   trial tahap dua pada 23/25/29 Oktober 19:58:45 WIB (hari 1/3/7 dari T0
   22 Oktober). Jadwal ETH dan tahap satu dibatalkan, bukan kelulusan yang
   dipindahkan. Nilai strategi dengan sampel memadai; 30 hari dapat menjadi
   evaluasi awal, diperpanjang bila transaksi sedikit. Tidak ada reminder AI baru.
+  **Review 29 Oktober sudah dilakukan**: [laporan](testing/research-stage-two-review.md);
+  feed bermasalah, sehingga penerimaan operasi dan evaluasi lanjutan tetap terbuka.
 - [ ] **P3-O4 (P2-0/P2-8 lanjutan, C-01/C-02/C-03/C-05):** tutup atau
   klasifikasikan ketidakpastian tick penolakan OCO, cancel ambigu dan proteksi
   expired; batas rekonstruksi realized PnL/equity/dust; audit terminal saat

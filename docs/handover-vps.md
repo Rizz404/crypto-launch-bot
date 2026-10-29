@@ -1,9 +1,46 @@
 # Handover VPS
 
-Checkpoint operasi P2 **23 Oktober 2026**, pilot paper P3 aktif **28 Oktober
-22.53 WIB**. Prosedur perubahan ada di
-[deployment](deployment.md); rencana aktif di [Plan 3](plan-3.md), dengan
-pembanding lama tetap mengikuti [Strategi 2](strategy-2.md).
+Checkpoint review P2 **29 Oktober 2026 20:34 WIB**, pilot paper P3 aktif
+**28 Oktober 22:53 WIB**. Prosedur di [deployment](deployment.md), rencana
+aktif [Plan 3](plan-3.md), pembanding [Strategi 2](strategy-2.md).
+
+## Lanjutan disetujui user — 29 Oktober 21:10–21:29 WIB
+
+Dua EMA 1m sudah **pause entry** via kontrol aplikasi; P2 tidak direstart,
+modal/T0/parameter tetap. Snapshot 21:29 WIB flat, total 214 fill (210 hot +4
+arsip), empat instance lain running. [Bukti pause](testing/research-stage-two-pause.json).
+
+Backup P3 `backup-20261029T141857Z` dan restore salinan lulus; 271 record
+arsip diperiksa hash, budget 1/4 slot 28/29 Oktober dipertahankan. Worker P3
+sama/image sama kembali start **21:18:56 WIB**; ledger T0 tetap 28 Oktober
+22:53:13 WIB. **37 container lain identik**, termasuk P2.
+[Bukti restore](testing/catalyst-backup-restore.json).
+
+QA Chromium desktop/mobile dan observer sekali jalan selesai. Observer
+mendeteksi review WATCH invalid; screenshot menemukan keputusan terakhir
+hilang dari tampilan setelah restart. Patch feed/health P2, schema simbol/
+UI P3 dan helper/timer sudah lokal, tes race/vet/lint lulus, **belum commit/
+push/CI/deploy atau pemasangan timer permanen**.
+[Laporan lengkap dan batas izin rilis](testing/operations-follow-up.md).
+
+## Review baca-saja — 29 Oktober
+
+[Analisis tujuh hari P2](testing/research-stage-two-review.md) dan
+[bukti](testing/research-stage-two-review.json): modal 747,83957456 → equity
+740,40558347 USDT, PnL −7,43399109 (−0,9941%). EMA dasar 1m −4,242513;
+EMA tren 1m −3,191478; empat instance lain belum bertransaksi. Komisi total
+5,773879 sudah termasuk PnL. Saat snapshot tidak ada holding nonzero,
+pending atau order nonterminal. Usulan pause EMA 1m belum diterapkan.
+
+P2 tetap source `9c18962`, restart 0/OOM false, tetapi candle 1m berumur
+450 detik dan harga ledger bertimestamp 20:03 WIB. Log 24 jam: 140 baris
+`Pong timeout`; observer terakhir melaporkan `candle_freshness_or_gap`,
+walaupun health HTTP 200. Penerimaan operasi belum lulus; root cause belum
+terverifikasi. Tidak ada perubahan/restart/deployment VPS pada review ini.
+
+P3 tetap source `1779878`, running/restart 0/OOM false dan health runtime/feed
+200 pada pemeriksaan terpisah sesudah snapshot P2. Ini belum review hasil
+riset/kuota/modal P3 hari 1. Jadwal review pertamanya 29 Oktober 22:53 WIB.
 
 ## Pilot paper P3 aktif — 28 Oktober 22.53 WIB
 
@@ -36,8 +73,9 @@ entry/hold tetap wajib bukti primer aset sendiri. Setelah redeploy, siklus
 berjalan tanpa error dan tanpa panggilan baru (bukti tidak berubah); kuota
 terpakai 1/12 pada 28 Oktober.
 
-Belum: backup/restore DB dan arsip P3, observer/alert P3, QA browser
-dashboard. Review pilot hari 1/3/7: **29 Oktober / 31 Oktober / 4 November
+Belum pada checkpoint start: backup/restore DB dan arsip P3, observer/alert P3,
+QA browser. Lanjutan 29 Oktober di atas menutup restore flat/QA browser awal;
+helper/timer permanen tetap belum aktif. Review pilot hari 1/3/7: **29 Oktober / 31 Oktober / 4 November
 22.53 WIB**. Tidak ada entry sampai sumber primer memuat jadwal mainnet/produk
 eksplisit (event Hoodi sekarang testnet dan ditunda).
 

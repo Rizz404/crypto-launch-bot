@@ -197,3 +197,35 @@ Periksa aturan gap/universe bila config berubah. Detail kesalahan ada di
 Saat trial selesai, matikan observe timer; pertahankan backup serta DB sesuai
 kebutuhan. Status saat ini: observe dan backup active untuk trial riset. Jangan mengaktifkan
 ulang keduanya secara membabi buta dari runbook lama.
+
+## Operasi pilot P3 terpisah
+
+Helper baru **belum dipasang permanen pada checkpoint 29 Oktober**.
+Backup/restore dan observer sudah diverifikasi sekali jalan; detail/batasnya:
+[laporan lanjutan](testing/operations-follow-up.md).
+
+Sesudah source rilis disetujui, diambil dari GitHub dan CI/GHCR lulus, helper
+berjalan dari `/opt/trading-bot-catalyst/repo`:
+
+```sh
+bash deploy/catalyst-backup.sh
+python3 deploy/catalyst-observe.py
+```
+
+Backup menghentikan **hanya worker P3** sementara agar DB, tesis inbox, bukti
+dan kuota AI konsisten, lalu menyalakan container yang sama jika sebelumnya
+running. Tidak menyentuh P2. Dump/arsip/env privat dan checksum disimpan di
+`/opt/trading-bot-catalyst/backups/`, 0700/0600; tidak menghapus backup lama
+otomatis atau menyalin secret keluar VPS. Restore hanya ke DB/direktori salinan.
+
+Empat unit `deploy/systemd/trading-bot-catalyst-*` disiapkan untuk observe tiap
+lima menit dan backup 03:45 UTC + jitter maksimal sepuluh menit (10:45 WIB).
+Pasang/aktifkan hanya sesudah izin rilis; tidak perlu restart Docker/host.
+Observer exit 1 menandai unit failed dengan nama masalah di journal, tanpa
+pesan Telegram atau recovery otomatis. Ia membedakan health runtime/feed
+dari sumber/riset/review invalid, budget, disk dan backup yang tertinggal.
+Kuota tepat 12/hari adalah batas normal, bukan pelanggaran.
+
+Backup luar server tetap ditunda sampai live; restore flat bukan bukti worker
+dapat pulih dengan posisi/order aktif. Ikuti jadwal review pilot dari T0 ledger,
+bukan waktu restart proses terakhir.

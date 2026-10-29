@@ -1,0 +1,2499 @@
+{
+  "subject": "P2 stage-two seven-day review; read-only VPS evidence",
+  "captured_at": "2026-10-29T13:34:29.538617+00:00",
+  "trial_started_at": "2026-10-22T12:58:45.651873337Z",
+  "scheduled_seven_day_review": "2026-10-29T12:58:45.651873337Z",
+  "timing_note": "Snapshot taken about 36 minutes after scheduled review; not reconstructed at exact cutoff. Ops checks collected shortly afterwards.",
+  "database": "tradingbot_research_stage_two",
+  "wallet": "paper:research-stage-two",
+  "revision": 151791,
+  "capital_usdt": "747.83957456237531",
+  "equity_usdt": "740.40558346906799",
+  "net_pnl_usdt": "-7.43399109330732",
+  "return_pct": "-0.9940622756769166638898525732",
+  "fees_usdt": "5.77387876126732",
+  "fees_share_of_net_loss_pct": "77.66862629772898999708041845",
+  "pnl_before_recorded_fees_usdt": "-1.66011233204000",
+  "account_halted": false,
+  "attention": "",
+  "nonzero_holdings": 0,
+  "pending_events": 0,
+  "nonterminal_orders": 0,
+  "instances": [
+    {
+      "id": "tren-500k",
+      "funded_usdt": "27.69776202082872",
+      "equity_usdt": "27.69776202082872",
+      "net_pnl_usdt": "0E-14",
+      "return_pct": "0",
+      "fees_usdt": "0",
+      "pnl_before_recorded_fees_usdt": "0E-14",
+      "fills": 0,
+      "buy_fills": 0,
+      "sell_fills": 0,
+      "winning_sell_fills": 0,
+      "losing_sell_fills": 0,
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "tren-2000k",
+      "funded_usdt": "110.79104808331486",
+      "equity_usdt": "110.79104808331486",
+      "net_pnl_usdt": "0E-14",
+      "return_pct": "0",
+      "fees_usdt": "0",
+      "pnl_before_recorded_fees_usdt": "0E-14",
+      "fills": 0,
+      "buy_fills": 0,
+      "sell_fills": 0,
+      "winning_sell_fills": 0,
+      "losing_sell_fills": 0,
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "tren-5000k",
+      "funded_usdt": "276.97762020828715",
+      "equity_usdt": "276.97762020828715",
+      "net_pnl_usdt": "0E-14",
+      "return_pct": "0",
+      "fees_usdt": "0",
+      "pnl_before_recorded_fees_usdt": "0E-14",
+      "fills": 0,
+      "buy_fills": 0,
+      "sell_fills": 0,
+      "winning_sell_fills": 0,
+      "losing_sell_fills": 0,
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "ema-base-1m",
+      "funded_usdt": "110.79104808331486",
+      "equity_usdt": "106.54853492910256",
+      "net_pnl_usdt": "-4.24251315421230",
+      "return_pct": "-3.829292372992022261989090347",
+      "fees_usdt": "3.3903763843123",
+      "pnl_before_recorded_fees_usdt": "-0.85213676990000",
+      "fills": 126,
+      "buy_fills": 63,
+      "sell_fills": 63,
+      "winning_sell_fills": 6,
+      "losing_sell_fills": 57,
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "ema-trend-1m",
+      "funded_usdt": "110.79104808331486",
+      "equity_usdt": "107.59957014421984",
+      "net_pnl_usdt": "-3.19147793909502",
+      "return_pct": "-2.880627987827165264129445024",
+      "fees_usdt": "2.38350237695502",
+      "pnl_before_recorded_fees_usdt": "-0.80797556214000",
+      "fills": 88,
+      "buy_fills": 44,
+      "sell_fills": 44,
+      "winning_sell_fills": 3,
+      "losing_sell_fills": 41,
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "ema-trend-4h",
+      "funded_usdt": "110.79104808331486",
+      "equity_usdt": "110.79104808331486",
+      "net_pnl_usdt": "0E-14",
+      "return_pct": "0",
+      "fees_usdt": "0",
+      "pnl_before_recorded_fees_usdt": "0E-14",
+      "fills": 0,
+      "buy_fills": 0,
+      "sell_fills": 0,
+      "winning_sell_fills": 0,
+      "losing_sell_fills": 0,
+      "halted": false,
+      "status": "running"
+    }
+  ],
+  "bindings": [
+    {
+      "id": "ema-base-1m/btc-ema",
+      "realized_usdt": "-0.9988090528341",
+      "fees_usdt": "1.2246987783341",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "ema-base-1m/eth-ema",
+      "realized_usdt": "-1.7161685409522",
+      "fees_usdt": "1.2445062915522",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "ema-base-1m/sol-ema",
+      "realized_usdt": "-1.527535560426",
+      "fees_usdt": "0.921171314426",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "ema-trend-1m/btc-ema",
+      "realized_usdt": "-0.64184979072882",
+      "fees_usdt": "0.75200473358882",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "ema-trend-1m/eth-ema",
+      "realized_usdt": "-1.0996361865762",
+      "fees_usdt": "0.8139626595762",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "ema-trend-1m/sol-ema",
+      "realized_usdt": "-1.44999196179",
+      "fees_usdt": "0.81753498379",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "ema-trend-4h/btc-ema",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "ema-trend-4h/eth-ema",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "ema-trend-4h/sol-ema",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "tren-500k/btc-momentum",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "tren-500k/eth-momentum",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "tren-500k/sol-pullback",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "tren-2000k/btc-momentum",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "tren-2000k/eth-momentum",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "tren-2000k/sol-pullback",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "tren-5000k/btc-momentum",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "tren-5000k/eth-momentum",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    },
+    {
+      "id": "tren-5000k/sol-pullback",
+      "realized_usdt": "0",
+      "fees_usdt": "0",
+      "halted": false,
+      "status": "running"
+    }
+  ],
+  "series": [
+    {
+      "symbol": "ETHUSDT",
+      "last_open": "2026-10-29T13:27:00+00:00",
+      "timeframe": "1m",
+      "age_seconds": 450
+    },
+    {
+      "symbol": "BTCUSDT",
+      "last_open": "2026-10-29T13:27:00+00:00",
+      "timeframe": "1m",
+      "age_seconds": 450
+    },
+    {
+      "symbol": "BTCUSDT",
+      "last_open": "2026-10-29T08:00:00+00:00",
+      "timeframe": "4h",
+      "age_seconds": 20070
+    },
+    {
+      "symbol": "SOLUSDT",
+      "last_open": "2026-10-29T13:27:00+00:00",
+      "timeframe": "1m",
+      "age_seconds": 450
+    },
+    {
+      "symbol": "SOLUSDT",
+      "last_open": "2026-10-29T08:00:00+00:00",
+      "timeframe": "4h",
+      "age_seconds": 20070
+    },
+    {
+      "symbol": "ETHUSDT",
+      "last_open": "2026-10-29T08:00:00+00:00",
+      "timeframe": "4h",
+      "age_seconds": 20070
+    }
+  ],
+  "ledger_price_at": {
+    "BTCUSDT": "2026-10-29T13:03:00Z",
+    "ETHUSDT": "2026-10-29T13:03:00Z",
+    "SOLUSDT": "2026-10-29T13:03:00Z"
+  },
+  "operations": {
+    "containers": [
+      {
+        "name": "/trading-bot-paper-bot-1",
+        "image": "sha256:02376651f56e2291c41fef664a44691a9279686b4a89288a2dba020528e097ca",
+        "source": "9c189624907981ad0e4a02325d83762e1be665fb",
+        "started_at": "2026-10-23T13:52:17.164470608Z",
+        "status": "running",
+        "restarts": 0,
+        "oom_killed": false
+      },
+      {
+        "name": "/trading-bot-catalyst-catalyst-1",
+        "image": "sha256:4579285aee19eeab366b4f87f6eb08d0340f8be8b1a5f2b4833b5ac3a3904cdf",
+        "source": "177987807f9cc6e007612e456d53203f5f6adefd",
+        "started_at": "2026-10-28T16:32:24.629785648Z",
+        "status": "running",
+        "restarts": 0,
+        "oom_killed": false
+      }
+    ],
+    "logs_24h": {
+      "returncode": 0,
+      "bounded_lines": 941,
+      "pong_timeout": 140,
+      "failed_pong": 0,
+      "stream_errors": 0
+    },
+    "observer": {
+      "samples": 1894,
+      "first_at": "2026-10-23T00:01:14.714056+00:00",
+      "last_at": "2026-10-29T13:32:39.019492+00:00",
+      "problem_counts": {
+        "candle_freshness_or_gap": 1186
+      },
+      "last_problems": [
+        "candle_freshness_or_gap"
+      ]
+    },
+    "p2_health": {
+      "status": 200,
+      "body": "ok\n"
+    },
+    "p3_health": {
+      "status": 200,
+      "body": "{\"runtime_feed\":\"ok\",\"research_ready_is_separate\":true}"
+    }
+  },
+  "execution_evidence": {
+    "hot_count": 214,
+    "archive_count": 0,
+    "fills": [
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-22T13:24:11.248059337Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.265",
+        "price": "104.480892",
+        "fee_usdt": "0.02768743638",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-22T13:24:11.314563846Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.265",
+        "price": "104.480892",
+        "fee_usdt": "0.02768743638",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-22T13:28:29.274239514Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.265",
+        "price": "104.619072",
+        "fee_usdt": "0.02772405408",
+        "realized_delta_usdt": "-0.01879379046"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-22T13:28:29.341210577Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.265",
+        "price": "104.619072",
+        "fee_usdt": "0.02772405408",
+        "realized_delta_usdt": "-0.01879379046"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-22T14:19:19.792298873Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "81629.962728",
+        "fee_usdt": "0.02693788770024",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-22T14:19:19.858695787Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "81629.962728",
+        "fee_usdt": "0.02693788770024",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-22T15:10:52.644349158Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "81577.821172",
+        "fee_usdt": "0.02692068098676",
+        "realized_delta_usdt": "-0.071065282167"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-22T15:10:52.736589421Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "81577.821172",
+        "fee_usdt": "0.02692068098676",
+        "realized_delta_usdt": "-0.071065282167"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-22T16:04:53.456487482Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2400.770058",
+        "fee_usdt": "0.027608855667",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-22T16:34:25.967860052Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2388.982108",
+        "fee_usdt": "0.027473294242",
+        "realized_delta_usdt": "-0.190643574909"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-23T06:53:01.213184554Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.264",
+        "price": "104.740944",
+        "fee_usdt": "0.027651609216",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-23T06:53:01.690348708Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.264",
+        "price": "104.740944",
+        "fee_usdt": "0.027651609216",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-23T07:05:53.847754784Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.264",
+        "price": "104.709054",
+        "fee_usdt": "0.027643190256",
+        "realized_delta_usdt": "-0.063713759472"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-23T07:53:23.56116843Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.264",
+        "price": "104.27914",
+        "fee_usdt": "0.02752969296",
+        "realized_delta_usdt": "-0.177097558176"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-23T10:00:28.446445394Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0114",
+        "price": "2399.919888",
+        "fee_usdt": "0.0273590867232",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-23T10:10:57.378363805Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0114",
+        "price": "2396.760552",
+        "fee_usdt": "0.0273230702928",
+        "realized_delta_usdt": "-0.090698587416"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-23T10:14:58.784968895Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "81810.718872",
+        "fee_usdt": "0.02699753722776",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-23T10:21:27.655797753Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "81814.823762",
+        "fee_usdt": "0.02699889184146",
+        "realized_delta_usdt": "-0.05264181536922"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-23T13:29:20.54340122Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "81810.368802",
+        "fee_usdt": "0.02699742170466",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-23T13:29:20.623821904Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "81810.368802",
+        "fee_usdt": "0.02699742170466",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-23T13:34:57.10307314Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "81725.711588",
+        "fee_usdt": "0.02696948482404",
+        "realized_delta_usdt": "-0.0819037871487"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-23T13:34:57.196135338Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "81725.711588",
+        "fee_usdt": "0.02696948482404",
+        "realized_delta_usdt": "-0.0819037871487"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-23T14:44:31.007426738Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.263",
+        "price": "104.67093",
+        "fee_usdt": "0.02752845459",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-23T14:44:31.11420599Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.263",
+        "price": "104.67093",
+        "fee_usdt": "0.02752845459",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-23T15:48:59.271672143Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.263",
+        "price": "104.389118",
+        "fee_usdt": "0.027454338034",
+        "realized_delta_usdt": "-0.129099348624"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-23T15:48:59.327970983Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.263",
+        "price": "104.389118",
+        "fee_usdt": "0.027454338034",
+        "realized_delta_usdt": "-0.129099348624"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-23T18:04:51.314844669Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0114",
+        "price": "2408.391582",
+        "fee_usdt": "0.0274556640348",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-23T18:04:51.45436117Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0114",
+        "price": "2408.391582",
+        "fee_usdt": "0.0274556640348",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-23T18:22:33.659104414Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0114",
+        "price": "2406.798544",
+        "fee_usdt": "0.0274375034016",
+        "realized_delta_usdt": "-0.0730538006364"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-23T18:22:33.724807482Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0114",
+        "price": "2406.798544",
+        "fee_usdt": "0.0274375034016",
+        "realized_delta_usdt": "-0.0730538006364"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-23T20:21:51.161212547Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0114",
+        "price": "2395.27896",
+        "fee_usdt": "0.027306180144",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-23T20:30:28.870195057Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0114",
+        "price": "2398.17027",
+        "fee_usdt": "0.027339141078",
+        "realized_delta_usdt": "-0.021684387222"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-23T23:24:59.828520913Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2379.115728",
+        "fee_usdt": "0.027359830872",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-23T23:56:32.855786069Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2387.482408",
+        "fee_usdt": "0.027456047692",
+        "realized_delta_usdt": "0.041400941436"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T01:50:32.0983086Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2381.256156",
+        "fee_usdt": "0.027384445794",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T01:50:32.195277021Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2381.256156",
+        "fee_usdt": "0.027384445794",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T01:56:18.796047251Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2382.47341",
+        "fee_usdt": "0.027398444215",
+        "realized_delta_usdt": "-0.040784469009"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T01:56:18.943580795Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2382.47341",
+        "fee_usdt": "0.027398444215",
+        "realized_delta_usdt": "-0.040784469009"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-24T03:37:15.4325198Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.267",
+        "price": "102.800556",
+        "fee_usdt": "0.027447748452",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-24T03:37:15.558219635Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.268",
+        "price": "102.800556",
+        "fee_usdt": "0.027550549008",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-24T03:41:40.255978204Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.267",
+        "price": "102.699456",
+        "fee_usdt": "0.027420754752",
+        "realized_delta_usdt": "-0.081862203204"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-24T03:41:40.401496914Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.268",
+        "price": "102.699456",
+        "fee_usdt": "0.027523454208",
+        "realized_delta_usdt": "-0.082168803216"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T04:44:32.141577362Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2383.666638",
+        "fee_usdt": "0.027412166337",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T04:44:32.256216378Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2383.666638",
+        "fee_usdt": "0.027412166337",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T05:05:48.824048574Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2380.533798",
+        "fee_usdt": "0.027376138677",
+        "realized_delta_usdt": "-0.090815965014"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T05:05:48.956563783Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2380.533798",
+        "fee_usdt": "0.027376138677",
+        "realized_delta_usdt": "-0.090815965014"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-24T06:33:31.076335271Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.268",
+        "price": "102.210438",
+        "fee_usdt": "0.027392397384",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-24T06:44:17.000938929Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.268",
+        "price": "102.119572",
+        "fee_usdt": "0.027368045296",
+        "realized_delta_usdt": "-0.07911253068"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T07:06:58.477751748Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2383.286562",
+        "fee_usdt": "0.027407795463",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T07:06:58.617630612Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2383.286562",
+        "fee_usdt": "0.027407795463",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T07:31:17.671475071Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2377.67437",
+        "fee_usdt": "0.027343255255",
+        "realized_delta_usdt": "-0.119291258718"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T07:31:17.730502345Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2377.67437",
+        "fee_usdt": "0.027343255255",
+        "realized_delta_usdt": "-0.119291258718"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-24T07:59:04.028506406Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80739.384648",
+        "fee_usdt": "0.02664399693384",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-24T07:59:04.2477388Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00034",
+        "price": "80739.384648",
+        "fee_usdt": "0.02745139078032",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-24T08:12:33.150139344Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80726.361498",
+        "fee_usdt": "0.02663969929434",
+        "realized_delta_usdt": "-0.05758133572818"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-24T08:12:33.229887307Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00034",
+        "price": "80726.361498",
+        "fee_usdt": "0.02744696290932",
+        "realized_delta_usdt": "-0.05932622468964"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-24T08:29:40.723944945Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80816.71011",
+        "fee_usdt": "0.0266695143363",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-24T08:29:40.845680804Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00034",
+        "price": "80816.71011",
+        "fee_usdt": "0.0274776814374",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-24T08:39:30.407653691Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80737.929184",
+        "fee_usdt": "0.02664351663072",
+        "realized_delta_usdt": "-0.07931073654702"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-24T08:39:30.553404168Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00034",
+        "price": "80737.929184",
+        "fee_usdt": "0.02745089592256",
+        "realized_delta_usdt": "-0.08171409219996"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T13:57:07.720076247Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2368.893684",
+        "fee_usdt": "0.027242277366",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T13:57:07.847456404Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2368.893684",
+        "fee_usdt": "0.027242277366",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T14:14:35.885852062Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2362.707364",
+        "fee_usdt": "0.027171134686",
+        "realized_delta_usdt": "-0.125556092052"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T14:14:36.041656322Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2362.707364",
+        "fee_usdt": "0.027171134686",
+        "realized_delta_usdt": "-0.125556092052"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-24T15:58:25.6225401Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00034",
+        "price": "79703.127438",
+        "fee_usdt": "0.02709906332892",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-24T16:03:53.212748506Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00034",
+        "price": "79818.823042",
+        "fee_usdt": "0.02713839983428",
+        "realized_delta_usdt": "-0.0149009578032"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-24T16:47:18.435062003Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00034",
+        "price": "79910.708946",
+        "fee_usdt": "0.02716964104164",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-24T16:52:04.259487714Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00034",
+        "price": "80194.627866",
+        "fee_usdt": "0.02726617347444",
+        "realized_delta_usdt": "0.04209661828392"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-24T19:46:13.103624358Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.27",
+        "price": "101.180232",
+        "fee_usdt": "0.02731866264",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-24T19:46:13.234251129Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.27",
+        "price": "101.180232",
+        "fee_usdt": "0.02731866264",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-24T19:51:09.361653756Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.27",
+        "price": "101.069782",
+        "fee_usdt": "0.02728884114",
+        "realized_delta_usdt": "-0.08442900378"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-24T19:51:09.521653756Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.27",
+        "price": "101.069782",
+        "fee_usdt": "0.02728884114",
+        "realized_delta_usdt": "-0.08442900378"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T20:07:30.953235833Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0116",
+        "price": "2346.26916",
+        "fee_usdt": "0.027216722256",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T20:07:31.099006777Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0116",
+        "price": "2346.26916",
+        "fee_usdt": "0.027216722256",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T20:13:49.52970163Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0116",
+        "price": "2346.040698",
+        "fee_usdt": "0.0272140720968",
+        "realized_delta_usdt": "-0.0570809535528"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T20:13:49.682016451Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0116",
+        "price": "2346.040698",
+        "fee_usdt": "0.0272140720968",
+        "realized_delta_usdt": "-0.0570809535528"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T21:38:55.254337401Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0116",
+        "price": "2340.488004",
+        "fee_usdt": "0.0271496608464",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T21:38:55.389677428Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0116",
+        "price": "2340.488004",
+        "fee_usdt": "0.0271496608464",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-24T21:43:09.054386353Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0116",
+        "price": "2339.33204",
+        "fee_usdt": "0.027136251664",
+        "realized_delta_usdt": "-0.0676950949104"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-24T21:43:09.213243263Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0116",
+        "price": "2339.33204",
+        "fee_usdt": "0.027136251664",
+        "realized_delta_usdt": "-0.0676950949104"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-24T22:07:56.613048316Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80471.24103",
+        "fee_usdt": "0.0265555095399",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-24T22:29:10.394774412Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80479.15095",
+        "fee_usdt": "0.0265581198135",
+        "realized_delta_usdt": "-0.0505033557534"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-24T23:34:59.102713093Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80782.80333",
+        "fee_usdt": "0.0266583250989",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-24T23:34:59.228993663Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80782.80333",
+        "fee_usdt": "0.0266583250989",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-25T03:45:28.674403699Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80915.11374",
+        "fee_usdt": "0.0267019875342",
+        "realized_delta_usdt": "-0.0096978773331"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-25T03:45:28.78249873Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80915.11374",
+        "fee_usdt": "0.0267019875342",
+        "realized_delta_usdt": "-0.0096978773331"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-25T07:14:40.124635243Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80638.52448",
+        "fee_usdt": "0.0266107130784",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-25T07:42:40.236202383Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80663.194134",
+        "fee_usdt": "0.02661885406422",
+        "realized_delta_usdt": "-0.04508858132262"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-25T09:53:44.161882418Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0117",
+        "price": "2329.525812",
+        "fee_usdt": "0.0272554520004",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-25T10:37:48.369391405Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0117",
+        "price": "2325.124882",
+        "fee_usdt": "0.0272039611194",
+        "realized_delta_usdt": "-0.1059502941198"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-25T11:08:26.705234964Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.269",
+        "price": "100.82016",
+        "fee_usdt": "0.02712062304",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-25T11:08:26.923166481Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.271",
+        "price": "100.82016",
+        "fee_usdt": "0.02732226336",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-25T11:22:32.647394643Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.269",
+        "price": "100.939808",
+        "fee_usdt": "0.027152808352",
+        "realized_delta_usdt": "-0.022088119392"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-25T11:22:32.749596258Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.271",
+        "price": "100.939808",
+        "fee_usdt": "0.027354687968",
+        "realized_delta_usdt": "-0.022252343328"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-25T11:49:53.793378594Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.269",
+        "price": "101.230242",
+        "fee_usdt": "0.027230935098",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-25T11:49:53.950497876Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.271",
+        "price": "101.230242",
+        "fee_usdt": "0.027433395582",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-25T12:29:44.541057913Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.269",
+        "price": "100.789838",
+        "fee_usdt": "0.027112466422",
+        "realized_delta_usdt": "-0.17281207752"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-25T12:29:44.61129911Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.271",
+        "price": "100.789838",
+        "fee_usdt": "0.027314046098",
+        "realized_delta_usdt": "-0.17409692568"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-25T13:48:43.184158245Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0116",
+        "price": "2337.057318",
+        "fee_usdt": "0.0271098648888",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-25T13:48:43.341180517Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0116",
+        "price": "2337.057318",
+        "fee_usdt": "0.0271098648888",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-25T14:06:28.680444023Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0116",
+        "price": "2332.293448",
+        "fee_usdt": "0.0270546039968",
+        "realized_delta_usdt": "-0.1094253608856"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-25T14:06:28.864881171Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0116",
+        "price": "2332.293448",
+        "fee_usdt": "0.0270546039968",
+        "realized_delta_usdt": "-0.1094253608856"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-25T16:38:31.660364261Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2344.078722",
+        "fee_usdt": "0.026956905303",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-25T16:38:31.896897447Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0116",
+        "price": "2344.078722",
+        "fee_usdt": "0.0271913131752",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-25T16:53:14.801887044Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2346.500606",
+        "fee_usdt": "0.026984756969",
+        "realized_delta_usdt": "-0.026089996272"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-25T16:53:14.939734278Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0116",
+        "price": "2346.500606",
+        "fee_usdt": "0.0272194070296",
+        "realized_delta_usdt": "-0.0263168658048"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T02:12:49.902202415Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "79868.560518",
+        "fee_usdt": "0.02635662497094",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T02:22:04.760693733Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "79611.834448",
+        "fee_usdt": "0.02627190536784",
+        "realized_delta_usdt": "-0.13734813343878"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T03:10:45.153997774Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00034",
+        "price": "79731.9432",
+        "fee_usdt": "0.027108860688",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T03:41:58.460529835Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00034",
+        "price": "79712.644282",
+        "fee_usdt": "0.02710229905588",
+        "realized_delta_usdt": "-0.06077279186388"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-26T04:11:32.591145271Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0117",
+        "price": "2308.9617",
+        "fee_usdt": "0.02701485189",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-26T04:11:32.751866565Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0118",
+        "price": "2308.9617",
+        "fee_usdt": "0.02724574806",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-26T04:16:31.891185992Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0117",
+        "price": "2317.616384",
+        "fee_usdt": "0.0271161116928",
+        "realized_delta_usdt": "0.0471288392172"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-26T04:16:32.081770816Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0118",
+        "price": "2317.616384",
+        "fee_usdt": "0.0273478733312",
+        "realized_delta_usdt": "0.0475316498088"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T07:51:27.74755835Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80132.053206",
+        "fee_usdt": "0.02644357755798",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-26T07:51:27.914996307Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00034",
+        "price": "80132.053206",
+        "fee_usdt": "0.02724489809004",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T08:03:20.172191603Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80013.484102",
+        "fee_usdt": "0.02640444975366",
+        "realized_delta_usdt": "-0.09197583163164"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-26T08:03:20.434097972Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00034",
+        "price": "80013.484102",
+        "fee_usdt": "0.02720458459468",
+        "realized_delta_usdt": "-0.09476297804472"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T09:12:41.425177555Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80280.762942",
+        "fee_usdt": "0.02649265177086",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-26T09:12:41.625850907Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80280.762942",
+        "fee_usdt": "0.02649265177086",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T09:19:42.011036138Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80433.900002",
+        "fee_usdt": "0.02654318700066",
+        "realized_delta_usdt": "-0.00250060897152"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-26T09:19:42.239588594Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80433.900002",
+        "fee_usdt": "0.02654318700066",
+        "realized_delta_usdt": "-0.00250060897152"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-26T09:28:14.074936811Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.267",
+        "price": "101.500296",
+        "fee_usdt": "0.027100579032",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-26T09:28:14.282173859Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.269",
+        "price": "101.500296",
+        "fee_usdt": "0.027303579624",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-26T13:31:45.12597159Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.267",
+        "price": "100.969802",
+        "fee_usdt": "0.026958937134",
+        "realized_delta_usdt": "-0.195701414166"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-26T13:31:45.222272441Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.269",
+        "price": "100.969802",
+        "fee_usdt": "0.027160876738",
+        "realized_delta_usdt": "-0.197167342362"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T17:01:47.349936741Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80252.29725",
+        "fee_usdt": "0.0264832580925",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T17:08:20.677387828Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80409.9148",
+        "fee_usdt": "0.026535271884",
+        "realized_delta_usdt": "-0.0010047384765"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-26T17:08:24.265036396Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.268",
+        "price": "101.650326",
+        "fee_usdt": "0.027242287368",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-26T17:32:53.419140684Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.268",
+        "price": "101.269742",
+        "fee_usdt": "0.027140290856",
+        "realized_delta_usdt": "-0.156379090224"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-26T18:08:16.760840811Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.266",
+        "price": "101.410278",
+        "fee_usdt": "0.026975133948",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-26T18:08:16.948274753Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.267",
+        "price": "101.410278",
+        "fee_usdt": "0.027076544226",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-26T18:16:25.934287003Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.266",
+        "price": "101.199756",
+        "fee_usdt": "0.026919135096",
+        "realized_delta_usdt": "-0.109893121044"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-26T18:16:26.151539821Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.267",
+        "price": "101.199756",
+        "fee_usdt": "0.027020334852",
+        "realized_delta_usdt": "-0.110306253078"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-26T19:48:24.294914482Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0116",
+        "price": "2320.16394",
+        "fee_usdt": "0.026913901704",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-26T20:04:04.023295525Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0116",
+        "price": "2315.806746",
+        "fee_usdt": "0.0268633582536",
+        "realized_delta_usdt": "-0.1043207103576"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-26T21:18:12.99275151Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.268",
+        "price": "100.250046",
+        "fee_usdt": "0.026867012328",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-26T21:27:47.409429478Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.268",
+        "price": "100.469902",
+        "fee_usdt": "0.026925933736",
+        "realized_delta_usdt": "0.005128461936"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T23:07:37.706049282Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "79769.570724",
+        "fee_usdt": "0.02632395833892",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T23:18:30.823203339Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "79884.029998",
+        "fee_usdt": "0.02636172989934",
+        "realized_delta_usdt": "-0.01491412781826"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-26T23:30:37.76476769Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80082.66333",
+        "fee_usdt": "0.0264272788989",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-27T01:35:32.945989722Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80101.986398",
+        "fee_usdt": "0.02643365551134",
+        "realized_delta_usdt": "-0.04648432197024"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-27T03:37:09.24266547Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "79946.08602",
+        "fee_usdt": "0.0263822083866",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-27T04:08:56.140341585Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "79832.63028",
+        "fee_usdt": "0.0263447679924",
+        "realized_delta_usdt": "-0.090167370579"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-27T04:41:41.141788668Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.268",
+        "price": "100.030002",
+        "fee_usdt": "0.026808040536",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-27T04:55:25.46451277Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.268",
+        "price": "100.02999",
+        "fee_usdt": "0.02680803732",
+        "realized_delta_usdt": "-0.053619293856"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-27T09:07:57.978580464Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.269",
+        "price": "99.989994",
+        "fee_usdt": "0.026897308386",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-27T09:07:58.17950658Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.271",
+        "price": "99.989994",
+        "fee_usdt": "0.027097288374",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-27T09:19:29.839470474Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.269",
+        "price": "99.740048",
+        "fee_usdt": "0.026830072912",
+        "realized_delta_usdt": "-0.120962855298"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-27T09:19:30.126366444Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.271",
+        "price": "99.740048",
+        "fee_usdt": "0.027029553008",
+        "realized_delta_usdt": "-0.121862207382"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-27T10:04:59.337455065Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0116",
+        "price": "2310.852078",
+        "fee_usdt": "0.0268058841048",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-27T10:04:59.676832624Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0117",
+        "price": "2310.852078",
+        "fee_usdt": "0.0270369693126",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-27T10:20:20.380729395Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0116",
+        "price": "2301.969514",
+        "fee_usdt": "0.0267028463624",
+        "realized_delta_usdt": "-0.1565464728672"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-27T10:20:20.567802065Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0117",
+        "price": "2301.969514",
+        "fee_usdt": "0.0269330433138",
+        "realized_delta_usdt": "-0.1578960114264"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-27T12:29:25.232875413Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.267",
+        "price": "100.510098",
+        "fee_usdt": "0.026836196166",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-27T12:29:25.430112021Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.27",
+        "price": "100.510098",
+        "fee_usdt": "0.02713772646",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-27T13:55:47.280791685Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.267",
+        "price": "100.099976",
+        "fee_usdt": "0.026726693592",
+        "realized_delta_usdt": "-0.163065463758"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-27T13:55:47.386976082Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.27",
+        "price": "100.099976",
+        "fee_usdt": "0.02702699352",
+        "realized_delta_usdt": "-0.16489765998"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-27T16:26:05.329185235Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80546.80614",
+        "fee_usdt": "0.0265804460262",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-27T16:26:05.59972326Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80546.80614",
+        "fee_usdt": "0.0265804460262",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-27T17:07:22.321648332Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80582.08036",
+        "fee_usdt": "0.0265920865188",
+        "realized_delta_usdt": "-0.041532039945"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-27T17:07:22.483670959Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80582.08036",
+        "fee_usdt": "0.0265920865188",
+        "realized_delta_usdt": "-0.041532039945"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-27T18:44:41.402826374Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80691.865146",
+        "fee_usdt": "0.02662831549818",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-27T18:44:41.61269405Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80691.865146",
+        "fee_usdt": "0.02662831549818",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-27T19:04:28.022019909Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80704.995772",
+        "fee_usdt": "0.02663264860476",
+        "realized_delta_usdt": "-0.04892785752294"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-27T19:04:28.304833429Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80704.995772",
+        "fee_usdt": "0.02663264860476",
+        "realized_delta_usdt": "-0.04892785752294"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-27T21:09:33.658780589Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.265",
+        "price": "101.180232",
+        "fee_usdt": "0.02681276148",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-27T21:09:33.863407499Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.267",
+        "price": "101.180232",
+        "fee_usdt": "0.027015121944",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-27T21:23:05.164296708Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.265",
+        "price": "100.959804",
+        "fee_usdt": "0.02675434806",
+        "realized_delta_usdt": "-0.11198052954"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-27T21:23:05.440579424Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.267",
+        "price": "100.959804",
+        "fee_usdt": "0.026956267668",
+        "realized_delta_usdt": "-0.112825665612"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-27T22:27:22.125101258Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0113",
+        "price": "2350.26996",
+        "fee_usdt": "0.026558050548",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-27T22:27:22.43061415Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0114",
+        "price": "2350.26996",
+        "fee_usdt": "0.026793077544",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-27T22:39:33.647523575Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0113",
+        "price": "2347.670372",
+        "fee_usdt": "0.0265286752036",
+        "realized_delta_usdt": "-0.0824620701516"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-27T22:39:33.784847675Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0114",
+        "price": "2347.670372",
+        "fee_usdt": "0.0267634422408",
+        "realized_delta_usdt": "-0.0831918229848"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-27T23:05:48.986865675Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0113",
+        "price": "2352.480402",
+        "fee_usdt": "0.0265830285426",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-27T23:05:49.211098013Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0114",
+        "price": "2352.480402",
+        "fee_usdt": "0.0268182765828",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-27T23:33:36.583674305Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0113",
+        "price": "2349.939918",
+        "fee_usdt": "0.0265543210734",
+        "realized_delta_usdt": "-0.081844818816"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-27T23:33:36.726085189Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0114",
+        "price": "2349.939918",
+        "fee_usdt": "0.0267893150652",
+        "realized_delta_usdt": "-0.082569109248"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-27T23:40:36.860672515Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0113",
+        "price": "2351.07012",
+        "fee_usdt": "0.026567092356",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-27T23:40:37.075559854Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0114",
+        "price": "2351.07012",
+        "fee_usdt": "0.026802199368",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-27T23:48:31.924899202Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0113",
+        "price": "2352.519402",
+        "fee_usdt": "0.0265834692426",
+        "realized_delta_usdt": "-0.0367736749986"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-27T23:48:32.187805991Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0114",
+        "price": "2352.519402",
+        "fee_usdt": "0.0268187211828",
+        "realized_delta_usdt": "-0.0370991057508"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-28T01:42:53.046240397Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80987.884338",
+        "fee_usdt": "0.02672600183154",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-28T01:42:53.289042118Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80987.884338",
+        "fee_usdt": "0.02672600183154",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-28T09:23:20.356524617Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "81417.743194",
+        "fee_usdt": "0.02686785525402",
+        "realized_delta_usdt": "0.08825956539444"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-28T09:23:20.536323871Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "81417.743194",
+        "fee_usdt": "0.02686785525402",
+        "realized_delta_usdt": "0.08825956539444"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-28T16:13:50.927097744Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.264",
+        "price": "100.990194",
+        "fee_usdt": "0.026661411216",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-28T16:13:51.179359937Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.266",
+        "price": "100.990194",
+        "fee_usdt": "0.026863391604",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-28T16:26:56.073984475Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.264",
+        "price": "100.909814",
+        "fee_usdt": "0.026640190896",
+        "realized_delta_usdt": "-0.074521922112"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-28T16:26:56.365555555Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.266",
+        "price": "100.909814",
+        "fee_usdt": "0.026842010524",
+        "realized_delta_usdt": "-0.075086482128"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-28T16:38:25.0701858Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0114",
+        "price": "2334.31677",
+        "fee_usdt": "0.026611211178",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-28T16:45:42.216216345Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0114",
+        "price": "2330.393828",
+        "fee_usdt": "0.0265664896392",
+        "realized_delta_usdt": "-0.0978992396172"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-28T17:03:51.410722838Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0114",
+        "price": "2335.477002",
+        "fee_usdt": "0.0266244378228",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-28T17:03:51.677272901Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2335.477002",
+        "fee_usdt": "0.026857985523",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-28T17:09:31.284106354Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0114",
+        "price": "2333.503206",
+        "fee_usdt": "0.0266019365484",
+        "realized_delta_usdt": "-0.0757276487712"
+      },
+      {
+        "owner": "ema-trend-1m/eth-ema",
+        "time": "2026-10-28T17:09:31.561458509Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2333.503206",
+        "fee_usdt": "0.026835286869",
+        "realized_delta_usdt": "-0.076391926392"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-28T17:30:43.734845395Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.263",
+        "price": "100.960188",
+        "fee_usdt": "0.026552529444",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-28T17:30:44.135322268Z",
+        "symbol": "SOLUSDT",
+        "side": "buy",
+        "quantity": "0.266",
+        "price": "100.960188",
+        "fee_usdt": "0.026855410008",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/sol-ema",
+        "time": "2026-10-28T17:45:54.101160171Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.263",
+        "price": "101.399716",
+        "fee_usdt": "0.026668125308",
+        "realized_delta_usdt": "0.062375209248"
+      },
+      {
+        "owner": "ema-trend-1m/sol-ema",
+        "time": "2026-10-28T17:45:54.25432364Z",
+        "symbol": "SOLUSDT",
+        "side": "sell",
+        "quantity": "0.266",
+        "price": "101.399716",
+        "fee_usdt": "0.026972324456",
+        "realized_delta_usdt": "0.063086713536"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-29T00:14:23.668035237Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00032",
+        "price": "81354.2676",
+        "fee_usdt": "0.026033365632",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-29T00:14:23.931034151Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "81354.2676",
+        "fee_usdt": "0.026846908308",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-29T00:20:22.367799001Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00032",
+        "price": "81261.754398",
+        "fee_usdt": "0.02600376140736",
+        "realized_delta_usdt": "-0.08164135167936"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-29T00:20:22.686988781Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "81261.754398",
+        "fee_usdt": "0.02681637895134",
+        "realized_delta_usdt": "-0.08419264391934"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-29T04:21:57.330760424Z",
+        "symbol": "ETHUSDT",
+        "side": "buy",
+        "quantity": "0.0115",
+        "price": "2311.792266",
+        "fee_usdt": "0.026585611059",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/eth-ema",
+        "time": "2026-10-29T04:27:32.505632999Z",
+        "symbol": "ETHUSDT",
+        "side": "sell",
+        "quantity": "0.0115",
+        "price": "2312.0375",
+        "fee_usdt": "0.02658843125",
+        "realized_delta_usdt": "-0.050353851309"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-29T09:05:49.033456579Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80126.732142",
+        "fee_usdt": "0.02644182160686",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-29T09:05:49.276510568Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80126.732142",
+        "fee_usdt": "0.02644182160686",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-29T09:12:20.374272709Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80279.9408",
+        "fee_usdt": "0.026492380464",
+        "realized_delta_usdt": "-0.00237534493086"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-29T09:12:20.71326324Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80279.9408",
+        "fee_usdt": "0.026492380464",
+        "realized_delta_usdt": "-0.00237534493086"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-29T11:56:32.130774372Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80200.006794",
+        "fee_usdt": "0.02646600224202",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-29T11:56:32.54043569Z",
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "quantity": "0.00033",
+        "price": "80200.006794",
+        "fee_usdt": "0.02646600224202",
+        "realized_delta_usdt": "0"
+      },
+      {
+        "owner": "ema-base-1m/btc-ema",
+        "time": "2026-10-29T12:28:06.332187119Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80058.845028",
+        "fee_usdt": "0.02641941885924",
+        "realized_delta_usdt": "-0.09946880388126"
+      },
+      {
+        "owner": "ema-trend-1m/btc-ema",
+        "time": "2026-10-29T12:28:06.486769845Z",
+        "symbol": "BTCUSDT",
+        "side": "sell",
+        "quantity": "0.00033",
+        "price": "80058.845028",
+        "fee_usdt": "0.02641941885924",
+        "realized_delta_usdt": "-0.09946880388126"
+      }
+    ]
+  },
+  "method": [
+    "One PostgreSQL REPEATABLE READ READ ONLY transaction for wallet/archived executions/candles; docker inspect/logs and existing observer files read separately.",
+    "Equity equals reserve plus instance cash; all holdings zero. Binding Realized is net of recorded entry/exit fees; fees must not be subtracted again.",
+    "Cumulative binding PnL and fees reconciled against all 214 hot plus zero archived fills using Python Decimal assertions.",
+    "Positive/negative sell fills are execution outcomes, not an assumption that partial fills are independent trades.",
+    "Adding recorded fees back is an arithmetic attribution only; slippage and execution timing remain.",
+    "Observer counts are sampled checks beginning October 23, before the latest P2 deployment that evening; not an uptime percentage or full seven-day coverage."
+  ],
+  "limitations": [
+    "No forced reconnect, restart, backup/restore, browser/Telegram acceptance, new AI inference, build or test suite performed.",
+    "No changes to remote config, ledger, capital, processes, images, secrets or T0.",
+    "P3 health does not establish research readiness, budget usage or performance.",
+    "Logs bounded to latest 20000 lines and 24 hours; matching Pong timeout lines are not unique outage count."
+  ]
+}

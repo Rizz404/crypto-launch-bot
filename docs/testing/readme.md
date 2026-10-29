@@ -10,7 +10,13 @@ Penerimaan tersisa dan risiko laporan historis dipetakan ke P3-O/P3-R/P3-LIVE.
 
 | Bukti | Isi |
 |---|---|
-| [WIP pilot katalis](catalyst-pilot-local.md) | Checkpoint unit/PG/native binary sesudah rilis komponen; belum tes lengkap checkout akhir atau aktivasi pilot |
+| [Lanjutan operasi 29 Oktober](operations-follow-up.md) | Pause EMA 1m, diagnosis/patch lokal, backup/restore P3, observer, QA dan batas rilis |
+| [Backup/restore P3](catalyst-backup-restore.json) | Restore DB/arsip salinan, 271 hash, modal/T0 dan isolasi container |
+| [Review awal P3](catalyst-pilot-review.json) / [observer](catalyst-observer-verification.json) | Modal/kuota/sumber/keputusan aktual dan alert review invalid; sebelum jadwal formal hari 1 |
+| [Browser P3](catalyst-browser-qa.json) | Chromium desktop/mobile melalui SSH tunnel, screenshot dan temuan keputusan hilang sesudah restart |
+| [Riset biaya terbatas](strategy-cost-review/readme.md) | 12 replay dua kandidat/3 simbol/2 biaya; bukan holdout atau aktivasi strategi |
+| [Review tujuh hari P2](research-stage-two-review.md) / [JSON](research-stage-two-review.json) | Snapshot baca-saja 29 Oktober; PnL/komisi 214 fill direkonsiliasi, feed tertinggal, belum penerimaan operasi |
+| [WIP pilot katalis](catalyst-pilot-local.md) | Checkpoint pengujian lokal historis; pilot kemudian aktif 28 Oktober, status rilis/start di handover VPS |
 | [Rilis komponen P3](catalyst-release.json) | Seluruh CI/GHCR dan deployment report VPS 28 Oktober; digest/source, batas isolasi dan 35 container lama tetap identik; bukan start pilot |
 | [Verifikasi Spider](catalyst-spider-verification.json) | Build/smoke image, regression stdout p3.1 dan tiga putaran binary TLS fixture tanpa jaringan keluar; batas egress/situs publik |
 | [Preflight VPS Spider](catalyst-vps-preflight.json) | Sampel kapasitas read-only 26 Oktober, usulan penempatan terpisah; belum instalasi/pilot |

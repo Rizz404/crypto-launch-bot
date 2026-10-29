@@ -1,0 +1,11 @@
+{
+  "kind": "One-off operational verification; persistent helper/timers not installed yet",
+  "remote_python": "3.9",
+  "exit_code": 1,
+  "result": {
+    "time": "2026-10-29T14:22:25.741448+00:00",
+    "problems": [
+      "latest_review_invalid"
+    ]
+  }
+}

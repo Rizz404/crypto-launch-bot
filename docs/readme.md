@@ -2,15 +2,18 @@
 
 Mulai dari [handover agent](handover-agent.md), lalu pilih panduan yang diperlukan.
 
-**Terbaru: development pilot dijeda 28 Oktober sekitar 22.12 WIB atas permintaan
-user.** Pilihan paper 1.000 USDT/12 panggilan AI per hari sudah dicatat; kode
-runner dan integrasi lanjutan masih WIP, belum rilis/start pilot. Mulai dari
-[handover pilot](catalyst-pilot-handover.md).
+**Terbaru — 29 Oktober 2026:** [review tujuh hari P2](testing/research-stage-two-review.md)
+sudah dilakukan dari VPS secara baca-saja, dilanjutkan tindakan yang disetujui
+user: dua EMA 1m pause entry, backup/restore P3 dan QA browser selesai.
+[Laporan lanjutan dan status patch lokal](testing/operations-follow-up.md). Equity 740,40558347 dari modal
+747,83957456 USDT (−0,9941%); feed masih tertinggal, penerimaan operasi belum lulus.
+Pilot P3 sudah aktif sejak **28 Oktober 22.53 WIB**, source `1779878` pada
+pemeriksaan 29 Oktober. Mulai dari [handover agent](handover-agent.md).
 
 | Dokumen | Isi |
 |---|---|
 | [Handover agent](handover-agent.md) | Status terbaru, batas kerja dan langkah lanjut untuk Codex/Claude/agent lain |
-| [Handover pilot](catalyst-pilot-handover.md) | Checkpoint pause, pilihan user, peta WIP, hasil tes/source nyata dan urutan lanjut |
+| [Handover pilot](catalyst-pilot-handover.md) | Riwayat implementasi/pause/resume hingga start, pilihan user dan pekerjaan tersisa |
 | [Handover Spider](catalyst-spider-handover.md) | Arah website→Spider→AI, patch/protokol, rilis komponen VPS dan gate pilot |
 | [Plan 3](plan-3.md) | Rencana aktif: katalis/AI, hold berbasis tesis, proteksi dan seluruh backlog Plan 2 |
 | [Plan 2](plan-2.md) | Siklus multi-instance selesai/arsip; checklist dan bukti historis |
@@ -25,26 +28,24 @@ runner dan integrasi lanjutan masih WIP, belum rilis/start pilot. Mulai dari
 | [Bukti pengujian](testing/readme.md) | Indeks laporan dan data pendukung |
 | [Plan](plan.md) | Arsip siklus pertama; bukan backlog aktif |
 
-Checkpoint development 28 Oktober: CLI collect kini Spider default dan race
-test/vet/lint komponen lokal lulus. Image P3 dibangun/smoke; binary patched
-2.53.9-p3.1 lulus TLS fixture/proxy terisolasi tiga kali. Egress adversarial/
-situs publik dan pilot masih terbuka. **Seluruh CI dan deployment komponen/report
-VPS lulus 28 Oktober 21.00 WIB**, source `2998f38`; worker/pilot belum aktif dan
-P2 tidak direstart. [Bukti rilis](testing/catalyst-release.json).
-Lanjutkan dari [handover Spider](catalyst-spider-handover.md).
+Rencana aktif repo ini tetap **Plan 3**. Klarifikasi user 29 Oktober:
+Plan 4 yang sempat muncul dari memori perangkat Windows adalah proyek lain
+dengan repository GitHub berbeda; tidak berlaku untuk trading-bot ini.
+Plan 2 ditutup sebagai siklus pada 23 Oktober; backlog-nya tetap di Plan 3.
 
-Plan 2 ditutup 23 Oktober sebagai siklus; seluruh sisa pekerjaan ada di Plan 3.
-Komponen collector/validator dan replay paper lokal tersedia; worker/pilot AI
-belum aktif. [Evaluasi OmniRoute](testing/catalyst-model-evaluation.md) 26 Oktober
-memilih Luna; combo/failover dan shadow prospektif masih terbuka. Presale/token baru menjadi
-future reference; memecoin yang sudah diperdagangkan termasuk universe riset.
+Pilot P3 memakai paper 1.000 USDT, maksimal 12 panggilan AI/hari WIB dan DB/wallet
+sendiri. Sumber Ethereum/Anza/Dogecoin sudah dikoleksi pada start; detail rilis,
+digest dan batas bukti di [handover VPS](handover-vps.md). Aktivasi
+observer/alert permanen serta review hari 1/3/7 masih terbuka. Backup/restore
+flat dan QA Chromium desktop/mobile sudah punya bukti; timer/patch belum rilis. Review hari 1
+pada **29 Oktober 22.53 WIB**, hari 3/7 pada 31 Oktober/4 November.
 
-Checkpoint operasi P2 23 Oktober 20.52 WIB: rilis notifikasi `9c18962`
-pada paper pembanding tahap dua, enam instance/18 binding BTC/ETH/SOL. T0 tetap
-22 Oktober 19:58:45 WIB, modal awal 747,83957456237531 USDT virtual dan CPU1.
-Review user 23/25/29 Oktober pukul 19:58:45 WIB; ledger lama dipertahankan.
-Detail dan batas penerimaan ada di [handover VPS](handover-vps.md).
-Ini checkpoint terdokumentasi, bukan status server real-time atau izin uang asli.
+P2 tetap enam instance/18 binding BTC/ETH/SOL, T0 **22 Oktober 19:58:45 WIB**.
+Review terbaru memakai snapshot 29 Oktober 20:34 WIB; dua EMA 1m merugi,
+empat instance lain belum bertransaksi. Dua EMA 1m sudah pause pada 21:10 WIB;
+P2 tidak direstart, parameter/modal/T0 dan ledger tetap dipertahankan.
+[Riset biaya 12 kasus](testing/strategy-cost-review/readme.md) selesai; kandidat
+baru belum diaktifkan. Tidak ada izin uang asli.
 
 ## Aturan dokumentasi
 
