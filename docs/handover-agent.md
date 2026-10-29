@@ -1,5 +1,7 @@
 # Handover agent
 
+**Server pindah 29 Oktober 23:48 WIB:** stack berjalan di `plesk-newest` sebagai `ana-core`/`ana-scout` (`/opt/ana-*`); `plesk` hanya rollback. [Laporan migrasi](testing/server-migration.md).
+
 **Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
 
 Untuk Codex, Claude dan agent berikutnya. Checkpoint **29 Oktober 2026**;
@@ -77,9 +79,9 @@ bukan berarti image dengan SHA docs itu sudah dibangun/dipasang.
   `var/paper-eth/`; jangan memakai `bot run` untuk mencoba dashboard.
 - Jangan menjalankan test, build, server atau verifikasi runtime otomatis
   kecuali diminta atau tugasnya memang pengujian/verifikasi tersebut.
-- VPS Plesk berbagi layanan produksi. Batasi perubahan ke `trading-bot-paper`
-  di `/opt/trading-bot-paper` atau P3 `trading-bot-catalyst` di
-  `/opt/trading-bot-catalyst`, sesuai scope tugas; jangan restart host/Docker
+- VPS Plesk berbagi layanan produksi. Batasi perubahan ke `ana-core`
+  di `/opt/ana-core` atau P3 `ana-scout` di
+  `/opt/ana-scout`, sesuai scope tugas; jangan restart host/Docker
   atau mengubah proyek lain. Rilis P3 tidak menjadi alasan merilis ulang P2.
 - Rilis lewat GitHub → CI/GHCR → digest tetap; jangan salin source laptop.
   Secret lokal/VPS tetap di file env masing-masing dan tidak masuk chat, repo,

@@ -1,5 +1,7 @@
 # Dokumentasi trading-bot
 
+**Server pindah 29 Oktober 23:48 WIB:** stack berjalan di `plesk-newest` sebagai `ana-core`/`ana-scout` (`/opt/ana-*`); `plesk` hanya rollback. [Laporan migrasi](testing/server-migration.md).
+
 **Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
 
 Mulai dari [handover agent](handover-agent.md), lalu pilih panduan yang diperlukan.

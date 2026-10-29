@@ -1,5 +1,7 @@
 # Handover VPS
 
+**Server pindah 29 Oktober 23:48 WIB:** stack berjalan di `plesk-newest` sebagai `ana-core`/`ana-scout` (`/opt/ana-*`); `plesk` hanya rollback. [Laporan migrasi](testing/server-migration.md).
+
 **Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
 
 Checkpoint rilis P2/P3 **29 Oktober 2026 22:23 WIB**, pilot paper P3 aktif
@@ -61,7 +63,7 @@ riset/kuota/modal P3 hari 1. Jadwal review pertamanya 29 Oktober 22:53 WIB.
 ## Pilot paper P3 aktif — 28 Oktober 22.53 WIB
 
 User mengizinkan deploy setelah lanjutan pilot. Worker paper P3 berjalan
-terus-menerus (`restart: unless-stopped`) di project `trading-bot-catalyst`
+terus-menerus (`restart: unless-stopped`) di project `ana-scout`
 dengan DB, resolver DoT dan wallet sendiri. **Uang virtual saja**, tanpa order
 sungguhan. Pada start 28 Oktober, P2 tidak direstart; identitas container P2
 identik sebelum/sesudah. Rilis kedua worker 29 Oktober dicatat di bagian atas.
@@ -72,7 +74,7 @@ identik sebelum/sesudah. Rilis kedua worker 29 Oktober dicatat di bagian atas.
 | Image | `ghcr.io/rizz404/trading-bot-catalyst@sha256:d43b809876dcc4f8422e25383fb3f83e8764df405f893ae04e925bef47742a76` (rilis 29 Oktober 22:23 WIB; Spider `spider_cli 2.53.9-p3.1`) |
 | Spider artefak | `ghcr.io/rizz404/trading-bot-spider@sha256:480faea43abdb2b2e8bd6cf136ecd250e8c37039e925f0bdb38f14385a318e19`; CI katalis turun ±12 → ±1,7 menit |
 | CI | [40899450590](https://github.com/Rizz404/trading-bot/actions/runs/40899450590) lulus untuk source final 29 Oktober; riwayat start [40717858676](https://github.com/Rizz404/trading-bot/actions/runs/40717858676), [40720835367](https://github.com/Rizz404/trading-bot/actions/runs/40720835367), [40724154160](https://github.com/Rizz404/trading-bot/actions/runs/40724154160) |
-| Wallet / DB | `paper:catalyst-catalyst-paper-v1` / `tradingbot_catalyst_paper_v1`, role `catalyst`, volume `trading-bot-catalyst_db-data` |
+| Wallet / DB | `paper:catalyst-catalyst-paper-v1` / `tradingbot_catalyst_paper_v1`, role `catalyst`, volume `ana-scout_db-data` |
 | Modal / risiko | 1.000 USDT virtual, 0,5%/trade, maks 2 posisi, halt harian 2% / drawdown 8% |
 | AI | `cx/gpt-6-luna-low` (served `gpt-6-luna`), prompt v5, maks 12 panggilan/hari WIB |
 | Policy hash | `b11fc4a1b144dd71c41dc1ffdf0a9f3e85edbd63b91bb1ec3f5d55899aa85f12` |
@@ -116,8 +118,8 @@ protokol Spider. Image khusus ditarik dari GHCR; source label dan checkout cocok
 |---|---|
 | Source rilis | `2998f386f5aead3cc19e0f2dee1c0abe735c2618` |
 | Image khusus | `ghcr.io/rizz404/trading-bot-catalyst@sha256:cee992d6f6cd908569e072d98d07831d04b2efab26f006bf74e2a3e2997ce79d` |
-| Project / direktori | `trading-bot-catalyst` / `/opt/trading-bot-catalyst` |
-| Container | `trading-bot-catalyst-catalyst-1`, exited 0 sesuai aksi sekali jalan |
+| Project / direktori | `ana-scout` / `/opt/ana-scout` |
+| Container | `ana-scout-catalyst-1`, exited 0 sesuai aksi sekali jalan |
 | Start / selesai | 28 Oktober 21:00:44,059 / 21:00:44,575 WIB |
 | Batas / isolasi | 0,5 CPU, 512 MiB, pids 128; UID 65532, read-only, cap-drop ALL, no-new-privileges, tanpa port publik |
 | State P3 | Volume arsip sendiri; default report shadow, tiga sumber `missing` karena belum pernah collect |
@@ -149,8 +151,8 @@ RAM tersedia ~15,7 GiB, disk kosong 121,23 GiB; sampel CPU bot P2 68,42% dari
 satu core, DB 52,77%. Bot container restart 0/OOM false. Ini bukan audit ledger,
 feed atau benchmark puncak; tidak memperbarui saldo/T0 historis di bawah.
 
-Usulan: container/Compose project `trading-bot-catalyst` dan direktori
-`/opt/trading-bot-catalyst` terpisah, belum dibuat/diinstal. Tidak mengubah P2,
+Usulan: container/Compose project `ana-scout` dan direktori
+`/opt/ana-scout` terpisah, belum dibuat/diinstal. Tidak mengubah P2,
 Plesk, gateway, Docker daemon atau layanan lain. Bukti:
 [preflight kapasitas](testing/catalyst-vps-preflight.json); detail dan pekerjaan
 sisa: [handover Spider](catalyst-spider-handover.md).
@@ -478,15 +480,15 @@ terjadwal atau instruksi untuk mengaktifkan kembali tahap satu.
 
 ## Akses dan batas
 
-`ssh -o BatchMode=yes plesk` menuju server Plesk bersama. Cakupan bot adalah
-project `trading-bot-paper` di `/opt/trading-bot-paper` dan komponen P3 terpisah
-`trading-bot-catalyst` di `/opt/trading-bot-catalyst`. Jangan mengubah
+`ssh -o BatchMode=yes plesk-newest` menuju server Plesk bersama. Cakupan bot adalah
+project `ana-core` di `/opt/ana-core` dan komponen P3 terpisah
+`ana-scout` di `/opt/ana-scout`. Jangan mengubah
 Plesk/domain/firewall/web server/Docker daemon, restart host,
 prune global atau menghapus volume. Mainnet belum diizinkan; manifest memaksa
 `TB_APP__ALLOW_LIVE=false`.
 
 ```text
-/opt/trading-bot-paper/
+/opt/ana-core/
   access/       deploy key read-only dan known_hosts proyek
   repo/         checkout rilis, .env.vps privat, configs/config.yaml
   evidence/     baseline dan sampel observasi
@@ -501,14 +503,14 @@ Secret hanya melalui `deploy/vps-set-env.py` via stdin SSH; jangan mencetak
 
 ## Inspeksi bila diminta
 
-Dari `/opt/trading-bot-paper/repo` di VPS; perintah berikut tidak memulai bot:
+Dari `/opt/ana-core/repo` di VPS; perintah berikut tidak memulai bot:
 
 ```sh
 dc() { docker compose --env-file .env.vps -f deploy/compose.vps.yml "$@" </dev/null; }
 dc ps --all
-docker inspect -f 'status={{.State.Status}} exit={{.State.ExitCode}} started={{.State.StartedAt}}' trading-bot-paper-bot-1
+docker inspect -f 'status={{.State.Status}} exit={{.State.ExitCode}} started={{.State.StartedAt}}' ana-core-bot-1
 python3 deploy/vps-baseline-check.py
-systemctl is-active trading-bot-paper-backup.timer
+systemctl is-active ana-core-backup.timer
 ```
 
 `vps-observe.py` memeriksa proses/feed trial riset aktif; bot sengaja mati akan
@@ -520,7 +522,7 @@ Port host loopback: web 18080, metrics 19100, Prometheus 19090, Grafana 13000.
 Tunnel dashboard/monitoring saat layanan terkait aktif:
 
 ```sh
-ssh -N -L 18080:127.0.0.1:18080 -L 13000:127.0.0.1:13000 plesk
+ssh -N -L 18080:127.0.0.1:18080 -L 13000:127.0.0.1:13000 plesk-newest
 ```
 
 DNS bot memakai CoreDNS/DoT Cloudflare pada subnet `172.31.253.0/29` karena DNS

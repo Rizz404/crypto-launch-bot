@@ -1,5 +1,7 @@
 # Deployment
 
+**Server pindah 29 Oktober 23:48 WIB:** stack berjalan di `plesk-newest` sebagai `ana-core`/`ana-scout` (`/opt/ana-*`); `plesk` hanya rollback. [Laporan migrasi](testing/server-migration.md).
+
 **Status 29 Oktober 2026:** P2 dan pilot AI P3 aktif pada binary `d30b93b`; helper/timer P3 terpasang. Dua EMA 1m P2 tetap pause. Lihat [rilis operasi](testing/paper-operations-release.md) dan [handover VPS](handover-vps.md). Bagian rilis komponen Spider di bawah adalah riwayat sebelum pilot aktif, bukan status worker saat ini.
 
 Ekspansi enam kasus paper BTC/ETH memakai worker/DB terpisah dalam proyek paper; ikuti [protokol tahap tiga](testing/research-stage-three.md) untuk konfigurasi, aktivasi, T0 dan review. Roadmap tetap [Plan 3](plan-3.md). Tidak ada izin transaksi dengan uang asli.
@@ -9,7 +11,7 @@ Ekspansi enam kasus paper BTC/ETH memakai worker/DB terpisah dalam proyek paper;
 **28 Oktober — izin terbaru:** user mengizinkan commit, push dan deploy.
 Rilis awal hanya memasang komponen CLI/image dan menjalankan default `report`
 sekali di proyek P3 terpisah. Runner/pilot trading belum tersedia/diterima.
-CI mempublikasikan `ghcr.io/rizz404/trading-bot-catalyst:sha-<commit>` setelah
+CI mempublikasikan `ghcr.io/rizz404/ana-scout:sha-<commit>` (sebelum 29 Oktober `trading-bot-catalyst`) setelah
 checks/integration/monitoring serta smoke/protokol khusus lulus. Rilis source
 `2998f38` dan pemasangan VPS **28 Oktober 21.00 WIB** sudah terverifikasi;
 report exited 0 dan 35 container lama tetap identik. Gunakan digest tetap pada
@@ -17,7 +19,7 @@ report exited 0 dan 35 container lama tetap identik. Gunakan digest tetap pada
 
 User menetapkan Spider sebagai collector utama P3 pada 26 Oktober. Inspeksi
 kapasitas VPS hanya baca sudah dilakukan; rencana awal memakai project/path
-`trading-bot-catalyst` / `/opt/trading-bot-catalyst` yang terpisah dari P2.
+`ana-scout` / `/opt/ana-scout` yang terpisah dari P2.
 `Dockerfile.catalyst` dan `deploy/compose.catalyst.yml` disiapkan 28 Oktober,
 build/smoke image linux/amd64 serta binary/protokol fixture tanpa jaringan lulus.
 CI image/protokol, publikasi GHCR dan deployment komponen/report sudah lulus.
@@ -38,13 +40,13 @@ Sebelum aktivasi collector/pilot: uji egress adversarial/situs publik, retensi,
 input pasar/event dan resource dengan beban sebenarnya. Dua halaman fixture
 berhasil dalam budget, tetapi belum membuktikan kapasitas situs/beban pilot.
 
-Checkout server berada di `/opt/trading-bot-catalyst/repo`; image digest ada di
+Checkout server berada di `/opt/ana-scout/repo`; image digest ada di
 `.env.catalyst-image` root mode 600. File itu hanya menyimpan referensi image,
 bukan key OmniRoute/trading. Bukti server ada di direktori `../evidence`.
 Untuk mengulang pemeriksaan report pada rilis yang sama:
 
 ```sh
-cd /opt/trading-bot-catalyst/repo
+cd /opt/ana-scout/repo
 docker compose --env-file .env.catalyst-image -f deploy/compose.catalyst.yml up --abort-on-container-exit --exit-code-from catalyst </dev/null
 ```
 
@@ -67,8 +69,8 @@ checkout/source label/digest yang sama dan menyimpan bukti sebelum/sesudah.
   adanya binary di image bukan izin mengaktifkan worker baru.
 - Gunakan deploy key read-only dan akses GHCR `read:packages`. Jangan mencetak
   token/password atau memasukkannya ke argumen perintah, repo maupun chat.
-- VPS Plesk bersama: scope bot P2 di `/opt/trading-bot-paper` dan P3 terpisah
-  di `/opt/trading-bot-catalyst`. Jangan mengubah service/port proyek lain, Plesk, firewall,
+- VPS Plesk bersama: scope bot P2 di `/opt/ana-core` dan P3 terpisah
+  di `/opt/ana-scout`. Jangan mengubah service/port proyek lain, Plesk, firewall,
   DNS host atau Docker daemon; jangan restart host/Docker, prune atau `down -v`.
 - Periksa resource/disk, port loopback, subnet resolver dan baseline sebelum
   perubahan. Jika baseline historis berbeda, simpan penyebab/selisih dan snapshot
@@ -83,7 +85,7 @@ Paper memakai harga publik tanpa key perdagangan.
 
 | Pengaturan | Penggunaan |
 |---|---|
-| `BOT_IMAGE` | `ghcr.io/rizz404/trading-bot@sha256:<digest>` dari CI |
+| `BOT_IMAGE` | `ghcr.io/rizz404/ana-core@sha256:<digest>` dari CI |
 | `BOT_DB_NAME` | Database trial yang tepat; trial baru menggunakan DB baru |
 | `TB_APP__MODE` | `paper` / `testnet`, harus cocok dengan config |
 | `TB_APP__ALLOW_LIVE` | Dipaksa `false` oleh manifest; live memerlukan P3-LIVE |
@@ -97,7 +99,7 @@ Frankfurter, hanya tampilan dan bukan input trading.
 
 ## Compose dan resource
 
-Semua perintah berikut dari `/opt/trading-bot-paper/repo` di VPS:
+Semua perintah berikut dari `/opt/ana-core/repo` di VPS:
 
 ```sh
 dc() { docker compose --env-file .env.vps -f deploy/compose.vps.yml "$@" </dev/null; }
@@ -116,7 +118,7 @@ read-only dan `no-new-privileges` karena file capability binary port 53.
 Periksa resolver sebelum mulai bot:
 
 ```sh
-nsenter -t "$(docker inspect -f '{{.State.Pid}}' trading-bot-paper-dns-1)" -n dig +short @127.0.0.1 A stream.binance.com
+nsenter -t "$(docker inspect -f '{{.State.Pid}}' ana-core-dns-1)" -n dig +short @127.0.0.1 A stream.binance.com
 ```
 
 Jawaban `139.255.196.196`/`182.23.79.195` berarti halaman blokir. Jangan
@@ -177,14 +179,14 @@ sudah menyimpan history. Referensi rilis lama ada di [handover VPS](handover-vps
 
 ## Timer dan observasi
 
-Unit `deploy/systemd/trading-bot-paper-*` hanya untuk proyek ini. Observe mencatat
+Unit `deploy/systemd/ana-core-*` hanya untuk proyek ini. Observe mencatat
 sampel tiap lima menit, retensi 14 hari; backup harian sekitar 03.15 UTC dan
 `Persistent` menangani jadwal yang terlewat. Unit membatasi CPU/memori.
 
 `vps-observe.py` memeriksa container, metrics, feed, monitoring dan disk; hasil
 bukan jaminan akuntansi/order benar dan tidak melakukan recovery otomatis.
 Periksa aturan gap/universe bila config berubah. Detail kesalahan ada di
-`journalctl -u trading-bot-paper-observe.service` atau service backup.
+`journalctl -u ana-core-observe.service` atau service backup.
 
 Saat trial selesai, matikan observe timer; pertahankan backup serta DB sesuai
 kebutuhan. Status saat ini: observe dan backup active untuk trial riset. Jangan mengaktifkan
@@ -198,7 +200,7 @@ Helper dan timer P3 **sudah dipasang pada 29 Oktober 22:23 WIB**, source
 menjalankan ulang hanya karena membaca runbook ini.
 
 Sesudah source rilis disetujui, diambil dari GitHub dan CI/GHCR lulus, helper
-berjalan dari `/opt/trading-bot-catalyst/repo`:
+berjalan dari `/opt/ana-scout/repo`:
 
 ```sh
 bash deploy/catalyst-backup.sh
@@ -208,10 +210,10 @@ python3 deploy/catalyst-observe.py
 Backup menghentikan **hanya worker P3** sementara agar DB, tesis inbox, bukti
 dan kuota AI konsisten, lalu menyalakan container yang sama jika sebelumnya
 running. Tidak menyentuh P2. Dump/arsip/env privat dan checksum disimpan di
-`/opt/trading-bot-catalyst/backups/`, 0700/0600; tidak menghapus backup lama
+`/opt/ana-scout/backups/`, 0700/0600; tidak menghapus backup lama
 otomatis atau menyalin secret keluar VPS. Restore hanya ke DB/direktori salinan.
 
-Empat unit `deploy/systemd/trading-bot-catalyst-*` sudah dipasang untuk observe tiap
+Empat unit `deploy/systemd/ana-scout-*` sudah dipasang untuk observe tiap
 lima menit dan backup 03:45 UTC + jitter maksimal sepuluh menit (10:45 WIB).
 Pemasangan berikutnya mengikuti izin rilis; tidak perlu restart Docker/host.
 Observer exit 1 menandai unit failed dengan nama masalah di journal, tanpa
