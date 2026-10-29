@@ -1,5 +1,7 @@
 # Bukti pengujian
 
+- [Paper tahap tiga](research-stage-three.md): enam kasus, konfigurasi dan jadwal review prospektif.
+
 Laporan di sini merekam pengujian pada waktunya; bukan status real-time,
 kelulusan fitur sesudahnya, holdout baru atau izin live. Tanggal tetap ada di
 isi laporan/payload. Rencana aktif: [Plan 3](../plan-3.md); pembanding lama:

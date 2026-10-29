@@ -2,7 +2,7 @@ groups:
   - name: tradingbot
     rules:
       - alert: TradingBotDown
-        expr: max(up{job="tradingbot"}) == 0
+        expr: up{job="tradingbot"} == 0
         for: 3m
         labels: {severity: critical}
         annotations:

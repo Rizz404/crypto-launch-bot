@@ -1,5 +1,7 @@
 # Handover VPS
 
+**Ekspansi paper 29 Oktober:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+
 Checkpoint rilis P2/P3 **29 Oktober 2026 22:23 WIB**, pilot paper P3 aktif
 **28 Oktober 22:53 WIB**. Prosedur di [deployment](deployment.md), rencana
 aktif [Plan 3](plan-3.md), pembanding [Strategi 2](strategy-2.md).

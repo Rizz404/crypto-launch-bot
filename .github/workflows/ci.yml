@@ -36,7 +36,7 @@ jobs:
       - run: go mod verify
       - name: Verify catalyst operational helpers
         run: |
-          python3 -m unittest discover -s deploy -p test_catalyst_ops.py
+          python3 -m unittest discover -s deploy -p 'test_*.py'
           bash -n deploy/catalyst-backup.sh
           systemd-analyze verify deploy/systemd/trading-bot-catalyst-*.service deploy/systemd/trading-bot-catalyst-*.timer
       - run: go vet -tags integration ./...

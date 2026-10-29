@@ -29,7 +29,7 @@ exchanges:
 `
 
 func TestManagedExamplesRemainPaperAndSingleCapital(t *testing.T) {
-	for _, name := range []string{"managed.example.yaml", "managed.eth-paper.yaml", "managed.research-stage-one.yaml", "managed.research-stage-two.yaml"} {
+	for _, name := range []string{"managed.example.yaml", "managed.eth-paper.yaml", "managed.research-stage-one.yaml", "managed.research-stage-two.yaml", "managed.research-stage-three.yaml"} {
 		cfg, err := load(filepath.Join("..", "..", "configs", name), []string{"TB_DATABASE__URL=postgres://unused@localhost/unused"})
 		require.NoError(t, err)
 		require.Equal(t, ModePaper, cfg.App.Mode)
@@ -89,6 +89,54 @@ func TestResearchStageTwoUsesComparableRiskAndExplicitCapital(t *testing.T) {
 	}
 	require.Equal(t, []string{"BTCUSDT", "ETHUSDT", "SOLUSDT"}, cfg.MarketData.Symbols)
 	require.Equal(t, []string{"1m", "4h"}, cfg.MarketData.Timeframes)
+}
+
+func TestResearchStageThreeKeepsIndependentComparableCases(t *testing.T) {
+	cfg, err := load(filepath.Join("..", "..", "configs", "managed.research-stage-three.yaml"), []string{"TB_DATABASE__URL=postgres://unused@localhost/unused"})
+	require.NoError(t, err)
+	old, err := load(filepath.Join("..", "..", "configs", "managed.research-stage-two.yaml"), []string{"TB_DATABASE__URL=postgres://unused@localhost/unused"})
+	require.NoError(t, err)
+	require.False(t, cfg.Telegram.Enabled)
+	w := cfg.Wallets[0]
+	require.Equal(t, "research-stage-three", w.ID)
+	require.Equal(t, "664.74628849988916", w.Capital.String())
+	require.Len(t, w.Instances, 6)
+	remaining := w.Capital
+	cases := map[string]bool{}
+	for _, i := range w.Instances {
+		require.Equal(t, "110.79104808331486", i.Allocation.String())
+		remaining = remaining.Sub(i.Allocation)
+		require.Len(t, i.Strategies, 1)
+		require.Equal(t, w.Instances[0].Risk, i.Risk)
+		require.Equal(t, 1, i.Risk.MaxOpenPositions)
+		require.Equal(t, 0.25, i.Risk.MaxExposurePct)
+		b := i.Strategies[0]
+		require.Equal(t, i.Risk, b.Risk)
+		require.Len(t, b.Symbols, 1)
+		require.Contains(t, []string{"BTCUSDT", "ETHUSDT"}, b.Symbols[0])
+		key := fmt.Sprint(b.Params["timeframe"], ":", b.Symbols[0])
+		require.False(t, cases[key], "duplicate case %s", key)
+		cases[key] = true
+		var baseline map[string]any
+		for _, oldInstance := range old.Wallets[0].Instances {
+			if oldInstance.ID == "ema-trend-1m" && b.Name == "emacross" || oldInstance.ID == "tren-2000k" && b.Name == "trendspot" {
+				if b.Name == "trendspot" {
+					baseline = oldInstance.Strategies[2].Params
+				} else {
+					baseline = oldInstance.Strategies[0].Params
+				}
+			}
+		}
+		require.NotNil(t, baseline)
+		for k, v := range baseline {
+			if k != "timeframe" {
+				require.Equal(t, v, b.Params[k], "parameter %s in %s", k, i.ID)
+			}
+		}
+		require.Len(t, b.Params, len(baseline))
+	}
+	require.True(t, remaining.IsZero())
+	require.Equal(t, []string{"1m", "15m", "1h", "4h"}, cfg.MarketData.Timeframes)
 }
 
 func TestLoadDefaultsAndEnvOverride(t *testing.T) {

@@ -9,3 +9,5 @@ scrape_configs:
     static_configs:
       - targets: ["bot:9100"]
         labels: {instance: container}
+      - targets: ["research:9100"]
+        labels: {instance: research}

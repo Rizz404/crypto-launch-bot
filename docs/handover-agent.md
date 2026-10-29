@@ -1,5 +1,7 @@
 # Handover agent
 
+**Ekspansi paper 29 Oktober:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+
 Untuk Codex, Claude dan agent berikutnya. Checkpoint **29 Oktober 2026**;
 verifikasi checkout dan waktu bukti sebelum bekerja.
 

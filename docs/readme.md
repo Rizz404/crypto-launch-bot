@@ -1,5 +1,7 @@
 # Dokumentasi trading-bot
 
+**Ekspansi paper 29 Oktober:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+
 Mulai dari [handover agent](handover-agent.md), lalu pilih panduan yang diperlukan.
 
 **Terbaru — 29 Oktober 2026, 22:23 WIB:** patch feed/health P2, schema/UI P3
@@ -43,8 +45,7 @@ Review terbaru memakai snapshot 29 Oktober 20:34 WIB; dua EMA 1m merugi,
 empat instance lain belum bertransaksi. Dua EMA 1m sudah pause pada 21:10 WIB;
 P2 kemudian dirilis ulang pada 22:23 WIB; parameter/modal/T0 dan ledger
 tetap dipertahankan.
-[Riset biaya 12 kasus](testing/strategy-cost-review/readme.md) selesai; kandidat
-baru belum diaktifkan. Tidak ada izin uang asli.
+[Riset biaya 12 kasus](testing/strategy-cost-review/readme.md) selesai; kandidat baru dilanjutkan melalui [tahap tiga](testing/research-stage-three.md). Tidak ada izin uang asli.
 
 ## Aturan dokumentasi
 

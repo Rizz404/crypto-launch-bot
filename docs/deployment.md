@@ -1,21 +1,8 @@
 # Deployment
 
-**Pause terbaru 28 Oktober 22.12 WIB:** overlay
-`deploy/compose.catalyst.pilot.yml` dan CLI `run` masih WIP, belum dibangun/
-divalidasi/deploy. User memilih paper 1.000 USDT dan 12 panggilan AI/hari,
-kemudian meminta berhenti untuk handover. Ikuti
-[handover pilot](catalyst-pilot-handover.md) setelah user melanjutkan; jangan
-menjalankan overlay hanya karena rilis komponen/report di bawah sudah lulus.
+**Status 29 Oktober 2026:** P2 dan pilot AI P3 aktif pada binary `d30b93b`; helper/timer P3 terpasang. Dua EMA 1m P2 tetap pause. Lihat [rilis operasi](testing/paper-operations-release.md) dan [handover VPS](handover-vps.md). Bagian rilis komponen Spider di bawah adalah riwayat sebelum pilot aktif, bukan status worker saat ini.
 
-Prosedur rilis dan operasi untuk project `trading-bot-paper`. Status server ada
-di [handover VPS](handover-vps.md); **paper pembanding tahap dua aktif** sejak
-22 Oktober 2026 19:58:45 WIB. Panduan ini tidak memberi izin trial tambahan
-atau transaksi mainnet dengan uang asli.
-
-Rencana aktif [Plan 3](plan-3.md); Plan 2 sudah diarsipkan. Komponen/report P3
-terpasang terpisah, worker/pilot AI belum aktif. P3-7 memerlukan kesiapan/izin start sendiri, DB/wallet baru
-dan pemeriksaan resource collector; runbook ini tidak mengizinkan perubahan
-trial pembanding hanya karena plan berganti.
+Ekspansi enam kasus paper BTC/ETH memakai worker/DB terpisah dalam proyek paper; ikuti [protokol tahap tiga](testing/research-stage-three.md) untuk konfigurasi, aktivasi, T0 dan review. Roadmap tetap [Plan 3](plan-3.md). Tidak ada izin transaksi dengan uang asli.
 
 ## Penempatan komponen Spider
 

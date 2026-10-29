@@ -141,6 +141,46 @@ services:
     restart: unless-stopped
     logging: *logging
 
+  research:
+    # Reuse the released bot binary; configuration and ledger are independent.
+    image: ${BOT_IMAGE:?Set BOT_IMAGE to the published GHCR image digest}
+    mem_limit: 512m
+    cpus: 0.5
+    pids_limit: 128
+    command: ["run"]
+    env_file: ../.env.vps
+    environment:
+      TB_APP__MODE: paper
+      TB_APP__ALLOW_LIVE: "false"
+      TB_DATABASE__URL: postgres://bot:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}@db:5432/tradingbot_research_stage_three?sslmode=disable
+      TB_METRICS__LISTEN: 0.0.0.0:9100
+      TB_WEB__LISTEN: 0.0.0.0:8080
+      TB_WEB__PASSWORD: ${TB_WEB__PASSWORD:?Set TB_WEB__PASSWORD in .env.vps}
+      TB_TELEGRAM__ENABLED: "false"
+      GOMEMLIMIT: 384MiB
+    volumes:
+      - ../configs/managed.research-stage-three.yaml:/app/configs/config.yaml:ro
+    ports:
+      - "127.0.0.1:18082:8080"
+      - "127.0.0.1:19102:9100"
+    dns: [172.31.253.2]
+    networks:
+      default:
+        gw_priority: 1
+      resolver: {}
+    depends_on:
+      db:
+        condition: service_healthy
+      dns:
+        condition: service_started
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 30s
+    restart: unless-stopped
+    logging: *logging
+
 networks:
   resolver:
     ipam:

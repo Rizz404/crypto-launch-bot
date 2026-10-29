@@ -1,5 +1,7 @@
 # Plan 3 — Riset katalis dan hold berbasis tesis
 
+**Ekspansi paper 29 Oktober:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+
 ## Checkpoint 29 Oktober
 
 **Pilot P3 sudah aktif sejak 28 Oktober 22:53 WIB.** Source berjalan `d30b93b`,

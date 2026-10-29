@@ -44,7 +44,7 @@ def containers():
              "oom_killed": v["State"]["OOMKilled"], "image": v["Image"]} for v in rows]
 
 
-def database(exchange):
+def database(exchange, db_name=None):
     # Series of the active exchange recorded within the last day; gaps and
     # age are judged against each series' own timeframe.
     sql = """
@@ -71,9 +71,9 @@ def database(exchange):
       'last_equity',(SELECT max(ts) FROM equity_snapshots),
       'database_bytes',pg_database_size(current_database()));
     """
-    out = json.loads(psql(sql % exchange))
+    out = json.loads(psql(sql % exchange, db_name))
     out["managed"] = []
-    if psql("SELECT to_regclass('managed_wallets') IS NOT NULL").strip() == "t":
+    if psql("SELECT to_regclass('managed_wallets') IS NOT NULL", db_name).strip() == "t":
         # Ledger health and hot-state size (compaction keeps it bounded).
         out["managed"] = json.loads(psql("""
         SELECT coalesce(json_agg(w),'[]'::json) FROM
@@ -82,12 +82,12 @@ def database(exchange):
              -- Go encodes empty collections as JSON null, which coalesce does not catch.
              CASE jsonb_typeof(state->'Pending') WHEN 'array' THEN jsonb_array_length(state->'Pending') ELSE 0 END AS pending,
              CASE jsonb_typeof(state->'Orders') WHEN 'object' THEN (SELECT count(*) FROM jsonb_object_keys(state->'Orders')) ELSE 0 END AS orders
-           FROM managed_wallets) w"""))
+           FROM managed_wallets) w""", db_name))
     return out
 
 
-def psql(sql):
-    return command(DC + ["exec", "-T", "db", "psql", "-U", "bot", "-d", DB_NAME,
+def psql(sql, db_name=None):
+    return command(DC + ["exec", "-T", "db", "psql", "-U", "bot", "-d", db_name or DB_NAME,
                          "-v", "ON_ERROR_STOP=1", "-At", "-c", sql])
 
 
@@ -119,16 +119,18 @@ sample = {
     "prometheus": attempt(lambda: json.loads(http("http://127.0.0.1:%d/api/v1/targets" % prometheus_port))),
     "mode": mode,
     "database": attempt(lambda: database(exchange)),
+    "research_health": attempt(lambda: http("http://127.0.0.1:19102/healthz").strip()),
+    "research_database": attempt(lambda: database("binance", "tradingbot_research_stage_three")),
     "metrics": attempt(lambda: [line for line in http("http://127.0.0.1:%d/metrics" % metrics_port).splitlines()
                                 if line.startswith(("tradingbot_", "process_start_time_seconds "))]),
     "disk_free_bytes": disk.free,
     "load": os.getloadavg(),
 }
-problems = [key for key in ("containers", "health", "grafana", "prometheus", "database", "metrics")
+problems = [key for key in ("containers", "health", "grafana", "prometheus", "database", "metrics", "research_health", "research_database")
             if not sample[key]["ok"]]
 if sample["containers"]["ok"]:
     rows = sample["containers"]["data"]
-    if {r["service"] for r in rows} != {"bot", "db", "dns", "prometheus", "grafana"} or any(
+    if {r["service"] for r in rows} != {"bot", "research", "db", "dns", "prometheus", "grafana"} or any(
             r["status"] != "running" or r["oom_killed"] for r in rows):
         problems.append("container_state")
     # A crash loop keeps the container "running" between restarts; compare
@@ -143,13 +145,19 @@ if sample["containers"]["ok"]:
                 pass
     if any(r["restarts"] > previous.get(r["id"], r["restarts"]) for r in rows):
         problems.append("container_restarted")
-if sample["database"]["ok"]:
-    series = sample["database"]["data"]["series"]
+for key in ("database", "research_database"):
+    if not sample[key]["ok"]:
+        continue
+    prefix = "research_" if key == "research_database" else ""
+    series = sample[key]["data"]["series"]
     # A closed candle is stored once its period ends: allow two periods plus a margin.
     if not series or any(r["age_seconds"] > 2 * r["tf_seconds"] + 120 or r["gaps"] for r in series):
-        problems.append("candle_freshness_or_gap")
-    if any(w["attention"] or w["halted"] for w in sample["database"]["data"]["managed"]):
-        problems.append("managed_attention")
+        problems.append(prefix + "candle_freshness_or_gap")
+    if key == "research_database" and {(r["symbol"], r["timeframe"]) for r in series} != {
+            (symbol, timeframe) for symbol in ("BTCUSDT", "ETHUSDT") for timeframe in ("1m", "15m", "1h", "4h")}:
+        problems.append("research_missing_series")
+    if any(w["attention"] or w["halted"] for w in sample[key]["data"]["managed"]):
+        problems.append(prefix + "managed_attention")
 if sample["prometheus"]["ok"]:
     targets = sample["prometheus"]["data"]["data"]["activeTargets"]
     if not targets or any(t["health"] != "up" for t in targets):
