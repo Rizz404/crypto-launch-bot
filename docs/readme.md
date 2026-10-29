@@ -1,58 +1,34 @@
-# Dokumentasi trading-bot
+# Dokumentasi presale dan listing baru
 
-Mulai dari [handover agent](handover-agent.md), lalu pilih panduan yang diperlukan.
+**Checkpoint 29 Oktober 2026:** arah repository diganti melalui perombakan
+dokumentasi. [Plan 4](plan-4.md) menjadi satu-satunya roadmap aktif. Belum ada
+implementasi, pilot atau hasil pengujian strategi baru.
 
-**Terbaru: development pilot dijeda 28 Oktober sekitar 22.12 WIB atas permintaan
-user.** Pilihan paper 1.000 USDT/12 panggilan AI per hari sudah dicatat; kode
-runner dan integrasi lanjutan masih WIP, belum rilis/start pilot. Mulai dari
-[handover pilot](catalyst-pilot-handover.md).
+## Dokumen aktif
 
 | Dokumen | Isi |
 |---|---|
-| [Handover agent](handover-agent.md) | Status terbaru, batas kerja dan langkah lanjut untuk Codex/Claude/agent lain |
-| [Handover pilot](catalyst-pilot-handover.md) | Checkpoint pause, pilihan user, peta WIP, hasil tes/source nyata dan urutan lanjut |
-| [Handover Spider](catalyst-spider-handover.md) | Arah website→Spider→AI, patch/protokol, rilis komponen VPS dan gate pilot |
-| [Plan 3](plan-3.md) | Rencana aktif: katalis/AI, hold berbasis tesis, proteksi dan seluruh backlog Plan 2 |
-| [Plan 2](plan-2.md) | Siklus multi-instance selesai/arsip; checklist dan bukti historis |
-| [Strategi 2](strategy-2.md) | Keputusan terbaru: tarik trial ETH, kandidat dan protokol riset |
-| [Strategi](strategy.md) | Keputusan awal ETH momentum 4h, parameter dan bukti historis |
-| [Strategi VPS](strategy-vps.md) | Referensi rinci profil ETH dan persiapan trial terisolasi |
-| [Runtime managed](managed-runtime.md) | Konfigurasi, kontrol, backtest dan recovery |
-| [Runtime katalis](catalyst-runtime.md) | Komponen/CLI development Plan 3, replay fixture dan batas penerimaan pilot |
-| [Multi-instance](multi-instance.md) | Model modal, ownership dan batas risiko |
-| [Handover VPS](handover-vps.md) | Checkpoint server, akses dan batas operasional |
-| [Deployment](deployment.md) | Rilis, backup, migrasi dan rollback |
-| [Bukti pengujian](testing/readme.md) | Indeks laporan dan data pendukung |
-| [Plan](plan.md) | Arsip siklus pertama; bukan backlog aktif |
+| [Plan 4](plan-4.md) | Fase implementasi dan gerbang penerimaan |
+| [Handover agent](handover-agent.md) | Keputusan terbaru, kondisi kode dan batas tindakan |
+| [Strategi presale/listing](presale-strategy.md) | Universe, discovery, tesis dan lifecycle |
+| [Arsitektur](presale-architecture.md) | Alur, kontrak data, reuse dan kebutuhan integrasi |
+| [Sumber data](presale-sources.md) | Protokol riset dan pemilihan chain/venue/provider |
+| [Risiko](presale-risk.md) | Gate transaksi, dana terkunci dan kegagalan |
+| [Evaluasi](presale-evaluation.md) | Simulasi, skenario pengujian dan penerimaan pilot/live |
+| [Arsip](archive.md) | Seluruh panduan dan keputusan Plan 1–3 |
+| [Bukti historis](testing/readme.md) | Laporan dan data pendukung lama |
 
-Checkpoint development 28 Oktober: CLI collect kini Spider default dan race
-test/vet/lint komponen lokal lulus. Image P3 dibangun/smoke; binary patched
-2.53.9-p3.1 lulus TLS fixture/proxy terisolasi tiga kali. Egress adversarial/
-situs publik dan pilot masih terbuka. **Seluruh CI dan deployment komponen/report
-VPS lulus 28 Oktober 21.00 WIB**, source `2998f38`; worker/pilot belum aktif dan
-P2 tidak direstart. [Bukti rilis](testing/catalyst-release.json).
-Lanjutkan dari [handover Spider](catalyst-spider-handover.md).
-
-Plan 2 ditutup 23 Oktober sebagai siklus; seluruh sisa pekerjaan ada di Plan 3.
-Komponen collector/validator dan replay paper lokal tersedia; worker/pilot AI
-belum aktif. [Evaluasi OmniRoute](testing/catalyst-model-evaluation.md) 26 Oktober
-memilih Luna; combo/failover dan shadow prospektif masih terbuka. Presale/token baru menjadi
-future reference; memecoin yang sudah diperdagangkan termasuk universe riset.
-
-Checkpoint operasi P2 23 Oktober 20.52 WIB: rilis notifikasi `9c18962`
-pada paper pembanding tahap dua, enam instance/18 binding BTC/ETH/SOL. T0 tetap
-22 Oktober 19:58:45 WIB, modal awal 747,83957456237531 USDT virtual dan CPU1.
-Review user 23/25/29 Oktober pukul 19:58:45 WIB; ledger lama dipertahankan.
-Detail dan batas penerimaan ada di [handover VPS](handover-vps.md).
-Ini checkpoint terdokumentasi, bukan status server real-time atau izin uang asli.
+Keputusan terbaru menggantikan penundaan presale/token baru pada Plan 3.
+Instruksi resume, status aktif, jadwal, parameter dan izin dalam arsip berlaku
+pada konteks historisnya; tidak menjadi perintah melanjutkan pilot P3.
 
 ## Aturan dokumentasi
 
-- Nama file/folder di `docs/` memakai kebab-case huruf kecil, tanpa tanggal.
-- Dokumen pertama tanpa `-1`; kelanjutan satu seri memakai `-2`, `-3`, dst.
-  Topik berbeda tetap memakai nama deskriptif. Tanggal/periode ada di isi laporan.
-- Dokumentasi umum ringkas: status, tindakan, batas dan tautan bukti. Plan dan
-  strategi tetap rinci, termasuk alasan, parameter, risiko dan kriteria evaluasi.
-- Handover netral antar-agent. Perbarui status terkini, hindari instruksi lama
-  yang bertentangan, dan perbarui rujukan serta output script saat mengganti nama.
-- Bukti JSON historis tidak ditulis ulang untuk merapikan narasi atau path lama.
+- Nama file/folder kebab-case huruf kecil, tanpa tanggal. Tanggal ada di isi.
+- Seri plan memakai nomor berurutan; topik lain memakai nama deskriptif.
+- Bedakan rancangan, kode yang ada, hasil pemeriksaan dan kemampuan operasional.
+- Handover netral antar-agent; keputusan aktif harus konsisten dengan Plan 4.
+- Simpan dokumen historis di path lama. Jangan mengubah payload, angka,
+  timestamp atau checksum bukti untuk menyesuaikan narasi baru.
+- Laporan baru menggunakan lokasi terpisah dari hasil lama; jangan menimpa
+  bukti dengan menjalankan ulang script reproduksi.

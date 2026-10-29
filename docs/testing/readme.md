@@ -1,10 +1,16 @@
 # Bukti pengujian
 
-Laporan di sini merekam pengujian pada waktunya; bukan status real-time,
-kelulusan fitur sesudahnya, holdout baru atau izin live. Tanggal tetap ada di
-isi laporan/payload. Rencana aktif: [Plan 3](../plan-3.md); pembanding lama:
-[Strategi 2](../strategy-2.md). Plan 2 sudah selesai sebagai siklus/arsip.
-Penerimaan tersisa dan risiko laporan historis dipetakan ke P3-O/P3-R/P3-LIVE.
+Laporan di sini adalah **bukti historis Plan 1–3**, bukan hasil pengujian
+strategi presale/listing baru, status real-time atau izin live. Tanggal tetap
+ada di isi laporan/payload. Rencana aktif sejak 29 Oktober 2026:
+[Plan 4](../plan-4.md); panduan lama: [indeks arsip](../archive.md).
+
+Belum ada bukti pengujian Plan 4 pada checkpoint perombakan docs. Checklist
+penerimaan P3-O/P3-R/P3-LIVE tetap historis, tidak otomatis menjadi backlog
+aktif. Semua laporan/payload lama di bawah dipertahankan; hanya pengantar
+indeks ini disesuaikan. Jangan menganggap instruksi resume dalam laporan lama
+sebagai arahan kerja terbaru. Rencana evaluasi baru ada di
+[evaluasi Plan 4](../presale-evaluation.md).
 
 ## Operasi dan Plan 2
 

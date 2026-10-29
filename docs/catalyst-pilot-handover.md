@@ -1,3 +1,11 @@
+> **ARSIP — 29 Oktober 2026.** Dokumen ini merekam proyek Plan 1–3.
+> Roadmap aktif: [Plan 4](plan-4.md); arahan terkini: [handover agent](handover-agent.md).
+> Pernyataan aktif, izin, jadwal, parameter dan instruksi resume di bawah berlaku
+> pada checkpoint historisnya, bukan arahan melanjutkan pilot P3 atau transaksi.
+> Pengarsipan tidak menghentikan proses lama. Lihat [indeks arsip](archive.md).
+
+---
+
 # Handover pilot katalis
 
 **Dijeda 28 Oktober 2026 sekitar 22.12 WIB, dilanjutkan user 22.18 WIB.**
