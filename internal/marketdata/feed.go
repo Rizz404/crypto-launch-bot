@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"sync"
 	"time"
 
 	"github.com/rizz404/trading-bot/internal/domain"
@@ -35,7 +36,23 @@ type Feed struct {
 	Log      *slog.Logger
 	Metrics  *Metrics // optional
 
-	last map[domain.SeriesKey]time.Time // newest delivered open time
+	last      map[domain.SeriesKey]time.Time // newest delivered open time
+	healthMu  sync.RWMutex
+	processed map[domain.SeriesKey]time.Time
+}
+
+// Health checks closed candles after the consumer has finished processing them.
+func (f *Feed) Health(now time.Time) error {
+	f.healthMu.RLock()
+	defer f.healthMu.RUnlock()
+	for _, sub := range f.Subs {
+		key := f.key(sub)
+		at := f.processed[key]
+		if at.IsZero() || at.After(now) || now.Sub(at) > sub.Timeframe.Duration()+2*time.Minute {
+			return fmt.Errorf("market data not ready or stale: %s %s", sub.Symbol, sub.Timeframe)
+		}
+	}
+	return nil
 }
 
 // Run blocks until ctx is cancelled.
@@ -48,6 +65,9 @@ func (f *Feed) Run(ctx context.Context) error {
 		f.InitialBackfill = f.Source.KlineLimit()
 	}
 	f.last = make(map[domain.SeriesKey]time.Time, len(f.Subs))
+	f.healthMu.Lock()
+	f.processed = make(map[domain.SeriesKey]time.Time, len(f.Subs))
+	f.healthMu.Unlock()
 
 	events, err := f.Source.StreamKlines(ctx, f.Market, f.Subs)
 	if err != nil {
@@ -151,11 +171,17 @@ func (f *Feed) deliver(ctx context.Context, cs []domain.Candle) error {
 	}
 	for _, c := range fresh {
 		f.last[c.Series()] = c.OpenTime
-		if f.Metrics != nil {
-			f.Metrics.lastClose.WithLabelValues(c.Exchange, string(c.Market), c.Symbol, string(c.Timeframe)).Set(float64(c.CloseTime().Unix()))
-		}
 		if f.OnCandle != nil {
 			f.OnCandle(c)
+		}
+		f.healthMu.Lock()
+		if f.processed == nil {
+			f.processed = make(map[domain.SeriesKey]time.Time)
+		}
+		f.processed[c.Series()] = c.CloseTime()
+		f.healthMu.Unlock()
+		if f.Metrics != nil {
+			f.Metrics.lastClose.WithLabelValues(c.Exchange, string(c.Market), c.Symbol, string(c.Timeframe)).Set(float64(c.CloseTime().Unix()))
 		}
 	}
 	return nil

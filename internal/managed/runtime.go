@@ -145,6 +145,10 @@ func (r *Runtime) checkpoint(ctx context.Context, owner string, raw []byte) erro
 	if Hash(st.Bindings[owner].Spec.Config(r.physical.Exchange(), owner)) != r.revisions[owner] {
 		return nil
 	}
+	// Avoid locking and re-encoding the entire ledger for an unchanged engine.
+	if sameJSON(st.Bindings[owner].Engine, raw) {
+		return nil
+	}
 	err = r.repo.Update(ctx, nonce(), "engine_checkpoint", map[string]any{"owner": owner, "state": jsonRaw(raw)}, func(s *State) error {
 		// The stored copy comes back with JSONB key order; only a different
 		// value is a change, otherwise every save would rewrite the ledger.
@@ -432,6 +436,9 @@ func (r *Runtime) record(ctx context.Context, c domain.Candle, closed bool, book
 		return err
 	}
 	for _, id := range sortedBindings(s) {
+		if !slices.Contains(s.Bindings[id].Spec.Symbols, c.Symbol) && !r.mustClose(s, id) {
+			continue
+		}
 		if err = r.syncView(ctx, id); err != nil {
 			return err
 		}

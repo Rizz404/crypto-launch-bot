@@ -80,6 +80,7 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 	feedMetrics := marketdata.NewMetrics(reg)
 	store := storage.NewStore(pool)
 	runtimes := map[string]*managed.Runtime{}
+	var feeds []*marketdata.Feed
 	// Telegram outlives ctx briefly so the shutdown message is delivered.
 	var tg *telegram.Bot
 	tgCtx, tgCancel := context.WithCancel(context.Background())
@@ -278,6 +279,7 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 			})
 		}
 		feed := &marketdata.Feed{Source: source, Store: store, Market: domain.Spot, Subs: subs, InitialBackfill: cfg.MarketData.InitialBackfill, Log: log, Metrics: feedMetrics, OnCandle: func(c domain.Candle) { fail(rt.Record(ctx, c, true)) }, OnUpdate: func(c domain.Candle) { fail(rt.Record(ctx, c, false)) }}
+		feeds = append(feeds, feed)
 		wg.Go(func() { fail(feed.Run(ctx)) })
 	}
 	if tg != nil {
@@ -307,6 +309,11 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 			}
 			for _, l := range leases {
 				if err := l.Check(check); err != nil {
+					return err
+				}
+			}
+			for _, feed := range feeds {
+				if err := feed.Health(time.Now()); err != nil {
 					return err
 				}
 			}
