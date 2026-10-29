@@ -147,3 +147,21 @@ deploy worker terkait saja dan pemasangan unit P3 dari checkout tersebut.
 Verifikasi ulang pause EMA, kas/T0, source/digest, health/freshness, beban,
 observer dan identitas proyek lain. Tidak mengaktifkan kandidat strategi baru
 atau mainnet sebagai bagian rilis ini.
+
+
+## Temuan saat rollout awal
+
+CI source `d33dd84` lulus seluruh job. P2 dipasang 29 Oktober **22:04:40 WIB**;
+P3 tetap pada image sebelumnya ketika readiness P2 belum 200. Health baru
+mengungkap celah startup seri 4h: bila DB sudah memuat bar tertutup terakhir,
+backfill tidak mengirim bar baru sehingga frontier health belum terisi. Patch
+lanjutan mengisi frontier dari bar tersimpan saat tidak ada delivery yang perlu
+dijalankan, tanpa mengulang callback/indikator. Regression meliputi kondisi itu.
+
+Inspeksi lanjutan juga memperkecil jalur idle: intrabar tidak menjalankan engine
+yang tidak memiliki PriceHandler, dan timer hanya mendispatch engine yang
+memang due. Pencocokan Sim, inbox, mark/Observe dan parent halt tetap dijalankan;
+strategi katalis tetap price-driven dan timer satu detik. Regression timer due
+serta uji dua directional binding membuktikan hanya dua Load pada tick idle,
+tanpa transaksi checkpoint per binding. Patch lanjutan memerlukan CI/image baru
+sebelum rollout diteruskan; ini bukan klaim Pong timeout sudah hilang.

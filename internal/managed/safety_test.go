@@ -148,6 +148,37 @@ func TestIdleDirectionalDrainSharesOneLedgerSnapshot(t *testing.T) {
 	require.Equal(t, "450", rt.accounts["b/two"].Snapshot().Balance.String())
 }
 
+func TestIdleDirectionalTickDoesNotLoadOrCheckpointEachEngine(t *testing.T) {
+	sp := spec()
+	for i := range sp.Instances {
+		sp.Instances[i].Strategies[0].Name = "emacross"
+		sp.Instances[i].Strategies[0].Params = nil
+	}
+	mem, err := NewMemory(sp)
+	require.NoError(t, err)
+	repo := &countedLoads{Repository: mem}
+	rt, err := NewRuntime(t.Context(), repo, broker.NewSim(broker.SimConfig{Exchange: "sim"}), testInstruments(), d("0.001"), nil, nil)
+	require.NoError(t, err)
+	require.NoError(t, rt.Start(t.Context()))
+	repo.loads, repo.checkpoints = 0, 0
+	require.NoError(t, rt.Tick(t.Context(), time.Now()))
+	require.Equal(t, 2, repo.loads, "idle tick must not reread the ledger per directional binding")
+	require.Zero(t, repo.checkpoints)
+}
+
+func TestTimerDueRetainsScheduledWork(t *testing.T) {
+	mem, err := NewMemory(spec())
+	require.NoError(t, err)
+	rt, err := NewRuntime(t.Context(), mem, broker.NewSim(broker.SimConfig{Exchange: "sim"}), testInstruments(), d("0.001"), nil, nil)
+	require.NoError(t, err)
+	now := time.Now()
+	e := rt.engines["a/one"]
+	require.True(t, e.TimerDue(now))
+	e.Tick(t.Context(), now)
+	require.False(t, e.TimerDue(now.Add(time.Second)))
+	require.True(t, e.TimerDue(now.Add(time.Minute)))
+}
+
 func (f *failRepo) Update(ctx context.Context, id, op string, payload any, fn func(*State) error) error {
 	if f.fail && op == "event_checkpoint" {
 		return errors.New("injected DB outage")

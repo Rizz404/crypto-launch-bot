@@ -281,3 +281,21 @@ func TestFeedHealthWaitsForConsumerAndChecksEverySeries(t *testing.T) {
 	require.Error(t, f.Health(now.Add(3*time.Minute+time.Nanosecond)))
 	require.Error(t, f.Health(now.Add(-time.Second)), "future close times must not be healthy")
 }
+
+func TestFeedHealthAcceptsStoredLongTimeframeWithoutRedelivery(t *testing.T) {
+	now := time.Now().UTC()
+	tf := domain.Timeframe("4h")
+	src := &fakeSource{limit: 1000}
+	store := newMemStore()
+	_, err := store.InsertCandles(t.Context(), []domain.Candle{candle("BTCUSDT", tf, tf.Truncate(now).Add(-4*time.Hour), true)})
+	require.NoError(t, err)
+	f := &Feed{Source: src, Store: store, Market: domain.Futures,
+		Subs: []exchange.KlineSub{{Symbol: "BTCUSDT", Timeframe: tf}}, last: make(map[domain.SeriesKey]time.Time),
+		OnCandle: func(domain.Candle) { t.Error("stored bars must not be delivered twice") },
+	}
+	n, err := f.backfillSeries(t.Context(), f.key(f.Subs[0]))
+	require.NoError(t, err)
+	require.Zero(t, n)
+	require.Zero(t, src.calls)
+	require.NoError(t, f.Health(time.Now()))
+}

@@ -351,6 +351,30 @@ func (e *Engine) OnPrice(ctx context.Context, c domain.Candle) {
 	}
 }
 
+// HasPriceHandler reports whether an intrabar update can run strategy logic.
+func (e *Engine) HasPriceHandler() bool {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	for _, inst := range e.instances {
+		if _, ok := inst.s.(strategy.PriceHandler); ok {
+			return true
+		}
+	}
+	return false
+}
+
+// TimerDue reports whether Tick has scheduled strategy work to perform.
+func (e *Engine) TimerDue(now time.Time) bool {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	for _, inst := range e.instances {
+		if _, ok := inst.s.(strategy.TimerHandler); ok && !now.Before(inst.nextTimer) {
+			return true
+		}
+	}
+	return false
+}
+
 // Tick runs strategies that implement strategy.TimerHandler when due.
 func (e *Engine) Tick(ctx context.Context, now time.Time) {
 	e.mu.Lock()

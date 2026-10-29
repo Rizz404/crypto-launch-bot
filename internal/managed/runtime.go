@@ -436,7 +436,7 @@ func (r *Runtime) record(ctx context.Context, c domain.Candle, closed bool, book
 		return err
 	}
 	for _, id := range sortedBindings(s) {
-		if !slices.Contains(s.Bindings[id].Spec.Symbols, c.Symbol) && !r.mustClose(s, id) {
+		if (!slices.Contains(s.Bindings[id].Spec.Symbols, c.Symbol) || (!closed && !r.engines[id].HasPriceHandler())) && !r.mustClose(s, id) {
 			continue
 		}
 		if err = r.syncView(ctx, id); err != nil {
@@ -479,6 +479,9 @@ func (r *Runtime) Tick(ctx context.Context, now time.Time) error {
 		return err
 	}
 	for _, id := range sortedBindings(s) {
+		if !r.mustClose(s, id) && !r.engines[id].TimerDue(now) {
+			continue
+		}
 		if err = r.syncView(ctx, id); err != nil {
 			return err
 		}

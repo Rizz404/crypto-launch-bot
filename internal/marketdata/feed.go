@@ -55,6 +55,15 @@ func (f *Feed) Health(now time.Time) error {
 	return nil
 }
 
+func (f *Feed) processedThrough(key domain.SeriesKey, at time.Time) {
+	f.healthMu.Lock()
+	defer f.healthMu.Unlock()
+	if f.processed == nil {
+		f.processed = make(map[domain.SeriesKey]time.Time)
+	}
+	f.processed[key] = at
+}
+
 // Run blocks until ctx is cancelled.
 func (f *Feed) Run(ctx context.Context) error {
 	if f.Log == nil {
@@ -141,6 +150,8 @@ func (f *Feed) backfillSeries(ctx context.Context, key domain.SeriesKey) (int, e
 		}
 	}
 	if !from.Before(current) {
+		// Stored bars are already warmed by the caller; no new delivery is due.
+		f.processedThrough(key, f.last[key].Add(tf))
 		return 0, nil // up to date
 	}
 
@@ -174,12 +185,7 @@ func (f *Feed) deliver(ctx context.Context, cs []domain.Candle) error {
 		if f.OnCandle != nil {
 			f.OnCandle(c)
 		}
-		f.healthMu.Lock()
-		if f.processed == nil {
-			f.processed = make(map[domain.SeriesKey]time.Time)
-		}
-		f.processed[c.Series()] = c.CloseTime()
-		f.healthMu.Unlock()
+		f.processedThrough(c.Series(), c.CloseTime())
 		if f.Metrics != nil {
 			f.Metrics.lastClose.WithLabelValues(c.Exchange, string(c.Market), c.Symbol, string(c.Timeframe)).Set(float64(c.CloseTime().Unix()))
 		}
