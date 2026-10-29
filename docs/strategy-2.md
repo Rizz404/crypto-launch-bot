@@ -1,11 +1,11 @@
 # Penarikan trial dan pengelolaan riset strategi — 21 Oktober 2026
 
-**Ekspansi paper 29 Oktober:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
 
 **Lanjutan 29 Oktober 2026:** review tujuh hari selesai; dua EMA 1m pause entry
 atas persetujuan user pada 21:10 WIB. Tren/EMA 4h dipertahankan. Dua belas
 replay biaya pada kandidat beku selesai; pullback BTC/ETH masuk shortlist
-riset, belum aktivasi strategi baru. [Review P2](testing/research-stage-two-review.md),
+riset dan kini diuji melalui enam kasus tahap tiga yang terisolasi. [Review P2](testing/research-stage-two-review.md),
 [operasi](testing/operations-follow-up.md), [riset biaya](testing/strategy-cost-review/readme.md).
 
 **Pembaruan rencana 23 Oktober:** [Plan 3](plan-3.md) menjadi rencana aktif;

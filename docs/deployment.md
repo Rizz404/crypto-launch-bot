@@ -123,6 +123,10 @@ Jawaban `139.255.196.196`/`182.23.79.195` berarti halaman blokir. Jangan
 mengganti resolver global sebagai perbaikan. Log WS mencatat tahap
 `dns|connect|tls|upgrade`.
 
+## Worker riset tambahan — 29 Oktober
+
+Enam kasus tahap tiga telah aktif; [T0, source/config/digest dan bukti](testing/research-stage-three.md). Service `research` memakai profil terpisah dan DB tetap `tradingbot_research_stage_three`, sehingga tidak mengganti `BOT_DB_NAME` atau config wallet P2. Jangan mengikuti langkah menghentikan worker lama pada prosedur penggantian trial berikut untuk sekadar memeriksa worker tambahan ini. Backup paper mencakup kedua DB dan profil; observer paper sekarang mengharuskan enam service dan dua worker sehat.
+
 ## Update atau trial baru yang telah diizinkan
 
 1. Catat source/digest/config hash, modal/ledger, mode dan waktu; jalankan

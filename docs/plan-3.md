@@ -1,6 +1,6 @@
 # Plan 3 — Riset katalis dan hold berbasis tesis
 
-**Ekspansi paper 29 Oktober:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
 
 ## Checkpoint 29 Oktober
 
@@ -31,7 +31,7 @@ transaksi; ketertinggalan feed masih ada. [Analisis](testing/research-stage-two-
 P3-O3 tetap terbuka untuk penerimaan operasi/sampel lanjutan. Pause dua EMA 1m
 kemudian diterapkan pada 21:10 WIB; P2 tidak direstart.
 Dua belas replay biaya kandidat selesai di [riset terbatas](testing/strategy-cost-review/readme.md),
-tanpa aktivasi strategi baru.
+kemudian diikuti aktivasi enam kasus indikator tahap tiga pada 29 Oktober 23:14 WIB; lihat protokol di atas.
 
 Klarifikasi user 29 Oktober: Plan 4 di memori Windows milik proyek/repo GitHub
 lain; **Plan 3 tetap aktif untuk repo ini**.
@@ -390,6 +390,7 @@ ID C lama dipertahankan sebagai provenance, bukan antrean duplikat.
   [protokol](strategy-2.md#perluasan-riset-multi-instance--21-oktober-2026).
   DB/wallet baru untuk eksperimen baru; target 44/132 menggantikan plafon lama
   24/72, tetapi tahapan antara tetap mengikuti hasil ukur dan cakupan izin.
+  Lanjutan 29 Oktober: enam kasus BTC/ETH aktif dengan DB/modal baru; review masih terbuka, target 44/132 belum selesai.
 
 Riset lama tetap menjadi pembanding terpisah; bukan prasyarat menyelesaikan
 semua 44 instance sebelum mengembangkan collector AI.

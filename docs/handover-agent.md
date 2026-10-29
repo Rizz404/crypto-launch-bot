@@ -1,6 +1,6 @@
 # Handover agent
 
-**Ekspansi paper 29 Oktober:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
 
 Untuk Codex, Claude dan agent berikutnya. Checkpoint **29 Oktober 2026**;
 verifikasi checkout dan waktu bukti sebelum bekerja.
@@ -49,7 +49,7 @@ bukan berarti image dengan SHA docs itu sudah dibangun/dipasang.
   order aktif, outage dan penerimaan Telegram alami/digest tetap terbuka.
   Backup luar server tetap ditunda sampai live sesuai keputusan user.
 - Dua belas replay biaya pada kandidat beku selesai. Pullback BTC/ETH masuk
-  shortlist eksplorasi, tanpa aktivasi baru atau holdout murni.
+  shortlist eksplorasi, kemudian diaktifkan melalui enam kasus tahap tiga; bukan holdout murni.
   [Riset terbatas](testing/strategy-cost-review/readme.md). Ekspansi 44/132,
   top-20 dan keluarga strategi baru tetap P3-R; mainnet belum disetujui.
 - Handover pilot/Spider menyimpan riwayat pause/WIP 28 Oktober. Gunakan status
@@ -60,17 +60,15 @@ bukan berarti image dengan SHA docs itu sudah dibangun/dipasang.
 1. Periksa `git status --short` dan source/runtime di handover VPS. Pertahankan
    perubahan belum di-commit; jangan reset/clean atau menyalin aplikasi laptop.
 2. Monitor source `d30b93b`: freshness/gap, reconnect/Pong, CPU/DB dan observer.
-   Penutupan 4h berikutnya 29 Oktober 23:00 WIB belum tercakup bukti awal ini.
+   Bukti awal rilis 22:30 belum mencakup penutupan 4h 23:00; checkpoint tahap tiga kemudian memeriksa delapan seri baru.
    Pause EMA 1m dipertahankan; jangan mengubah parameter/modal/T0/history.
-3. Review P3 hari 1 **29 Oktober 22:53 WIB** (belum jatuh tempo pada checkpoint
-   22:30), lalu 31 Oktober/4 November 22:53 WIB. Bedakan runtime/feed, sumber,
+3. Checkpoint ringkas P3 setelah hari 1 ada di [aktivasi tahap tiga](testing/research-stage-three.md); lanjut 31 Oktober/4 November 22:53 WIB. Bedakan runtime/feed, sumber,
    keputusan valid dan performa. Periksa keputusan baru untuk menutup alert
    lama tanpa memaksa inference di luar dedup/kuota.
 4. Periksa backup terjadwal pertama dan observer sesuai kebutuhan. Timer sudah
    aktif; jangan memasangnya atau mengulang restore flat lagi tanpa perubahan/
    risiko baru. Recovery posisi/order aktif dan outage tetap pekerjaan lanjut.
-5. Tidak mengaktifkan ulang ETH/tahap satu yang dihentikan, mengaktifkan
-   kandidat baru atau mainnet. Eksperimen berikut memakai versi/periode dan
+5. Enam kasus tahap tiga sudah diaktifkan dengan izin user; review D+1/3/7 pada 30 Oktober/1 November/5 November 23:14 WIB. Tidak mengaktifkan ulang ETH/tahap satu yang dihentikan, menambah kasus di luar enam ini atau mainnet. Eksperimen berikut memakai versi/periode dan
    ledger/modal terpisah sesuai [deployment](deployment.md).
 
 ## Batas kerja

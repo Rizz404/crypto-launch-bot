@@ -1,10 +1,10 @@
 # Dokumentasi trading-bot
 
-**Ekspansi paper 29 Oktober:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
 
 Mulai dari [handover agent](handover-agent.md), lalu pilih panduan yang diperlukan.
 
-**Terbaru — 29 Oktober 2026, 22:23 WIB:** patch feed/health P2, schema/UI P3
+**Rilis operasi sebelumnya — 29 Oktober 2026, 22:23 WIB:** patch feed/health P2, schema/UI P3
 serta helper/timer P3 sudah commit/push/CI/deploy pada **`d30b93b`**.
 [Laporan rilis dan batas bukti](testing/paper-operations-release.md).
 Dua EMA 1m tetap pause, saldo/T0/parameter sama. Feed awal membaik; P3 masih
