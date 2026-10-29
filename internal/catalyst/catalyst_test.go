@@ -364,7 +364,7 @@ func TestRobotsRulesAndCollectorPollingBudget(t *testing.T) {
 		{"User-agent: *\nDisallow: /\nAllow: /news", "/news/item", true},
 		{"User-agent: *\nDisallow: /news/*/hidden$", "/news/a/hidden", false},
 		{"User-agent: other\nDisallow: /", "/news", true},
-		{"User-agent: *\nDisallow: /\nUser-agent: trading-bot-catalyst-research\nAllow: /news", "/news", true},
+		{"User-agent: *\nDisallow: /\nUser-agent: ana-scout-research\nAllow: /news", "/news", true},
 	} {
 		require.Equal(t, row.allowed, robotsAllow(row.body, row.path), row.body)
 	}

@@ -78,7 +78,6 @@ jobs:
           load: true
           tags: ana-scout:ci
           labels: |
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
           cache-from: type=gha,scope=catalyst
           cache-to: type=gha,scope=catalyst,mode=max
@@ -204,7 +203,6 @@ jobs:
           tags: ${{ steps.image.outputs.name }}:sha-${{ github.sha }}
           build-args: VERSION=${{ github.sha }}
           labels: |
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
