@@ -2,7 +2,7 @@
 
 ## Checkpoint 29 Oktober
 
-**Pilot P3 sudah aktif sejak 28 Oktober 22:53 WIB.** Source berjalan `1779878`,
+**Pilot P3 sudah aktif sejak 28 Oktober 22:53 WIB.** Source berjalan `d30b93b`,
 DB/wallet terpisah; [source/digest, policy dan T0](handover-vps.md).
 Pause 22:12 WIB sudah dilanjutkan user malam 28 Oktober. Kode pilot sudah
 commit/push/CI/deploy; jangan memakai status WIP awal sebagai pekerjaan kini.
@@ -12,16 +12,15 @@ Profil: paper 1.000 USDT, risiko 0,5%/trade, maksimal dua posisi, halt harian
 Hari risiko ledger tetap UTC. Sumber Ethereum/Anza/Dogecoin sudah berhasil
 collect saat start. Worker memakai prompt v5 dan sender Telegram tanpa poller.
 
-**Lanjutan 29 Oktober disetujui user:** dua EMA 1m pause entry, backup/restore
-P3 saat flat dan QA Chromium desktop/mobile selesai, observer diuji sekali
-jalan. Patch feed/health P2, schema/UI P3 dan helper/timer lokal lulus race/vet/
-lint, belum commit/push/CI/deploy. [Bukti lanjutan](testing/operations-follow-up.md).
+**Rilis 29 Oktober 22:23 WIB selesai:** dua worker source `d30b93b`, CI lulus,
+patch feed/health dan schema/UI terpasang, timer P3 enabled/active. Dua EMA 1m
+pause; saldo/T0/parameter dan data dipertahankan. Backup/restore flat dan QA
+Chromium selesai. [Bukti rilis](testing/paper-operations-release.md).
 
-**Belum selesai:** pemasangan timer backup/observer, rollout dan pengukuran feed,
-review hari 1/3/7 (29 Oktober/31 Oktober/4 November 22:53 WIB), kecukupan
-sumber/event dan evaluasi prospektif. Snapshot P3 21:14 WIB: kas/modal 1.000,
-tanpa fill/posisi, kuota 4/12; tiga dari lima review valid. Ini belum kelulusan
-operasi/penerimaan hari 1 atau bukti profitabilitas.
+**Tetap terbuka:** observasi panjang feed/Pong/beban, keputusan model valid
+berikutnya (alert WATCH lama invalid masih ada), review hari 1/3/7,
+kecukupan sumber/event serta recovery posisi/order aktif/outage.
+Snapshot P3 masih tanpa fill, modal 1.000 dan kuota 4/12; belum bukti profitabilitas.
 Fase detail di bawah tidak otomatis lulus hanya karena pilot sudah aktif.
 
 **P2 hari ke-7 sudah dianalisis**, snapshot 29 Oktober 20:34 WIB:
@@ -410,7 +409,8 @@ semua 44 instance sebelum mengembangkan collector AI.
   ID/mode dan market-data publik pada rilis yang relevan tanpa order mainnet.
   **P3 29 Oktober:** backup DB/arsip + restore salinan flat sudah lulus,
   271 record arsip diperiksa; [bukti](testing/catalyst-backup-restore.json).
-  Pemasangan timer/observer permanen dan recovery posisi aktif tetap terbuka.
+  Timer backup/observer sudah aktif pada rilis 29 Oktober; pemeriksaan otomatis
+  dua kali tercatat. Recovery posisi aktif dan operasi panjang tetap terbuka.
 - [ ] **P3-O3 (P2-9 tujuh hari, C-08/C-18):** review operasi prospektif
   trial tahap dua pada 23/25/29 Oktober 19:58:45 WIB (hari 1/3/7 dari T0
   22 Oktober). Jadwal ETH dan tahap satu dibatalkan, bukan kelulusan yang

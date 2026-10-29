@@ -2,13 +2,11 @@
 
 Mulai dari [handover agent](handover-agent.md), lalu pilih panduan yang diperlukan.
 
-**Terbaru — 29 Oktober 2026:** [review tujuh hari P2](testing/research-stage-two-review.md)
-sudah dilakukan dari VPS secara baca-saja, dilanjutkan tindakan yang disetujui
-user: dua EMA 1m pause entry, backup/restore P3 dan QA browser selesai.
-[Laporan lanjutan dan status patch lokal](testing/operations-follow-up.md). Equity 740,40558347 dari modal
-747,83957456 USDT (−0,9941%); feed masih tertinggal, penerimaan operasi belum lulus.
-Pilot P3 sudah aktif sejak **28 Oktober 22.53 WIB**, source `1779878` pada
-pemeriksaan 29 Oktober. Mulai dari [handover agent](handover-agent.md).
+**Terbaru — 29 Oktober 2026, 22:23 WIB:** patch feed/health P2, schema/UI P3
+serta helper/timer P3 sudah commit/push/CI/deploy pada **`d30b93b`**.
+[Laporan rilis dan batas bukti](testing/paper-operations-release.md).
+Dua EMA 1m tetap pause, saldo/T0/parameter sama. Feed awal membaik; P3 masih
+memiliki alert review WATCH lama yang invalid meskipun runtime/feed sehat.
 
 | Dokumen | Isi |
 |---|---|
@@ -36,14 +34,15 @@ Plan 2 ditutup sebagai siklus pada 23 Oktober; backlog-nya tetap di Plan 3.
 Pilot P3 memakai paper 1.000 USDT, maksimal 12 panggilan AI/hari WIB dan DB/wallet
 sendiri. Sumber Ethereum/Anza/Dogecoin sudah dikoleksi pada start; detail rilis,
 digest dan batas bukti di [handover VPS](handover-vps.md). Aktivasi
-observer/alert permanen serta review hari 1/3/7 masih terbuka. Backup/restore
-flat dan QA Chromium desktop/mobile sudah punya bukti; timer/patch belum rilis. Review hari 1
+observer/alert permanen, backup/restore flat dan QA Chromium sudah selesai.
+Alert review invalid tetap dipertahankan. Review hari 1
 pada **29 Oktober 22.53 WIB**, hari 3/7 pada 31 Oktober/4 November.
 
 P2 tetap enam instance/18 binding BTC/ETH/SOL, T0 **22 Oktober 19:58:45 WIB**.
 Review terbaru memakai snapshot 29 Oktober 20:34 WIB; dua EMA 1m merugi,
 empat instance lain belum bertransaksi. Dua EMA 1m sudah pause pada 21:10 WIB;
-P2 tidak direstart, parameter/modal/T0 dan ledger tetap dipertahankan.
+P2 kemudian dirilis ulang pada 22:23 WIB; parameter/modal/T0 dan ledger
+tetap dipertahankan.
 [Riset biaya 12 kasus](testing/strategy-cost-review/readme.md) selesai; kandidat
 baru belum diaktifkan. Tidak ada izin uang asli.
 

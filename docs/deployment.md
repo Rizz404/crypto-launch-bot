@@ -152,7 +152,8 @@ mengganti resolver global sebagai perbaikan. Log WS mencatat tahap
 6. Mulai infrastruktur yang diperlukan, cek DNS, baru mulai bot. Jangan
    menjalankan worker legacy dan managed bersamaan pada wallet/mode yang sama.
 7. Periksa source/digest log, mode paper, saldo awal, indikator siap, feed 1m/4h,
-   order/proteksi, persistence, Telegram dan resource. `/healthz` hanya cek DB.
+   order/proteksi, persistence, Telegram dan resource. Managed `/healthz` mengecek DB, lease dan freshness consumer;
+   legacy hanya DB. Health P3 membedakan runtime/feed dari kesiapan riset.
    Bandingkan baseline/snapshot proyek lain sesudah perubahan.
 8. Catat waktu mulai aktual dan hasil pemeriksaan. Parameter dibekukan;
    perubahan strategi mendapat versi eksperimen baru, tanpa promosi live otomatis.
@@ -200,9 +201,10 @@ ulang keduanya secara membabi buta dari runbook lama.
 
 ## Operasi pilot P3 terpisah
 
-Helper baru **belum dipasang permanen pada checkpoint 29 Oktober**.
-Backup/restore dan observer sudah diverifikasi sekali jalan; detail/batasnya:
-[laporan lanjutan](testing/operations-follow-up.md).
+Helper dan timer P3 **sudah dipasang pada 29 Oktober 22:23 WIB**, source
+`d30b93b`. Backup/restore flat, trigger observer dan QA punya bukti di
+[laporan rilis](testing/paper-operations-release.md). Tidak perlu memasang atau
+menjalankan ulang hanya karena membaca runbook ini.
 
 Sesudah source rilis disetujui, diambil dari GitHub dan CI/GHCR lulus, helper
 berjalan dari `/opt/trading-bot-catalyst/repo`:
@@ -218,9 +220,9 @@ running. Tidak menyentuh P2. Dump/arsip/env privat dan checksum disimpan di
 `/opt/trading-bot-catalyst/backups/`, 0700/0600; tidak menghapus backup lama
 otomatis atau menyalin secret keluar VPS. Restore hanya ke DB/direktori salinan.
 
-Empat unit `deploy/systemd/trading-bot-catalyst-*` disiapkan untuk observe tiap
+Empat unit `deploy/systemd/trading-bot-catalyst-*` sudah dipasang untuk observe tiap
 lima menit dan backup 03:45 UTC + jitter maksimal sepuluh menit (10:45 WIB).
-Pasang/aktifkan hanya sesudah izin rilis; tidak perlu restart Docker/host.
+Pemasangan berikutnya mengikuti izin rilis; tidak perlu restart Docker/host.
 Observer exit 1 menandai unit failed dengan nama masalah di journal, tanpa
 pesan Telegram atau recovery otomatis. Ia membedakan health runtime/feed
 dari sumber/riset/review invalid, budget, disk dan backup yang tertinggal.

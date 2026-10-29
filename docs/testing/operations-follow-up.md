@@ -1,5 +1,10 @@
 # Lanjutan operasi P2/P3 — 29 Oktober 2026
 
+> **Status akhir:** rilis source `d30b93b` dan pemasangan timer selesai 29 Oktober
+> 22:23 WIB. [Laporan rilis](paper-operations-release.md) menggantikan status
+> lokal/belum dipasang pada checkpoint persiapan berikut; rinciannya tetap
+> dipertahankan sebagai riwayat diagnosis dan verifikasi.
+
 User menyetujui urutan diagnosis/perbaikan feed P2, pause entry dua EMA 1m,
 backup/observer P3, QA dashboard dan riset strategi terbatas. Paper saja.
 User kemudian memberi izin eksplisit **commit, push, deploy dan pemasangan

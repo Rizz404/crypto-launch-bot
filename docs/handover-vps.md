@@ -1,10 +1,24 @@
 # Handover VPS
 
-Checkpoint review P2 **29 Oktober 2026 20:34 WIB**, pilot paper P3 aktif
+Checkpoint rilis P2/P3 **29 Oktober 2026 22:23 WIB**, pilot paper P3 aktif
 **28 Oktober 22:53 WIB**. Prosedur di [deployment](deployment.md), rencana
 aktif [Plan 3](plan-3.md), pembanding [Strategi 2](strategy-2.md).
 
+## Rilis operasi P2/P3 — 29 Oktober 22:23 WIB
+
+**Source kedua worker `d30b93b`**, [seluruh CI lulus](https://github.com/Rizz404/trading-bot/actions/runs/40899450590).
+Image P2 `sha256:fbf28da706e06aebf022e964e12ee1e29183eb948a5b6261dd7617b5a7f7665e`,
+P3 `sha256:d43b809876dcc4f8422e25383fb3f83e8764df405f893ae04e925bef47742a76`.
+Health 200; modal, T0, status pause dan seluruh proyeksi finansial/config sama.
+36 container lain/lima layanan host identik. Timer P3 enabled/active dan
+observer sudah terpicu otomatis dua kali. Alert riset tetap menandai WATCH
+lama invalid; tidak dipaksa inference ulang. Bukti awal feed/sampel beban dan
+batas observasi: [laporan rilis](testing/paper-operations-release.md),
+[JSON](testing/paper-operations-release.json).
+
 ## Lanjutan disetujui user — 29 Oktober 21:10–21:29 WIB
+
+Checkpoint persiapan sebelum rilis 22:23 WIB di atas.
 
 Dua EMA 1m sudah **pause entry** via kontrol aplikasi; P2 tidak direstart,
 modal/T0/parameter tetap. Snapshot 21:29 WIB flat, total 214 fill (210 hot +4
@@ -23,7 +37,7 @@ UI P3 dan helper/timer sudah lokal, tes race/vet/lint lulus, **belum commit/
 push/CI/deploy atau pemasangan timer permanen**.
 [Laporan lengkap dan batas izin rilis](testing/operations-follow-up.md).
 
-## Review baca-saja — 29 Oktober
+## Review baca-saja — 29 Oktober 20:34 WIB
 
 [Analisis tujuh hari P2](testing/research-stage-two-review.md) dan
 [bukti](testing/research-stage-two-review.json): modal 747,83957456 → equity
@@ -47,14 +61,15 @@ riset/kuota/modal P3 hari 1. Jadwal review pertamanya 29 Oktober 22:53 WIB.
 User mengizinkan deploy setelah lanjutan pilot. Worker paper P3 berjalan
 terus-menerus (`restart: unless-stopped`) di project `trading-bot-catalyst`
 dengan DB, resolver DoT dan wallet sendiri. **Uang virtual saja**, tanpa order
-sungguhan. P2 tidak direstart; identitas container P2 identik sebelum/sesudah.
+sungguhan. Pada start 28 Oktober, P2 tidak direstart; identitas container P2
+identik sebelum/sesudah. Rilis kedua worker 29 Oktober dicatat di bagian atas.
 
 | Item | Nilai |
 |---|---|
-| Source berjalan | `1779878` (pesan start Telegram), sebelumnya `05ce48a`/`41d22b0`; start awal `43b6f61` 22.53 WIB |
-| Image | `ghcr.io/rizz404/trading-bot-catalyst@sha256:4579285aee19eeab366b4f87f6eb08d0340f8be8b1a5f2b4833b5ac3a3904cdf` (redeploy ±23.35 WIB, Spider `spider_cli 2.53.9-p3.1`) |
+| Source berjalan | `d30b93b`, rilis 29 Oktober 22:23 WIB; start trial awal `43b6f61` 28 Oktober 22:53 WIB |
+| Image | `ghcr.io/rizz404/trading-bot-catalyst@sha256:d43b809876dcc4f8422e25383fb3f83e8764df405f893ae04e925bef47742a76` (rilis 29 Oktober 22:23 WIB; Spider `spider_cli 2.53.9-p3.1`) |
 | Spider artefak | `ghcr.io/rizz404/trading-bot-spider@sha256:480faea43abdb2b2e8bd6cf136ecd250e8c37039e925f0bdb38f14385a318e19`; CI katalis turun ±12 → ±1,7 menit |
-| CI | [40717858676](https://github.com/Rizz404/trading-bot/actions/runs/40717858676) dan [40720835367](https://github.com/Rizz404/trading-bot/actions/runs/40720835367) lulus seluruh job; [40724154160](https://github.com/Rizz404/trading-bot/actions/runs/40724154160) untuk `05ce48a` |
+| CI | [40899450590](https://github.com/Rizz404/trading-bot/actions/runs/40899450590) lulus untuk source final 29 Oktober; riwayat start [40717858676](https://github.com/Rizz404/trading-bot/actions/runs/40717858676), [40720835367](https://github.com/Rizz404/trading-bot/actions/runs/40720835367), [40724154160](https://github.com/Rizz404/trading-bot/actions/runs/40724154160) |
 | Wallet / DB | `paper:catalyst-catalyst-paper-v1` / `tradingbot_catalyst_paper_v1`, role `catalyst`, volume `trading-bot-catalyst_db-data` |
 | Modal / risiko | 1.000 USDT virtual, 0,5%/trade, maks 2 posisi, halt harian 2% / drawdown 8% |
 | AI | `cx/gpt-6-luna-low` (served `gpt-6-luna`), prompt v5, maks 12 panggilan/hari WIB |
@@ -74,8 +89,8 @@ berjalan tanpa error dan tanpa panggilan baru (bukti tidak berubah); kuota
 terpakai 1/12 pada 28 Oktober.
 
 Belum pada checkpoint start: backup/restore DB dan arsip P3, observer/alert P3,
-QA browser. Lanjutan 29 Oktober di atas menutup restore flat/QA browser awal;
-helper/timer permanen tetap belum aktif. Review pilot hari 1/3/7: **29 Oktober / 31 Oktober / 4 November
+QA browser. Restore flat/QA awal kemudian lulus dan helper/timer permanen
+aktif pada rilis 29 Oktober 22:23 WIB. Review pilot hari 1/3/7: **29 Oktober / 31 Oktober / 4 November
 22.53 WIB**. Tidak ada entry sampai sumber primer memuat jadwal mainnet/produk
 eksplisit (event Hoodi sekarang testnet dan ditunda).
 
@@ -496,7 +511,8 @@ systemctl is-active trading-bot-paper-backup.timer
 
 `vps-observe.py` memeriksa proses/feed trial riset aktif; bot sengaja mati akan
 memberi masalah kesehatan. Timer lama diaktifkan kembali untuk trial baru ini.
-`/healthz` hanya membuktikan DB, bukan kesehatan feed atau strategi.
+Pada rilis lama `/healthz` hanya membuktikan DB. Managed source `d30b93b`
+menambah lease/freshness consumer; ini tetap bukan bukti seluruh strategi/penerimaan lulus.
 
 Port host loopback: web 18080, metrics 19100, Prometheus 19090, Grafana 13000.
 Tunnel dashboard/monitoring saat layanan terkait aktif:

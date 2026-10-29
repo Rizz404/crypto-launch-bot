@@ -1,0 +1,824 @@
+{
+  "subject": "User-authorized paper P2/P3 rollout and P3 timer installation",
+  "recorded_at": "2026-10-29T15:35:17.323869+00:00",
+  "source": "d30b93b33307bad5a8736a6685b7e556aaee6040",
+  "ci": {
+    "id": 40899450590,
+    "url": "https://github.com/Rizz404/trading-bot/actions/runs/40899450590",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "Database and paper recovery",
+        "conclusion": "success"
+      },
+      {
+        "name": "Go checks and unit tests",
+        "conclusion": "success"
+      },
+      {
+        "name": "Prometheus alerts",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build and publish container",
+        "conclusion": "success"
+      },
+      {
+        "name": "Isolated Spider image and protocol",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "initial_rollout": {
+    "source": "d33dd845be444affc75d449db92c2e774e87e683",
+    "started_at": "2026-10-29T15:04:39.197991+00:00",
+    "p2": {
+      "started_at": "2026-10-29T15:04:39.202444+00:00",
+      "old_image": "ghcr.io/rizz404/trading-bot@sha256:02376651f56e2291c41fef664a44691a9279686b4a89288a2dba020528e097ca",
+      "image": "ghcr.io/rizz404/trading-bot@sha256:85a9daa248e435eafd4e438cf1ea489bee3f834e8671c061e7f636c023824e81",
+      "health": {
+        "status": 503
+      },
+      "completed_at": "2026-10-29T15:05:24.854046+00:00",
+      "container": {
+        "id": "f625be509cee65a4e29aec568db84c6dfe8bb7db29bd0ac54e8be176cf9585a3",
+        "image": "sha256:85a9daa248e435eafd4e438cf1ea489bee3f834e8671c061e7f636c023824e81",
+        "status": "running",
+        "source": "d33dd845be444affc75d449db92c2e774e87e683",
+        "started_at": "2026-10-29T15:04:40.432317125Z",
+        "restarts": 0,
+        "oom_killed": false
+      }
+    }
+  },
+  "initial_ci_url": "https://github.com/Rizz404/trading-bot/actions/runs/40896251543",
+  "images": {
+    "p2": {
+      "image": "ghcr.io/rizz404/trading-bot@sha256:fbf28da706e06aebf022e964e12ee1e29183eb948a5b6261dd7617b5a7f7665e",
+      "id": "sha256:fbf28da706e06aebf022e964e12ee1e29183eb948a5b6261dd7617b5a7f7665e",
+      "source": "d30b93b33307bad5a8736a6685b7e556aaee6040"
+    },
+    "p3": {
+      "image": "ghcr.io/rizz404/trading-bot-catalyst@sha256:d43b809876dcc4f8422e25383fb3f83e8764df405f893ae04e925bef47742a76",
+      "id": "sha256:d43b809876dcc4f8422e25383fb3f83e8764df405f893ae04e925bef47742a76",
+      "source": "d30b93b33307bad5a8736a6685b7e556aaee6040"
+    }
+  },
+  "deployment": {
+    "source": "d30b93b33307bad5a8736a6685b7e556aaee6040",
+    "started_at": "2026-10-29T15:23:13.888894+00:00",
+    "p2": {
+      "started_at": "2026-10-29T15:23:13.894693+00:00",
+      "old_image": "ghcr.io/rizz404/trading-bot@sha256:85a9daa248e435eafd4e438cf1ea489bee3f834e8671c061e7f636c023824e81",
+      "image": "ghcr.io/rizz404/trading-bot@sha256:fbf28da706e06aebf022e964e12ee1e29183eb948a5b6261dd7617b5a7f7665e",
+      "health": {
+        "status": 200,
+        "body": "ok\n"
+      },
+      "completed_at": "2026-10-29T15:23:19.213520+00:00",
+      "container": {
+        "id": "4e0b70509306bc5fc27fb440b62042ddd732bc1011c87bd0078d34b794c27c1b",
+        "image": "sha256:fbf28da706e06aebf022e964e12ee1e29183eb948a5b6261dd7617b5a7f7665e",
+        "status": "running",
+        "source": "d30b93b33307bad5a8736a6685b7e556aaee6040",
+        "started_at": "2026-10-29T15:23:14.942916325Z",
+        "restarts": 0,
+        "oom_killed": false
+      }
+    },
+    "p3": {
+      "started_at": "2026-10-29T15:23:19.361912+00:00",
+      "old_image": "ghcr.io/rizz404/trading-bot-catalyst@sha256:4579285aee19eeab366b4f87f6eb08d0340f8be8b1a5f2b4833b5ac3a3904cdf",
+      "image": "ghcr.io/rizz404/trading-bot-catalyst@sha256:d43b809876dcc4f8422e25383fb3f83e8764df405f893ae04e925bef47742a76",
+      "backup_output": "Backup completed: /opt/trading-bot-catalyst/repo/../backups/backup-20261029T152320Z",
+      "health": {
+        "status": 200,
+        "body": "{\"runtime_feed\":\"ok\",\"research_ready_is_separate\":true}"
+      },
+      "completed_at": "2026-10-29T15:23:25.359773+00:00",
+      "container": {
+        "id": "7f3d5ab0dee47f2c8029cf695871d3fdd2a8bea7171acbe57e870473c37d522c",
+        "image": "sha256:d43b809876dcc4f8422e25383fb3f83e8764df405f893ae04e925bef47742a76",
+        "status": "running",
+        "source": "d30b93b33307bad5a8736a6685b7e556aaee6040",
+        "started_at": "2026-10-29T15:23:21.102866931Z",
+        "restarts": 0,
+        "oom_killed": false
+      }
+    },
+    "observer_start_exit_code": 1,
+    "units": {
+      "trading-bot-catalyst-backup.service": {
+        "Result": "success",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "static"
+      },
+      "trading-bot-catalyst-backup.timer": {
+        "NextElapseUSecRealtime": "Fri 2026-10-30 03:48:38 UTC",
+        "LastTriggerUSec": "",
+        "Result": "success",
+        "ActiveState": "active",
+        "SubState": "waiting",
+        "UnitFileState": "enabled"
+      },
+      "trading-bot-catalyst-observe.service": {
+        "Result": "exit-code",
+        "ActiveState": "failed",
+        "SubState": "failed",
+        "UnitFileState": "static"
+      },
+      "trading-bot-catalyst-observe.timer": {
+        "NextElapseUSecRealtime": "",
+        "LastTriggerUSec": "Thu 2026-10-29 15:23:26 UTC",
+        "Result": "success",
+        "ActiveState": "active",
+        "SubState": "waiting",
+        "UnitFileState": "enabled"
+      }
+    },
+    "completed_at": "2026-10-29T15:23:30.187719+00:00"
+  },
+  "p2_backup_restore": {
+    "at": "2026-10-29T14:58:47.453530+00:00",
+    "backup": "/opt/trading-bot-paper/backups/backup-20261029T145749Z",
+    "checksums_verified": true,
+    "restore_database": "tradingbot_release_verify",
+    "restored_counts": {
+      "wallets": 1,
+      "journal": 618,
+      "archive_fills": 4,
+      "migration_version": 5
+    },
+    "financial_projection_equal": true,
+    "scratch_database_dropped": true
+  },
+  "p2_active_config_sha256": "8687ca0ca42629b642920c2d27cacbaf2cc3533cb1d5ad48673c3b027822d893",
+  "wallets_before": {
+    "p2": {
+      "id": "paper:research-stage-two",
+      "started_at": "2026-10-22T12:58:45.651873337Z",
+      "capital_usdt": "747.83957456237531",
+      "equity_usdt": "740.40558346906799",
+      "net_pnl_usdt": "-7.43399109330732",
+      "config_hash": "af4c6a5018dfac769769c92cb7b88b95a0000e5fbfebf57e78e09117c2bb4b36",
+      "projection_sha256": "08025c7a17d89a50f124601941bace1b39b6ddf9cf7978565caec640877ca44f",
+      "instances": {
+        "tren-500k": {
+          "Status": "running",
+          "Cash": "27.69776202082872",
+          "Funded": "27.69776202082872",
+          "Halted": false
+        },
+        "tren-2000k": {
+          "Status": "running",
+          "Cash": "110.79104808331486",
+          "Funded": "110.79104808331486",
+          "Halted": false
+        },
+        "tren-5000k": {
+          "Status": "running",
+          "Cash": "276.97762020828715",
+          "Funded": "276.97762020828715",
+          "Halted": false
+        },
+        "ema-base-1m": {
+          "Status": "paused",
+          "Cash": "106.54853492910256",
+          "Funded": "110.79104808331486",
+          "Halted": false
+        },
+        "ema-trend-1m": {
+          "Status": "paused",
+          "Cash": "107.59957014421984",
+          "Funded": "110.79104808331486",
+          "Halted": false
+        },
+        "ema-trend-4h": {
+          "Status": "running",
+          "Cash": "110.79104808331486",
+          "Funded": "110.79104808331486",
+          "Halted": false
+        }
+      },
+      "nonzero_holdings": 0,
+      "active_orders": 0,
+      "pending_events": 0,
+      "hot_fills": 208,
+      "archived_fills": 6,
+      "total_fills": 214,
+      "schema_version": 5
+    },
+    "p3": {
+      "id": "paper:catalyst-catalyst-paper-v1",
+      "started_at": "2026-10-28T15:53:13.569901322Z",
+      "capital_usdt": "1000",
+      "equity_usdt": "1000",
+      "net_pnl_usdt": "0",
+      "config_hash": "0451f322e03852e106d57d0b8986f98072201ed04f4fb4cbd507265fa91cc85d",
+      "projection_sha256": "7449c6205a9e3d1c2bbaceb82bea1066c2245222cb256121cd0df0223bf5aea1",
+      "instances": {
+        "research": {
+          "Status": "running",
+          "Cash": "1000",
+          "Funded": "1000",
+          "Halted": false
+        }
+      },
+      "nonzero_holdings": 0,
+      "active_orders": 0,
+      "pending_events": 0,
+      "hot_fills": 0,
+      "archived_fills": 0,
+      "total_fills": 0,
+      "schema_version": 5
+    }
+  },
+  "wallets_after": {
+    "p2": {
+      "id": "paper:research-stage-two",
+      "started_at": "2026-10-22T12:58:45.651873337Z",
+      "capital_usdt": "747.83957456237531",
+      "equity_usdt": "740.40558346906799",
+      "net_pnl_usdt": "-7.43399109330732",
+      "config_hash": "af4c6a5018dfac769769c92cb7b88b95a0000e5fbfebf57e78e09117c2bb4b36",
+      "projection_sha256": "08025c7a17d89a50f124601941bace1b39b6ddf9cf7978565caec640877ca44f",
+      "instances": {
+        "tren-500k": {
+          "Status": "running",
+          "Cash": "27.69776202082872",
+          "Funded": "27.69776202082872",
+          "Halted": false
+        },
+        "tren-2000k": {
+          "Status": "running",
+          "Cash": "110.79104808331486",
+          "Funded": "110.79104808331486",
+          "Halted": false
+        },
+        "tren-5000k": {
+          "Status": "running",
+          "Cash": "276.97762020828715",
+          "Funded": "276.97762020828715",
+          "Halted": false
+        },
+        "ema-base-1m": {
+          "Status": "paused",
+          "Cash": "106.54853492910256",
+          "Funded": "110.79104808331486",
+          "Halted": false
+        },
+        "ema-trend-1m": {
+          "Status": "paused",
+          "Cash": "107.59957014421984",
+          "Funded": "110.79104808331486",
+          "Halted": false
+        },
+        "ema-trend-4h": {
+          "Status": "running",
+          "Cash": "110.79104808331486",
+          "Funded": "110.79104808331486",
+          "Halted": false
+        }
+      },
+      "nonzero_holdings": 0,
+      "active_orders": 0,
+      "pending_events": 0,
+      "hot_fills": 206,
+      "archived_fills": 8,
+      "total_fills": 214,
+      "schema_version": 5
+    },
+    "p3": {
+      "id": "paper:catalyst-catalyst-paper-v1",
+      "started_at": "2026-10-28T15:53:13.569901322Z",
+      "capital_usdt": "1000",
+      "equity_usdt": "1000",
+      "net_pnl_usdt": "0",
+      "config_hash": "0451f322e03852e106d57d0b8986f98072201ed04f4fb4cbd507265fa91cc85d",
+      "projection_sha256": "7449c6205a9e3d1c2bbaceb82bea1066c2245222cb256121cd0df0223bf5aea1",
+      "instances": {
+        "research": {
+          "Status": "running",
+          "Cash": "1000",
+          "Funded": "1000",
+          "Halted": false
+        }
+      },
+      "nonzero_holdings": 0,
+      "active_orders": 0,
+      "pending_events": 0,
+      "hot_fills": 0,
+      "archived_fills": 0,
+      "total_fills": 0,
+      "schema_version": 5
+    }
+  },
+  "financial_config_status_projections_equal": true,
+  "isolation": {
+    "other_containers_unchanged": 36,
+    "other_containers_before_sha256": "7c3244e7c4c36e4928ffdd479ca85e0fc50422f5b0ffad5429f0977f178546aa",
+    "other_containers_after_sha256": "7c3244e7c4c36e4928ffdd479ca85e0fc50422f5b0ffad5429f0977f178546aa",
+    "host_services_unchanged": true,
+    "host_services": {
+      "psa": {
+        "ActiveState": "active",
+        "SubState": "exited"
+      },
+      "nginx": {
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "httpd": {
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "sw-cp-server": {
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "docker": {
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    }
+  },
+  "p3_budget_before": {
+    "2026-10-28": 1,
+    "2026-10-29": 4
+  },
+  "p3_budget_after": {
+    "2026-10-28": 1,
+    "2026-10-29": 4
+  },
+  "mode_source_check": {
+    "at": "2026-10-29T15:32:14.773795+00:00",
+    "p2_mode_flags": {
+      "TB_APP__MODE": "paper",
+      "TB_APP__ALLOW_LIVE": "false"
+    },
+    "repository_heads": {
+      "p2": "d30b93b33307bad5a8736a6685b7e556aaee6040",
+      "p3": "d30b93b33307bad5a8736a6685b7e556aaee6040"
+    }
+  },
+  "post_checks": {
+    "at": "2026-10-29T15:25:55.919150+00:00",
+    "p2_series": [
+      {
+        "symbol": "BTCUSDT",
+        "timeframe": "1m",
+        "last_open": "2026-10-29T15:24:00+00:00",
+        "age_seconds": 116
+      },
+      {
+        "symbol": "BTCUSDT",
+        "timeframe": "4h",
+        "last_open": "2026-10-29T08:00:00+00:00",
+        "age_seconds": 26756
+      },
+      {
+        "symbol": "ETHUSDT",
+        "timeframe": "1m",
+        "last_open": "2026-10-29T15:24:00+00:00",
+        "age_seconds": 116
+      },
+      {
+        "symbol": "ETHUSDT",
+        "timeframe": "4h",
+        "last_open": "2026-10-29T08:00:00+00:00",
+        "age_seconds": 26756
+      },
+      {
+        "symbol": "SOLUSDT",
+        "timeframe": "1m",
+        "last_open": "2026-10-29T15:24:00+00:00",
+        "age_seconds": 116
+      },
+      {
+        "symbol": "SOLUSDT",
+        "timeframe": "4h",
+        "last_open": "2026-10-29T08:00:00+00:00",
+        "age_seconds": 26756
+      }
+    ],
+    "p2_health": {
+      "status": 200,
+      "body": "ok\n"
+    },
+    "p3_health": {
+      "status": 200,
+      "body": "{\"runtime_feed\":\"ok\",\"research_ready_is_separate\":true}"
+    },
+    "p3_research_status": {
+      "StartedAt": "2026-10-29T15:23:22.386207101Z",
+      "TickAt": "2026-10-29T15:25:55.414230211Z",
+      "ResearchAt": "2026-10-29T15:23:41.612364939Z",
+      "Prices": {
+        "DOGEUSDT": "2026-10-29T15:25:54.612475608Z",
+        "ETHUSDT": "2026-10-29T15:25:54.414202489Z",
+        "SOLUSDT": "2026-10-29T15:25:54.515652886Z"
+      },
+      "SourceGaps": null,
+      "DecisionID": "83431ba065efa7c0279086b0def3cdc5b446123e6df9e8af0f67b669669a3ecd",
+      "Action": "WATCH",
+      "Symbol": "",
+      "Reason": "No Events are supplied, so there is no exact event key, schedule, or literal primary-source date to support an entry. There are no existing positions to hold or exit. Watch for verified, dated primary evidence; do not treat old development updates or an already-live product as a future catalyst.",
+      "Error": "invalid action, symbol or reason"
+    },
+    "p3_latest_review": {
+      "ID": "83431ba065efa7c0279086b0def3cdc5b446123e6df9e8af0f67b669669a3ecd",
+      "Action": "WATCH",
+      "Symbol": "",
+      "Reason": "No Events are supplied, so there is no exact event key, schedule, or literal primary-source date to support an entry. There are no existing positions to hold or exit. Watch for verified, dated primary evidence; do not treat old development updates or an already-live product as a future catalyst.",
+      "Error": "invalid action, symbol or reason",
+      "RequestedModel": "cx/gpt-6-luna-low",
+      "ServedModel": "gpt-6-luna",
+      "At": "2026-10-29T12:02:40.44853133Z",
+      "ExpiresAt": "2026-10-29T12:07:40.44853133Z",
+      "Valid": false,
+      "LatencyMS": 5009,
+      "InputTokens": 10058,
+      "OutputTokens": 408
+    },
+    "p3_sources": [
+      {
+        "source_id": "ethereum-blog",
+        "at": "2026-10-29T15:23:22.413996189Z",
+        "evidence_id": "c4a87992743cddc376d984f9dc8d9eb37db54496271a8444bfec044e45b0d582",
+        "status": "ok",
+        "http_status": 200
+      },
+      {
+        "source_id": "anza-blog",
+        "at": "2026-10-29T15:23:28.53241134Z",
+        "evidence_id": "ccde8719829e8ad33fcb646c9078749ccf29bfc37c34e9e932b26ee2d93a1cf3",
+        "status": "ok",
+        "http_status": 200
+      },
+      {
+        "source_id": "dogecoin-blog",
+        "at": "2026-10-29T15:23:34.720695644Z",
+        "evidence_id": "836b2d75f3bead6b5b13a16785447651f2dfc24d277b5ee797c9b3a97d744c77",
+        "status": "ok",
+        "http_status": 200
+      }
+    ],
+    "p3_tokens": {
+      "input": 50292,
+      "output": 2055
+    },
+    "p3_research_unauthenticated_status": 401,
+    "archived_decision_visible_after_restart": true,
+    "p2_binary_version": "d30b93b33307bad5a8736a6685b7e556aaee6040",
+    "p3_spider_version": "spider_cli 2.53.9-p3.1",
+    "host_services": {
+      "psa": {
+        "ActiveState": "active",
+        "SubState": "exited"
+      },
+      "nginx": {
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "httpd": {
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "sw-cp-server": {
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "docker": {
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    },
+    "p2_observer": {
+      "exit_code": 0,
+      "result": {
+        "time": "2026-10-29T15:25:56.408860+00:00",
+        "problems": []
+      }
+    },
+    "p3_observer": {
+      "exit_code": 1,
+      "result": {
+        "time": "2026-10-29T15:25:57.631784+00:00",
+        "problems": [
+          "research_error",
+          "latest_review_invalid"
+        ]
+      }
+    }
+  },
+  "performance_samples": {
+    "initial_d33dd84": {
+      "at": "2026-10-29T15:16:21.468864+00:00",
+      "sample_seconds": 15.481851171003655,
+      "database_commits_per_second": 84.80897959148132,
+      "before": {
+        "at": "2026-10-29T15:16:03.987102+00:00",
+        "commits": 92422309,
+        "rollbacks": 57
+      },
+      "after": {
+        "at": "2026-10-29T15:16:19.208932+00:00",
+        "commits": 92423622,
+        "rollbacks": 57
+      },
+      "resources": [
+        {
+          "BlockIO": "229kB / 0B",
+          "CPUPerc": "59.73%",
+          "Container": "trading-bot-paper-bot-1",
+          "ID": "f625be509cee",
+          "MemPerc": "17.59%",
+          "MemUsage": "90.04MiB / 512MiB",
+          "Name": "trading-bot-paper-bot-1",
+          "NetIO": "36.6GB / 151MB",
+          "PIDs": "8"
+        },
+        {
+          "BlockIO": "180MB / 197GB",
+          "CPUPerc": "64.30%",
+          "Container": "trading-bot-paper-db-1",
+          "ID": "9d17669ad57f",
+          "MemPerc": "13.92%",
+          "MemUsage": "142.5MiB / 1GiB",
+          "Name": "trading-bot-paper-db-1",
+          "NetIO": "92.5GB / 24.8TB",
+          "PIDs": "15"
+        }
+      ],
+      "series": [
+        {
+          "symbol": "BTCUSDT",
+          "timeframe": "1m",
+          "last_open": "2026-10-29T15:10:00+00:00",
+          "age_seconds": 381
+        },
+        {
+          "symbol": "BTCUSDT",
+          "timeframe": "4h",
+          "last_open": "2026-10-29T08:00:00+00:00",
+          "age_seconds": 26181
+        },
+        {
+          "symbol": "ETHUSDT",
+          "timeframe": "1m",
+          "last_open": "2026-10-29T15:10:00+00:00",
+          "age_seconds": 381
+        },
+        {
+          "symbol": "ETHUSDT",
+          "timeframe": "4h",
+          "last_open": "2026-10-29T08:00:00+00:00",
+          "age_seconds": 26181
+        },
+        {
+          "symbol": "SOLUSDT",
+          "timeframe": "1m",
+          "last_open": "2026-10-29T15:10:00+00:00",
+          "age_seconds": 381
+        },
+        {
+          "symbol": "SOLUSDT",
+          "timeframe": "4h",
+          "last_open": "2026-10-29T08:00:00+00:00",
+          "age_seconds": 26181
+        }
+      ],
+      "health": {
+        "status": 503,
+        "body": "unhealthy: market data not ready or stale: BTCUSDT 1m\n"
+      },
+      "limitations": "Short sample includes observer/verification SQL; not a peak-load benchmark or proof of long-term stability."
+    },
+    "final_d30b93b": {
+      "at": "2026-10-29T15:26:13.280654+00:00",
+      "sample_seconds": 15.377384140039794,
+      "database_commits_per_second": 18.923894815262575,
+      "before": {
+        "at": "2026-10-29T15:25:55.857024+00:00",
+        "commits": 92488050,
+        "rollbacks": 57
+      },
+      "after": {
+        "at": "2026-10-29T15:26:11.030913+00:00",
+        "commits": 92488341,
+        "rollbacks": 57
+      },
+      "resources": [
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "27.39%",
+          "Container": "trading-bot-paper-bot-1",
+          "ID": "4e0b70509306",
+          "MemPerc": "16.19%",
+          "MemUsage": "82.88MiB / 512MiB",
+          "Name": "trading-bot-paper-bot-1",
+          "NetIO": "1.58GB / 45.5MB",
+          "PIDs": "8"
+        },
+        {
+          "BlockIO": "180MB / 197GB",
+          "CPUPerc": "9.50%",
+          "Container": "trading-bot-paper-db-1",
+          "ID": "9d17669ad57f",
+          "MemPerc": "13.82%",
+          "MemUsage": "141.5MiB / 1GiB",
+          "Name": "trading-bot-paper-db-1",
+          "NetIO": "92.6GB / 24.8TB",
+          "PIDs": "15"
+        }
+      ],
+      "series": [
+        {
+          "symbol": "BTCUSDT",
+          "timeframe": "1m",
+          "last_open": "2026-10-29T15:25:00+00:00",
+          "age_seconds": 73
+        },
+        {
+          "symbol": "BTCUSDT",
+          "timeframe": "4h",
+          "last_open": "2026-10-29T08:00:00+00:00",
+          "age_seconds": 26773
+        },
+        {
+          "symbol": "ETHUSDT",
+          "timeframe": "1m",
+          "last_open": "2026-10-29T15:25:00+00:00",
+          "age_seconds": 73
+        },
+        {
+          "symbol": "ETHUSDT",
+          "timeframe": "4h",
+          "last_open": "2026-10-29T08:00:00+00:00",
+          "age_seconds": 26773
+        },
+        {
+          "symbol": "SOLUSDT",
+          "timeframe": "1m",
+          "last_open": "2026-10-29T15:25:00+00:00",
+          "age_seconds": 73
+        },
+        {
+          "symbol": "SOLUSDT",
+          "timeframe": "4h",
+          "last_open": "2026-10-29T08:00:00+00:00",
+          "age_seconds": 26773
+        }
+      ],
+      "health": {
+        "status": 200,
+        "body": "ok\n"
+      },
+      "limitations": "Short sample includes observer/verification SQL; not a peak-load benchmark or proof of long-term stability."
+    }
+  },
+  "timer_and_log_follow_up": {
+    "at": "2026-10-29T15:29:21.832883+00:00",
+    "units": {
+      "trading-bot-catalyst-backup.timer": {
+        "NextElapseUSecRealtime": "Fri 2026-10-30 03:48:38 UTC",
+        "NextElapseUSecMonotonic": "0",
+        "LastTriggerUSec": "",
+        "Result": "success",
+        "ActiveState": "active",
+        "SubState": "waiting",
+        "UnitFileState": "enabled"
+      },
+      "trading-bot-catalyst-observe.timer": {
+        "NextElapseUSecRealtime": "",
+        "NextElapseUSecMonotonic": "1w 4d 23h 51min 14.257698s",
+        "LastTriggerUSec": "Thu 2026-10-29 15:28:27 UTC",
+        "Result": "success",
+        "ActiveState": "active",
+        "SubState": "waiting",
+        "UnitFileState": "enabled"
+      },
+      "trading-bot-catalyst-observe.service": {
+        "Result": "exit-code",
+        "ActiveState": "failed",
+        "SubState": "failed",
+        "UnitFileState": "static"
+      }
+    },
+    "p2_logs_since_final_start": {
+      "exit_code": 0,
+      "bounded_lines": 3,
+      "pong_timeout_lines": 0,
+      "disconnect_lines": 0,
+      "backfill_done_lines": 1
+    }
+  },
+  "candle_follow_up": {
+    "at": "2026-10-29T15:30:57.566589+00:00",
+    "p2_series_since_final_start": [
+      {
+        "symbol": "BTCUSDT",
+        "bars": 7,
+        "last_open": "2026-10-29T15:29:00+00:00",
+        "age_seconds": 118,
+        "gaps": 0
+      },
+      {
+        "symbol": "ETHUSDT",
+        "bars": 7,
+        "last_open": "2026-10-29T15:29:00+00:00",
+        "age_seconds": 118,
+        "gaps": 0
+      },
+      {
+        "symbol": "SOLUSDT",
+        "bars": 7,
+        "last_open": "2026-10-29T15:29:00+00:00",
+        "age_seconds": 118,
+        "gaps": 0
+      }
+    ],
+    "p2_health": {
+      "status": 200,
+      "body": "ok\n"
+    }
+  },
+  "browser_evidence": "docs/testing/catalyst-browser-release.json",
+  "limitations": [
+    "Short post-rollout observation only; no 24h/7-day stability or peak-load claim.",
+    "No Pong timeout/disconnect lines in the approximately six-minute bounded log window, not proof they cannot recur.",
+    "Four-hour readiness was checked against the stored frontier; next live four-hour close has not occurred in this window.",
+    "P3 observer deliberately exits 1 for the latest archived invalid WATCH; runtime/feed health is 200 and no new model call was forced.",
+    "P3 day-one formal review at October 29 22:53 WIB has not yet occurred at this checkpoint.",
+    "No mainnet authorization, new strategy activation, capital/T0/parameter changes, global Docker/host restart or changes to other projects."
+  ],
+  "completion_check": {
+    "at": "2026-10-29T15:42:20.848781+00:00",
+    "p2_health": {
+      "status": 200,
+      "body": "ok\n"
+    },
+    "p3_health": {
+      "status": 200,
+      "body": "{\"runtime_feed\":\"ok\",\"research_ready_is_separate\":true}"
+    },
+    "p2_series": [
+      {
+        "symbol": "BTCUSDT",
+        "timeframe": "1m",
+        "last_open": "2026-10-29T15:41:00+00:00",
+        "age_seconds": 81
+      },
+      {
+        "symbol": "BTCUSDT",
+        "timeframe": "4h",
+        "last_open": "2026-10-29T08:00:00+00:00",
+        "age_seconds": 27741
+      },
+      {
+        "symbol": "ETHUSDT",
+        "timeframe": "1m",
+        "last_open": "2026-10-29T15:41:00+00:00",
+        "age_seconds": 81
+      },
+      {
+        "symbol": "ETHUSDT",
+        "timeframe": "4h",
+        "last_open": "2026-10-29T08:00:00+00:00",
+        "age_seconds": 27741
+      },
+      {
+        "symbol": "SOLUSDT",
+        "timeframe": "1m",
+        "last_open": "2026-10-29T15:41:00+00:00",
+        "age_seconds": 81
+      },
+      {
+        "symbol": "SOLUSDT",
+        "timeframe": "4h",
+        "last_open": "2026-10-29T08:00:00+00:00",
+        "age_seconds": 27741
+      }
+    ],
+    "p2_observer": {
+      "exit_code": 0,
+      "result": {
+        "time": "2026-10-29T15:42:21.373891+00:00",
+        "problems": []
+      }
+    },
+    "p3_observer": {
+      "exit_code": 1,
+      "result": {
+        "time": "2026-10-29T15:42:22.812601+00:00",
+        "problems": [
+          "research_error",
+          "latest_review_invalid"
+        ]
+      }
+    },
+    "p2_binary_version": "d30b93b33307bad5a8736a6685b7e556aaee6040",
+    "archived_decision_visible_after_restart": true
+  }
+}

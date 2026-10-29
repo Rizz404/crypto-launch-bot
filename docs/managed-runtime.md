@@ -6,6 +6,18 @@ Trial ETH sudah dihentikan; contoh perintah di sini bukan izin memulainya lagi.
 Backlog aktif mengikuti [Plan 3](plan-3.md); Plan 2 sudah diarsipkan. Panduan
 ini menjelaskan runtime yang tersedia, bukan klaim dukungan strategi AI.
 
+## Health managed
+
+Sejak source `d30b93b` (29 Oktober 2026), `/healthz` mengecek DB, ownership lease
+serta frontier setiap seri setelah consumer selesai. Seri belum siap, future
+atau umur close melampaui satu timeframe + dua menit menghasilkan 503.
+Bar tersimpan yang sudah mutakhir dipakai sebagai frontier startup tanpa
+mengulang delivery/indikator. Gauge candle juga diperbarui setelah callback.
+
+Legacy masih memakai ping DB. Health P3 runtime/feed terpisah dari riset;
+200 tidak membuktikan keputusan AI valid, strategi untung atau seluruh
+penerimaan operasi lulus. [Bukti rilis](testing/paper-operations-release.md).
+
 ## Konfigurasi dan modal
 
 `wallets[] → instances[] → strategies[]` menggantikan daftar legacy; jangan
@@ -73,7 +85,7 @@ belum diketahui atau dibayar dengan aset ketiga ditandai belum lengkap pada
 data eksekusi; penilaian terlambat mengikuti total ledger sejak awal.
 Notifikasi bersifat best effort: crash antara commit dan pengiriman atau
 antrean Telegram penuh dapat menghilangkan pesan. Riwayat yang sudah selesai
-tidak dikirim ulang saat restart. Runtime `9c18962` sudah aktif di VPS; bukti
+tidak dikirim ulang saat restart. Rilis `9c18962` memasang notifikasi itu pada 23 Oktober; source terbaru serta bukti
 pemeriksaan dan batas verifikasi ada di [handover](handover-vps.md).
 
 Contoh format:

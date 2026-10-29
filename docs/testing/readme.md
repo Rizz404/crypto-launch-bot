@@ -10,6 +10,8 @@ Penerimaan tersisa dan risiko laporan historis dipetakan ke P3-O/P3-R/P3-LIVE.
 
 | Bukti | Isi |
 |---|---|
+| [Rilis operasi P2/P3](paper-operations-release.md) / [JSON](paper-operations-release.json) | CI/source/digest final 29 Oktober, ledger tetap, timer aktif, perbaikan feed awal dan alert riset yang masih ada |
+| [Browser pascarilis](catalyst-browser-release.json) | Keputusan arsip/error terlihat lagi setelah restart pada desktop/mobile, tanpa submit form |
 | [Lanjutan operasi 29 Oktober](operations-follow-up.md) | Pause EMA 1m, diagnosis/patch lokal, backup/restore P3, observer, QA dan batas rilis |
 | [Backup/restore P3](catalyst-backup-restore.json) | Restore DB/arsip salinan, 271 hash, modal/T0 dan isolasi container |
 | [Review awal P3](catalyst-pilot-review.json) / [observer](catalyst-observer-verification.json) | Modal/kuota/sumber/keputusan aktual dan alert review invalid; sebelum jadwal formal hari 1 |

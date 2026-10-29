@@ -4,8 +4,8 @@
 > pause/WIP di bagian awal berikut adalah riwayat, bukan status checkout/VPS kini.
 > Gunakan [handover agent](handover-agent.md) dan [handover VPS](handover-vps.md)
 > untuk pekerjaan berikutnya. Backup/restore flat dan QA Chromium awal selesai
-> 29 Oktober; observer diuji sekali jalan. Patch/helper/timer belum dirilis;
-> [status lanjutan](testing/operations-follow-up.md). Review hari 1/3/7 dan
+> 29 Oktober. Patch/helper/timer kemudian dirilis pada 22:23 WIB, source `d30b93b`;
+> [status rilis](testing/paper-operations-release.md). Review hari 1/3/7 dan
 > recovery posisi aktif tetap terbuka. Plan 3 tetap roadmap repo ini.
 
 **Lanjutan terakhir dijeda 28 Oktober 22.12 WIB.** Runner/pilot baru masih WIP;
