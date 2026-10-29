@@ -10,6 +10,12 @@ import (
 
 const DailyInferenceLimit = 12
 
+// ReserveResearchInference shares the durable daily quota implementation.
+// A separate archive isolates Plan 4 from Plan 3. A failed call keeps its slot.
+func (a Archive) ReserveResearchInference(now time.Time) error {
+	return a.reserveInference(now)
+}
+
 // Reserve before I/O; crashes, timeouts and provider failures consume a slot.
 // Exclusive files enforce the cap across processes and restarts on this archive.
 func (a Archive) reserveInference(now time.Time) error {

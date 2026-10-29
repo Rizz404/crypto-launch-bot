@@ -265,13 +265,22 @@ func (a *Analyst) analyze(ctx context.Context, archive Archive, policy Policy, e
 }
 
 func (a *Analyst) call(ctx context.Context, maxTokens int, input []byte) (string, string, int, int, error) {
+	return a.StructuredCompletion(ctx, maxTokens, researchPrompt+"\n"+marketPrompt, analysisResponseFormat, input)
+}
+
+// StructuredCompletion shares only the bounded, tool-free gateway transport.
+// Callers own their policy, budget, prompt, input archive and output validation.
+func (a *Analyst) StructuredCompletion(ctx context.Context, maxTokens int, prompt string, format map[string]any, input []byte) (string, string, int, int, error) {
+	if maxTokens < 256 || maxTokens > 8192 || len(input) > 64<<10 || prompt == "" || len(format) == 0 {
+		return "", "", 0, 0, errors.New("invalid structured inference request")
+	}
 	request := struct {
 		Model          string              `json:"model"`
 		Messages       []map[string]string `json:"messages"`
 		MaxTokens      int                 `json:"max_tokens"`
 		Stream         bool                `json:"stream"`
 		ResponseFormat map[string]any      `json:"response_format"`
-	}{a.Model, []map[string]string{{"role": "system", "content": researchPrompt + "\n" + marketPrompt}, {"role": "user", "content": string(input)}}, maxTokens, false, analysisResponseFormat}
+	}{a.Model, []map[string]string{{"role": "system", "content": prompt}, {"role": "user", "content": string(input)}}, maxTokens, false, format}
 	body, err := json.Marshal(request)
 	if err != nil {
 		return "", "", 0, 0, err

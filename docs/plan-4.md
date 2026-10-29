@@ -9,7 +9,8 @@ lama lulus. Backlog lama tidak otomatis menjadi prasyarat Plan 4.
 
 Target versi pertama mencakup discovery, analisis dan eksekusi otomatis
 presale, DEX serta CEX, termasuk meme, dengan implementasi bertahap. Tidak
-ada pemilihan chain/venue final atau izin uang asli pada checkpoint ini.
+ada izin uang asli. Pilihan integrasi discovery dan policy paper terbaru ada
+pada checkpoint di bawah.
 Universe: presale mendatang/aktif dan listing berumur maksimal 30 hari pada
 masing-masing venue; coin lama dengan listing baru tetap dihitung.
 
@@ -30,6 +31,32 @@ Checklist P4-2 di bawah menandai **kode yang ditulis**, bukan runtime yang
 lulus. Tes/build dan akses sumber melalui aplikasi belum dijalankan;
 [checkpoint lokal](testing/plan-4-local.md). Penerimaan runtime P4-2 tetap
 terbuka; jangan mulai pilot atau menyatakan integrasi nyata lulus dari checklist.
+
+## Checkpoint P4-3 — 29 Oktober
+
+P4-1/P4-2 di-commit **`108b3fa`** atas permintaan user. User kemudian memilih
+profil paper 1.000 USDT, dua exposure, presale/DEX 1% full-loss budget, CEX
+10% nominal/0,5% risiko rencana, halt harian 2% dan drawdown 8%, serta
+12 request AI/hari WIB dan 2.048 output token/request. Ini keputusan baru
+Plan 4, bukan pewarisan otomatis P3.
+
+Kode/schema/prompt, policy versioned, sizing paper, validasi lifecycle,
+kuota durable dan CLI analyze sudah ditulis. [Kontrak P4-3](presale-analysis.md)
+memuat metode simulasi/evaluasi dan batas biayanya. Belum ada tes/build,
+inference/model evaluation nyata atau pilot. P4-2 runtime tetap belum diterima.
+
+## Checkpoint P4-4 — 29 Oktober
+
+User meminta fase berikutnya; implementasi paper P4-4 dilanjutkan tanpa
+menutup penerimaan P4-2/P4-3. Tersedia journal virtual terisolasi dan adapter
+skenario sintetis CEX/DEX/presale dengan reservasi, receipt kumulatif,
+allocation/vesting/refund, finality/reorg dan recovery. Reuse matcher book
+CEX dan archive, tanpa mengubah ledger/runtime lama.
+
+[Kontrak paper](presale-paper.md) menjelaskan mode fixture, cost versus mark,
+guard dan batasnya. Fixture contoh tiga jalur serta test source ditulis,
+tetapi belum dijalankan. Wire quote/receipt sumber nyata dan ABI transaksi
+launchpad belum diterima; tidak ada signer, order live atau pilot.
 
 ## Fase dan kriteria selesai
 
@@ -67,24 +94,28 @@ tidak meloloskan entry, dan penemuan tidak bergantung daftar ticker statis P3.
 
 ### P4-3 — Analisis dan policy simulasi
 
-- [ ] Adaptasi schema/prompt AI pada lifecycle baru dengan bukti, kontra-argumen,
+- [x] Tulis schema/prompt AI pada lifecycle baru dengan bukti, kontra-argumen,
   invalidation serta usulan entry/hold/exit atau aksi presale yang sesuai.
-- [ ] Usulkan modal virtual, sizing, exposure termasuk dana terkunci, halt,
+- [x] Sepakati modal virtual, sizing, exposure termasuk dana terkunci, halt,
   budget layanan/AI, interval monitoring dan batas biaya berdasarkan P4-1.
-- [ ] Bekukan policy dan metode evaluasi sebelum pilot, dengan persetujuan user.
-  Profil 1.000 USDT/12 panggilan harian P3 bukan default Plan 4.
+- [x] Bekukan `launch-paper-v1` dan `launch-evaluation-v1`; user memilih profil
+  serta kuota melalui pertanyaan terstruktur. Pilot belum diaktifkan.
+- [ ] Verifikasi kode/tes dan kualitas model nyata pada ketiga jalur; sumber
+  P4-2 tetap harus diterima sebelum pilot. Checklist kode bukan hasil runtime.
 
 Selesai ketika output AI tervalidasi, tidak dapat menaikkan batas policy, dan
 ketiga jalur punya aturan simulasi serta parameter yang disepakati.
 
 ### P4-4 — Simulasi dan adapter eksekusi
 
-- [ ] Bangun simulasi presale terpisah dari fill DEX/CEX; dokumentasikan bagian
+- [x] Tulis simulasi presale terpisah dari fill DEX/CEX; dokumentasikan bagian
   yang tidak dapat dimodelkan secara andal, jangan mengarang fill/return.
-- [ ] Implementasikan adapter ketiga jalur secara bertahap, terpisah dari
+- [x] Tulis adapter paper/sintetis ketiga jalur secara bertahap, terpisah dari
   ledger/proses lama; catat intent, reservasi, status eksternal dan settlement.
-- [ ] Tangani timeout/status unknown, restart, partial fill, claim/refund,
+- [x] Tulis penanganan timeout/status unknown, restart, partial fill, claim/refund,
   vesting, finality/reorg dan transaksi gagal tanpa aksi finansial ganda.
+- [ ] Terima hasil tes/regresi, recovery dan sumber quote/receipt nyata sebelum
+  pilot. Implementasi fixture bukan bukti integrasi venue atau runtime lulus.
 
 Selesai ketika pengujian relevan pada [rencana evaluasi](presale-evaluation.md)
 punya bukti baru dan tidak ada adapter yang diam-diam memakai uang asli.
@@ -111,9 +142,10 @@ termasuk kegagalan serta keterbatasan; keberhasilan satu jalur tidak mewakili ti
 
 ## Batas dan langkah berikutnya
 
-Pekerjaan berikutnya adalah penerimaan P4-2 sebelum policy/AI P4-3, bukan resume
-pilot P3. Commit docs sudah dibuat sesuai permintaan; perubahan implementasi
-sesudahnya belum di-commit. Tidak ada push, riset berbayar, runtime aplikasi,
-tes/build, deploy atau transaksi dalam lanjutan ini. Eksperimen lama, data,
+Pekerjaan berikutnya adalah penerimaan P4-2–P4-4 sebelum monitoring/pilot P4-5,
+bukan resume pilot P3. Commit docs dan discovery sudah dibuat sesuai permintaan;
+checkpoint P4-3/P4-4 kemudian diminta user untuk di-commit; hash terbaru ada
+di `git log`. Tidak ada push, inference berbayar,
+runtime aplikasi, tes/build, deploy atau transaksi dalam lanjutan ini. Data,
 ledger, modal dan T0 tetap dipertahankan; status server belum diperiksa.
 [Handover](handover-agent.md) dan [arsip](archive.md) menyimpan jejak historis.

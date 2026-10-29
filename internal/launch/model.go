@@ -1,5 +1,6 @@
 // Package launch discovers and verifies launch candidates. It has no signer,
-// financial ledger, AI calls, Telegram client or order submission path.
+// real-money ledger, Telegram client or live order submission path. AI analysis
+// is explicit research; a separate journal supports synthetic paper replay.
 package launch
 
 import (
@@ -100,6 +101,7 @@ type Report struct {
 	ResearchOnly bool             `json:"research_only"`
 	Sources      map[string]Batch `json:"sources"`
 	Reviews      []Review         `json:"reviews"`
+	Analyses     []AIReview       `json:"analyses,omitempty"`
 }
 
 // Verify never authorizes entry. Missing facts are not interpreted as safe.

@@ -114,6 +114,33 @@ func ReadReport(archive catalyst.Archive, now time.Time) (Report, error) {
 			}
 		}
 	}
+	ids, err := archive.IDs("launch-ai-reviews")
+	if err != nil {
+		return r, err
+	}
+	for _, id := range ids {
+		var analysis AIReview
+		if err = archive.Read("launch-ai-reviews", id, &analysis); err != nil {
+			return r, err
+		}
+		analysis.EntryAllowed = false
+		if analysis.Valid {
+			var packet AnalysisPacket
+			if err = archive.Read("launch-ai-inputs", analysis.InputHash, &packet); err != nil {
+				return r, err
+			}
+			if analysis.Version != AnalysisVersion || analysis.PolicyHash != packet.PolicyHash || analysis.At.After(now) || !now.Before(analysis.ExpiresAt) || ValidateDecision(analysis.Decision, packet, now) != nil ||
+				!slices.ContainsFunc(r.Reviews, func(current Review) bool {
+					return current.Candidate.ID == analysis.Decision.CandidateID && current.Candidate.Revision == analysis.Decision.CandidateRevision &&
+						((analysis.Decision.Action != "PROPOSE_ENTRY" && analysis.Decision.Action != "PROPOSE_CONTRIBUTE") || current.Status == "accepted_for_research")
+				}) {
+				analysis.Valid = false
+				analysis.Error = "analysis_expired_superseded_or_invalid"
+			}
+		}
+		r.Analyses = append(r.Analyses, analysis)
+	}
+	slices.SortFunc(r.Analyses, func(a, b AIReview) int { return a.At.Compare(b.At) })
 	return r, nil
 }
 

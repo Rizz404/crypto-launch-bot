@@ -2,7 +2,9 @@
 
 Rencana pengujian untuk [Plan 4](plan-4.md), 29 Oktober 2026. Semua skenario
 di sini **belum dijalankan untuk strategi baru**. Pekerjaan docs hanya memakai
-review statis. [Bukti lama](testing/readme.md) tetap historis.
+review statis. [Bukti lama](testing/readme.md) tetap historis. P4-3 membekukan
+[metode `launch-evaluation-v1`](presale-analysis.md#metode-simulasi-dan-evaluasi-v1)
+dan profil paper; model fill/ledger baru diimplementasikan pada P4-4.
 
 ## Metode dan metrik
 

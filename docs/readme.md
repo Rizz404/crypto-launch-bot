@@ -2,8 +2,10 @@
 
 **Checkpoint 29 Oktober 2026:** arah repository diganti melalui perombakan
 dokumentasi. [Plan 4](plan-4.md) menjadi satu-satunya roadmap aktif. Lanjutan
-user: P4-1 diriset dan kode discovery/verifikasi P4-2 ditulis. Belum ada
-hasil tes/build, integrasi runtime, pilot atau transaksi strategi baru.
+user: P4-1 diriset, discovery/verifikasi P4-2 di-commit, dan kode/schema/policy
+AI P4-3 ditulis sesuai profil yang dipilih, lalu journal/adapter paper sintetis
+P4-4 ditambahkan. Belum ada hasil tes/build,
+integrasi runtime, inference baru, pilot atau transaksi strategi baru.
 
 ## Dokumen aktif
 
@@ -16,6 +18,8 @@ hasil tes/build, integrasi runtime, pilot atau transaksi strategi baru.
 | [Sumber data](presale-sources.md) | Protokol riset dan pemilihan chain/venue/provider |
 | [Integrasi awal](presale-integrations.md) | Hasil P4-1, referensi resmi, kontrak v1 dan gap |
 | [Discovery/report](presale-runtime.md) | CLI P4-2, arsip dan status riset tanpa transaksi |
+| [Analisis/policy](presale-analysis.md) | P4-3: profil disetujui, schema/validator, kuota dan metode evaluasi |
+| [Simulasi paper](presale-paper.md) | P4-4: journal, adapter fixture tiga jalur, settlement dan recovery |
 | [Checkpoint P4](testing/plan-4-local.md) | Implementasi, review statis dan verifikasi yang belum dilakukan |
 | [Risiko](presale-risk.md) | Gate transaksi, dana terkunci dan kegagalan |
 | [Evaluasi](presale-evaluation.md) | Simulasi, skenario pengujian dan penerimaan pilot/live |

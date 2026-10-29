@@ -1,0 +1,492 @@
+{
+  "version": "launch-paper-fixture-v1",
+  "run_id": "example-three-paths",
+  "fixture_only": true,
+  "policy": {
+    "version": "launch-paper-v1",
+    "evaluation_version": "launch-evaluation-v1",
+    "initial_usdt": "1000",
+    "max_exposures": 2,
+    "presale_fraction": "0.01",
+    "dex_fraction": "0.01",
+    "cex_fraction": "0.10",
+    "cex_risk_fraction": "0.005",
+    "daily_halt_fraction": "0.02",
+    "drawdown_halt_fraction": "0.08",
+    "calls_per_wib_day": 12,
+    "max_output_tokens": 2048,
+    "decision_ttl_seconds": 300,
+    "review_interval_seconds": 300
+  },
+  "steps": [
+    {
+      "id": "cex-reserve",
+      "at": "2026-10-29T10:00:00Z",
+      "op": "submit",
+      "intent": {
+        "id": "cex-buy",
+        "candidate": {
+          "id": "9dc77deccf7cf8a9a1702e61338b76653d31ff16b8b4f87c0bc1811361f8dfdd",
+          "kind": "cex",
+          "venue": "binance-spot",
+          "external_id": "TESTUSDT",
+          "asset": {
+            "venue_asset_id": "binance:TEST",
+            "symbol": "TEST"
+          },
+          "quote": "USDT",
+          "url": "https://example.invalid/synthetic-fixture",
+          "starts_at": "2026-10-29T09:00:00Z",
+          "ends_at": "0001-01-01T00:00:00Z",
+          "time_basis": "first_trade_id_zero",
+          "state": "TRADING",
+          "observed_at": "2026-10-29T10:00:00Z",
+          "first_seen_at": "2026-10-29T10:00:00Z",
+          "evidence_ids": [
+            "fixture:explicit-assumptions"
+          ],
+          "facts": null,
+          "gaps": null,
+          "revision": "f865609e34bf06a9141ec8c62a364f24002fb5d01ad9409721489059b22d0729"
+        },
+        "action": "buy",
+        "position_id": "position-cex-buy",
+        "notional_usdt": "90",
+        "quantity": "0.9",
+        "limit_price": "100",
+        "max_fee_usdt": "0.27",
+        "cost_fraction": "0.003",
+        "stop_fraction": "0.05",
+        "costs_known": true,
+        "expires_at": "2026-10-29T10:05:00Z",
+        "thesis": "Explicit synthetic scenario; no real order",
+        "invalidation": "Synthetic thesis invalidation",
+        "assumed_verified": true
+      }
+    },
+    {
+      "id": "cex-buy-fill",
+      "at": "2026-10-29T10:00:01Z",
+      "op": "match",
+      "order_id": "cex-buy",
+      "book": {
+        "at": "2026-10-29T10:00:01Z",
+        "candidate_id": "9dc77deccf7cf8a9a1702e61338b76653d31ff16b8b4f87c0bc1811361f8dfdd",
+        "bid": "99.5",
+        "ask": "100",
+        "bid_qty": "20",
+        "ask_qty": "20",
+        "lot_step": "0.1",
+        "min_notional": "1",
+        "fee_fraction": "0.001",
+        "costs_known": true
+      }
+    },
+    {
+      "id": "cex-exit-reserve",
+      "at": "2026-10-29T10:00:02Z",
+      "op": "submit",
+      "intent": {
+        "id": "cex-sell",
+        "candidate": {
+          "id": "9dc77deccf7cf8a9a1702e61338b76653d31ff16b8b4f87c0bc1811361f8dfdd",
+          "kind": "cex",
+          "venue": "binance-spot",
+          "external_id": "TESTUSDT",
+          "asset": {
+            "venue_asset_id": "binance:TEST",
+            "symbol": "TEST"
+          },
+          "quote": "USDT",
+          "url": "https://example.invalid/synthetic-fixture",
+          "starts_at": "2026-10-29T09:00:00Z",
+          "ends_at": "0001-01-01T00:00:00Z",
+          "time_basis": "first_trade_id_zero",
+          "state": "TRADING",
+          "observed_at": "2026-10-29T10:00:00Z",
+          "first_seen_at": "2026-10-29T10:00:00Z",
+          "evidence_ids": [
+            "fixture:explicit-assumptions"
+          ],
+          "facts": null,
+          "gaps": null,
+          "revision": "f865609e34bf06a9141ec8c62a364f24002fb5d01ad9409721489059b22d0729"
+        },
+        "action": "sell",
+        "position_id": "position-cex-buy",
+        "notional_usdt": "0",
+        "quantity": "0.9",
+        "limit_price": "100",
+        "max_fee_usdt": "0.18",
+        "cost_fraction": "0.003",
+        "stop_fraction": "0.05",
+        "costs_known": true,
+        "expires_at": "2026-10-29T10:05:00Z",
+        "thesis": "Explicit synthetic scenario; no real order",
+        "invalidation": "Synthetic thesis invalidation",
+        "assumed_verified": true
+      }
+    },
+    {
+      "id": "cex-sell-fill",
+      "at": "2026-10-29T10:00:03Z",
+      "op": "match",
+      "order_id": "cex-sell",
+      "book": {
+        "at": "2026-10-29T10:00:03Z",
+        "candidate_id": "9dc77deccf7cf8a9a1702e61338b76653d31ff16b8b4f87c0bc1811361f8dfdd",
+        "bid": "110",
+        "ask": "111",
+        "bid_qty": "20",
+        "ask_qty": "20",
+        "lot_step": "0.1",
+        "min_notional": "1",
+        "fee_fraction": "0.001",
+        "costs_known": true
+      }
+    },
+    {
+      "id": "dex-reserve",
+      "at": "2026-10-29T10:00:04Z",
+      "op": "submit",
+      "intent": {
+        "id": "dex-buy",
+        "candidate": {
+          "id": "06bdfff9da06869c7649665775448fe328fe67a699946592e85aaa42b4433f5e",
+          "kind": "dex",
+          "venue": "pancakeswap-v2",
+          "external_id": "0x2234567890123456789012345678901234567890",
+          "asset": {
+            "chain": "eip155:56",
+            "address": "0x1234567890123456789012345678901234567890",
+            "symbol": "FIXTURE"
+          },
+          "quote": "USDT",
+          "url": "https://example.invalid/synthetic-fixture",
+          "starts_at": "2026-10-29T09:00:00Z",
+          "ends_at": "0001-01-01T00:00:00Z",
+          "time_basis": "provider_pool_creation",
+          "state": "TRADING",
+          "observed_at": "2026-10-29T10:00:00Z",
+          "first_seen_at": "2026-10-29T10:00:00Z",
+          "evidence_ids": [
+            "fixture:explicit-assumptions"
+          ],
+          "facts": null,
+          "gaps": null,
+          "revision": "87ec4b0e3487a72dca9e99b60cbe1644b42adffdfd23b854e74a052381df15d4"
+        },
+        "action": "buy",
+        "position_id": "position-dex-buy",
+        "notional_usdt": "9",
+        "quantity": "0.09",
+        "limit_price": "100",
+        "max_fee_usdt": "0.45",
+        "cost_fraction": "0.05",
+        "stop_fraction": "0.05",
+        "costs_known": true,
+        "expires_at": "2026-10-29T10:05:00Z",
+        "thesis": "Explicit synthetic scenario; no real order",
+        "invalidation": "Synthetic thesis invalidation",
+        "assumed_verified": true
+      }
+    },
+    {
+      "id": "dex-broadcast",
+      "at": "2026-10-29T10:00:05Z",
+      "op": "broadcast",
+      "order_id": "dex-buy",
+      "external_id": "fixture:dex-buy-tx",
+      "route": {
+        "id": "fixture:buy-route",
+        "at": "2026-10-29T10:00:05Z",
+        "expires_at": "2026-10-29T10:00:08Z",
+        "candidate_id": "06bdfff9da06869c7649665775448fe328fe67a699946592e85aaa42b4433f5e",
+        "asset_key": "eip155:56:0x1234567890123456789012345678901234567890",
+        "input_usdt": "9",
+        "quantity": "0.09",
+        "output_usdt": "0",
+        "min_quantity": "0.085",
+        "min_output_usdt": "0",
+        "fee_usdt": "0.05",
+        "gas_usdt": "0.05",
+        "costs_known": true,
+        "liquidity_verified": true,
+        "sellable_verified": true
+      }
+    },
+    {
+      "id": "dex-final",
+      "at": "2026-10-29T10:00:06Z",
+      "op": "receipt",
+      "order_id": "dex-buy",
+      "receipt": {
+        "id": "fixture:dex-buy-final",
+        "external_id": "fixture:dex-buy-tx",
+        "status": "filled",
+        "quantity": "0.09",
+        "spent_usdt": "9",
+        "received_usdt": "0",
+        "fee_usdt": "0.1",
+        "finalized": true,
+        "block_number": 100,
+        "block_hash": "fixture:finalized-block"
+      }
+    },
+    {
+      "id": "dex-mark",
+      "at": "2026-10-29T10:00:07Z",
+      "op": "mark",
+      "mark": {
+        "position_id": "position-dex-buy",
+        "at": "2026-10-29T10:00:07Z",
+        "price_usdt": "100",
+        "known": true,
+        "proof": "fixture:mark"
+      }
+    },
+    {
+      "id": "dex-exit-reserve",
+      "at": "2026-10-29T10:00:08Z",
+      "op": "submit",
+      "intent": {
+        "id": "dex-sell",
+        "candidate": {
+          "id": "06bdfff9da06869c7649665775448fe328fe67a699946592e85aaa42b4433f5e",
+          "kind": "dex",
+          "venue": "pancakeswap-v2",
+          "external_id": "0x2234567890123456789012345678901234567890",
+          "asset": {
+            "chain": "eip155:56",
+            "address": "0x1234567890123456789012345678901234567890",
+            "symbol": "FIXTURE"
+          },
+          "quote": "USDT",
+          "url": "https://example.invalid/synthetic-fixture",
+          "starts_at": "2026-10-29T09:00:00Z",
+          "ends_at": "0001-01-01T00:00:00Z",
+          "time_basis": "provider_pool_creation",
+          "state": "TRADING",
+          "observed_at": "2026-10-29T10:00:00Z",
+          "first_seen_at": "2026-10-29T10:00:00Z",
+          "evidence_ids": [
+            "fixture:explicit-assumptions"
+          ],
+          "facts": null,
+          "gaps": null,
+          "revision": "87ec4b0e3487a72dca9e99b60cbe1644b42adffdfd23b854e74a052381df15d4"
+        },
+        "action": "sell",
+        "position_id": "position-dex-buy",
+        "notional_usdt": "0",
+        "quantity": "0.09",
+        "limit_price": "100",
+        "max_fee_usdt": "0.2",
+        "cost_fraction": "0.05",
+        "stop_fraction": "0.05",
+        "costs_known": true,
+        "expires_at": "2026-10-29T10:05:00Z",
+        "thesis": "Explicit synthetic scenario; no real order",
+        "invalidation": "Synthetic thesis invalidation",
+        "assumed_verified": true
+      }
+    },
+    {
+      "id": "dex-exit-broadcast",
+      "at": "2026-10-29T10:00:09Z",
+      "op": "broadcast",
+      "order_id": "dex-sell",
+      "external_id": "fixture:dex-sell-tx",
+      "route": {
+        "id": "fixture:sell-route",
+        "at": "2026-10-29T10:00:09Z",
+        "expires_at": "2026-10-29T10:00:12Z",
+        "candidate_id": "06bdfff9da06869c7649665775448fe328fe67a699946592e85aaa42b4433f5e",
+        "asset_key": "eip155:56:0x1234567890123456789012345678901234567890",
+        "input_usdt": "0",
+        "quantity": "0.09",
+        "output_usdt": "9.5",
+        "min_quantity": "0",
+        "min_output_usdt": "9.4",
+        "fee_usdt": "0.05",
+        "gas_usdt": "0.05",
+        "costs_known": true,
+        "liquidity_verified": true,
+        "sellable_verified": true
+      }
+    },
+    {
+      "id": "dex-exit-final",
+      "at": "2026-10-29T10:00:10Z",
+      "op": "receipt",
+      "order_id": "dex-sell",
+      "receipt": {
+        "id": "fixture:dex-sell-final",
+        "external_id": "fixture:dex-sell-tx",
+        "status": "filled",
+        "quantity": "0.09",
+        "spent_usdt": "0",
+        "received_usdt": "9.5",
+        "fee_usdt": "0.1",
+        "finalized": true,
+        "block_number": 100,
+        "block_hash": "fixture:finalized-block"
+      }
+    },
+    {
+      "id": "sale-reserve",
+      "at": "2026-10-29T10:00:11Z",
+      "op": "submit",
+      "intent": {
+        "id": "sale",
+        "candidate": {
+          "id": "e86bad7428d4cd54d24a547592237bec2feecc8044b2d8b3866f37d81833bc83",
+          "kind": "presale",
+          "venue": "pinksale",
+          "external_id": "0x3234567890123456789012345678901234567890",
+          "asset": {
+            "chain": "eip155:56",
+            "address": "0x1234567890123456789012345678901234567890",
+            "symbol": "FIXTURE"
+          },
+          "quote": "USDT",
+          "url": "https://example.invalid/synthetic-fixture",
+          "starts_at": "2026-10-29T09:00:00Z",
+          "ends_at": "2026-10-30T10:00:00Z",
+          "time_basis": "publisher_schedule",
+          "state": "live",
+          "observed_at": "2026-10-29T10:00:00Z",
+          "first_seen_at": "2026-10-29T10:00:00Z",
+          "evidence_ids": [
+            "fixture:explicit-assumptions"
+          ],
+          "facts": null,
+          "gaps": null,
+          "revision": "ebd20dda9a49f7f5c82238a4e2a3bea4b2d1fb0df04f8758aa294ba36d499431"
+        },
+        "action": "contribute",
+        "position_id": "position-sale",
+        "notional_usdt": "9",
+        "quantity": "0",
+        "limit_price": "0",
+        "max_fee_usdt": "0.45",
+        "cost_fraction": "0.05",
+        "stop_fraction": "0.05",
+        "costs_known": true,
+        "expires_at": "2026-10-29T10:05:00Z",
+        "thesis": "Explicit synthetic scenario; no real order",
+        "invalidation": "Synthetic thesis invalidation",
+        "assumed_verified": true
+      }
+    },
+    {
+      "id": "sale-broadcast",
+      "at": "2026-10-29T10:00:12Z",
+      "op": "broadcast",
+      "order_id": "sale",
+      "external_id": "fixture:sale-tx"
+    },
+    {
+      "id": "sale-final",
+      "at": "2026-10-29T10:00:13Z",
+      "op": "receipt",
+      "order_id": "sale",
+      "receipt": {
+        "id": "fixture:sale-final",
+        "external_id": "fixture:sale-tx",
+        "status": "filled",
+        "quantity": "0",
+        "spent_usdt": "9",
+        "received_usdt": "0",
+        "fee_usdt": "0.1",
+        "finalized": true,
+        "block_number": 100,
+        "block_hash": "fixture:finalized-block"
+      }
+    },
+    {
+      "id": "sale-canceled",
+      "at": "2026-10-29T10:00:14Z",
+      "op": "allocation",
+      "allocation": {
+        "position_id": "position-sale",
+        "total_quantity": "0",
+        "unlocked_quantity": "0",
+        "refundable_usdt": "9",
+        "finalized": true,
+        "proof": "fixture:sale-canceled"
+      }
+    },
+    {
+      "id": "refund-reserve",
+      "at": "2026-10-29T10:00:15Z",
+      "op": "submit",
+      "intent": {
+        "id": "refund",
+        "candidate": {
+          "id": "e86bad7428d4cd54d24a547592237bec2feecc8044b2d8b3866f37d81833bc83",
+          "kind": "presale",
+          "venue": "pinksale",
+          "external_id": "0x3234567890123456789012345678901234567890",
+          "asset": {
+            "chain": "eip155:56",
+            "address": "0x1234567890123456789012345678901234567890",
+            "symbol": "FIXTURE"
+          },
+          "quote": "USDT",
+          "url": "https://example.invalid/synthetic-fixture",
+          "starts_at": "2026-10-29T09:00:00Z",
+          "ends_at": "2026-10-30T10:00:00Z",
+          "time_basis": "publisher_schedule",
+          "state": "live",
+          "observed_at": "2026-10-29T10:00:00Z",
+          "first_seen_at": "2026-10-29T10:00:00Z",
+          "evidence_ids": [
+            "fixture:explicit-assumptions"
+          ],
+          "facts": null,
+          "gaps": null,
+          "revision": "ebd20dda9a49f7f5c82238a4e2a3bea4b2d1fb0df04f8758aa294ba36d499431"
+        },
+        "action": "refund",
+        "position_id": "position-sale",
+        "notional_usdt": "9",
+        "quantity": "0",
+        "limit_price": "0",
+        "max_fee_usdt": "0.1",
+        "cost_fraction": "0.05",
+        "stop_fraction": "0.05",
+        "costs_known": true,
+        "expires_at": "2026-10-29T10:05:00Z",
+        "thesis": "Explicit synthetic scenario; no real order",
+        "invalidation": "Synthetic thesis invalidation",
+        "assumed_verified": true
+      }
+    },
+    {
+      "id": "refund-broadcast",
+      "at": "2026-10-29T10:00:16Z",
+      "op": "broadcast",
+      "order_id": "refund",
+      "external_id": "fixture:refund-tx"
+    },
+    {
+      "id": "refund-final",
+      "at": "2026-10-29T10:00:17Z",
+      "op": "receipt",
+      "order_id": "refund",
+      "receipt": {
+        "id": "fixture:refund-final",
+        "external_id": "fixture:refund-tx",
+        "status": "filled",
+        "quantity": "0",
+        "spent_usdt": "0",
+        "received_usdt": "9",
+        "fee_usdt": "0.05",
+        "finalized": true,
+        "block_number": 100,
+        "block_hash": "fixture:finalized-block"
+      }
+    }
+  ]
+}

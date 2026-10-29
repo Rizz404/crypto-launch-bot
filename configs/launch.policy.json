@@ -1,0 +1,16 @@
+{
+  "version": "launch-paper-v1",
+  "evaluation_version": "launch-evaluation-v1",
+  "initial_usdt": "1000",
+  "max_exposures": 2,
+  "presale_fraction": "0.01",
+  "dex_fraction": "0.01",
+  "cex_fraction": "0.10",
+  "cex_risk_fraction": "0.005",
+  "daily_halt_fraction": "0.02",
+  "drawdown_halt_fraction": "0.08",
+  "calls_per_wib_day": 12,
+  "max_output_tokens": 2048,
+  "decision_ttl_seconds": 300,
+  "review_interval_seconds": 300
+}

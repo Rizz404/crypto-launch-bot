@@ -2,7 +2,9 @@
 
 Rancangan [Plan 4](plan-4.md), 29 Oktober 2026. Kontrak discovery v1 kini ditulis
 di `internal/launch` dengan CLI `cmd/launch`; [integrasi](presale-integrations.md)
-membekukan pilihannya. AI, intent finansial, DB dan eksekusi masih rancangan.
+membekukan pilihannya. P4-3 menambah schema/validator AI dan policy paper;
+journal dan adapter paper sintetis P4-4 kini ditulis. DB, wire venue dan
+eksekusi uang asli masih rancangan.
 Keberadaan schema/CLI belum dibuktikan dengan tes/build atau integrasi nyata.
 
 ## Alur dan batas tanggung jawab
@@ -64,6 +66,11 @@ Panduan kode lama ada di [arsip](archive.md). Dokumen checkpoint P3 bukan bukti
 checkout sekarang sudah diuji atau dirilis untuk Plan 4.
 
 ## Durability dan isolasi
+
+P4-4 menggunakan [journal virtual terpisah](presale-paper.md) berbasis archive,
+bukan tabel/wallet managed lama. Replay fixture mempertahankan intent,
+reservasi dan receipt kumulatif lintas proses melalui urutan/hash chain serta
+lock transaksi. Ini tidak membuktikan durabilitas runtime sebelum tes dijalankan.
 
 Simpan intent/reservasi sebelum submit. Timeout sesudah submit menghasilkan
 status unknown yang direkonsiliasi lewat order ID/tx hash, bukan retry buta.

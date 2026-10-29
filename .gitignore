@@ -3,6 +3,7 @@
 .env.*
 !.env.example
 !.env.catalyst.example
+!.env.launch.example
 configs/config.yaml
 *.test
 *.out
@@ -24,3 +25,4 @@ __pycache__/
 /var/managed-backtest/
 /var/catalyst/
 /var/launch/
+/var/launch-paper/

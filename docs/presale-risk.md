@@ -1,8 +1,10 @@
 # Risiko dan gate transaksi
 
 Rancangan [Plan 4](plan-4.md), 29 Oktober 2026. Modal, sizing, exposure,
-stop/trailing, halt, freshness dan budget harus dirancang ulang pada P4-3.
-Belum ada policy numerik atau izin live Plan 4. Profil P3 tidak berlaku otomatis.
+stop/trailing, halt, freshness dan budget tidak diwarisi dari P3. User sudah
+memilih profil paper baru pada P4-3; [policy disepakati](presale-analysis.md)
+memuat angka dan perhitungan biaya. Tidak ada izin live Plan 4. Eksekusi,
+valuasi ledger, stop strategy dan quote/slippage aktual masih P4-4.
 
 ## Pemeriksaan sebelum entry
 
