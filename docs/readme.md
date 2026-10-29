@@ -1,8 +1,9 @@
 # Dokumentasi presale dan listing baru
 
 **Checkpoint 29 Oktober 2026:** arah repository diganti melalui perombakan
-dokumentasi. [Plan 4](plan-4.md) menjadi satu-satunya roadmap aktif. Belum ada
-implementasi, pilot atau hasil pengujian strategi baru.
+dokumentasi. [Plan 4](plan-4.md) menjadi satu-satunya roadmap aktif. Lanjutan
+user: P4-1 diriset dan kode discovery/verifikasi P4-2 ditulis. Belum ada
+hasil tes/build, integrasi runtime, pilot atau transaksi strategi baru.
 
 ## Dokumen aktif
 
@@ -13,6 +14,9 @@ implementasi, pilot atau hasil pengujian strategi baru.
 | [Strategi presale/listing](presale-strategy.md) | Universe, discovery, tesis dan lifecycle |
 | [Arsitektur](presale-architecture.md) | Alur, kontrak data, reuse dan kebutuhan integrasi |
 | [Sumber data](presale-sources.md) | Protokol riset dan pemilihan chain/venue/provider |
+| [Integrasi awal](presale-integrations.md) | Hasil P4-1, referensi resmi, kontrak v1 dan gap |
+| [Discovery/report](presale-runtime.md) | CLI P4-2, arsip dan status riset tanpa transaksi |
+| [Checkpoint P4](testing/plan-4-local.md) | Implementasi, review statis dan verifikasi yang belum dilakukan |
 | [Risiko](presale-risk.md) | Gate transaksi, dana terkunci dan kegagalan |
 | [Evaluasi](presale-evaluation.md) | Simulasi, skenario pengujian dan penerimaan pilot/live |
 | [Arsip](archive.md) | Seluruh panduan dan keputusan Plan 1–3 |

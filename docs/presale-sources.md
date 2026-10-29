@@ -1,8 +1,9 @@
 # Sumber data dan pemilihan integrasi
 
 Protokol riset P4-1 pada [Plan 4](plan-4.md), 29 Oktober 2026.
-**Belum ada katalog provider, tarif atau endpoint baru yang diverifikasi dalam
-perombakan docs ini.** Chain, launchpad, DEX dan CEX awal belum dipilih.
+Lanjutan user: **riset referensi resmi P4-1 selesai**, integrasi awal dipilih
+dan kontrak discovery dibekukan pada [hasil riset](presale-integrations.md).
+Pemeriksaan referensi tidak sama dengan uji endpoint melalui aplikasi/VPS.
 
 ## Kebutuhan sumber
 

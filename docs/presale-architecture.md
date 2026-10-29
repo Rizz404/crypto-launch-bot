@@ -1,7 +1,9 @@
 # Arsitektur presale dan listing baru
 
-Rancangan [Plan 4](plan-4.md), 29 Oktober 2026. Kontrak di bawah adalah target
-desain, belum schema Go/DB, API HTTP, CLI atau konfigurasi yang tersedia.
+Rancangan [Plan 4](plan-4.md), 29 Oktober 2026. Kontrak discovery v1 kini ditulis
+di `internal/launch` dengan CLI `cmd/launch`; [integrasi](presale-integrations.md)
+membekukan pilihannya. AI, intent finansial, DB dan eksekusi masih rancangan.
+Keberadaan schema/CLI belum dibuktikan dengan tes/build atau integrasi nyata.
 
 ## Alur dan batas tanggung jawab
 
@@ -36,7 +38,8 @@ identitas terverifikasi sesuai adapter. Jadwal listing bukan waktu fetch.
 ID sale/listing berbeda dari ID aset dan ID berita. Satu berita yang disalin
 tidak menghasilkan intent ganda; listing aset yang sama di venue berbeda
 tetap event berbeda. Semua keputusan mengacu versi bukti/policy tertentu.
-Schema final, precision/unit, TTL dan finality dipilih setelah P4-1.
+Kontrak discovery/freshness/finality v1 ada di hasil P4-1. Precision/unit uang,
+TTL pra-transaksi dan schema keputusan AI dibekukan pada P4-3/P4-4.
 
 ## Kode saat ini dan reuse
 
@@ -50,6 +53,12 @@ Inspeksi statis checkout 29 Oktober, tanpa tes/runtime baru:
 | Managed ledger, reservasi/checkpoint dan broker Sim | Kandidat reuse pencatatan; fill candle/book tidak memodelkan alokasi/vesting, AMM/gas/finality |
 | Runner paper, dashboard/health dan Telegram | Ada kode P3, bukan penerimaan operasional Plan 4; UI/laporan perlu dana terkunci dan hasil per jalur |
 | Presale/DEX execution dan signer | Belum ada integrasi Plan 4; perlu adapter, batas kewenangan dan rekonsiliasi baru |
+
+Lanjutan P4-2 menambahkan pipeline discovery/read-only `internal/launch`, reuse
+archive dan fungsi jaringan/Spider dari `internal/catalyst/discovery.go`.
+Entry point lama tidak diubah. CLI baru menggunakan archive sendiri, membaca
+registry Pancake V2 serta daftar simbol CEX dinamis, dan memverifikasi ulang
+freshness/referensi saat report. Seluruh `entry_allowed` tetap false.
 
 Panduan kode lama ada di [arsip](archive.md). Dokumen checkpoint P3 bukan bukti
 checkout sekarang sudah diuji atau dirilis untuk Plan 4.
@@ -65,4 +74,4 @@ Plan 4 kelak memakai konfigurasi, DB/ledger, wallet dan budget terisolasi dari
 eksperimen lama. Perubahan shared code membutuhkan regression relevan sebelum
 rilis, tanpa otomatis deploy ulang P2/P3. Rancangan signer tidak menyimpan key
 di prompt, arsip bukti, source atau log. Tidak ada perubahan runtime/DB pada
-tahap dokumentasi ini.
+tahap discovery ini.

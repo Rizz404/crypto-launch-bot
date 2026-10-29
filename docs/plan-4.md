@@ -18,6 +18,19 @@ validator risiko → eksekusi → monitoring. Rincian: [strategi](presale-strate
 [arsitektur](presale-architecture.md), [sumber](presale-sources.md),
 [risiko](presale-risk.md), [evaluasi](presale-evaluation.md).
 
+## Checkpoint P4-1/P4-2 — 29 Oktober
+
+Atas permintaan user, docs di-commit lebih dahulu pada **`839fa2e`**, lalu
+riset P4-1 dan penulisan implementasi P4-2 dilanjutkan. P4-1 memilih BSC 56,
+PinkSale, PancakeSwap V2 dan Binance Spot; [matriks dan kontrak](presale-integrations.md)
+memuat bukti referensi, budget serta gap akses. CLI [discovery/report](presale-runtime.md)
+tersedia sebagai development, tanpa AI, Telegram, wallet atau transaksi.
+
+Checklist P4-2 di bawah menandai **kode yang ditulis**, bukan runtime yang
+lulus. Tes/build dan akses sumber melalui aplikasi belum dijalankan;
+[checkpoint lokal](testing/plan-4-local.md). Penerimaan runtime P4-2 tetap
+terbuka; jangan mulai pilot atau menyatakan integrasi nyata lulus dari checklist.
+
 ## Fase dan kriteria selesai
 
 ### P4-0 — Reset dokumentasi
@@ -28,12 +41,12 @@ validator risiko → eksekusi → monitoring. Rincian: [strategi](presale-strate
 
 ### P4-1 — Riset dan pembekuan integrasi
 
-- [ ] Riset sumber primer, chain, launchpad, DEX, CEX dan provider sesuai
+- [x] Riset sumber primer, chain, launchpad, DEX, CEX dan provider sesuai
   [protokol sumber](presale-sources.md); catat URL resmi, tanggal verifikasi,
   cakupan, biaya, batas akses dan gap.
-- [ ] Pilih integrasi awal untuk ketiga jalur; tetapkan urutan implementasi,
+- [x] Pilih integrasi awal untuk ketiga jalur; tetapkan urutan implementasi,
   akses yang layak, kebutuhan wallet serta batas kapasitas/penyimpanan.
-- [ ] Bekukan kontrak identitas, lifecycle, freshness, finality dan adapter
+- [x] Bekukan kontrak identitas, lifecycle, freshness, finality dan adapter
   berdasarkan venue terpilih; jangan memperlakukan ticker sebagai identitas.
 
 Selesai ketika matriks pilihan dan alasan penolakannya tersedia, tidak ada
@@ -41,11 +54,13 @@ jalur presale/DEX/CEX tanpa integrasi sasaran, dan dependensi akses diketahui.
 
 ### P4-2 — Discovery dan verifikasi
 
-- [ ] Temukan kandidat dinamis; arsipkan bukti beserta first-seen/revisi/gap.
-- [ ] Pisahkan aset, sale dan listing/pool; deduplikasi berita, bukan identitas
+- [x] Tulis discovery kandidat dinamis dan arsip bukti/first-seen/revisi/gap.
+- [x] Pisahkan aset, sale dan listing/pool; deduplikasi informasi, bukan identitas
   listing yang memang berbeda. Tangani jadwal, konflik dan identitas ambigu.
-- [ ] Implementasikan pemeriksaan pasar/on-chain dan laporan alasan
-  terima/tahan/tolak, dengan verifikasi ulang sebelum transaksi.
+- [x] Tulis pemeriksaan pasar/on-chain serta laporan terima/tahan/tolak;
+  seluruh entry tetap mati. Verifikasi pra-transaksi menjadi kewajiban P4-4.
+- [ ] Terima hasil tes dan sumber nyata: parsing/robots, API/RPC, finality,
+  gap/recovery, coverage dan budget; belum dijalankan pada checkpoint ini.
 
 Selesai ketika kandidat dapat ditelusuri sampai sumber, informasi basi/konflik
 tidak meloloskan entry, dan penemuan tidak bergantung daftar ticker statis P3.
@@ -96,8 +111,9 @@ termasuk kegagalan serta keterbatasan; keberhasilan satu jalur tidak mewakili ti
 
 ## Batas dan langkah berikutnya
 
-Pekerjaan berikutnya adalah **P4-1**, bukan resume pilot P3. Tidak menjalankan
-riset berbayar, runtime, tes/build, deploy, commit/push atau transaksi sebagai
-bagian perombakan docs ini. Eksperimen lama, data, ledger, modal dan T0 tetap
-dipertahankan; status server saat ini belum diperiksa. [Handover](handover-agent.md)
-dan [arsip](archive.md) menyimpan batas serta jejak historis.
+Pekerjaan berikutnya adalah penerimaan P4-2 sebelum policy/AI P4-3, bukan resume
+pilot P3. Commit docs sudah dibuat sesuai permintaan; perubahan implementasi
+sesudahnya belum di-commit. Tidak ada push, riset berbayar, runtime aplikasi,
+tes/build, deploy atau transaksi dalam lanjutan ini. Eksperimen lama, data,
+ledger, modal dan T0 tetap dipertahankan; status server belum diperiksa.
+[Handover](handover-agent.md) dan [arsip](archive.md) menyimpan jejak historis.

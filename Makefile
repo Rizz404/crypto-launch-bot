@@ -16,6 +16,7 @@ build:
 	go build -trimpath -ldflags "$(LDFLAGS)" -o bin/backtest ./cmd/backtest
 	go build -trimpath -o bin/portfolio-backtest ./cmd/portfolio-backtest
 	go build -trimpath -o bin/catalyst ./cmd/catalyst
+	go build -trimpath -o bin/launch ./cmd/launch
 
 test:
 	go test ./...

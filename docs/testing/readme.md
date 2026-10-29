@@ -1,11 +1,13 @@
-# Bukti pengujian
+# Bukti pengujian dan checkpoint development
 
 Laporan di sini adalah **bukti historis Plan 1–3**, bukan hasil pengujian
 strategi presale/listing baru, status real-time atau izin live. Tanggal tetap
 ada di isi laporan/payload. Rencana aktif sejak 29 Oktober 2026:
 [Plan 4](../plan-4.md); panduan lama: [indeks arsip](../archive.md).
 
-Belum ada bukti pengujian Plan 4 pada checkpoint perombakan docs. Checklist
+Belum ada bukti kelulusan pengujian Plan 4. [Checkpoint P4-1/P4-2](plan-4-local.md)
+mencatat riset, kode/test source dan review statis; tes/build serta sumber
+nyata melalui aplikasi belum dijalankan. Checklist
 penerimaan P3-O/P3-R/P3-LIVE tetap historis, tidak otomatis menjadi backlog
 aktif. Semua laporan/payload lama di bawah dipertahankan; hanya pengantar
 indeks ini disesuaikan. Jangan menganggap instruksi resume dalam laporan lama
