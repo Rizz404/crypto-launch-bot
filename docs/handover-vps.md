@@ -40,9 +40,10 @@ aktif [Plan 3](plan-3.md), pembanding [Strategi 2](strategy-2.md).
 ## Spam Telegram P3 — 30 Oktober
 
 Worker P3 crash-loop (restart 9×) karena error timer/lease; tiap start mengirim
-pesan Telegram. Gateway AI pindah ke `https://route-gateway.nexlabs.cloud/v1`;
-`.env.catalyst` VPS masih host lama (gagal TLS). Detail dan patch lokal yang belum
-dirilis: [Plan 3](plan-3.md#temuan-spam-telegram--30-oktober).
+pesan Telegram. Gateway AI pindah ke `https://route-gateway.nexlabs.cloud/v1`.
+Patch dan env baru **dirilis 30 Oktober 22:05 WIB**, source `7d8ed0b`, image
+`ana-scout@sha256:ce45bd77…797c`; P2 tidak disentuh. Source berjalan P3 kini
+`7d8ed0b` (bukan `e74a9af`). Detail: [Plan 3](plan-3.md#temuan-spam-telegram--30-oktober).
 
 ## Rilis operasi P2/P3 — 29 Oktober 22:23 WIB
 

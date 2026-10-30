@@ -18,11 +18,16 @@ empat `inference transport failed` 30 Oktober terkait ini dan tetap memakan
 slot kuota harian (5/12). AI dipindah ke `https://route-gateway.nexlabs.cloud/v1`
 (HTTPS 401 tanpa key; HTTP hanya 301 ke HTTPS, adapter menolak HTTP non-loopback).
 
-Perbaikan lokal, **belum commit/push/CI/deploy**: hapus pesan start, Telegram
-hanya untuk PROPOSE_ENTRY/HOLD/PROPOSE_EXIT dan fill, error timer/book
-dibungkus `%w` agar akar restart terlihat di log. `.env.catalyst` lokal dan
-template memakai URL baru; `.env.catalyst` VPS (`/opt/ana-scout/repo`) belum
-diubah. Restart loop sendiri belum diperbaiki sampai error aslinya terbaca.
+Perbaikan: hapus pesan start, Telegram hanya untuk PROPOSE_ENTRY/HOLD/
+PROPOSE_EXIT dan fill, error timer/book dibungkus `%w` agar akar restart
+terlihat di log. **Dirilis atas izin user 30 Oktober 22:05 WIB**: source
+`7d8ed0b`, [CI lulus](https://github.com/Rizz404/trading-bot/actions/runs/41076456041),
+image `ghcr.io/rizz404/ana-scout@sha256:ce45bd77d5a7a5fdd23ceca440da1064aff71dff7849cb93499e7ece2567797c`.
+`.env.catalyst` VPS memakai URL baru (salinan lama di `/opt/ana-scout/backups/`).
+Hanya `ana-scout-catalyst-1` diganti; container lain identik. Pasca-start:
+healthy, restart 0, policy hash/wallet sama, gateway 401 tanpa key dari jaringan
+container. Inference nyata via host baru belum terjadi. Restart loop belum
+diperbaiki; baca error lengkap di log pada crash berikutnya.
 
 ## Checkpoint 29 Oktober
 
