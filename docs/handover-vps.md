@@ -37,6 +37,13 @@ aktif [Plan 3](plan-3.md), pembanding [Strategi 2](strategy-2.md).
 - Bagian dokumen di bawah yang menyebut `plesk`, `trading-bot-*` atau source `d30b93b` adalah riwayat
   sebelum migrasi; path/runbook sudah diganti ke nama `ana-*`.
 
+## Spam Telegram P3 — 30 Oktober
+
+Worker P3 crash-loop (restart 9×) karena error timer/lease; tiap start mengirim
+pesan Telegram. Gateway AI pindah ke `https://route-gateway.nexlabs.cloud/v1`;
+`.env.catalyst` VPS masih host lama (gagal TLS). Detail dan patch lokal yang belum
+dirilis: [Plan 3](plan-3.md#temuan-spam-telegram--30-oktober).
+
 ## Rilis operasi P2/P3 — 29 Oktober 22:23 WIB
 
 **Source kedua worker `d30b93b`**, [seluruh CI lulus](https://github.com/Rizz404/trading-bot/actions/runs/40899450590).

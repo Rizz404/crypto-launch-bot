@@ -23,7 +23,8 @@ memasang layanan/jadwal. [Plan 3](plan-3.md) menjadi pemilik checklist penerimaa
 Pembaruan 26 Oktober: key OmniRoute diisi user, katalog dan inference nyata
 pada bukti sintetis diuji atas izin user. `.env.catalyst` privat (0600,
 diabaikan Git) memilih `cx/gpt-6-luna-low` melalui
-`https://route-gateway.fbe.co.id/v1`. Template aman: `.env.catalyst.example`.
+`https://route-gateway.fbe.co.id/v1` (sejak 30 Oktober pindah ke
+`https://route-gateway.nexlabs.cloud/v1`; host lama gagal TLS). Template aman: `.env.catalyst.example`.
 Luna lolos 7/7 kasus; kandidat fallback Haiku OpenRouter 6/7. Combo belum dibuat
 atau diuji failover. Lihat [evaluasi model](testing/catalyst-model-evaluation.md)
 untuk bukti, ID persis dan batasnya. Jangan menyalin key ke template atau chat.

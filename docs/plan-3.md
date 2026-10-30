@@ -2,6 +2,28 @@
 
 **Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
 
+## Temuan spam Telegram — 30 Oktober
+
+User melaporkan spam pesan AI di Telegram. Inspeksi baca-saja VPS `plesk-newest`
+14:52 WIB: `ana-scout-catalyst-1` **restart 9× (21 start sejak 29 Oktober)**;
+setiap start mengirim `P3 paper aktif`. Pemicu: loop timer memanggil
+`CheckLease`/`Tick` dengan timeout 5 detik; kegagalan apa pun mematikan worker
+(`pilot timer/storage/ownership failed`, sekali `book settlement/storage failed`)
+lalu Docker `unless-stopped` menyalakannya ulang. Error asli dibuang sehingga
+akar pastinya (lease PG, timeout di bawah kuota CPU 0,5 yang ter-throttle, atau
+DB) belum terbukti. Selain itu tiap review WATCH/REJECT dikirim sebagai `Usulan AI`.
+
+Base URL lama `route-gateway.fbe.co.id` kini gagal TLS (sertifikat tidak cocok);
+empat `inference transport failed` 30 Oktober terkait ini dan tetap memakan
+slot kuota harian (5/12). AI dipindah ke `https://route-gateway.nexlabs.cloud/v1`
+(HTTPS 401 tanpa key; HTTP hanya 301 ke HTTPS, adapter menolak HTTP non-loopback).
+
+Perbaikan lokal, **belum commit/push/CI/deploy**: hapus pesan start, Telegram
+hanya untuk PROPOSE_ENTRY/HOLD/PROPOSE_EXIT dan fill, error timer/book
+dibungkus `%w` agar akar restart terlihat di log. `.env.catalyst` lokal dan
+template memakai URL baru; `.env.catalyst` VPS (`/opt/ana-scout/repo`) belum
+diubah. Restart loop sendiri belum diperbaiki sampai error aslinya terbaca.
+
 ## Checkpoint 29 Oktober
 
 **Pilot P3 sudah aktif sejak 28 Oktober 22:53 WIB.** Source berjalan `d30b93b`,
