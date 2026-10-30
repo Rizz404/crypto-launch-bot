@@ -132,7 +132,7 @@ func (p *Pilot) timers(ctx context.Context) error {
 			}
 			cancel()
 			if err != nil {
-				return errors.New("pilot timer/storage/ownership failed; entry stopped")
+				return fmt.Errorf("pilot timer/storage/ownership failed; entry stopped: %w", err)
 			}
 			p.mu.Lock()
 			p.status.TickAt = at.UTC()
@@ -172,7 +172,7 @@ func (p *Pilot) feed(ctx context.Context) error {
 			err = p.Runtime.RecordBook(writeCtx, domain.BookQuote{Exchange: "binance", Market: domain.Spot, Symbol: symbol, Bid: book.Bid, Ask: book.Ask, BidQty: book.BidQty, AskQty: book.AskQty, At: book.At})
 			done()
 			if err != nil {
-				return errors.New("pilot book settlement/storage failed")
+				return fmt.Errorf("pilot book settlement/storage failed: %w", err)
 			}
 			p.mu.Lock()
 			p.status.Prices[symbol] = book.At
@@ -303,7 +303,8 @@ func (p *Pilot) Cycle(ctx context.Context) error {
 		p.mu.Unlock()
 	}
 	_, auditErr := p.Archive.Put("outcomes", map[string]any{"review_id": review.ID, "policy_hash": Hash(p.Policy), "action": review.Analysis.Action, "symbol": review.Analysis.Symbol, "at": time.Now().UTC(), "message": message})
-	if p.Notify != nil {
+	// WATCH/REJECT stay in the archive and dashboard; Telegram only gets actionable proposals.
+	if p.Notify != nil && review.Analysis.Action != "WATCH" && review.Analysis.Action != "REJECT" {
 		p.Notify(fmt.Sprintf("Usulan AI • P3 paper • %s %s\n%s\n%s", review.Analysis.Action, review.Analysis.Symbol, review.Analysis.Reason, message))
 	}
 	return errors.Join(submitErr, auditErr)
