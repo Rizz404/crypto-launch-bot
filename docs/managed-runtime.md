@@ -260,3 +260,24 @@ Stop proses tidak membatalkan order. Bukti historis jangan ditimpa.
 **Rollback:** stop worker, backup schema/state, selesaikan order managed dan
 periksa kompatibilitas binary. Jangan down migrasi 4/5 pada DB berisi dana/
 history; down/up hanya DB test disposable.
+
+## UI web (31 Oktober)
+
+Ketiga UI (dashboard bot `internal/web`, dashboard managed, `/research`
+Catalyst) memakai satu design system di `internal/ui`: templ + HTMX + Alpine.js
+(build CSP, tanpa `unsafe-eval`) + Tailwind v4 dengan komponen bergaya Penguin
+UI. Palet light/dark ada di `internal/ui/input.css`; tema bisa diubah manual dan
+default mengikuti sistem. Teks UI Bahasa Indonesia.
+
+- Setelah mengubah `*.templ`, `input.css` atau `app.js`, jalankan `make generate`
+  (templ lalu Tailwind standalone, tanpa Node) dan commit hasilnya
+  (`*_templ.go`, `internal/ui/static/app.css`). CI gagal bila hasil basi.
+- Managed dibagi tab: Ringkasan, Instance & strategi, Posisi & order, Riwayat.
+  Tab hanya-baca disegarkan tiap 15 detik; form tidak ikut diganti.
+- Aksi yang butuh konfirmasi memakai dialog; `confirm=yes` hanya diisi setelah
+  user setuju. Server tetap mewajibkan CSRF, cek Origin, dan flag konfirmasi.
+- CSP: `script-src 'self'`, tanpa inline script/style. Aset hanya dari
+  `/static/` dan di-embed ke binary; tidak ada CDN saat runtime.
+- QA 31 Oktober: Chromium headless (Playwright), light/dark, 1280 dan 390 px,
+  konsol bersih; belum Safari/perangkat fisik/pembaca layar. Tes otomatis lulus;
+  form `/control` tidak diuji terhadap exchange nyata.
