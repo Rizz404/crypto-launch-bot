@@ -25,6 +25,9 @@ func ts(t time.Time) string {
 
 func itoa(n int) string { return strconv.Itoa(n) }
 
+// short keeps revision hashes readable; the full value stays in the tooltip.
+func short(s string) string { return s[:min(len(s), 12)] }
+
 func i64(n int64) string { return strconv.FormatInt(n, 10) }
 
 func (d researchData) Reviews() []ReviewSummary {
@@ -206,7 +209,7 @@ templ Research(d researchData) {
 									<td>{ doc.Kind }</td>
 									<td>{ doc.PublishedText }</td>
 									<td>{ ts(doc.FirstSeenAt) }</td>
-									<td>{ doc.Revision }</td>
+									<td class="font-mono text-xs" title={ doc.Revision }>{ short(doc.Revision) }</td>
 								</tr>
 							}
 						</tbody>
