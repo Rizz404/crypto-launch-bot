@@ -34,6 +34,10 @@ jobs:
             exit 1
           fi
       - run: go mod verify
+      - name: Generated templ and CSS are current
+        run: |
+          make generate
+          git diff --exit-code -- internal
       - name: Verify catalyst operational helpers
         run: |
           python3 -m unittest discover -s deploy -p 'test_*.py'

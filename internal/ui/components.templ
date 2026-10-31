@@ -1,0 +1,231 @@
+package ui
+
+// Class strings live in .templ files so Tailwind sees them (see input.css @source).
+const (
+	BtnPrimary   = "inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-on-primary transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50"
+	BtnSecondary = "inline-flex items-center justify-center gap-2 rounded-lg border border-outline bg-surface px-4 py-2 text-sm font-medium text-on-surface transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link disabled:opacity-50"
+	BtnDanger    = "inline-flex items-center justify-center gap-2 rounded-lg border border-neg bg-surface px-4 py-2 text-sm font-medium text-neg transition-colors hover:bg-neg/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neg disabled:opacity-50"
+	BtnSmall     = " !px-3 !py-1.5 !text-xs"
+	InputClass   = "w-full rounded-lg border border-outline bg-surface px-3 py-2 text-sm text-on-surface placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-link"
+	LinkClass    = "text-link underline-offset-2 hover:underline"
+)
+
+// Current is the aria-current value for nav links; styling keys off "page".
+func Current(active bool) string {
+	if active {
+		return "page"
+	}
+	return "false"
+}
+
+// Tone maps pos/neg/warn to a text colour; anything else is neutral.
+func Tone(t string) string {
+	switch t {
+	case "pos":
+		return "text-pos"
+	case "neg":
+		return "text-neg"
+	case "warn":
+		return "text-on-surface"
+	}
+	return "text-on-surface"
+}
+
+func badgeClass(t string) string {
+	base := "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium "
+	switch t {
+	case "pos":
+		return base + "bg-pos/15 text-pos"
+	case "neg":
+		return base + "bg-neg/15 text-neg"
+	case "warn":
+		return base + "bg-highlight text-on-highlight"
+	case "info":
+		return base + "bg-link/15 text-link"
+	}
+	return base + "bg-badge text-on-badge"
+}
+
+func alertClass(t string) string {
+	base := "flex items-start gap-3 rounded-lg border px-4 py-3 "
+	switch t {
+	case "neg":
+		return base + "border-neg/40 bg-neg/10 text-on-surface"
+	case "pos":
+		return base + "border-pos/40 bg-pos/10 text-on-surface"
+	case "warn":
+		return base + "border-highlight bg-highlight/20 text-on-surface"
+	}
+	return base + "border-link/40 bg-link/10 text-on-surface"
+}
+
+func alertIcon(t string) string {
+	switch t {
+	case "neg", "warn":
+		return "warn"
+	case "pos":
+		return "check"
+	}
+	return "info"
+}
+
+func alertIconTone(t string) string {
+	switch t {
+	case "neg":
+		return "mt-0.5 shrink-0 text-neg"
+	case "pos":
+		return "mt-0.5 shrink-0 text-pos"
+	}
+	return "mt-0.5 shrink-0 text-link"
+}
+
+// Heading is the page title row; actions may be nil.
+templ Heading(title, sub string, actions templ.Component) {
+	<div class="flex flex-wrap items-end justify-between gap-3">
+		<div>
+			<h1 class="text-2xl font-semibold tracking-tight">{ title }</h1>
+			if sub != "" {
+				<p class="mt-1 text-muted">{ sub }</p>
+			}
+		</div>
+		if actions != nil {
+			<div class="flex flex-wrap items-center gap-2">
+				@actions
+			</div>
+		}
+	</div>
+}
+
+// Card is a titled surface; title and actions may be empty/nil.
+templ Card(title string, actions templ.Component) {
+	<section class="rounded-xl border border-outline bg-surface shadow-sm">
+		if title != "" || actions != nil {
+			<header class="flex flex-wrap items-center justify-between gap-2 border-b border-outline px-5 py-3">
+				<h2 class="text-sm font-semibold">{ title }</h2>
+				if actions != nil {
+					<div class="flex flex-wrap items-center gap-2">
+						@actions
+					</div>
+				}
+			</header>
+		}
+		<div class="p-5">
+			{ children... }
+		</div>
+	</section>
+}
+
+// Flush is a card body without padding, for edge-to-edge tables.
+templ CardFlush(title string, actions templ.Component) {
+	<section class="rounded-xl border border-outline bg-surface shadow-sm">
+		if title != "" || actions != nil {
+			<header class="flex flex-wrap items-center justify-between gap-2 border-b border-outline px-5 py-3">
+				<h2 class="text-sm font-semibold">{ title }</h2>
+				if actions != nil {
+					<div class="flex flex-wrap items-center gap-2">
+						@actions
+					</div>
+				}
+			</header>
+		}
+		{ children... }
+	</section>
+}
+
+templ StatGrid() {
+	<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+		{ children... }
+	</div>
+}
+
+templ Stat(label, value, tone, hint string) {
+	<div class="rounded-xl border border-outline bg-surface p-4 shadow-sm">
+		<div class="text-xs text-muted">{ label }</div>
+		<div class={ "mt-1 text-xl font-semibold tabular-nums " + Tone(tone) }>{ value }</div>
+		if hint != "" {
+			<div class="mt-0.5 text-xs text-muted">{ hint }</div>
+		}
+	</div>
+}
+
+templ Badge(text, tone string) {
+	<span class={ badgeClass(tone) }>{ text }</span>
+}
+
+templ Alert(tone string) {
+	<div class={ alertClass(tone) } role="alert">
+		<span class={ alertIconTone(tone) }>@Icon(alertIcon(tone))</span>
+		<div class="min-w-0 flex-1">
+			{ children... }
+		</div>
+	</div>
+}
+
+templ Empty(msg string) {
+	<p class="py-6 text-center text-muted">{ msg }</p>
+}
+
+templ Table() {
+	<div class="overflow-x-auto">
+		<table class="tbl">
+			{ children... }
+		</table>
+	</div>
+}
+
+// Field wraps a form control with a label.
+templ Field(label string) {
+	<label class="grid gap-1">
+		<span class="text-xs font-medium text-muted">{ label }</span>
+		{ children... }
+	</label>
+}
+
+// Tabs is a row of boosted links; the server picks the active section.
+templ Tabs(items []NavItem, active string) {
+	<nav class="flex gap-1 overflow-x-auto border-b border-outline" aria-label="Bagian">
+		for _, t := range items {
+			<a
+				href={ templ.SafeURL(t.Href) }
+				aria-current={ Current(t.Key == active) }
+				class="-mb-px whitespace-nowrap border-b-2 border-transparent px-4 py-2.5 text-sm font-medium text-muted transition-colors hover:text-on-surface aria-[current=page]:border-primary aria-[current=page]:text-on-surface"
+			>{ t.Label }</a>
+		}
+	</nav>
+}
+
+// Fold is a collapsible block (native <details>, no JS).
+templ Fold(title string, open bool) {
+	<details class="group rounded-lg border border-outline" open?={ open }>
+		<summary class="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-2.5 text-sm font-medium hover:bg-surface-alt">
+			<span>{ title }</span>
+			<span class="text-muted transition-transform group-open:rotate-180" aria-hidden="true">▾</span>
+		</summary>
+		<div class="space-y-3 border-t border-outline p-4">
+			{ children... }
+		</div>
+	</details>
+}
+
+templ Icon(name string) {
+	switch name {
+		case "sun":
+			<svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"></path></svg>
+		case "moon":
+			<svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"></path></svg>
+		case "computer":
+			<svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25A2.25 2.25 0 0 1 5.25 3h13.5A2.25 2.25 0 0 1 21 5.25Z"></path></svg>
+		case "menu":
+			<svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path></svg>
+		case "x":
+			<svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"></path></svg>
+		case "warn":
+			<svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"></path></svg>
+		case "check":
+			<svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg>
+		case "info":
+			<svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"></path></svg>
+		case "chart":
+			<svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"></path></svg>
+	}
+}

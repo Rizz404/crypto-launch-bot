@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
@@ -13,6 +14,7 @@ import (
 	"testing"
 
 	"github.com/rizz404/trading-bot/internal/portfolio"
+	"github.com/rizz404/trading-bot/internal/ui"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -45,7 +47,7 @@ func TestDashboardAuthSecurityHeadersAndNoSession(t *testing.T) {
 		h.ServeHTTP(w, r)
 		assert.Equal(t, tc.status, w.Code)
 		if tc.status == 200 {
-			assert.Contains(t, w.Body.String(), "No trading session")
+			assert.Contains(t, w.Body.String(), "Tidak ada sesi trading")
 			assert.Equal(t, "DENY", w.Header().Get("X-Frame-Options"))
 			assert.Contains(t, w.Header().Get("Content-Security-Policy"), "script-src 'self'")
 		} else {
@@ -97,7 +99,7 @@ func TestParseSeriesRejectsInvalidInput(t *testing.T) {
 }
 
 func TestCSPAllowsOnlyPinnedChartAttributionStyle(t *testing.T) {
-	js, err := staticFS.ReadFile("static/lightweight-charts.js")
+	js, err := fs.ReadFile(ui.FS(), "lightweight-charts.js")
 	require.NoError(t, err)
 	match := regexp.MustCompile(`this\.qv\.innerText=("(?:[^"\\]|\\.)*")`).FindSubmatch(js)
 	require.Len(t, match, 2, "review CSP when upgrading the vendored chart library")
