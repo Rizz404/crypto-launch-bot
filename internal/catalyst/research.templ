@@ -1,0 +1,219 @@
+package catalyst
+
+import (
+	"slices"
+	"strconv"
+	"time"
+
+	"github.com/rizz404/trading-bot/internal/ui"
+)
+
+// researchData is what /research and /research.json both expose.
+type researchData struct {
+	Status PilotStatus
+	Report Report
+}
+
+const recentReviews = 20
+
+func ts(t time.Time) string {
+	if t.IsZero() {
+		return "belum ada"
+	}
+	return t.UTC().Format("2006-01-02 15:04:05 UTC")
+}
+
+func itoa(n int) string { return strconv.Itoa(n) }
+
+func i64(n int64) string { return strconv.FormatInt(n, 10) }
+
+func (d researchData) Reviews() []ReviewSummary {
+	rows := slices.Clone(d.Report.Reviews)
+	slices.Reverse(rows)
+	return rows[:min(len(rows), recentReviews)]
+}
+
+func (d researchData) Prices() []string {
+	keys := make([]string, 0, len(d.Status.Prices))
+	for k := range d.Status.Prices {
+		keys = append(keys, k)
+	}
+	slices.Sort(keys)
+	return keys
+}
+
+func (d researchData) Cost() string {
+	if d.Report.CostUSD == nil {
+		return "tidak tercatat"
+	}
+	return strconv.FormatFloat(*d.Report.CostUSD, 'f', 4, 64) + " USD"
+}
+
+func actionTone(a string) string {
+	switch a {
+	case "PROPOSE_ENTRY":
+		return "pos"
+	case "PROPOSE_EXIT":
+		return "neg"
+	case "WATCH", "HOLD":
+		return "info"
+	}
+	return ""
+}
+
+func researchPage(d researchData) ui.Page {
+	return ui.Page{
+		Title:  "Riset katalis",
+		Brand:  "trading-bot",
+		Active: "research",
+		Nav: []ui.NavItem{
+			{Key: "ledger", Label: "Ledger paper", Href: "/"},
+			{Key: "research", Label: "Riset AI", Href: "/research"},
+		},
+		Footer: "Hanya uang virtual · batas AI 12 panggilan per hari WIB",
+	}
+}
+
+templ researchLinks() {
+	<a href="/research.json" hx-boost="false" class={ ui.BtnSecondary + ui.BtnSmall }>JSON</a>
+	<a href="/" class={ ui.BtnSecondary + ui.BtnSmall }>Dana, posisi, proteksi dan kontrol</a>
+}
+
+templ Research(d researchData) {
+	@ui.Shell(researchPage(d)) {
+		@ui.Heading("Riset katalis · paper", "Hanya uang virtual. Batas AI 12 panggilan per hari WIB.", researchLinks())
+		<div id="live" class="space-y-6" hx-get="/research" hx-trigger="every 30s" hx-select="#live" hx-swap="outerHTML">
+			if d.Status.Error != "" {
+				@ui.Alert("neg") {
+					{ d.Status.Error }
+				}
+			}
+			if len(d.Status.SourceGaps) > 0 {
+				@ui.Alert("warn") {
+					Sumber tidak terbaca:
+					for _, g := range d.Status.SourceGaps {
+						<span class="ml-1">@ui.Badge(g, "warn")</span>
+					}
+				}
+			}
+			@ui.StatGrid() {
+				@ui.Stat("Timer terakhir", ts(d.Status.TickAt), "", "")
+				@ui.Stat("Riset terakhir", ts(d.Status.ResearchAt), "", "")
+				@ui.Stat("Token input", itoa(d.Report.InputTokens), "", "")
+				@ui.Stat("Token output", itoa(d.Report.OutputTokens), "", "")
+				@ui.Stat("Review tidak valid", itoa(d.Report.InvalidReviews), "", "")
+				@ui.Stat("Biaya model", d.Cost(), "", "")
+			}
+			@ui.Card("Keputusan terakhir", nil) {
+				if d.Status.Action == "" {
+					@ui.Empty("Belum ada keputusan.")
+				} else {
+					<div class="flex flex-wrap items-center gap-2">
+						@ui.Badge(d.Status.Action, actionTone(d.Status.Action))
+						<span class="font-medium">{ d.Status.Symbol }</span>
+						<span class="text-xs text-muted">{ d.Status.DecisionID }</span>
+					</div>
+					<p class="mt-2">{ d.Status.Reason }</p>
+				}
+			}
+			@ui.CardFlush("Review terbaru", nil) {
+				if rows := d.Reviews(); len(rows) > 0 {
+					@ui.Table() {
+						<thead><tr><th>Waktu</th><th>Aksi</th><th>Simbol</th><th>Berlaku sampai</th><th>Model</th><th>Latensi</th><th>Token</th><th>Valid</th></tr></thead>
+						<tbody>
+							for _, r := range rows {
+								<tr>
+									<td>{ ts(r.At) }</td>
+									<td>@ui.Badge(r.Action, actionTone(r.Action))</td>
+									<td>{ r.Symbol }</td>
+									<td>{ ts(r.ExpiresAt) }</td>
+									<td>{ r.ServedModel }</td>
+									<td>{ i64(r.LatencyMS) } ms</td>
+									<td>{ itoa(r.InputTokens) } / { itoa(r.OutputTokens) }</td>
+									<td>
+										if r.Valid {
+											@ui.Badge("valid", "pos")
+										} else {
+											@ui.Badge("tidak valid", "neg")
+										}
+									</td>
+								</tr>
+								if r.Reason != "" || r.Error != "" {
+									<tr>
+										<td colspan="8" class="!whitespace-normal text-muted">
+											{ r.Reason }
+											if r.Error != "" {
+												<span class="ml-1 text-neg">{ r.Error }</span>
+											}
+										</td>
+									</tr>
+								}
+							}
+						</tbody>
+					}
+				} else {
+					@ui.Empty("Belum ada review.")
+				}
+			}
+			<div class="grid gap-6 lg:grid-cols-2">
+				@ui.CardFlush("Sumber", nil) {
+					@ui.Table() {
+						<thead><tr><th>Sumber</th><th>Status</th><th>Waktu</th><th>HTTP</th></tr></thead>
+						<tbody>
+							for _, s := range d.Report.Sources {
+								<tr>
+									<td>{ s.SourceID }</td>
+									<td>
+										if s.Status == "ok" {
+											@ui.Badge(s.Status, "pos")
+										} else {
+											@ui.Badge(s.Status, "warn")
+										}
+									</td>
+									<td>{ ts(s.At) }</td>
+									<td>{ itoa(s.HTTP) }</td>
+								</tr>
+							}
+						</tbody>
+					}
+				}
+				@ui.CardFlush("Kesegaran harga", nil) {
+					if keys := d.Prices(); len(keys) > 0 {
+						@ui.Table() {
+							<thead><tr><th>Pair</th><th>Harga terakhir diterima</th></tr></thead>
+							<tbody>
+								for _, k := range keys {
+									<tr><td>{ k }</td><td>{ ts(d.Status.Prices[k]) }</td></tr>
+								}
+							</tbody>
+						}
+					} else {
+						@ui.Empty("Belum ada harga.")
+					}
+				}
+			</div>
+			@ui.CardFlush("Dokumen terakhir", nil) {
+				if len(d.Report.Documents) == 0 {
+					@ui.Empty("Belum ada dokumen.")
+				} else {
+					@ui.Table() {
+						<thead><tr><th>Judul</th><th>Sumber</th><th>Jenis</th><th>Terbit</th><th>Pertama terlihat</th><th>Revisi</th></tr></thead>
+						<tbody>
+							for _, doc := range d.Report.Documents {
+								<tr>
+									<td class="!whitespace-normal"><a class={ ui.LinkClass } href={ templ.URL(doc.URL) } rel="noopener noreferrer" target="_blank">{ doc.Title }</a></td>
+									<td>{ doc.SourceID }</td>
+									<td>{ doc.Kind }</td>
+									<td>{ doc.PublishedText }</td>
+									<td>{ ts(doc.FirstSeenAt) }</td>
+									<td>{ doc.Revision }</td>
+								</tr>
+							}
+						</tbody>
+					}
+				}
+			}
+			<p class="text-xs text-muted">Data sumber hilang bukan pembatalan event. Keputusan tidak otomatis berarti order diterima atau terisi. Policy <code class="font-mono">{ d.Report.PolicyHash }</code></p>
+		</div>
+	}
+}

@@ -268,11 +268,8 @@ func TestResearchPageKeepsArchivedDecisionAfterRestart(t *testing.T) {
 
 func TestResearchPageEscapesUntrustedSourceText(t *testing.T) {
 	var out strings.Builder
-	data := struct {
-		Status PilotStatus
-		Report Report
-	}{PilotStatus{Reason: `<img src=x onerror=alert(1)>`}, Report{Documents: []DocumentSummary{{URL: "javascript:alert(1)", Title: "<script>alert(1)</script>"}}}}
-	require.NoError(t, researchPage.Execute(&out, data))
+	data := researchData{PilotStatus{Action: "WATCH", Reason: `<img src=x onerror=alert(1)>`}, Report{Documents: []DocumentSummary{{URL: "javascript:alert(1)", Title: "<script>alert(1)</script>"}}}}
+	require.NoError(t, Research(data).Render(t.Context(), &out))
 	page := out.String()
 	for _, raw := range []string{"<script>alert", "<img src=x", `href="javascript:`} {
 		require.NotContains(t, page, raw)
