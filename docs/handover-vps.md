@@ -53,7 +53,7 @@ Setelah izin commit/push/deploy:
 [41223015909](https://github.com/Rizz404/trading-bot/actions/runs/41223015909) lulus).
 Backup `ana-core` `backup-20261031T170447Z` dan `ana-scout` `backup-20261031T170449Z`
 dibuat sebelum rilis. Hanya `bot`, `research`, `catalyst` yang di-recreate
-(`up -d --no-deps`); DB/DNS/Prometheus/Grafana dan 20 container lain tidak berubah.
+(`up -d --no-deps`); DB/DNS/Prometheus/Grafana tidak disentuh; himpunan container sama sebelum/sesudah.
 
 Snapshot `/api/state` sebelum/sesudah identik (config hash, kas per instance, peak,
 jumlah binding/order/eksekusi, halt false, attention kosong) untuk P2, tahap tiga,
