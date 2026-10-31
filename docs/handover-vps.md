@@ -37,6 +37,33 @@ aktif [Plan 3](plan-3.md), pembanding [Strategi 2](strategy-2.md).
 - Bagian dokumen di bawah yang menyebut `plesk`, `trading-bot-*` atau source `d30b93b` adalah riwayat
   sebelum migrasi; path/runbook sudah diganti ke nama `ana-*`.
 
+## Rilis UI web — 1 November 00:05 WIB (31 Oktober UTC)
+
+Dashboard bot/managed dan `/research` Catalyst dibangun ulang di `internal/ui`
+(templ + HTMX + Alpine CSP + Tailwind; [detail](managed-runtime.md#ui-web-31-oktober)).
+Setelah izin commit/push/deploy:
+
+| Project | Source | Image |
+|---|---|---|
+| `ana-core` (`bot`, `research`) | `42c933d` | `ana-core@sha256:4dcc7d69…33c9` |
+| `ana-scout` (`catalyst`) | `c1ce856` | `ana-scout@sha256:4e20406f…5662` |
+
+[CI lulus](https://github.com/Rizz404/trading-bot/actions/runs/41222043081) untuk
+`42c933d`; `c1ce856` hanya merapikan kolom revisi `/research` (CI
+[41223015909](https://github.com/Rizz404/trading-bot/actions/runs/41223015909) lulus).
+Backup `ana-core` `backup-20261031T170447Z` dan `ana-scout` `backup-20261031T170449Z`
+dibuat sebelum rilis. Hanya `bot`, `research`, `catalyst` yang di-recreate
+(`up -d --no-deps`); DB/DNS/Prometheus/Grafana dan 20 container lain tidak berubah.
+
+Snapshot `/api/state` sebelum/sesudah identik (config hash, kas per instance, peak,
+jumlah binding/order/eksekusi, halt false, attention kosong) untuk P2, tahap tiga,
+dan P3. Health 200, observer `problems: []`, log WARN/ERROR 0 setelah start.
+Dashboard asli diperiksa di Chromium lewat SSH tunnel (light/dark, 1280 px):
+konsol tanpa error. Belum dicek: Safari/perangkat fisik, form `/control` pada
+data produksi (tidak ada aksi yang ditekan), dan tangkapan layar `/research`
+setelah `c1ce856`. Checkout `ana-core` di `42c933d` (enam config lokal untracked
+dipertahankan), `ana-scout` di `c1ce856`. Bukti server: `/root/ana-ui-release-20261031T170434Z`.
+
 ## Spam Telegram P3 — 30 Oktober
 
 Worker P3 crash-loop (restart 9×) karena error timer/lease; tiap start mengirim
