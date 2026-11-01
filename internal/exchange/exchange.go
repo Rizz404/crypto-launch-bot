@@ -91,3 +91,68 @@ type FundingRate struct {
 type FundingSource interface {
 	FundingRates(ctx context.Context) ([]FundingRate, error)
 }
+
+// Level is one price level of an order book.
+type Level struct {
+	Price, Qty decimal.Decimal
+}
+
+// DepthSnapshot is a REST order book snapshot.
+type DepthSnapshot struct {
+	LastUpdateID int64
+	Bids, Asks   []Level
+}
+
+// DepthUpdate is one diff event of the depth stream. A level with zero
+// quantity removes the price.
+type DepthUpdate struct {
+	Symbol           string
+	FirstID, FinalID int64
+	Bids, Asks       []Level
+}
+
+// Trade is one public (aggregated) trade.
+type Trade struct {
+	Symbol     string
+	Price, Qty decimal.Decimal
+	Time       time.Time
+	// BuyerMaker means the seller was the aggressor (a sell on the tape).
+	BuyerMaker bool
+}
+
+// Ticker24 is the rolling 24h statistics of a symbol.
+type Ticker24 struct {
+	Symbol                      string
+	Last, Change, ChangePct     decimal.Decimal
+	High, Low, Volume, QuoteVol decimal.Decimal
+}
+
+// MarketEventKind tags a MarketEvent.
+type MarketEventKind int
+
+const (
+	MarketConnected MarketEventKind = iota + 1
+	MarketDepth
+	MarketTrade
+	MarketTicker
+	MarketCandle
+)
+
+// MarketEvent is one message of a public market stream. Exactly one payload
+// matches Kind.
+type MarketEvent struct {
+	Kind   MarketEventKind
+	Depth  DepthUpdate
+	Trade  Trade
+	Ticker Ticker24
+	Candle domain.Candle
+}
+
+// MarketStream is implemented by sources that stream order books, trades and
+// tickers for a trading screen. Depth returns a REST snapshot used to align
+// the diff stream.
+type MarketStream interface {
+	Name() string
+	Depth(ctx context.Context, symbol string, limit int) (DepthSnapshot, error)
+	StreamMarket(ctx context.Context, symbols []string, timeframes []domain.Timeframe) (<-chan MarketEvent, error)
+}
