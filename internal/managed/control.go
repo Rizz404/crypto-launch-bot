@@ -25,6 +25,14 @@ type Command struct {
 	Instance  *InstanceSpec   `json:"instance,omitempty"`
 	Binding   *BindingSpec    `json:"binding,omitempty"`
 	Confirm   bool            `json:"confirm"`
+	// Manual orders (place_order, close_position).
+	Symbol     string          `json:"symbol,omitempty"`
+	Side       string          `json:"side,omitempty"`
+	OrderType  string          `json:"order_type,omitempty"`
+	Quantity   decimal.Decimal `json:"quantity"`
+	Price      decimal.Decimal `json:"price"`
+	StopLoss   decimal.Decimal `json:"stop_loss"`
+	TakeProfit decimal.Decimal `json:"take_profit"`
 }
 
 func (s *State) owners(scope string) ([]string, error) {
@@ -301,6 +309,9 @@ func (r *Runtime) Command(ctx context.Context, c Command) error {
 	defer r.mu.Unlock()
 	if c.Operation == "resolve_order" {
 		return r.resolveOrder(ctx, c)
+	}
+	if manualOperations[c.Operation] {
+		return r.manual(ctx, c)
 	}
 	if c.Operation == "resume" || c.Operation == "reset" {
 		st, err := r.repo.Load(ctx)
