@@ -185,18 +185,31 @@ func ExchangeName(exchange string, mode config.Mode) string {
 // LiveBroker returns the trading client of an exchange for testnet or live
 // mode, using the credentials from the config.
 func LiveBroker(cfg *config.Config, name string, markets []domain.Market, log *slog.Logger) (broker.Live, error) {
+	return LiveBrokerFor(cfg, name, cfg.App.Mode, markets, log)
+}
+
+// LiveBrokerFor returns the trading client of an exchange for an explicit
+// testnet or live mode, so wallets of both modes can run in one process.
+func LiveBrokerFor(cfg *config.Config, name string, mode config.Mode, markets []domain.Market, log *slog.Logger) (broker.Live, error) {
 	ex, ok := cfg.Exchanges[name]
 	if !ok || !ex.Enabled {
 		return nil, fmt.Errorf("exchange %s is not enabled in the config", name)
 	}
-	testnet := cfg.App.Mode == config.ModeTestnet
+	if mode != config.ModeTestnet && mode != config.ModeLive {
+		return nil, fmt.Errorf("mode %s has no exchange trading client", mode)
+	}
+	testnet := mode == config.ModeTestnet
+	key, secret := ex.Credentials(testnet)
+	if key == "" || secret == "" {
+		return nil, fmt.Errorf("exchange %s has no %s API credentials", name, mode)
+	}
 	switch name {
 	case "binance":
 		c := binance.New(binance.Options{Testnet: testnet, Log: log})
-		return binance.NewTrader(c, ex.APIKey.Reveal(), ex.APISecret.Reveal(), markets), nil
+		return binance.NewTrader(c, key.Reveal(), secret.Reveal(), markets), nil
 	case "bybit":
 		c := bybit.New(bybit.Options{Testnet: testnet, Log: log})
-		return bybit.NewTrader(c, ex.APIKey.Reveal(), ex.APISecret.Reveal(), markets), nil
+		return bybit.NewTrader(c, key.Reveal(), secret.Reveal(), markets), nil
 	default:
 		return nil, fmt.Errorf("live trading on %s is not supported", name)
 	}

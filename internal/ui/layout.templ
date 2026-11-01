@@ -9,6 +9,23 @@ type Page struct {
 	Footer string
 	// Charts loads lightweight-charts; only pages with data-chart elements need it.
 	Charts bool
+	// Wide uses the full screen width (trading screen).
+	Wide bool
+}
+
+// width is the content width shared by header, main and footer.
+func (p Page) width() string {
+	if p.Wide {
+		return "max-w-screen-2xl"
+	}
+	return "max-w-7xl"
+}
+
+func (p Page) mainClass() string {
+	if p.Wide {
+		return "mx-auto w-full max-w-screen-2xl flex-1 space-y-4 px-3 py-4"
+	}
+	return "mx-auto w-full max-w-7xl flex-1 space-y-6 px-4 py-6"
 }
 
 type NavItem struct {
@@ -38,7 +55,7 @@ templ Shell(p Page) {
 		<body class="flex min-h-screen flex-col bg-page font-sans text-sm text-on-surface antialiased" hx-boost="true">
 			<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-3 focus:py-2 focus:text-on-primary">Lewati ke konten</a>
 			<header class="sticky top-0 z-30 border-b border-outline bg-surface/95 backdrop-blur" x-data="menu">
-				<div class="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
+				<div class={ "mx-auto flex items-center gap-4 px-4 py-3 " + p.width() }>
 					<span class="flex items-center gap-2 font-semibold">
 						<span class="grid size-8 place-items-center rounded-lg bg-primary text-on-primary">
 							@Icon("chart")
@@ -65,11 +82,11 @@ templ Shell(p Page) {
 					</div>
 				</nav>
 			</header>
-			<main id="main" class="mx-auto w-full max-w-7xl flex-1 space-y-6 px-4 py-6">
+			<main id="main" class={ p.mainClass() }>
 				{ children... }
 			</main>
 			<footer class="bg-footer text-on-footer">
-				<div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-xs">
+				<div class={ "mx-auto flex flex-wrap items-center justify-between gap-2 px-4 py-4 text-xs " + p.width() }>
 					<span>{ p.Brand }</span>
 					<span class="opacity-80">{ p.Footer }</span>
 				</div>

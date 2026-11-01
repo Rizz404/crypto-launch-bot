@@ -20,9 +20,11 @@ import (
 	"github.com/rizz404/trading-bot/internal/config"
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/exchange"
+	"github.com/rizz404/trading-bot/internal/exchange/binance"
 	"github.com/rizz404/trading-bot/internal/fx"
 	"github.com/rizz404/trading-bot/internal/managed"
 	"github.com/rizz404/trading-bot/internal/marketdata"
+	"github.com/rizz404/trading-bot/internal/marketview"
 	"github.com/rizz404/trading-bot/internal/metrics"
 	"github.com/rizz404/trading-bot/internal/notify/telegram"
 	"github.com/rizz404/trading-bot/internal/storage"
@@ -33,7 +35,7 @@ import (
 func lockWallets(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool) ([]*managed.Lease, error) {
 	keys := map[string]bool{}
 	for _, w := range cfg.Wallets {
-		keys[w.Exchange+":"+string(cfg.App.Mode)+":spot"] = true
+		keys[w.Exchange+":"+w.Mode+":spot"] = true
 	}
 	for _, sc := range cfg.Strategies {
 		if sc.Enabled {
@@ -129,11 +131,12 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 			return err
 		}
 		// Mark prior sessions for explicit review, without modifying legacy history.
-		_, err = pool.Exec(ctx, `INSERT INTO managed_legacy_imports(wallet_id,legacy_run_id,status,notes) SELECT $1,id,'review',jsonb_build_object('reason','legacy ownership and capital require explicit review') FROM strategy_runs WHERE mode=$2 AND instance_id='session' ON CONFLICT DO NOTHING`, spec.Key(), string(cfg.App.Mode))
+		_, err = pool.Exec(ctx, `INSERT INTO managed_legacy_imports(wallet_id,legacy_run_id,status,notes) SELECT $1,id,'review',jsonb_build_object('reason','legacy ownership and capital require explicit review') FROM strategy_runs WHERE mode=$2 AND instance_id='session' ON CONFLICT DO NOTHING`, spec.Key(), spec.Mode)
 		if err != nil {
 			return err
 		}
-		source, err := app.MarketSource(spec.Exchange, cfg.App.Mode == config.ModeTestnet, log)
+		mode := config.Mode(spec.Mode)
+		source, err := app.MarketSource(spec.Exchange, mode == config.ModeTestnet, log)
 		if err != nil {
 			return err
 		}
@@ -160,10 +163,10 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 			return err
 		}
 		var physical broker.Broker
-		if cfg.App.Mode == config.ModePaper {
+		if mode == config.ModePaper {
 			physical = broker.NewSim(broker.SimConfig{Exchange: source.Name(), Fees: app.Fees(cfg.Backtest.Fees), SlippageBps: cfg.Backtest.SlippageBps, Clock: time.Now})
 		} else {
-			physical, err = app.LiveBroker(cfg, spec.Exchange, []domain.Market{domain.Spot}, log)
+			physical, err = app.LiveBrokerFor(cfg, spec.Exchange, mode, []domain.Market{domain.Spot}, log)
 			if err != nil {
 				return err
 			}
@@ -187,7 +190,7 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 		}
 		seen := map[exchange.KlineSub]bool{}
 		var subs []exchange.KlineSub
-		if cfg.App.Mode != config.ModePaper {
+		if mode != config.ModePaper {
 			sub := exchange.KlineSub{Symbol: "BNBUSDT", Timeframe: "1m"}
 			subs = append(subs, sub)
 			seen[sub] = true
@@ -300,6 +303,12 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 	if cfg.Web.Enabled {
 		handler := managed.NewHTTP(runtimes, cfg.Web.Password.Reveal(), func(v decimal.Decimal) string { return moneyFor().amount(v) })
 		handler.RateLine = func() string { return moneyFor().rateLine() }
+		handler.TOTP = cfg.Web.TOTPSecret.Reveal()
+		hubs := marketHubs(cfg, log)
+		for _, h := range hubs {
+			wg.Go(func() { fail(h.Run(ctx)) })
+		}
+		handler.Markets = func(mode string) *marketview.Hub { return hubs[mode == string(config.ModeTestnet)] }
 		startHTTP(&http.Server{Addr: cfg.Web.Listen, Handler: handler, ReadHeaderTimeout: 5 * time.Second})
 	}
 	if cfg.Metrics.Enabled {
@@ -458,4 +467,38 @@ func registerManagedTelegram(tg *telegram.Bot, runtimes map[string]*managed.Runt
 		stop()
 		return "🛑 Permintaan mematikan proses bot diterima. Posisi dan order dipertahankan; proses menyimpan data sebelum keluar."
 	})
+}
+
+// marketHubs builds one trading-screen market stream per network (mainnet
+// for paper and live wallets, testnet for testnet ones), keyed by testnet.
+// Each streams the configured symbols plus every symbol a binding trades.
+func marketHubs(cfg *config.Config, log *slog.Logger) map[bool]*marketview.Hub {
+	symbols := map[bool]map[string]bool{}
+	for _, w := range cfg.Wallets {
+		if w.Exchange != "binance" {
+			continue // only Binance implements the market stream
+		}
+		testnet := w.Mode == string(config.ModeTestnet)
+		if symbols[testnet] == nil {
+			symbols[testnet] = map[string]bool{}
+			for _, s := range cfg.MarketData.Symbols {
+				symbols[testnet][s] = true
+			}
+		}
+		for _, i := range w.Instances {
+			for _, b := range i.Strategies {
+				for _, s := range b.Symbols {
+					symbols[testnet][s] = true
+				}
+			}
+		}
+	}
+	hubs := map[bool]*marketview.Hub{}
+	for testnet, set := range symbols {
+		if len(set) == 0 {
+			continue
+		}
+		hubs[testnet] = &marketview.Hub{Source: binance.New(binance.Options{Testnet: testnet, Log: log}), Symbols: slices.Sorted(maps.Keys(set)), Timeframes: marketview.ChartTimeframes, Log: log.With("component", "market-hub", "testnet", testnet)}
+	}
+	return hubs
 }

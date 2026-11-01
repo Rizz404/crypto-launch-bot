@@ -4,6 +4,7 @@ import (
 	"crypto/subtle"
 	"encoding/json"
 	"errors"
+	"github.com/rizz404/trading-bot/internal/marketview"
 	"github.com/rizz404/trading-bot/internal/risk"
 	"github.com/rizz404/trading-bot/internal/ui"
 	"io"
@@ -23,7 +24,12 @@ type HTTP struct {
 	Wallets  map[string]*Runtime
 	Password string
 	Money    func(decimal.Decimal) string
+	// TOTP is the base32 secret of the login and live-order codes; empty keeps basic auth.
+	TOTP string
+	// Markets returns the market hub of a wallet mode (paper and live share mainnet).
+	Markets  func(mode string) *marketview.Hub
 	token    string
+	sessions sessions
 }
 
 func NewHTTP(wallets map[string]*Runtime, password string, money func(decimal.Decimal) string) *HTTP {
@@ -39,16 +45,28 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 	w.Header().Set("Cache-Control", "no-store")
 	// Scripts, styles and XHR come from this origin only; there is no inline code or eval.
 	w.Header().Set("Content-Security-Policy", "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'")
-	if h.Password != "" {
-		_, pass, ok := q.BasicAuth()
-		if !ok || subtle.ConstantTimeCompare([]byte(pass), []byte(h.Password)) != 1 {
-			w.Header().Set("WWW-Authenticate", `Basic realm="Trading bot"`)
-			http.Error(w, "Autentikasi diperlukan", http.StatusUnauthorized)
-			return
-		}
-	}
 	if strings.HasPrefix(q.URL.Path, "/static/") && q.Method == http.MethodGet {
 		ui.Handler().ServeHTTP(w, q)
+		return
+	}
+	switch q.URL.Path {
+	case "/login":
+		h.login(w, q)
+		return
+	case "/logout":
+		h.logout(w, q)
+		return
+	}
+	if !h.authorized(q) {
+		switch {
+		case h.TOTP == "":
+			w.Header().Set("WWW-Authenticate", `Basic realm="Trading bot"`)
+			http.Error(w, "Autentikasi diperlukan", http.StatusUnauthorized)
+		case q.Method == http.MethodGet && !strings.HasPrefix(q.URL.Path, "/api/") && q.URL.Path != "/stream":
+			http.Redirect(w, q, "/login", http.StatusSeeOther)
+		default:
+			http.Error(w, "Autentikasi diperlukan", http.StatusUnauthorized)
+		}
 		return
 	}
 	wallets := sortedWallets(h.Wallets)
@@ -102,6 +120,24 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 				return
 			}
 		}
+		st, err := rt.Snapshot(q.Context())
+		if err != nil {
+			http.Error(w, "Status akun tidak tersedia", http.StatusServiceUnavailable)
+			return
+		}
+		code := q.Header.Get("X-TOTP")
+		if code == "" {
+			code = q.FormValue("totp")
+		}
+		if !h.liveConfirmed(st.Spec.Mode, code) {
+			err = errors.New("akun live: kode authenticator (TOTP) baru diperlukan")
+			if strings.HasPrefix(q.Header.Get("Content-Type"), "application/json") {
+				http.Error(w, err.Error(), http.StatusForbidden)
+			} else {
+				formError(w, q, wallet, err)
+			}
+			return
+		}
 		if err := rt.Command(q.Context(), c); err != nil {
 			if strings.HasPrefix(q.Header.Get("Content-Type"), "application/json") {
 				http.Error(w, err.Error(), http.StatusConflict)
@@ -127,6 +163,25 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 		_ = json.NewEncoder(w).Encode(state)
 		return
 	}
+	switch q.URL.Path {
+	case "/trade", "/api/candles", "/stream":
+		hub := h.hub(state.Spec.Mode)
+		if hub == nil {
+			http.Error(w, "Data pasar tidak tersedia untuk akun ini", http.StatusServiceUnavailable)
+			return
+		}
+		tv := h.tradeView(q, wallet, wallets, state, hub)
+		switch q.URL.Path {
+		case "/trade":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_ = Trade(tv).Render(q.Context(), w)
+		case "/api/candles":
+			h.candles(w, q, tv, hub)
+		default:
+			h.stream(w, q, rt, tv, hub)
+		}
+		return
+	}
 	if q.URL.Path != "/" {
 		http.NotFound(w, q)
 		return
@@ -135,7 +190,11 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 	if !slices.ContainsFunc(tabs, func(t ui.NavItem) bool { return t.Key == tab }) {
 		tab = tabs[0].Key
 	}
-	v := view{Wallet: wallet, Wallets: wallets, Tab: tab, State: state, Token: h.token, Error: q.URL.Query().Get("error"), money: h.Money, links: h.NavLinks}
+	links := h.NavLinks
+	if h.Markets != nil {
+		links = append([]ui.NavItem{{Key: "trade", Label: "Trading", Href: "/trade?wallet=" + url.QueryEscape(wallet)}}, links...)
+	}
+	v := view{Wallet: wallet, Wallets: wallets, Tab: tab, State: state, Token: h.token, Error: q.URL.Query().Get("error"), money: h.Money, links: links}
 	if h.RateLine != nil {
 		v.Rate = h.RateLine()
 	}
@@ -151,6 +210,9 @@ func formError(w http.ResponseWriter, q *http.Request, wallet string, err error)
 
 // backURL returns to the dashboard tab the action was submitted from.
 func backURL(q *http.Request, wallet string) string {
+	if q.FormValue("view") == "trade" {
+		return "/trade?wallet=" + url.QueryEscape(wallet) + "&symbol=" + url.QueryEscape(q.FormValue("symbol")) + "&tf=" + url.QueryEscape(q.FormValue("tf"))
+	}
 	u := "/?wallet=" + url.QueryEscape(wallet)
 	if tab := q.URL.Query().Get("tab"); slices.ContainsFunc(tabs, func(t ui.NavItem) bool { return t.Key == tab }) {
 		u += "&tab=" + tab
@@ -162,6 +224,24 @@ func formCommand(q *http.Request) (Command, error) {
 	c := Command{ID: q.FormValue("id"), Operation: q.FormValue("operation"), Scope: q.FormValue("scope"), From: q.FormValue("from"), To: q.FormValue("to"), Name: q.FormValue("name"), Policy: q.FormValue("policy"), Order: q.FormValue("order"), Confirm: q.FormValue("confirm") == "yes"}
 	if c.ID == "" {
 		return c, errors.New("ID aksi diperlukan")
+	}
+	if manualOperations[c.Operation] {
+		c.Scope, c.Symbol, c.Side, c.OrderType = q.FormValue("scope"), q.FormValue("symbol"), q.FormValue("side"), q.FormValue("order_type")
+		for _, f := range []struct {
+			name   string
+			target *decimal.Decimal
+		}{{"quantity", &c.Quantity}, {"price", &c.Price}, {"stop_loss", &c.StopLoss}, {"take_profit", &c.TakeProfit}} {
+			if v := strings.TrimSpace(q.FormValue(f.name)); v != "" {
+				d, err := decimal.NewFromString(v)
+				if err != nil {
+					return c, errors.New("angka order tidak valid: " + f.name)
+				}
+				*f.target = d
+			}
+		}
+		if c.OrderType == "market" {
+			c.Price = decimal.Zero
+		}
 	}
 	if v := q.FormValue("amount"); v != "" {
 		d, err := decimal.NewFromString(v)
@@ -205,6 +285,8 @@ func formCommand(q *http.Request) (Command, error) {
 			params["momentum_min"] = 0.05
 		case "emacross":
 			params["allow_short"] = false
+		case ManualStrategy:
+			params = nil
 		default:
 			return c, errors.New("template strategi tidak tersedia")
 		}

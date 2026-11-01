@@ -93,6 +93,9 @@ type WebConfig struct {
 	// Password enables HTTP basic auth (any user name); only via
 	// TB_WEB__PASSWORD. Required when listening beyond localhost.
 	Password Secret `koanf:"password"`
+	// TOTPSecret (base32, only via TB_WEB__TOTP_SECRET) replaces basic auth
+	// with a login session plus authenticator code, and confirms live orders.
+	TOTPSecret Secret `koanf:"totp_secret"`
 }
 
 // TelegramConfig configures notifications and remote commands.
@@ -172,6 +175,22 @@ type ExchangeConfig struct {
 	Testnet   bool   `koanf:"testnet"`
 	APIKey    Secret `koanf:"api_key"`
 	APISecret Secret `koanf:"api_secret"`
+	// Testnet credentials let testnet and live wallets run in one process.
+	TestnetAPIKey    Secret `koanf:"testnet_api_key"`
+	TestnetAPISecret Secret `koanf:"testnet_api_secret"`
+}
+
+// Credentials returns the API key pair for testnet or mainnet orders. The
+// legacy api_key pair counts as testnet only when testnet: true, so a mainnet
+// key is never sent to testnet or the other way round.
+func (e ExchangeConfig) Credentials(testnet bool) (key, secret Secret) {
+	switch {
+	case testnet && e.TestnetAPIKey != "":
+		return e.TestnetAPIKey, e.TestnetAPISecret
+	case testnet == e.Testnet:
+		return e.APIKey, e.APISecret
+	}
+	return "", ""
 }
 
 // MarketDataConfig selects which live candles the bot records.
@@ -198,7 +217,7 @@ type UniverseConfig struct {
 }
 
 // secretKeys may only be set through the environment.
-var secretKeys = []string{"api_key", "api_secret"}
+var secretKeys = []string{"api_key", "api_secret", "testnet_api_key", "testnet_api_secret"}
 
 // DefaultExcludeBases are assets that are pegged or wrapped, and therefore
 // not worth trading against USDT.
@@ -325,6 +344,9 @@ func checkNoSecretsInFile(k *koanf.Koanf) error {
 	if k.String("web.password") != "" {
 		errs = append(errs, errors.New("web.password must not be set in the config file, use TB_WEB__PASSWORD"))
 	}
+	if k.String("web.totp_secret") != "" {
+		errs = append(errs, errors.New("web.totp_secret must not be set in the config file, use TB_WEB__TOTP_SECRET"))
+	}
 	if k.String("telegram.token") != "" {
 		errs = append(errs, errors.New("telegram.token must not be set in the config file, use TB_TELEGRAM__TOKEN"))
 	}
@@ -365,6 +387,15 @@ func (c *Config) Validate() error {
 			errs = append(errs, fmt.Errorf("web.listen %q: %w", c.Web.Listen, err))
 		case c.Web.Password == "" && host != "localhost" && (ip == nil || !ip.IsLoopback()):
 			errs = append(errs, errors.New("web.listen is not localhost: set TB_WEB__PASSWORD"))
+		}
+		if c.Web.TOTPSecret != "" && (c.Web.Password == "" || !managed.ValidTOTPSecret(c.Web.TOTPSecret.Reveal())) {
+			errs = append(errs, errors.New("web.totp_secret must be base32 (at least 16 characters) and needs TB_WEB__PASSWORD"))
+		}
+		for _, w := range c.Wallets {
+			if (w.Mode == string(ModeLive) || (w.Mode == "" && c.App.Mode == ModeLive)) && c.Web.TOTPSecret == "" {
+				errs = append(errs, errors.New("a live wallet on the web dashboard needs TB_WEB__TOTP_SECRET for order confirmation"))
+				break
+			}
 		}
 	}
 	if c.Telegram.Enabled {
@@ -408,16 +439,29 @@ func (c *Config) Validate() error {
 	walletIDs, walletExchanges := map[string]bool{}, map[string]bool{}
 	for idx := range c.Wallets {
 		w := &c.Wallets[idx]
-		w.Mode = string(c.App.Mode)
+		if w.Mode == "" {
+			w.Mode = string(c.App.Mode)
+		}
 		if err := w.Validate(); err != nil {
 			errs = append(errs, fmt.Errorf("wallets[%d]: %w", idx, err))
 		}
-		if walletIDs[w.ID] || walletExchanges[w.Exchange] {
+		// One physical wallet per exchange and mode: paper, testnet and live may run together.
+		physical := w.Exchange + ":" + w.Mode
+		if walletIDs[w.ID] || walletExchanges[physical] {
 			errs = append(errs, errors.New("duplicate managed wallet id or physical exchange wallet"))
 		}
-		walletIDs[w.ID], walletExchanges[w.Exchange] = true, true
-		if !c.Exchanges[w.Exchange].Enabled {
+		walletIDs[w.ID], walletExchanges[physical] = true, true
+		ex := c.Exchanges[w.Exchange]
+		if !ex.Enabled {
 			errs = append(errs, fmt.Errorf("managed exchange %s is not enabled", w.Exchange))
+		}
+		if w.Mode == string(ModeLive) && (!c.App.AllowLive || !w.AllowLive) {
+			errs = append(errs, fmt.Errorf("wallets[%d] sends real orders: set app.allow_live and wallets[%d].allow_live to true", idx, idx))
+		}
+		if w.Mode == string(ModeTestnet) || w.Mode == string(ModeLive) {
+			if key, secret := ex.Credentials(w.Mode == string(ModeTestnet)); key == "" || secret == "" {
+				errs = append(errs, fmt.Errorf("wallets[%d]: exchanges.%s needs %s API credentials", idx, w.Exchange, w.Mode))
+			}
 		}
 	}
 	if len(c.Wallets) > 0 {
@@ -465,7 +509,8 @@ func (c *Config) Validate() error {
 	}
 
 	for name, ex := range c.Exchanges {
-		if !ex.Enabled {
+		// Managed wallets choose their mode and credentials themselves (checked above).
+		if !ex.Enabled || len(c.Wallets) > 0 {
 			continue
 		}
 		// Guard against sending real orders by accident, and against a

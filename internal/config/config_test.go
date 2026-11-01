@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -29,7 +30,7 @@ exchanges:
 `
 
 func TestManagedExamplesRemainPaperAndSingleCapital(t *testing.T) {
-	for _, name := range []string{"managed.example.yaml", "managed.eth-paper.yaml", "managed.research-stage-one.yaml", "managed.research-stage-two.yaml", "managed.research-stage-three.yaml"} {
+	for _, name := range []string{"managed.example.yaml", "managed.trading.example.yaml", "managed.eth-paper.yaml", "managed.research-stage-one.yaml", "managed.research-stage-two.yaml", "managed.research-stage-three.yaml"} {
 		cfg, err := load(filepath.Join("..", "..", "configs", name), []string{"TB_DATABASE__URL=postgres://unused@localhost/unused"})
 		require.NoError(t, err)
 		require.Equal(t, ModePaper, cfg.App.Mode)
@@ -297,4 +298,64 @@ func TestWebRequiresPasswordOffLoopbackAndRejectsYAMLSecrets(t *testing.T) {
 		require.Error(t, err)
 		assert.NotContains(t, err.Error(), "unsafe")
 	}
+}
+
+func TestWalletModesRunTogetherWithSeparateCredentials(t *testing.T) {
+	const yaml = `
+app: {mode: paper, allow_live: %t}
+database: {url: postgres://bot:bot@localhost:5432/tradingbot}
+web: {enabled: %t, listen: '127.0.0.1:18080'}
+exchanges:
+  binance: {enabled: true, testnet: false}
+marketdata: {exchange: binance, markets: [spot], symbols: [BTCUSDT], timeframes: [1m]}
+wallets:
+  - {id: paper, exchange: binance, quote: USDT, capital: '100'}
+  - {id: test, mode: testnet, exchange: binance, quote: USDT, capital: '100'}
+  - {id: real, mode: live, allow_live: %t, exchange: binance, quote: USDT, capital: '10'}
+`
+	testnet := []string{"TB_EXCHANGES__BINANCE__TESTNET_API_KEY=tk", "TB_EXCHANGES__BINANCE__TESTNET_API_SECRET=ts"}
+	live := []string{"TB_EXCHANGES__BINANCE__API_KEY=lk", "TB_EXCHANGES__BINANCE__API_SECRET=ls"}
+	tests := []struct {
+		name               string
+		appLive, walletLiv bool
+		web                bool
+		environ            []string
+		wantErr            string
+	}{
+		{"all modes", true, true, false, append(slices.Clone(testnet), live...), ""},
+		{"live wallet not confirmed", true, false, false, append(slices.Clone(testnet), live...), "allow_live"},
+		{"app not confirmed", false, true, false, append(slices.Clone(testnet), live...), "allow_live"},
+		{"no testnet key", true, true, false, live, "needs testnet API credentials"},
+		{"no live key", true, true, false, testnet, "needs live API credentials"},
+		{"live on web without totp", true, true, true, append(slices.Clone(testnet), live...), "TOTP_SECRET"},
+		{"live on web with totp", true, true, true, append(append(slices.Clone(testnet), live...), "TB_WEB__PASSWORD=p", "TB_WEB__TOTP_SECRET=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"), ""},
+		{"bad totp secret", true, true, true, append(append(slices.Clone(testnet), live...), "TB_WEB__PASSWORD=p", "TB_WEB__TOTP_SECRET=nope"), "base32"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cfg, err := load(writeFile(t, "config.yaml", fmt.Sprintf(yaml, tt.appLive, tt.web, tt.walletLiv)), tt.environ)
+			if tt.wantErr != "" {
+				require.Error(t, err)
+				assert.Contains(t, err.Error(), tt.wantErr)
+				return
+			}
+			require.NoError(t, err)
+			assert.Equal(t, []string{"paper", "testnet", "live"}, []string{cfg.Wallets[0].Mode, cfg.Wallets[1].Mode, cfg.Wallets[2].Mode})
+			key, _ := cfg.Exchanges["binance"].Credentials(true)
+			assert.Equal(t, "tk", key.Reveal())
+			key, _ = cfg.Exchanges["binance"].Credentials(false)
+			assert.Equal(t, "lk", key.Reveal())
+		})
+	}
+}
+
+func TestCredentialsNeverCrossNetworks(t *testing.T) {
+	mainnet := ExchangeConfig{APIKey: "main", APISecret: "s"}
+	key, _ := mainnet.Credentials(true)
+	assert.Empty(t, key, "a mainnet key must not be sent to testnet")
+	legacy := ExchangeConfig{Testnet: true, APIKey: "test", APISecret: "s"}
+	key, _ = legacy.Credentials(false)
+	assert.Empty(t, key, "a testnet key must not be used for live orders")
+	key, _ = legacy.Credentials(true)
+	assert.Equal(t, "test", key.Reveal())
 }

@@ -31,6 +31,12 @@
       },
     }));
 
+    Alpine.data("dropdown", () => ({
+      open: false,
+      toggle() { this.open = !this.open; },
+      close() { this.open = false; },
+    }));
+
     Alpine.data("menu", () => ({
       open: false,
       toggle() { this.open = !this.open; },
@@ -71,6 +77,64 @@
           ? "rounded-lg bg-neg px-4 py-2 text-sm font-medium text-page hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neg"
           : "rounded-lg bg-primary px-4 py-2 text-sm font-medium text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
       },
+    }));
+
+    // Trading screen order form. Quantity presets use the selected manual
+    // strategy's free cash (buy) or holding (sell); the server re-checks all.
+    Alpine.data("orderForm", () => ({
+      side: "buy", type: "market", qty: "", price: "", cash: 0, hold: 0,
+      init() { this.pick(); },
+      pick() {
+        const o = this.$refs.scope && this.$refs.scope.selectedOptions[0];
+        this.cash = o ? Number(o.dataset.cash) : 0;
+        this.hold = o ? Number(o.dataset.hold) : 0;
+      },
+      buy() { this.side = "buy"; },
+      sell() { this.side = "sell"; },
+      market() { this.type = "market"; },
+      limit() {
+        this.type = "limit";
+        if (!this.price) this.price = lastPrice() ? String(lastPrice()) : "";
+      },
+      get isBuy() { return this.side === "buy"; },
+      get isSell() { return this.side === "sell"; },
+      get isMarket() { return this.type === "market"; },
+      get isLimit() { return this.type === "limit"; },
+      get protectable() { return this.side === "buy" && this.type === "market"; },
+      get available() {
+        return this.side === "buy" ? this.cash.toFixed(2) + " USDT" : String(this.hold) + " koin";
+      },
+      percent(e) {
+        const pct = Number(e.currentTarget.dataset.pct) / 100;
+        if (this.side === "sell") { this.qty = trim(this.hold * pct); return; }
+        const px = this.type === "limit" ? Number(this.price) : lastPrice();
+        // Leave room for the fee and slippage reserve.
+        if (px > 0) this.qty = trim((this.cash * pct * 0.995) / px);
+      },
+      get summary() {
+        const px = this.type === "limit" ? "@ " + this.price : "harga pasar";
+        return (this.side === "buy" ? "Beli " : "Jual ") + this.qty + " " + px + "\nStrategi: " + (this.$refs.scope ? this.$refs.scope.value : "");
+      },
+      get submitLabel() { return (this.side === "buy" ? "Beli" : "Jual") + (this.type === "limit" ? " limit" : " market"); },
+      get submitClass() {
+        return "w-full rounded-lg px-4 py-2 text-sm font-semibold text-page hover:opacity-90 " + (this.side === "buy" ? "bg-pos" : "bg-neg");
+      },
+    }));
+
+    Alpine.data("accountTabs", () => ({
+      tab: "positions",
+      positions() { this.tab = "positions"; },
+      orders() { this.tab = "orders"; },
+      fills() { this.tab = "fills"; },
+      funds() { this.tab = "funds"; },
+      get isPositions() { return this.tab === "positions"; },
+      get isOrders() { return this.tab === "orders"; },
+      get isFills() { return this.tab === "fills"; },
+      get isFunds() { return this.tab === "funds"; },
+      get posCurrent() { return this.tab === "positions" ? "page" : "false"; },
+      get ordersCurrent() { return this.tab === "orders" ? "page" : "false"; },
+      get fillsCurrent() { return this.tab === "fills" ? "page" : "false"; },
+      get fundsCurrent() { return this.tab === "funds" ? "page" : "false"; },
     }));
 
     Alpine.data("toast", () => ({
@@ -153,14 +217,117 @@
     chart.timeScale().fitContent();
   }
 
+  // Trading screen ---------------------------------------------------------
+  // One EventSource per page: book, tape and ticker update in place; the
+  // chart's last candle follows the stream; account panels re-fetch on notice.
+  let source = null, liveSeries = null, last = 0;
+  function lastPrice() { return last; }
+  function trim(n) { return n > 0 ? String(Number(n.toFixed(8))) : ""; }
+  const fmt = (v) => { const n = Number(v); return n >= 100 ? n.toFixed(2) : n >= 1 ? n.toFixed(4) : String(n); };
+  const fmtQty = (v) => String(Number(Number(v).toFixed(6)));
+
+  async function tradeChart(el) {
+    const data = await load(el);
+    const chart = baseChart(el);
+    const s = chart.addSeries(LightweightCharts.CandlestickSeries, {
+      upColor: css("--c-pos"), downColor: css("--c-neg"), borderVisible: false,
+      wickUpColor: css("--c-pos"), wickDownColor: css("--c-neg"),
+    });
+    s.setData(data.candles);
+    const pick = (c) => (c === "pos" ? css("--c-pos") : c === "neg" ? css("--c-neg") : css("--c-link"));
+    LightweightCharts.createSeriesMarkers(s, data.markers.map((m) => ({ ...m, color: pick(m.color) })));
+    liveSeries = s;
+  }
+
+  function bookRows(box, levels, tone, max) {
+    const rows = levels.map(([p, q]) => {
+      const row = document.createElement("div");
+      row.className = "relative grid grid-cols-3 py-0.5 tabular-nums";
+      const bar = document.createElement("span");
+      bar.className = "absolute inset-y-0 right-0 " + (tone === "pos" ? "bg-pos/10" : "bg-neg/10");
+      bar.style.width = Math.min(100, (Number(q) * Number(p) / max) * 100) + "%";
+      const cells = [[fmt(p), tone === "pos" ? "text-pos" : "text-neg"], [fmtQty(q), "text-right"], [fmt(Number(p) * Number(q)), "text-right text-muted"]];
+      row.append(bar, ...cells.map(([t, c]) => { const s = document.createElement("span"); s.className = "relative " + c; s.textContent = t; return s; }));
+      return row;
+    });
+    box.replaceChildren(...rows);
+  }
+
+  function onMarket(root, d) {
+    const book = root.querySelector("[data-book]");
+    if (book) {
+      book.querySelector("[data-book-wait]").hidden = d.synced;
+      const all = d.bids.concat(d.asks);
+      const max = Math.max(1, ...all.map(([p, q]) => Number(p) * Number(q)));
+      bookRows(book.querySelector("[data-asks]"), d.asks, "neg", max);
+      bookRows(book.querySelector("[data-bids]"), d.bids, "pos", max);
+      const spread = book.querySelector("[data-spread]");
+      if (d.bids.length && d.asks.length) {
+        // Price strings carry the tick precision; float maths must not add digits.
+        const places = Math.max(...[d.bids[0][0], d.asks[0][0]].map((p) => (p.split(".")[1] || "").length));
+        const bid = Number(d.bids[0][0]), ask = Number(d.asks[0][0]);
+        spread.textContent = ((bid + ask) / 2).toFixed(places + 1) + "  ·  spread " + (ask - bid).toFixed(places);
+      }
+    }
+    const tape = root.querySelector("[data-tape]");
+    if (tape && d.trades.length) {
+      const rows = d.trades.slice().reverse().map((t) => {
+        const row = document.createElement("div");
+        row.className = "grid grid-cols-3 py-0.5 tabular-nums";
+        const cells = [[fmt(t.p), t.s ? "text-neg" : "text-pos"], [fmtQty(t.q), "text-right"], [new Date(t.t).toLocaleTimeString(), "text-right text-muted"]];
+        row.append(...cells.map(([x, c]) => { const s = document.createElement("span"); s.className = c; s.textContent = x; return s; }));
+        return row;
+      });
+      tape.prepend(...rows);
+      while (tape.children.length > 40) tape.lastChild.remove();
+    }
+    if (d.ticker) {
+      last = Number(d.ticker.last);
+      const set = (k, v, tone) => {
+        const el = root.querySelector('[data-ticker="' + k + '"]');
+        if (!el) return;
+        el.textContent = v;
+        if (tone !== undefined) el.className = el.className.replace(/\btext-(pos|neg)\b/g, "") + " " + tone;
+      };
+      const up = Number(d.ticker.pct) >= 0;
+      set("last", fmt(d.ticker.last), up ? "text-pos" : "text-neg");
+      set("pct", (up ? "+" : "") + d.ticker.pct + "%", up ? "text-pos" : "text-neg");
+      set("high", fmt(d.ticker.high));
+      set("low", fmt(d.ticker.low));
+      set("qv", Number(d.ticker.qv).toLocaleString());
+    }
+    if (d.candle && liveSeries) {
+      try { liveSeries.update(d.candle); } catch (e) { /* older than the loaded history */ }
+    }
+  }
+
+  function trade(root) {
+    const el = root.querySelector("[data-trade]");
+    if (!el || el.dataset.live) return;
+    el.dataset.live = "1";
+    if (source) source.close();
+    const state = el.querySelector("[data-stream-state]");
+    source = new EventSource(el.dataset.stream);
+    source.addEventListener("open", () => { if (state) state.textContent = "live"; });
+    source.addEventListener("error", () => { if (state) state.textContent = "terputus, mencoba lagi…"; });
+    source.addEventListener("market", (e) => onMarket(el, JSON.parse(e.data)));
+    source.addEventListener("account", () => window.dispatchEvent(new CustomEvent("account-changed")));
+  }
+
   function render(root) {
     root.querySelectorAll("[data-chart]").forEach((el) => {
       if (el.dataset.rendered) return;
       el.dataset.rendered = "1";
-      (el.dataset.chart === "candles" ? candles : line)(el).catch((err) => note(el, "Grafik gagal dimuat: " + err.message));
+      const fn = el.dataset.chart === "trade" ? tradeChart : el.dataset.chart === "candles" ? candles : line;
+      fn(el).catch((err) => note(el, "Grafik gagal dimuat: " + err.message));
     });
+    trade(root);
   }
 
+  // Leaving the screen through a boosted link must close the stream.
+  document.addEventListener("htmx:beforeSwap", (e) => {
+    if (source && e.detail.target === document.body) { source.close(); source = null; liveSeries = null; }
+  });
   document.addEventListener("DOMContentLoaded", () => render(document));
   document.addEventListener("htmx:afterSettle", (e) => render(e.target));
   window.addEventListener("themechange", () => {

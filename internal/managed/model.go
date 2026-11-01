@@ -24,9 +24,12 @@ var ErrFunds = errors.New("insufficient unreserved capital or inventory")
 var ErrAttention = errors.New("wallet needs reconciliation")
 
 type Spec struct {
-	ID        string          `koanf:"id"`
-	Exchange  string          `koanf:"exchange"`
-	Mode      string          `koanf:"-"`
+	ID       string `koanf:"id"`
+	Exchange string `koanf:"exchange"`
+	Mode     string `koanf:"mode"`
+	// AllowLive confirms that this wallet may send real orders. It stays out of
+	// the configuration hash so confirming does not look like a strategy change.
+	AllowLive bool            `koanf:"allow_live" json:"-"`
 	Quote     string          `koanf:"quote"`
 	Capital   decimal.Decimal `koanf:"capital"`
 	Risk      risk.Config     `koanf:"risk"`

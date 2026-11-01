@@ -8,7 +8,52 @@ const (
 	BtnSmall     = " !px-3 !py-1.5 !text-xs"
 	InputClass   = "w-full rounded-lg border border-outline bg-surface px-3 py-2 text-sm text-on-surface placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-link"
 	LinkClass    = "text-link underline-offset-2 hover:underline"
+	// Segmented controls (Penguin UI button group): items set aria-pressed or aria-current.
+	SegGroup = "inline-flex rounded-lg border border-outline bg-surface-alt p-0.5"
+	SegItem  = "rounded-md px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:text-on-surface aria-pressed:bg-surface aria-pressed:text-on-surface aria-pressed:shadow-sm aria-[current=page]:bg-surface aria-[current=page]:text-on-surface aria-[current=page]:shadow-sm"
+	MenuItem = "flex items-center justify-between gap-3 px-4 py-2 text-sm text-on-surface hover:bg-surface-alt aria-[current=page]:font-semibold"
 )
+
+// ModeTone colours an account by how real its money is.
+func ModeTone(mode string) string {
+	switch mode {
+	case "live":
+		return "neg"
+	case "testnet":
+		return "warn"
+	}
+	return ""
+}
+
+// ModeLabel names an account mode for operators.
+func ModeLabel(mode string) string {
+	switch mode {
+	case "live":
+		return "LIVE · uang asli"
+	case "testnet":
+		return "TESTNET"
+	case "paper":
+		return "PAPER"
+	}
+	return mode
+}
+
+templ ModeBadge(mode string) {
+	@Badge(ModeLabel(mode), ModeTone(mode))
+}
+
+// Dropdown is a Penguin UI style menu: a button and a panel of MenuItem links.
+templ Dropdown(label templ.Component, align string) {
+	<div x-data="dropdown" x-on:keydown.escape="close" x-on:click.outside="close" class="relative">
+		<button type="button" x-on:click="toggle" x-bind:aria-expanded="open" aria-haspopup="true" class={ BtnSecondary + BtnSmall }>
+			@label
+			<span class="text-muted" aria-hidden="true">▾</span>
+		</button>
+		<div x-show="open" x-cloak x-transition class={ "absolute z-40 mt-1 max-h-80 min-w-48 overflow-y-auto rounded-lg border border-outline bg-surface py-1 shadow-lg " + align } role="menu">
+			{ children... }
+		</div>
+	</div>
+}
 
 // Current is the aria-current value for nav links; styling keys off "page".
 func Current(active bool) string {
