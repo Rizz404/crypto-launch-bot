@@ -1,5 +1,23 @@
 # Handover VPS
 
+## Plan 4 paper aktif — 1 November 2026 23:24 WIB
+
+Atas izin user ("commit dan deploy"). Source `048ae24`, CI [41325452146](https://github.com/Rizz404/trading-bot/actions/runs/41325452146) lulus,
+image `ghcr.io/rizz404/ana-core@sha256:1f967fe5341040446f9cad1cbf0ecf20a2834f650df0b40161541391ec1882fe`
+(dicocokkan dengan tag `sha-<commit>`). Backup pra-rilis `backup-20261101T162312Z`.
+
+- Hanya `ana-core` `db`, `dns`, `prometheus`, `grafana`, `bot`. `research` dan seluruh `ana-scout` tetap mati.
+- `configs/config.yaml` = `configs/managed.trading.example.yaml` + blok Telegram lama + metrics; config lama
+  sama persis dengan `configs/config.research-stage-two.yaml` (disimpan). Owner 65532 mode 600.
+- `BOT_DB_NAME=tradingbot_plan4_paper` (baru, migrasi 1–5). Wallet `paper` 1.000 USDT virtual, instance `main`
+  dengan `eth-trend` (EMA 1h) + `manual` (BTC/ETH/SOL). Tidak ada testnet/live.
+- `TB_WEB__TOTP_SECRET` dibangkitkan di server, tidak pernah dicetak; Basic Auth diganti login + kode.
+  Ambil sendiri: `grep '^TB_WEB__TOTP_SECRET=' /opt/ana-core/repo/.env.vps`.
+- Timer `ana-core-backup` aktif lagi. `ana-core-observe` **tetap disabled**: observer masih mengharuskan
+  worker `research`; perlu disesuaikan sebelum diaktifkan.
+- Pemeriksaan: market stream 27 stream, `/healthz` 200, `https://ana.nexlabs.cloud/login` 200, `/trade` tanpa
+  sesi 303 ke login, Basic Auth salah 401. Whitelist IP nginx belum dipasang (menunggu IP dari user).
+
 ## Semua runtime dihentikan — 1 November 2026 19:49 WIB
 
 Atas permintaan user, setelah [review akhir](../testing/final-review.md), seluruh

@@ -27,6 +27,12 @@ Website dipakai untuk memantau dan mengendalikan bot, serta mengintervensi posis
 - **Testnet**: order dikirim ke server latihan Binance. Untuk menguji jalur eksekusi API;
   harga dan likuiditasnya tidak realistis.
 
+## Status
+
+Dirilis 1 November 23:24 WIB di `https://ana.nexlabs.cloud/trade`: akun **paper** 1.000 USDT virtual
+(bot EMA ETH 1h + strategi manual BTC/ETH/SOL), login password + kode authenticator. Testnet, live dan
+whitelist IP belum.
+
 ## Tahap
 
 1. P4-0 Akun paper/testnet/live dalam satu proses.
