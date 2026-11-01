@@ -1,5 +1,20 @@
 # Handover VPS
 
+## Semua runtime dihentikan — 1 November 2026 19:49 WIB
+
+Atas permintaan user, setelah [review akhir](../testing/final-review.md), seluruh
+eksperimen paper dihentikan untuk analisis ulang (Plan 4). Urutan: backup manual
+`backup-20261101T124918Z` (core) dan `backup-20261101T124923Z` (scout) sukses; keempat
+timer `ana-{core,scout}-{observe,backup}` `disable --now`; worker `bot`/`research`/`catalyst`
+di-`docker stop` (SIGTERM, exit 0), lalu DB/DNS/Prometheus/Grafana (exit 0).
+
+Container `ana-*` tetap ada (exited, restart `unless-stopped` tidak menyalakan ulang
+container yang di-stop manual). Volume `ana-core_{db,grafana,prometheus}-data`,
+`ana-scout_{archive,db-data}`, image, checkout dan backup disimpan; tidak ada yang dihapus.
+Ledger tidak di-flatten (tidak ada posisi/order). Akibatnya `https://ana.nexlabs.cloud`
+tidak punya backend (502) sampai ada keputusan baru; subdomain/vhost belum dihapus.
+`plesk` lama tetap cadangan mati sampai ±5 November. Bagian di bawah adalah riwayat.
+
 **Runtime pindah ke `plesk-newest` 29 Oktober 23:48 WIB** sebagai `ana-core`/`ana-scout`; lihat bagian Server saat ini.
 
 **Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](../testing/research-stage-three.md).

@@ -1,5 +1,9 @@
 # Plan 3 — Riset katalis dan hold berbasis tesis
 
+> **Ditutup 1 November 2026.** Semua eksperimen dihentikan setelah
+> [review akhir](testing/final-review.md): tidak ada edge, sebagian besar sinyal tidak pernah entry,
+> AI tidak pernah mendapat event yang bisa dieksekusi. Analisis berikutnya di Plan 4.
+
 Rencana aktif sejak 23 Oktober 2026. Plan 1 dan 2 sudah selesai. Pekerjaan sisanya ada di sini.
 Status di bawah per **30 Oktober 2026**; verifikasi sebelum mengandalkannya.
 
@@ -12,14 +16,14 @@ sendiri dan tidak bergantung pada AI.
 
 ## Status sekarang
 
-| Hal | Kondisi |
-|---|---|
-| Pilot AI (P3) | Aktif sejak 28 Oktober 22:53 WIB. Modal virtual 1.000 USDT, risiko 0,5%/trade, maksimal 2 posisi, maksimal 12 panggilan AI/hari |
-| Hasil pilot | Per 29 Oktober belum ada transaksi (fill); belum ada bukti untung/rugi |
-| Pembanding P2 | 6 instance/18 binding BTC/ETH/SOL sejak 22 Oktober. Dua EMA 1m rugi dan sudah di-pause; empat lain belum bertransaksi |
-| Riset tahap tiga | Enam kasus BTC/ETH (pullback 4h, EMA 15m/1h) aktif sejak 29 Oktober 23:14 WIB |
-| Server | `plesk-newest`; server lama `plesk` hanya cadangan rollback sampai ±5 November |
-| Uang asli | **Tidak diizinkan** |
+| Hal              | Kondisi                                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Pilot AI (P3)    | Aktif sejak 28 Oktober 22:53 WIB. Modal virtual 1.000 USDT, risiko 0,5%/trade, maksimal 2 posisi, maksimal 12 panggilan AI/hari |
+| Hasil pilot      | Belum ada transaksi (fill); belum ada bukti untung/rugi                                                                         |
+| Pembanding P2    | 6 instance/18 binding BTC/ETH/SOL sejak 22 Oktober. Dua EMA 1m rugi dan sudah di-pause; empat lain belum bertransaksi           |
+| Riset tahap tiga | Enam kasus BTC/ETH (pullback 4h, EMA 15m/1h) aktif sejak 29 Oktober 23:14 WIB                                                   |
+| Server           | `plesk-newest`; server lama `plesk` hanya cadangan rollback sampai ±5 November                                                  |
+| Uang asli        | **Tidak diizinkan**                                                                                                             |
 
 ## Masalah yang diketahui
 
