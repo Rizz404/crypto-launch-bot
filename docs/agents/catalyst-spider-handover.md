@@ -7,7 +7,7 @@
 > Gunakan [handover agent](handover-agent.md) dan [handover VPS](handover-vps.md)
 > untuk pekerjaan berikutnya. Backup/restore flat dan QA Chromium awal selesai
 > 29 Oktober. Patch/helper/timer kemudian dirilis pada 22:23 WIB, source `d30b93b`;
-> [status rilis](testing/paper-operations-release.md). Review hari 1/3/7 dan
+> [status rilis](../testing/paper-operations-release.md). Review hari 1/3/7 dan
 > recovery posisi aktif tetap terbuka. Plan 3 tetap roadmap repo ini.
 
 **Lanjutan terakhir dijeda 28 Oktober 22.12 WIB.** Runner/pilot baru masih WIP;
@@ -23,7 +23,7 @@ Mulai dari [handover agent](handover-agent.md) dan [Plan 3](plan-3.md).
 push dan deploy pada 28 Oktober. Commit config `c8a3439` dan implementasi
 `1afbd80`; source rilis `2998f38`. Seluruh CI/publikasi GHCR dan deployment
 report sekali jalan lulus 21.00 WIB, dengan 35 container lama tetap identik.
-[Bukti/digest rilis](testing/catalyst-release.json). Ini bukan aktivasi runner/pilot. Bagian
+[Bukti/digest rilis](../testing/catalyst-release.json). Ini bukan aktivasi runner/pilot. Bagian
 "tanpa commit/push/deploy" di bawah merekam checkpoint sebelum izin ini.
 
 ## Hasil lanjutan 28 Oktober
@@ -62,7 +62,7 @@ report sekali jalan lulus 21.00 WIB, dengan 35 container lama tetap identik.
   dokumen dan round-trip arsip. CI image/protokol/publikasi serta pemasangan
   VPS report lulus setelah izin user; runner trading tetap belum aktif.
 - Race test tiga paket terkait, vet dan lint lokal lulus; rincian dan batas di
-  [hasil lokal](testing/plan-3-local.md#lanjutan-spider-28-oktober).
+  [hasil lokal](../testing/plan-3-local.md#lanjutan-spider-28-oktober).
   Unit subprocess memakai shell fixture; tes container tambahan memakai binary
   Spider asli dengan patch flush. Tidak ada crawl publik, inference baru atau
   perubahan runtime P2; commit/push/deployment komponen tercatat di bukti rilis.
@@ -115,7 +115,7 @@ SSH alias `plesk`, hanya perintah baca: `/proc/meminfo`, load, disk `/opt`,
 `docker ps`, satu sampel `docker stats --no-stream`, dan `docker inspect`
 dengan format terbatas untuk limit/state container P2. Tidak membaca env
 container, password, key atau isi database. Bukti terstruktur:
-[preflight VPS](testing/catalyst-vps-preflight.json).
+[preflight VPS](../testing/catalyst-vps-preflight.json).
 
 | Ukuran | Sampel 26 Oktober |
 |---|---|
@@ -253,7 +253,7 @@ atau menyalinnya ke docs/log. Model utama `cx/gpt-6-luna-low`, kandidat fallback
 `openrouter/anthropic/claude-haiku-5.5`, combo usulan `p3-research` priority belum
 dibuat. Evaluasi 7/7 dan 6/7 berlaku untuk prompt v3 dan tujuh kasus sintetis,
 bukan pengujian v4, profitabilitas atau failover. Bukti historis tetap utuh:
-[evaluasi model](testing/catalyst-model-evaluation.md).
+[evaluasi model](../testing/catalyst-model-evaluation.md).
 
 - [Spider upstream](https://github.com/spider-rs/spider).
 - [Spider CLI published](https://crates.io/crates/spider_cli/2.53.9).

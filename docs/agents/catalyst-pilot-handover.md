@@ -7,7 +7,7 @@
 > Gunakan [handover agent](handover-agent.md) dan [handover VPS](handover-vps.md)
 > untuk pekerjaan berikutnya. Backup/restore flat dan QA Chromium awal selesai
 > 29 Oktober. Patch/helper/timer kemudian dirilis pada 22:23 WIB, source `d30b93b`;
-> [status rilis](testing/paper-operations-release.md). Review hari 1/3/7 dan
+> [status rilis](../testing/paper-operations-release.md). Review hari 1/3/7 dan
 > recovery posisi aktif tetap terbuka. Plan 3 tetap roadmap repo ini.
 
 **Dijeda 28 Oktober 2026 sekitar 22.12 WIB, dilanjutkan user 22.18 WIB.**
@@ -52,7 +52,7 @@ Rilis VPS yang sudah terbukti masih **source `2998f38`**, project
 `trading-bot-catalyst`, `/opt/trading-bot-catalyst`, image
 `ghcr.io/rizz404/trading-bot-catalyst@sha256:cee992d6f6cd908569e072d98d07831d04b2efab26f006bf74e2a3e2997ce79d`.
 Itu pemasangan komponen dan `report` sekali jalan, **bukan worker/pilot**.
-[Bukti rilis](testing/catalyst-release.json) dan CI di sana tetap historis;
+[Bukti rilis](../testing/catalyst-release.json) dan CI di sana tetap historis;
 kelulusannya tidak mencakup WIP baru. Tidak ada DB/wallet/modal/T0 pilot P3
 yang dibuat di VPS, tidak ada worker/scheduler P3 yang diaktifkan.
 
@@ -116,7 +116,7 @@ sehat tetap dapat dianalisis, tanpa mengizinkan entry aset yang buktinya kurang.
 
 ## Bukti pengujian dan batasnya
 
-Lihat [laporan lokal pilot](testing/catalyst-pilot-local.md). Beberapa checkpoint
+Lihat [laporan lokal pilot](../testing/catalyst-pilot-local.md). Beberapa checkpoint
 unit/race/lint/PG berhasil, tetapi **tidak ada putaran lengkap untuk seluruh
 checkout final** setelah edit terakhir. Jangan mengatakan seluruh WIP lulus,
 CI sudah menerima worker atau integrasi source/model nyata sudah selesai.

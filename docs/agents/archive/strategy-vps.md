@@ -3,8 +3,8 @@
 **Pembaruan 21 Oktober 2026:** trial managed P2-9 yang dimulai
 2026-10-20 16:24:45 UTC sudah dihentikan atas permintaan user pada 21 Oktober
 20.30 WIB. Jangan resume; data/backup dipertahankan. Lihat
-[keputusan riset terbaru](strategy-2.md) dan
-[handoff VPS](handover-vps.md). Isi di bawah adalah riwayat persiapan.
+[keputusan riset terbaru](../strategy-2.md) dan
+[handoff VPS](../handover-vps.md). Isi di bawah adalah riwayat persiapan.
 
 Status 19 Oktober 2026: **belum di-deploy di VPS, tidak berjalan di laptop,
 dan belum disetujui untuk live**. User meminta tidak menjalankan eksperimen ini
@@ -13,11 +13,11 @@ Jika belum siap, simpan referensi untuk sesudah pengujian VPS selesai.
 
 ## Hubungan dengan rencana aktif
 
-[Plan 3](plan-3.md) adalah rencana aktif; Plan 1/2 menjadi arsip.
+[Plan 3](../plan-3.md) adalah rencana aktif; Plan 1/2 menjadi arsip.
 Audit/penerimaan lama diteruskan ke P3-O; P2-0 sampai P2-9 di bawah adalah
 referensi historis. Pilot AI tidak otomatis mewarisi aturan ETH. Istilah project
 Compose/instance kedua pada runbook ini menjelaskan isolasi deployment
-eksperimen, berbeda dari [instance virtual dalam satu akun](multi-instance.md).
+eksperimen, berbeda dari [instance virtual dalam satu akun](../multi-instance.md).
 Jangan membuat beberapa proses trading pada wallet yang sama untuk meniru
 fitur multi-instance; runtime managed sudah tersedia, backlog mengikuti Plan 3.
 
@@ -51,7 +51,7 @@ Dipilih opsi dokumentasi yang user izinkan: **tidak ada deployment baru sekarang
 Tidak membuat branch, push, image, restart, migrasi database VPS, atau perubahan
 konfigurasi instance berjalan. Jangan mengklaim eksperimen ETH sudah berjalan
 di VPS. Riwayat startup lokal ada di
-[bukti bootstrap/start](testing/eth-paper-start.json), bukan bukti trial
+[bukti bootstrap/start](../../testing/eth-paper-start.json), bukan bukti trial
 prospektif yang selesai. Timestamp penghentian ada di
 `var/paper-eth/disabled-by-user.json`.
 
@@ -67,8 +67,8 @@ prospektif yang selesai. Timestamp penghentian ada di
   risk terencana 3% per transaksi, daily loss 8%, drawdown 30%, close on kill.
   Ini profil paper yang diuji, bukan persetujuan batas kerugian live.
 - Fee standar 0,1% per sisi dan slippage 2bps. Jangan mengasumsikan diskon BNB.
-- Detail lengkap: [referensi terstruktur](testing/eth-paper-reference.json)
-  dan [konfigurasi strategi](../configs/paper.eth.yaml). Konfigurasi tersebut
+- Detail lengkap: [referensi terstruktur](../../testing/eth-paper-reference.json)
+  dan [konfigurasi strategi](../../../configs/paper.eth.yaml). Konfigurasi tersebut
   adalah template strategi; port, secret, koneksi DB, dan pembatasan deployment
   tetap harus disiapkan khusus VPS.
 
@@ -76,7 +76,7 @@ prospektif yang selesai. Timestamp penghentian ada di
 
 Uji testnet VPS **dihentikan lebih awal pada 20 Oktober 2026 pukul 18.52 WIB**
 atas permintaan user; target 21 Oktober pukul 23.43 WIB dibatalkan.
-[Analisis penutupan](testing/testnet-stop/analysis.md) sudah tersedia.
+[Analisis penutupan](../../testing/testnet-stop/analysis.md) sudah tersedia.
 User ingin mencari strategi lain dan mengembangkan aplikasi. ETH kini direkomendasikan sebagai kandidat paper utama sesuai
 [keputusan 20 Oktober](strategy.md), tetapi trial belum dimulai.
 Nilai kembali hasil dan keandalan aplikasi sebelum menyiapkan deployment berikutnya.
@@ -91,7 +91,7 @@ singkat tidak dihitung sebagai hari observasi trial VPS.
 1. Catat baseline container/service dan kondisi instance lama sebelum perubahan.
    Periksa ulang kapasitas, pemakaian disk, port, subnet, dan batas sumber daya.
 2. Rilis implementasi `trendspot` dan konfigurasi yang direview lewat GitHub/CI,
-   mengikuti [prosedur deployment](deployment.md). Pin image ke digest dan source
+   mengikuti [prosedur deployment](../deployment.md). Pin image ke digest dan source
    commit yang sama. Jangan salin binary/folder laptop atau memakai tag mutable.
    Branch riset boleh dibuat saat persiapan rilis; jika dipakai untuk image,
    workflow harus menerbitkan image branch secara eksplisit tanpa mengganti
@@ -146,4 +146,4 @@ volume dan bukti. Hindari perintah global seperti prune atau down -v.
 `configs/managed.eth-paper.yaml` mengekspresikan profil ETH-only pada ledger baru.
 Belum di-deploy atau diaktifkan. Jangan mengganti config sesi lama lalu resume:
 siapkan trial/DB baru setelah migrasi salinan, QA dan review P2-9. Baca
-[panduan managed](managed-runtime.md) dan [handover](handover-agent.md).
+[panduan managed](../managed-runtime.md) dan [handover](../handover-agent.md).

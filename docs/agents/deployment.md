@@ -1,10 +1,10 @@
 # Deployment
 
-**Server pindah 29 Oktober 23:48 WIB:** seluruh runtime di `plesk-newest` sebagai `ana-core`/`ana-scout` (`/opt/ana-*`, source `e74a9af`); `plesk` hanya rollback sampai ±5 November. Detail akses di [handover agent](handover-agent.md). [Laporan migrasi](testing/server-migration.md).
+**Server pindah 29 Oktober 23:48 WIB:** seluruh runtime di `plesk-newest` sebagai `ana-core`/`ana-scout` (`/opt/ana-*`, source `e74a9af`); `plesk` hanya rollback sampai ±5 November. Detail akses di [handover agent](handover-agent.md). [Laporan migrasi](../testing/server-migration.md).
 
-**Status 29 Oktober 2026:** P2 dan pilot AI P3 aktif pada binary `d30b93b`; helper/timer P3 terpasang. Dua EMA 1m P2 tetap pause. Lihat [rilis operasi](testing/paper-operations-release.md) dan [handover VPS](handover-vps.md). Bagian rilis komponen Spider di bawah adalah riwayat sebelum pilot aktif, bukan status worker saat ini.
+**Status 29 Oktober 2026:** P2 dan pilot AI P3 aktif pada binary `d30b93b`; helper/timer P3 terpasang. Dua EMA 1m P2 tetap pause. Lihat [rilis operasi](../testing/paper-operations-release.md) dan [handover VPS](handover-vps.md). Bagian rilis komponen Spider di bawah adalah riwayat sebelum pilot aktif, bukan status worker saat ini.
 
-Ekspansi enam kasus paper BTC/ETH memakai worker/DB terpisah dalam proyek paper; ikuti [protokol tahap tiga](testing/research-stage-three.md) untuk konfigurasi, aktivasi, T0 dan review. Roadmap tetap [Plan 3](plan-3.md). Tidak ada izin transaksi dengan uang asli.
+Ekspansi enam kasus paper BTC/ETH memakai worker/DB terpisah dalam proyek paper; ikuti [protokol tahap tiga](../testing/research-stage-three.md) untuk konfigurasi, aktivasi, T0 dan review. Roadmap tetap [Plan 3](plan-3.md). Tidak ada izin transaksi dengan uang asli.
 
 ## Penempatan komponen Spider
 
@@ -15,7 +15,7 @@ CI mempublikasikan `ghcr.io/rizz404/ana-scout:sha-<commit>` (sebelum 29 Oktober 
 checks/integration/monitoring serta smoke/protokol khusus lulus. Rilis source
 `2998f38` dan pemasangan VPS **28 Oktober 21.00 WIB** sudah terverifikasi;
 report exited 0 dan 35 container lama tetap identik. Gunakan digest tetap pada
-[bukti rilis](testing/catalyst-release.json); jangan mengganti runtime P2.
+[bukti rilis](../testing/catalyst-release.json); jangan mengganti runtime P2.
 
 User menetapkan Spider sebagai collector utama P3 pada 26 Oktober. Inspeksi
 kapasitas VPS hanya baca sudah dilakukan; rencana awal memakai project/path
@@ -128,7 +128,7 @@ mengganti resolver global sebagai perbaikan. Log WS mencatat tahap
 
 ## Worker riset tambahan — 29 Oktober
 
-Enam kasus tahap tiga telah aktif; [T0, source/config/digest dan bukti](testing/research-stage-three.md). Service `research` memakai profil terpisah dan DB tetap `tradingbot_research_stage_three`, sehingga tidak mengganti `BOT_DB_NAME` atau config wallet P2. Jangan mengikuti langkah menghentikan worker lama pada prosedur penggantian trial berikut untuk sekadar memeriksa worker tambahan ini. Backup paper mencakup kedua DB dan profil; observer paper sekarang mengharuskan enam service dan dua worker sehat.
+Enam kasus tahap tiga telah aktif; [T0, source/config/digest dan bukti](../testing/research-stage-three.md). Service `research` memakai profil terpisah dan DB tetap `tradingbot_research_stage_three`, sehingga tidak mengganti `BOT_DB_NAME` atau config wallet P2. Jangan mengikuti langkah menghentikan worker lama pada prosedur penggantian trial berikut untuk sekadar memeriksa worker tambahan ini. Backup paper mencakup kedua DB dan profil; observer paper sekarang mengharuskan enam service dan dua worker sehat.
 
 ## Update atau trial baru yang telah diizinkan
 
@@ -171,7 +171,7 @@ TimescaleDB: buat DB/extension, panggil `timescaledb_pre_restore()`, jalankan
 schema/jumlah baris/ledger dengan sumber, baru hapus DB sementara. Peringatan
 circular foreign-key pada katalog TimescaleDB pernah muncul; jangan menganggap
 restore lulus hanya karena warning tersebut dikenal. Bukti historis ada di
-[operasi VPS](testing/vps-ops.json) dan [start P2-9](testing/p2-9-vps-start.json).
+[operasi VPS](../testing/vps-ops.json) dan [start P2-9](../testing/p2-9-vps-start.json).
 
 Rollback mengembalikan commit dan image digest yang cocok **setelah** memeriksa
 kompatibilitas schema, menghentikan pemilik wallet baru dan menyelesaikan order
@@ -197,7 +197,7 @@ ulang keduanya secara membabi buta dari runbook lama.
 
 Helper dan timer P3 **sudah dipasang pada 29 Oktober 22:23 WIB**, source
 `d30b93b`. Backup/restore flat, trigger observer dan QA punya bukti di
-[laporan rilis](testing/paper-operations-release.md). Tidak perlu memasang atau
+[laporan rilis](../testing/paper-operations-release.md). Tidak perlu memasang atau
 menjalankan ulang hanya karena membaca runbook ini.
 
 Sesudah source rilis disetujui, diambil dari GitHub dan CI/GHCR lulus, helper

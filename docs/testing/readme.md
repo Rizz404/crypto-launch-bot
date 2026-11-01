@@ -4,8 +4,8 @@
 
 Laporan di sini merekam pengujian pada waktunya; bukan status real-time,
 kelulusan fitur sesudahnya, holdout baru atau izin live. Tanggal tetap ada di
-isi laporan/payload. Rencana aktif: [Plan 3](../plan-3.md); pembanding lama:
-[Strategi 2](../strategy-2.md). Plan 2 sudah selesai sebagai siklus/arsip.
+isi laporan/payload. Rencana aktif: [Plan 3](../agents/plan-3.md); pembanding lama:
+[Strategi 2](../agents/strategy-2.md). Plan 2 sudah selesai sebagai siklus/arsip.
 Penerimaan tersisa dan risiko laporan historis dipetakan ke P3-O/P3-R/P3-LIVE.
 
 ## Operasi dan Plan 2

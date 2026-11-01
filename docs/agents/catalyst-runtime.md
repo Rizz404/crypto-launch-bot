@@ -4,7 +4,7 @@
 paper 1.000 USDT virtual dan 12 panggilan AI per hari. Checkout kini menambah
 runner tiga loop, market/event/context v5, PG, book fills, quota dan overlay
 pilot. Ini belum image/rilis baru atau start worker. [Handover lengkap dan
-batas bukti](catalyst-pilot-handover.md), [checkpoint tes](testing/catalyst-pilot-local.md).
+batas bukti](catalyst-pilot-handover.md), [checkpoint tes](../testing/catalyst-pilot-local.md).
 Penjelasan checkpoint komponen di bawah adalah riwayat sebelum WIP tersebut.
 
 **Checkpoint 28 Oktober:** CLI `collect` memakai Spider sebagai engine utama;
@@ -12,7 +12,7 @@ failure ekstraksi, cache dan batas arsip telah diperbaiki. Adapter/proxy memilik
 race test fixture lokal yang lulus. Image khusus dibangun/smoke lokal; binary
 patched/protokol/proxy lulus tiga kali pada TLS fixture tanpa jaringan keluar.
 Egress adversarial dan situs publik belum diuji. Komponen/report terpasang di
-VPS 28 Oktober 21.00 WIB; worker/pilot belum aktif. [Bukti rilis](testing/catalyst-release.json).
+VPS 28 Oktober 21.00 WIB; worker/pilot belum aktif. [Bukti rilis](../testing/catalyst-release.json).
 Lihat [handover Spider](catalyst-spider-handover.md) sebelum memakai checkout ini.
 Penjelasan komponen di bawah bukan klaim seluruh integrasi sudah diterima.
 
@@ -26,7 +26,7 @@ diabaikan Git) memilih `cx/gpt-6-luna-low` melalui
 `https://route-gateway.fbe.co.id/v1` (sejak 30 Oktober pindah ke
 `https://route-gateway.nexlabs.cloud/v1`; host lama gagal TLS). Template aman: `.env.catalyst.example`.
 Luna lolos 7/7 kasus; kandidat fallback Haiku OpenRouter 6/7. Combo belum dibuat
-atau diuji failover. Lihat [evaluasi model](testing/catalyst-model-evaluation.md)
+atau diuji failover. Lihat [evaluasi model](../testing/catalyst-model-evaluation.md)
 untuk bukti, ID persis dan batasnya. Jangan menyalin key ke template atau chat.
 
 ## Batas proses dan data

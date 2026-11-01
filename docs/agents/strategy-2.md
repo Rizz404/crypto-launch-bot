@@ -1,12 +1,12 @@
 # Penarikan trial dan pengelolaan riset strategi — 21 Oktober 2026
 
-**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](../testing/research-stage-three.md).
 
 **Lanjutan 29 Oktober 2026:** review tujuh hari selesai; dua EMA 1m pause entry
 atas persetujuan user pada 21:10 WIB. Tren/EMA 4h dipertahankan. Dua belas
 replay biaya pada kandidat beku selesai; pullback BTC/ETH masuk shortlist
-riset dan kini diuji melalui enam kasus tahap tiga yang terisolasi. [Review P2](testing/research-stage-two-review.md),
-[operasi](testing/operations-follow-up.md), [riset biaya](testing/strategy-cost-review/readme.md).
+riset dan kini diuji melalui enam kasus tahap tiga yang terisolasi. [Review P2](../testing/research-stage-two-review.md),
+[operasi](../testing/operations-follow-up.md), [riset biaya](../testing/strategy-cost-review/readme.md).
 
 **Pembaruan rencana 23 Oktober:** [Plan 3](plan-3.md) menjadi rencana aktif;
 Plan 2 selesai sebagai siklus/arsip. Riset/ekspansi di sini diteruskan melalui
@@ -67,8 +67,8 @@ kontrol managed. Status instance tersimpan masih `running`; **itu bukan bukti
 proses hidup dan bukan izin resume**. Jangan start ulang, memakai ledger ini
 untuk eksperimen baru, mengubah bootstrap, atau menandai selesai lewat SQL manual.
 
-Bukti: [penghentian](testing/p2-9-stop.json) dan
-[pemeriksaan trial](testing/p2-9-review.json). Backup memvalidasi daftar
+Bukti: [penghentian](../testing/p2-9-stop.json) dan
+[pemeriksaan trial](../testing/p2-9-review.json). Backup memvalidasi daftar
 arsip dan membuat checksum; tidak ada restore drill baru pada penutupan ini.
 
 ## Mengapa tidak ada transaksi
@@ -94,18 +94,18 @@ riset, bukan karena bukti statistik kegagalan strategi.
 
 ## Apa yang sudah dan belum didukung riset lama
 
-- [Baseline 20 kombinasi](testing/backtest/summary.txt): semuanya rugi
+- [Baseline 20 kombinasi](../testing/backtest/summary.txt): semuanya rugi
   pada tahun 2025–2026 dengan parameter yang diuji. Tidak menjadi alasan memilih
   lagi EMA cepat, grid, DCA atau MM sebagai default.
-- [Kandidat pullback 4h](testing/candidates/summary.txt): BTC +2,41%
+- [Kandidat pullback 4h](../testing/candidates/summary.txt): BTC +2,41%
   dengan 14 penutupan dan ETH +2,35% dengan 20 penutupan pada tahun tersebut.
   Hasil tipis; keduanya bahkan tidak lebih sering tutup transaksi daripada ETH
   momentum referensi. Tidak boleh dijanjikan sebagai solusi aktivitas harian.
-- [ETH momentum referensi](testing/eth-reference-fees/summary.json):
+- [ETH momentum referensi](../testing/eth-reference-fees/summary.json):
   +34,38%, +57,81%, +8,80% pada tiga simulasi tahunan independen; maksimum
   drawdown masing-masing 10,50%, 12,54%, 11,37%. Bukan modal tersambung tiga tahun
   dan ETH dipilih setelah melihat hasil lintas koin.
-- [Validasi 360 pekerjaan](testing/high-return-validation-analysis.json):
+- [Validasi 360 pekerjaan](../testing/high-return-validation-analysis.json):
   tidak ada kandidat lolos gerbang target 50% historis; `momentum-037-larger`
   harian lolos penyaringan ketahanan heuristik, bukan bukti keunggulan statistik.
   Rata-rata kelompok yang positif juga tidak menjamin tiap koin positif:

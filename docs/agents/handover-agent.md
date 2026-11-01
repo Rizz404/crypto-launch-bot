@@ -2,7 +2,7 @@
 
 **Runtime pindah ke `plesk-newest` 29 Oktober 23:48 WIB** sebagai `ana-core`/`ana-scout`; lihat bagian Server saat ini.
 
-**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](../testing/research-stage-three.md).
 
 Untuk Codex, Claude dan agent berikutnya. Checkpoint **30 Oktober 2026**;
 verifikasi checkout dan waktu bukti sebelum bekerja.
@@ -10,7 +10,7 @@ verifikasi checkout dan waktu bukti sebelum bekerja.
 ## Server saat ini — sejak 29 Oktober 23:48 WIB
 
 **Seluruh runtime sudah dimigrasi ke `plesk-newest`** (srv2088216, 187.124.139.72); bukan lagi `plesk`
-(srv1142454). [Laporan migrasi](testing/server-migration.md) memuat bukti salinan, ledger dan rollback.
+(srv1142454). [Laporan migrasi](../testing/server-migration.md) memuat bukti salinan, ledger dan rollback.
 
 | Item | Nilai |
 |---|---|
@@ -40,8 +40,8 @@ verifikasi checkout dan waktu bukti sebelum bekerja.
 
 **Rilis 29 Oktober 22:23 WIB selesai**, source **`d30b93b`**, setelah izin
 commit/push/deploy/pemasangan timer P3. [Seluruh CI lulus](https://github.com/Rizz404/trading-bot/actions/runs/40899450590).
-Mulai dari [laporan rilis](testing/paper-operations-release.md) dan
-[bukti](testing/paper-operations-release.json). Commit dokumentasi sesudahnya
+Mulai dari [laporan rilis](../testing/paper-operations-release.md) dan
+[bukti](../testing/paper-operations-release.json). Commit dokumentasi sesudahnya
 bukan berarti image dengan SHA docs itu sudah dibangun/dipasang.
 
 - **Plan 3 tetap roadmap aktif repo Rizz404/trading-bot.** User meluruskan
@@ -50,7 +50,7 @@ bukan berarti image dengan SHA docs itu sudah dibangun/dipasang.
 - **Review tujuh hari P2 selesai:** modal 747,83957456 → equity 740,40558347
   USDT, PnL −7,43399109 (−0,9941%). Seluruh rugi dari dua EMA 1m; tiga Tren
   dan EMA 4h belum bertransaksi. Komisi 5,77387876 sudah termasuk realized.
-  [Review](testing/research-stage-two-review.md), [pause](testing/research-stage-two-pause.json).
+  [Review](../testing/research-stage-two-review.md), [pause](../testing/research-stage-two-pause.json).
 - Dua EMA 1m sudah pause entry **21:10 WIB**. Empat instance lain running.
   Sesudah rilis, kas/status/parameter/T0/holding/pending cocok dengan sebelum
   rilis; total 214 fill (210 hot +4 arsip). **T0 tetap 22 Oktober 19:58:45 WIB**,
@@ -81,7 +81,7 @@ bukan berarti image dengan SHA docs itu sudah dibangun/dipasang.
   Backup luar server tetap ditunda sampai live sesuai keputusan user.
 - Dua belas replay biaya pada kandidat beku selesai. Pullback BTC/ETH masuk
   shortlist eksplorasi, kemudian diaktifkan melalui enam kasus tahap tiga; bukan holdout murni.
-  [Riset terbatas](testing/strategy-cost-review/readme.md). Ekspansi 44/132,
+  [Riset terbatas](../testing/strategy-cost-review/readme.md). Ekspansi 44/132,
   top-20 dan keluarga strategi baru tetap P3-R; mainnet belum disetujui.
 - Handover pilot/Spider menyimpan riwayat pause/WIP 28 Oktober. Gunakan status
   rilis 29 Oktober di atas untuk melanjutkan; jangan mengulang bootstrap.
@@ -93,7 +93,7 @@ bukan berarti image dengan SHA docs itu sudah dibangun/dipasang.
 2. Monitor source `e74a9af` (Go sama dengan `d30b93b`): freshness/gap, reconnect/Pong, CPU/DB dan observer.
    Bukti awal rilis 22:30 belum mencakup penutupan 4h 23:00; checkpoint tahap tiga kemudian memeriksa delapan seri baru.
    Pause EMA 1m dipertahankan; jangan mengubah parameter/modal/T0/history.
-3. Checkpoint ringkas P3 setelah hari 1 ada di [aktivasi tahap tiga](testing/research-stage-three.md); lanjut 31 Oktober/4 November 22:53 WIB. Bedakan runtime/feed, sumber,
+3. Checkpoint ringkas P3 setelah hari 1 ada di [aktivasi tahap tiga](../testing/research-stage-three.md); lanjut 31 Oktober/4 November 22:53 WIB. Bedakan runtime/feed, sumber,
    keputusan valid dan performa. Periksa keputusan baru untuk menutup alert
    lama tanpa memaksa inference di luar dedup/kuota.
 4. Periksa backup terjadwal pertama di NEWEST (`ana-core` ±10:20 WIB, `ana-scout` ±10:54 WIB 30 Oktober) dan observer sesuai kebutuhan. Timer sudah
@@ -136,9 +136,9 @@ bukan berarti image dengan SHA docs itu sudah dibangun/dipasang.
 
 ## Bukti dan keterbatasan
 
-[Test lokal](testing/plan-2-local.md), [QA browser](testing/plan-2-browser-qa.md),
-[review kode](testing/plan-2-code-review.md), [start VPS](testing/p2-9-vps-start.json),
-[stop VPS](testing/p2-9-stop.json) dan [review trial](testing/p2-9-review.json).
+[Test lokal](../testing/plan-2-local.md), [QA browser](../testing/plan-2-browser-qa.md),
+[review kode](../testing/plan-2-code-review.md), [start VPS](../testing/p2-9-vps-start.json),
+[stop VPS](../testing/p2-9-stop.json) dan [review trial](../testing/p2-9-review.json).
 Hasil test itu historis; tidak dijalankan ulang oleh pembaca dokumen.
 
 Firefox fixture belum membuktikan Safari/perangkat fisik, Telegram whitelist/

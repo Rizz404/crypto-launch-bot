@@ -83,7 +83,7 @@ Tes setelah penambahan extractor/metadata/prompt-v4:
 **gagal** pada `TestExtractFeedAndHTML`: expected `Activation date is TBA .`,
 actual `Activation date is TBA.`. Sesudah draft `spider.go`/`spider_proxy.go`
 belum ada format/build/tes/vet/lint baru. Hasil lulus di bagian berikut berlaku
-untuk checkpoint sebelumnya. [Handover Spider](../catalyst-spider-handover.md)
+untuk checkpoint sebelumnya. [Handover Spider](../agents/catalyst-spider-handover.md)
 mencatat failure dan temuan statis untuk ditutup.
 
 Inspeksi VPS hanya baca, tanpa instalasi/crawl/deploy: [preflight](catalyst-vps-preflight.json).
@@ -126,8 +126,8 @@ Tidak ada inference atau perubahan layanan P2.
 
 23 Oktober 2026. Baseline dokumentasi di-commit sebagai `bc321b8`.
 Development komponen baru belum di-commit pada checkpoint ini. User meminta
-koneksi/model AI ditunda untuk fokus development. [Plan 3](../plan-3.md) dan
-[kontrak runtime](../catalyst-runtime.md) mencatat cakupan serta pekerjaan sisa.
+koneksi/model AI ditunda untuk fokus development. [Plan 3](../agents/plan-3.md) dan
+[kontrak runtime](../agents/catalyst-runtime.md) mencatat cakupan serta pekerjaan sisa.
 
 ## Hasil yang dijalankan
 

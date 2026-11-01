@@ -16,7 +16,7 @@ mengulang delivery/indikator. Gauge candle juga diperbarui setelah callback.
 
 Legacy masih memakai ping DB. Health P3 runtime/feed terpisah dari riset;
 200 tidak membuktikan keputusan AI valid, strategi untung atau seluruh
-penerimaan operasi lulus. [Bukti rilis](testing/paper-operations-release.md).
+penerimaan operasi lulus. [Bukti rilis](../testing/paper-operations-release.md).
 
 ## Konfigurasi dan modal
 
@@ -28,7 +28,7 @@ lewat environment, bukan YAML/state/laporan; paper tidak perlu key trading.
   bukan keputusan alokasi strategi.
 - `configs/managed.eth-paper.yaml`: profil historis ETH-only 110,79104808331486
   USDT total, risk 3%, posisi 75%, daily kill 8%, drawdown 30%, leverage 1.
-  Parameter lengkap di [Strategi](strategy.md); pembanding di [Strategi 2](strategy-2.md).
+  Parameter lengkap di [Strategi](archive/strategy.md); pembanding di [Strategi 2](strategy-2.md).
 - `configs/managed.research-stage-one.yaml`: trial tahap satu yang sudah dihentikan, tiga instance
   Tren Rp500 ribu/2 juta/5 juta virtual; masing-masing BTC/ETH momentum 4h dan
   SOL pullback 4h. Modal dibagi sekali, sembilan binding tidak berarti sembilan
@@ -227,7 +227,7 @@ bukan holdout baru atau bukti profit live.
 
 Preview `TB_DASHBOARD_PREVIEW=127.0.0.1:18082 go test ./internal/managed -run '^TestDashboardPreview$' -v -timeout 10m`
 hanya fixture memori, tanpa Runtime/feed/DB/`.env`; hentikan setelah QA.
-Jangan memakai `bot run` di laptop. [Hasil QA historis](testing/plan-2-browser-qa.md).
+Jangan memakai `bot run` di laptop. [Hasil QA historis](../testing/plan-2-browser-qa.md).
 
 ## Migrasi dan recovery
 

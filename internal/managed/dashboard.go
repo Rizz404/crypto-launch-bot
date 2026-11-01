@@ -16,7 +16,7 @@ import (
 )
 
 // recentRows caps the tables that grow with time; the rest is in the journal
-// and the archive (see managed-runtime.md).
+// and the archive (see docs/agents/managed-runtime.md).
 const recentRows = 200
 
 // view is everything a dashboard page needs. Maps in State are exposed as

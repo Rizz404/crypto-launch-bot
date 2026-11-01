@@ -2,7 +2,7 @@
 
 **Runtime pindah ke `plesk-newest` 29 Oktober 23:48 WIB** sebagai `ana-core`/`ana-scout`; lihat bagian Server saat ini.
 
-**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](../testing/research-stage-three.md).
 
 Checkpoint rilis P2/P3 **29 Oktober 2026 22:23 WIB**, pilot paper P3 aktif
 **28 Oktober 22:53 WIB**. Prosedur di [deployment](deployment.md), rencana
@@ -11,7 +11,7 @@ aktif [Plan 3](plan-3.md), pembanding [Strategi 2](strategy-2.md).
 ## Server saat ini — sejak 29 Oktober 23:48 WIB
 
 **Seluruh runtime sudah dimigrasi ke `plesk-newest`** (srv2088216, 187.124.139.72); bukan lagi `plesk`
-(srv1142454). [Laporan migrasi](testing/server-migration.md) memuat bukti salinan, ledger dan rollback.
+(srv1142454). [Laporan migrasi](../testing/server-migration.md) memuat bukti salinan, ledger dan rollback.
 
 | Item | Nilai |
 |---|---|
@@ -110,8 +110,8 @@ Health 200; modal, T0, status pause dan seluruh proyeksi finansial/config sama.
 36 container lain/lima layanan host identik. Timer P3 enabled/active dan
 observer sudah terpicu otomatis dua kali. Alert riset tetap menandai WATCH
 lama invalid; tidak dipaksa inference ulang. Bukti awal feed/sampel beban dan
-batas observasi: [laporan rilis](testing/paper-operations-release.md),
-[JSON](testing/paper-operations-release.json).
+batas observasi: [laporan rilis](../testing/paper-operations-release.md),
+[JSON](../testing/paper-operations-release.json).
 
 ## Lanjutan disetujui user — 29 Oktober 21:10–21:29 WIB
 
@@ -119,25 +119,25 @@ Checkpoint persiapan sebelum rilis 22:23 WIB di atas.
 
 Dua EMA 1m sudah **pause entry** via kontrol aplikasi; P2 tidak direstart,
 modal/T0/parameter tetap. Snapshot 21:29 WIB flat, total 214 fill (210 hot +4
-arsip), empat instance lain running. [Bukti pause](testing/research-stage-two-pause.json).
+arsip), empat instance lain running. [Bukti pause](../testing/research-stage-two-pause.json).
 
 Backup P3 `backup-20261029T141857Z` dan restore salinan lulus; 271 record
 arsip diperiksa hash, budget 1/4 slot 28/29 Oktober dipertahankan. Worker P3
 sama/image sama kembali start **21:18:56 WIB**; ledger T0 tetap 28 Oktober
 22:53:13 WIB. **37 container lain identik**, termasuk P2.
-[Bukti restore](testing/catalyst-backup-restore.json).
+[Bukti restore](../testing/catalyst-backup-restore.json).
 
 QA Chromium desktop/mobile dan observer sekali jalan selesai. Observer
 mendeteksi review WATCH invalid; screenshot menemukan keputusan terakhir
 hilang dari tampilan setelah restart. Patch feed/health P2, schema simbol/
 UI P3 dan helper/timer sudah lokal, tes race/vet/lint lulus, **belum commit/
 push/CI/deploy atau pemasangan timer permanen**.
-[Laporan lengkap dan batas izin rilis](testing/operations-follow-up.md).
+[Laporan lengkap dan batas izin rilis](../testing/operations-follow-up.md).
 
 ## Review baca-saja — 29 Oktober 20:34 WIB
 
-[Analisis tujuh hari P2](testing/research-stage-two-review.md) dan
-[bukti](testing/research-stage-two-review.json): modal 747,83957456 → equity
+[Analisis tujuh hari P2](../testing/research-stage-two-review.md) dan
+[bukti](../testing/research-stage-two-review.json): modal 747,83957456 → equity
 740,40558347 USDT, PnL −7,43399109 (−0,9941%). EMA dasar 1m −4,242513;
 EMA tren 1m −3,191478; empat instance lain belum bertransaksi. Komisi total
 5,773879 sudah termasuk PnL. Saat snapshot tidak ada holding nonzero,
@@ -227,7 +227,7 @@ Metadata **35 container yang sudah ada identik** sebelum/sesudah. Bot P2 tetap
 image `02376651f56e...`, started `2026-10-23T13:52:17.164470608Z`, restart 0.
 Tidak restart P2/Docker/host, mengubah env/config/ledger/T0 P2, migrasi database
 atau menyalin secret laptop. Ini pemeriksaan identitas/isolasi, bukan audit
-saldo/feed terkini P2. Bukti lengkap: [rilis P3](testing/catalyst-release.json).
+saldo/feed terkini P2. Bukti lengkap: [rilis P3](../testing/catalyst-release.json).
 
 ## Pergantian rencana 23 Oktober
 
@@ -247,7 +247,7 @@ feed atau benchmark puncak; tidak memperbarui saldo/T0 historis di bawah.
 Usulan: container/Compose project `ana-scout` dan direktori
 `/opt/ana-scout` terpisah, belum dibuat/diinstal. Tidak mengubah P2,
 Plesk, gateway, Docker daemon atau layanan lain. Bukti:
-[preflight kapasitas](testing/catalyst-vps-preflight.json); detail dan pekerjaan
+[preflight kapasitas](../testing/catalyst-vps-preflight.json); detail dan pekerjaan
 sisa: [handover Spider](catalyst-spider-handover.md).
 
 ## Status terakhir P2
@@ -282,7 +282,7 @@ Observer 20.54 WIB `problems: []`; candle 1m BTC/ETH/SOL setelah restart
 tersimpan tanpa gap. Backup pascarilis `backup-20261023T135257Z` disimpan
 terpisah dari pra-rilis dan checksum cocok.
 
-Bukti: [rilis notifikasi](testing/telegram-notification-release.json). Ini
+Bukti: [rilis notifikasi](../testing/telegram-notification-release.json). Ini
 pemeriksaan awal, bukan bukti operasi jangka panjang. Penerimaan di aplikasi
 Telegram, pesan eksekusi alami berikutnya, ringkasan 24 Oktober 07.00 WIB dan
 restore backup pascarilis belum diverifikasi. Pesan Telegram tetap best effort;
@@ -313,7 +313,7 @@ status migrasi scratch sebelum target disentuh. Scratch dihapus. Tidak ada
 migrasi baru, reset modal, perubahan parameter atau penghapusan history.
 Mulai observasi kapasitas berkelanjutan setelah rilis ini; pemeriksaan awal
 beberapa menit sebelumnya bukan kelulusan24jam. Bukti rilis terbaru:
-[research-stage-two-release.json](testing/research-stage-two-release.json).
+[research-stage-two-release.json](../testing/research-stage-two-release.json).
 
 Pemeriksaan pascarilis 20:25–20:26 WIB: observer `problems: []`, semua seri
 gap 0; candle 1m BTC/ETH/SOL maju dari open 13:21 ke 13:24 UTC, tanpa restart/OOM.
@@ -383,7 +383,7 @@ akhir 28 container lain identik, hash ledger tahap satu sesudah stop tetap sama.
 Log shutdown memuat sembilan `store candle` dengan `context canceled`, dan
 run ditandai `interrupted`. Feed pulih tanpa gap terdeteksi; klasifikasi run
 dan log saat penghentian tetap temuan terbuka, bukan alasan mengedit history.
-Bukti lengkap: [start tahap dua](testing/research-stage-two-start.json).
+Bukti lengkap: [start tahap dua](../testing/research-stage-two-start.json).
 
 Tahap satu dihentikan setelah dipastikan tidak ada posisi/order; kas tetap
 415,46643031243073 USDT, config disimpan sebagai
@@ -437,7 +437,7 @@ hash ledger ETH lama tetap sama. File config aktif dimiliki UID 65532 mode 600
 agar user non-root container dapat membacanya; jangan mengubahnya menjadi
 root:root mode 600. Percobaan migrasi pertama tertahan izin file, sebelum start.
 Snapshot 28 container proyek lain identik sebelum/sesudah; lima service host
-tetap aktif. Bukti rinci dan batas pemeriksaan: [start riset](testing/research-stage-one-start.json).
+tetap aktif. Bukti rinci dan batas pemeriksaan: [start riset](../testing/research-stage-one-start.json).
 
 Sampel beban 163,51 detik: bot sekitar 56 MiB/512 MiB dan CPU 51% dari satu
 core (quota 0,5 core), DB sekitar 189 MiB/1 GiB dan CPU 50%. Sekitar 18 revisi
@@ -467,8 +467,8 @@ Jadwal laporan hari 1/3/7 dan review tujuh hari **dibatalkan**. Jangan resume
 trial atau memakai ledger ini sebagai eksperimen baru. Status instance tersimpan
 masih `running` karena yang dihentikan prosesnya; ini bukan status container.
 
-Bukti: [start](testing/p2-9-vps-start.json), [stop](testing/p2-9-stop.json),
-[review](testing/p2-9-review.json). Trial dihitung sejak 20 Okt 16:24:45 UTC;
+Bukti: [start](../testing/p2-9-vps-start.json), [stop](../testing/p2-9-stop.json),
+[review](../testing/p2-9-review.json). Trial dihitung sejak 20 Okt 16:24:45 UTC;
 start sebelumnya mengalami crash loop warmup dan tidak dihitung.
 
 ## Temuan terbuka
@@ -491,7 +491,7 @@ bertahap, bukan konfigurasi siap diaktifkan. Jangan membuat strategi pengganti
 dengan nama yang sama atau memakai ledger trial ETH lama untuk mempercepat start.
 
 Konfigurasi tahap awal yang disiapkan:
-[managed.research-stage-one.yaml](../configs/managed.research-stage-one.yaml).
+[managed.research-stage-one.yaml](../../configs/managed.research-stage-one.yaml).
 Ini tiga varian komposisi Tren yang sudah ada pada rancangan: `tren-500k`,
 `tren-2000k`, `tren-5000k`, masing-masing momentum BTC 4h, momentum ETH 4h dan
 pullback SOL 4h. Jadi **3 instance / 9 binding / 3 koin / 6 stream unik**,
@@ -628,10 +628,10 @@ untuk Codex atau agent lain; periksa sandbox yang aktif.
 
 - Testnet 18–20 Oktober berakhir normal setelah ±43 jam, tujuh order dibatalkan
   sesudah recorder stop; DB historis masih `new`, exchange final nol open order.
-  Inventori dipertahankan. [Analisis](testing/testnet-stop/analysis.md).
+  Inventori dipertahankan. [Analisis](../testing/testnet-stop/analysis.md).
 - Rollback testnet historis: commit `f709429`, digest
   `sha256:e5b8710bc76da2cd5d581511e19fb7bf9e6a472e0eb61b14fb3c099054fd0438`.
   Ini referensi, bukan instruksi start. Jangan down migrasi `tradingbot_eth`.
-- Riwayat operasi awal: [handover awal](testing/vps-handoff.json) dan
-  [operasi/restore](testing/vps-ops.json). Prosedur rilis, migrasi dan rollback
+- Riwayat operasi awal: [handover awal](../testing/vps-handoff.json) dan
+  [operasi/restore](../testing/vps-ops.json). Prosedur rilis, migrasi dan rollback
   terpusat di [deployment](deployment.md).

@@ -1,6 +1,6 @@
 # Plan 3 — Riset katalis dan hold berbasis tesis
 
-**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](testing/research-stage-three.md).
+**Ekspansi paper aktif 29 Oktober 23:14 WIB:** enam kasus BTC/ETH (pullback4h, EMA15m/1h), modal virtual dan ledger baru; [protokol, status aktivasi dan jadwal review](../testing/research-stage-three.md).
 
 ## Temuan spam Telegram — 30 Oktober
 
@@ -44,7 +44,7 @@ collect saat start. Worker memakai prompt v5 dan sender Telegram tanpa poller.
 **Rilis 29 Oktober 22:23 WIB selesai:** dua worker source `d30b93b`, CI lulus,
 patch feed/health dan schema/UI terpasang, timer P3 enabled/active. Dua EMA 1m
 pause; saldo/T0/parameter dan data dipertahankan. Backup/restore flat dan QA
-Chromium selesai. [Bukti rilis](testing/paper-operations-release.md).
+Chromium selesai. [Bukti rilis](../testing/paper-operations-release.md).
 
 **Tetap terbuka:** observasi panjang feed/Pong/beban, keputusan model valid
 berikutnya (alert WATCH lama invalid masih ada), review hari 1/3/7,
@@ -54,10 +54,10 @@ Fase detail di bawah tidak otomatis lulus hanya karena pilot sudah aktif.
 
 **P2 hari ke-7 sudah dianalisis**, snapshot 29 Oktober 20:34 WIB:
 −7,43399109 USDT (−0,9941%), dua EMA 1m negatif dan empat instance tanpa
-transaksi; ketertinggalan feed masih ada. [Analisis](testing/research-stage-two-review.md).
+transaksi; ketertinggalan feed masih ada. [Analisis](../testing/research-stage-two-review.md).
 P3-O3 tetap terbuka untuk penerimaan operasi/sampel lanjutan. Pause dua EMA 1m
 kemudian diterapkan pada 21:10 WIB; P2 tidak direstart.
-Dua belas replay biaya kandidat selesai di [riset terbatas](testing/strategy-cost-review/readme.md),
+Dua belas replay biaya kandidat selesai di [riset terbatas](../testing/strategy-cost-review/readme.md),
 kemudian diikuti aktivasi enam kasus indikator tahap tiga pada 29 Oktober 23:14 WIB; lihat protokol di atas.
 
 Klarifikasi user 29 Oktober: Plan 4 di memori Windows milik proyek/repo GitHub
@@ -76,8 +76,8 @@ Plan 3 mencakup dua jalur: menyelesaikan penerimaan/riset platform lama dan
 membangun eksperimen katalis dengan hold berbasis tesis. Paper pembanding lama
 tetap memakai ledger, parameter dan T0 sendiri; tidak dihentikan, diubah atau
 digabung modalnya hanya karena pergantian plan. Sumber status operasi:
-[handover VPS](handover-vps.md); bukti lama: [Plan 2](plan-2.md) dan
-[indeks pengujian](testing/readme.md).
+[handover VPS](handover-vps.md); bukti lama: [Plan 2](archive/plan-2.md) dan
+[indeks pengujian](../testing/readme.md).
 
 ## Klarifikasi alur dan handover 26 Oktober
 
@@ -92,7 +92,7 @@ lokal yang lulus. Image khusus dibangun/smoke; binary dengan patch flush stdout
 Seluruh CI kemudian lulus dan komponen/report dipasang di VPS 28 Oktober
 21.00 WIB pada source `2998f38`. Pada checkpoint komponen itu worker/pilot
 belum dimulai; collect nyata dan start pilot kemudian tercatat di
-[handover VPS](handover-vps.md). [Bukti rilis komponen](testing/catalyst-release.json).
+[handover VPS](handover-vps.md). [Bukti rilis komponen](../testing/catalyst-release.json).
 
 [Handover implementasi dan urutan lanjut](catalyst-spider-handover.md) mencatat
 hasil inspeksi kapasitas VPS, usulan container/project tersendiri, file WIP,
@@ -107,7 +107,7 @@ membaca env tersebut atau `-env-file`, dengan environment proses lebih tinggi.
 Evaluasi tujuh kasus sintetis memakai inference nyata: Luna 7/7, cadangan
 `openrouter/anthropic/claude-haiku-5.5` 6/7 (satu HTTP 403). Rekomendasi combo
 `p3-research` memakai urutan priority; combo belum dibuat atau diuji failover.
-[Bukti dan batas evaluasi](testing/catalyst-model-evaluation.md).
+[Bukti dan batas evaluasi](../testing/catalyst-model-evaluation.md).
 Tidak mengubah proses/config/ledger P2 atau memasang layanan baru.
 
 Pilihan awal 9router dan penundaan AI pada 23 Oktober merupakan riwayat;
@@ -126,7 +126,7 @@ cukup untuk jalur awal, dengan validasi deterministik sebelum aksi paper.
 
 Kode: `internal/catalyst`, CLI `cmd/catalyst`, policy contoh
 `configs/catalyst.policy.json`. [Kontrak dan penggunaan](catalyst-runtime.md),
-[bukti/checkpoint pengujian](testing/plan-3-local.md). Tabel ini tidak menandai
+[bukti/checkpoint pengujian](../testing/plan-3-local.md). Tabel ini tidak menandai
 seluruh fase selesai hanya karena fixture berjalan. P3-R/P3-O P2 belum dikerjakan.
 
 ## Prioritas dan perlindungan eksperimen P2
@@ -428,7 +428,7 @@ semua 44 instance sebelum mengembangkan collector AI.
   whitelist chat lain, digest 07.00 WIB, shutdown dan pesan fill alami.
   Rilis 23 Oktober sudah memasang perbaikan notifikasi; penerimaan aplikasi,
   fill berikutnya dan digest 24 Oktober masih terbuka pada checkpoint
-  [rilis](testing/telegram-notification-release.json). Tinjau poll/send failure;
+  [rilis](../testing/telegram-notification-release.json). Tinjau poll/send failure;
   demo/API sukses bukan bukti penerimaan semua alur.
 - [ ] **P3-O2 (P2-9 verifikasi, C-07/C-14/C-16/C-19):** restart dengan
   posisi/order/reservasi aktif, proteksi, feed/reconnect/gap backfill, recorder
@@ -438,7 +438,7 @@ semua 44 instance sebelum mengembangkan collector AI.
   Restore backup pascarilis 23 Oktober belum diverifikasi. Verifikasi namespace
   ID/mode dan market-data publik pada rilis yang relevan tanpa order mainnet.
   **P3 29 Oktober:** backup DB/arsip + restore salinan flat sudah lulus,
-  271 record arsip diperiksa; [bukti](testing/catalyst-backup-restore.json).
+  271 record arsip diperiksa; [bukti](../testing/catalyst-backup-restore.json).
   Timer backup/observer sudah aktif pada rilis 29 Oktober; pemeriksaan otomatis
   dua kali tercatat. Recovery posisi aktif dan operasi panjang tetap terbuka.
 - [ ] **P3-O3 (P2-9 tujuh hari, C-08/C-18):** review operasi prospektif
@@ -446,7 +446,7 @@ semua 44 instance sebelum mengembangkan collector AI.
   22 Oktober). Jadwal ETH dan tahap satu dibatalkan, bukan kelulusan yang
   dipindahkan. Nilai strategi dengan sampel memadai; 30 hari dapat menjadi
   evaluasi awal, diperpanjang bila transaksi sedikit. Tidak ada reminder AI baru.
-  **Review 29 Oktober sudah dilakukan**: [laporan](testing/research-stage-two-review.md);
+  **Review 29 Oktober sudah dilakukan**: [laporan](../testing/research-stage-two-review.md);
   feed bermasalah, sehingga penerimaan operasi dan evaluasi lanjutan tetap terbuka.
 - [ ] **P3-O4 (P2-0/P2-8 lanjutan, C-01/C-02/C-03/C-05):** tutup atau
   klasifikasikan ketidakpastian tick penolakan OCO, cancel ambigu dan proteksi
@@ -455,7 +455,7 @@ semua 44 instance sebelum mengembangkan collector AI.
   partial fill, order balasan per level dan reservasi base diuji ulang saat
   jalur terkait berubah, bukan menganggap audit lama belum pernah dilakukan.
 - [ ] **P3-O5 (risiko review P2-8):** rekonsiliasi status lima temuan
-  [review kode](testing/plan-2-code-review.md#risiko-terbuka-belum-diubah).
+  [review kode](../testing/plan-2-code-review.md#risiko-terbuka-belum-diubah).
   Resolusi order tak pasti dan kompaksi state telah mendapat implementasi
   lanjutan (`/resolve`, `managed_archive`); ukur kecukupan/pertumbuhannya,
   jangan membangun ulang. Periksa attention transien snapshot/fill, pemulihan

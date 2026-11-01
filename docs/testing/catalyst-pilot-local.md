@@ -2,7 +2,7 @@
 
 **28 Oktober 2026, handover sekitar 22.12 WIB.** Ini hasil beberapa checkpoint
 lokal saat implementasi, **bukan penerimaan checkout final, CI rilis atau start
-pilot**. [Handover utama](../catalyst-pilot-handover.md) memuat file, izin,
+pilot**. [Handover utama](../agents/catalyst-pilot-handover.md) memuat file, izin,
 keputusan user dan pekerjaan lanjut. Kode baru masih modified/untracked.
 
 ## Pemeriksaan yang benar-benar dijalankan
