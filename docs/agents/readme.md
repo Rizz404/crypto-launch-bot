@@ -1,7 +1,7 @@
 # Docs untuk agent
 
 Untuk Codex, Claude dan agent lain. Manusia tidak perlu membaca folder ini; ringkasannya ada di
-[docs/readme.md](../readme.md) (`plan-3.md`, `strategy-2.md`, `panduan.md`).
+[docs/readme.md](../readme.md) (`plan-3.md`, `strategy-2.md`, `guide.md`).
 
 Versi **lengkap** dari dokumen ringkas itu ada di sini: [plan-3.md](plan-3.md), [strategy-2.md](strategy-2.md)
 dan panduan rinci ([runtime managed](managed-runtime.md), [runtime katalis](catalyst-runtime.md),
