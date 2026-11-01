@@ -30,6 +30,19 @@ dilaporkan bila level notifikasi `info`.
 
 Dashboard memakai Basic Auth dan hanya bind loopback. Jangan buka port ke publik.
 
+## Halaman Trading (Plan 4)
+
+`/trade`: chart candle live, order book, transaksi pasar, form order manual, serta posisi, order
+terbuka, riwayat dan saldo. Switcher akun di kanan atas (badge PAPER / TESTNET / **LIVE merah**).
+
+- Order manual hanya lewat binding strategi `manual` di sebuah instance; modal dan batas risikonya
+  ikut instance. Market buy bisa diberi stop loss/take profit. Bot bisa memperkecil jumlah order.
+- Posisi bot bisa ditutup dan order entry bot bisa dibatalkan dari tabel. Order proteksi (SL/TP)
+  tidak bisa dibatalkan satu per satu; tutup posisinya.
+- Dengan `TB_WEB__TOTP_SECRET`, Basic Auth diganti login + kode authenticator; akun live meminta
+  kode baru di setiap aksi. Akun live di web wajib memakai TOTP.
+- Data pasar: satu websocket Binance per jaringan untuk semua tab; browser tidak memakai kuota API.
+
 ## Menjalankan dan deploy
 
 - **Jangan menjalankan bot atau trial di laptop.** Runtime ada di server `plesk-newest`

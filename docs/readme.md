@@ -4,7 +4,7 @@ Folder ini untuk dibaca manusia. Semua trading masih **paper/virtual**; tidak ad
 
 | Ingin tahu | Baca |
 |---|---|
-| Rencana kerja dan status sekarang | [plan-3.md](plan-3.md) |
+| Rencana kerja dan status sekarang | [plan-4.md](plan-4.md) (Plan 3 ditutup: [plan-3.md](plan-3.md)) |
 | Hasil riset strategi | [strategy-2.md](strategy-2.md) |
 | Cara kerja, kontrol, deploy | [guide.md](guide.md) |
 

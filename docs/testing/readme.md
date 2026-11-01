@@ -12,6 +12,8 @@ Penerimaan tersisa dan risiko laporan historis dipetakan ke P3-O/P3-R/P3-LIVE.
 
 | Bukti | Isi |
 |---|---|
+| [Plan 4 uji lokal](plan-4-local.md) | Halaman trading, akun multi-mode, order manual, TOTP; paper lokal, belum testnet/rilis |
+| [Review akhir 1 November](final-review.md) | Snapshot gabungan P2/tahap tiga/P3 sebelum semua dimatikan; tanpa edge, nol entry di sebagian besar binding, AI tanpa event |
 | [Migrasi server](server-migration.md) | plesk → plesk-newest, nama samaran `ana-*`, salinan volume terverifikasi, rollback |
 | [Rilis operasi P2/P3](paper-operations-release.md) / [JSON](paper-operations-release.json) | CI/source/digest final 29 Oktober, ledger tetap, timer aktif, perbaikan feed awal dan alert riset yang masih ada |
 | [Browser pascarilis](catalyst-browser-release.json) | Keputusan arsip/error terlihat lagi setelah restart pada desktop/mobile, tanpa submit form |
