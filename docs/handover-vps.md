@@ -64,6 +64,35 @@ data produksi (tidak ada aksi yang ditekan), dan tangkapan layar `/research`
 setelah `c1ce856`. Checkout `ana-core` di `42c933d` (enam config lokal untracked
 dipertahankan), `ana-scout` di `c1ce856`. Bukti server: `/root/ana-ui-release-20261031T170434Z`.
 
+## Dashboard publik `ana.nexlabs.cloud` — 1 November
+
+Dashboard P2 (`ana-core-bot-1`, loopback `127.0.0.1:18080`) bisa dibuka di
+**https://ana.nexlabs.cloud** (Cloudflare → nginx Plesk → loopback). Perlindungan:
+basic auth aplikasi (`TB_WEB__PASSWORD`, 48 karakter, di `.env.vps`), CSRF, cek
+Origin, HTTPS (sertifikat wildcard Cloudflare Origin `cloudflare`) dan redirect
+HTTP→HTTPS. Tidak ada pembatasan IP/rate limit di nginx; satu password
+melindungi tombol kill/flatten. P3 (`18081`) dan tahap tiga (`18082`) **tidak**
+dipublikasikan; tetap lewat SSH tunnel.
+
+Pembuatan di `plesk-newest` (webspace `nexlabs.cloud`, Domain ID 123):
+`plesk bin subdomain --create ana -domain nexlabs.cloud -www-root ana -php false -ssl true`,
+lalu `/var/www/vhosts/system/ana.nexlabs.cloud/conf/vhost_nginx.conf` berisi
+`location ~ ^/ { proxy_pass http://127.0.0.1:18080; … }` (bentuk regex seperti
+`hindsight`; `location /` bentrok dengan blok bawaan Plesk) dan restore IP
+klien Cloudflare. DNS tidak diubah (wildcard `*.nexlabs.cloud` sudah proxied).
+Rollback: `plesk bin subdomain --remove ana.nexlabs.cloud`.
+
+Temuan Plesk yang perlu diketahui:
+- **Lisensi Web Pro Edition membatasi 30 domain/situs** (`plesk bin keyinfo --list`,
+  `lim_dom`), sedangkan server sudah punya >90. Situs baru (`site --create`) gagal
+  "no available resources (domains)"; **subdomain tidak dihitung** (`lim-subdom: -1`),
+  jadi pakai `subdomain --create`.
+- Limit plan "Default Domain" (`Domains`) semula 10 dan penuh; atas persetujuan user
+  diubah ke **Unlimited** (`service_plan --update "Default Domain" -max_site -1`, sync
+  ke subscription `nexlabs.cloud`). Itu bukan penghalang utama, tetapi tetap berubah.
+- `domain_resolution_checker` dimatikan permanen oleh user (domain di balik
+  Cloudflare ditolak Plesk bila aktif).
+
 ## Spam Telegram P3 — 30 Oktober
 
 Worker P3 crash-loop (restart 9×) karena error timer/lease; tiap start mengirim

@@ -109,7 +109,8 @@ DB 1 GiB/1 CPU; bot 512 MiB/1 CPU; Prometheus dan Grafana masing-masing 512 MiB/
 DNS 128 MiB/0,25 CPU. Batas aktual mengikuti manifest. Log 3 × 10 MB/container;
 Prometheus retensi 7 hari/1 GB tidak membatasi seluruh pemakaian disk/WAL.
 DB/monitoring memakai volume persisten. Port loopback: web 18080, metrics 19100,
-Prometheus 19090, Grafana 13000. DB tidak diekspos ke host.
+Prometheus 19090, Grafana 13000. DB tidak diekspos ke host. Hanya dashboard P2 yang
+dipublikasikan lewat proxy Plesk di `ana.nexlabs.cloud` ([detail](handover-vps.md#dashboard-publik-ananexlabscloud--1-november)); port host tetap loopback.
 
 CoreDNS melayani bot melalui DoT Cloudflare, network `172.31.253.0/29`, IP
 `172.31.253.2`; Docker tetap meresolusi service `db`. Pastikan subnet kosong pada
