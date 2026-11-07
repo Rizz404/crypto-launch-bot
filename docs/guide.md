@@ -39,8 +39,11 @@ terbuka, riwayat dan saldo. Switcher akun di kanan atas (badge PAPER / TESTNET /
   ikut instance. Market buy bisa diberi stop loss/take profit. Bot bisa memperkecil jumlah order.
 - Posisi bot bisa ditutup dan order entry bot bisa dibatalkan dari tabel. Order proteksi (SL/TP)
   tidak bisa dibatalkan satu per satu; tutup posisinya.
-- Dengan `TB_WEB__TOTP_SECRET`, Basic Auth diganti login + kode authenticator; akun live meminta
-  kode baru di setiap aksi. Akun live di web wajib memakai TOTP.
+- Login email + password. Akun (satu pemilik) disimpan di database, password di-hash PBKDF2, bukan di env.
+  Selama belum ada akun, `/login` mengarah ke `/register`, yang meminta **kode setup sekali pakai** dari log bot
+  (`docker logs ana-core-bot-1 | grep setup_code`). Setelah akun dibuat, register tertutup.
+- Ganti password di `/account` (tombol **Akun** di header); sesi lain ikut keluar. Aksi akun live meminta
+  password akun lagi.
 - Data pasar: satu websocket Binance per jaringan untuk semua tab; browser tidak memakai kuota API.
 
 ## Menjalankan dan deploy

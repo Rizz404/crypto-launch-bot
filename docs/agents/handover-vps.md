@@ -1,5 +1,18 @@
 # Handover VPS
 
+## Login akun database — 7 November 2026 22:17 WIB
+
+Atas izin user ("jalankan ... dan deploy"). Source `f3ae596`, image
+`ghcr.io/rizz404/ana-core@sha256:a0129d08fa63409a907527060c86e96493a8f535475b8ede031ced24e9a9eeba`
+(tag `sha-<commit>`, terbit setelah checks/integration/monitoring). Backup pra-rilis `backup-20261107T151611Z`.
+
+- Migrasi 6 `web_owner` diterapkan pada `tradingbot_plan4_paper`; hanya `bot` dibuat ulang, service lain tidak disentuh.
+- TOTP dihapus. Akun web dibuat lewat `/register` dengan kode setup dari log (`grep setup_code`); kode berganti
+  tiap restart selama belum ada akun. `TB_WEB__PASSWORD` tetap di `.env.vps` (wajib di compose) tapi tidak dipakai
+  login managed. `TB_WEB__TOTP_SECRET` tidak dipakai lagi.
+- Pemeriksaan: `/healthz` 200, market stream 27 stream, `/login` publik 303 ke `/register`, `/trade` tanpa sesi 303
+  ke login, log tanpa error. Whitelist IP nginx masih belum.
+
 ## Plan 4 paper aktif — 1 November 2026 23:24 WIB
 
 Atas izin user ("commit dan deploy"). Source `048ae24`, CI [41325452146](https://github.com/Rizz404/trading-bot/actions/runs/41325452146) lulus,

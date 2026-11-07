@@ -30,7 +30,7 @@ Website dipakai untuk memantau dan mengendalikan bot, serta mengintervensi posis
 ## Status
 
 Dirilis 1 November 23:24 WIB di `https://ana.nexlabs.cloud/trade`: akun **paper** 1.000 USDT virtual
-(bot EMA ETH 1h + strategi manual BTC/ETH/SOL), login password + kode authenticator. Testnet, live dan
+(bot EMA ETH 1h + strategi manual BTC/ETH/SOL), login email + password (akun di database, dibuat lewat `/register`). Testnet, live dan
 whitelist IP belum.
 
 ## Tahap

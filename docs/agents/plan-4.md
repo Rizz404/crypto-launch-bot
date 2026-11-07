@@ -42,7 +42,9 @@ Ringkasan untuk user: [../plan-4.md](../plan-4.md). Dimulai 1 November 2026 sete
 - [x] Command `place_order`, `cancel_order`, `close_position`.
 
 ### P4-5 Akses
-- [x] Login sesi + TOTP, konfirmasi TOTP untuk wallet live, rate limit login.
+- [x] Login sesi email + password; akun tunggal di tabel `web_owner` (migrasi 6, PBKDF2-SHA256 600k),
+      `/register` sekali dengan kode setup dari log, `/account` ganti password, konfirmasi password untuk wallet live,
+      rate limit login. TOTP dihapus 7 November 2026. `TB_WEB__PASSWORD` hanya untuk dashboard legacy/catalyst.
 - [ ] Whitelist IP di vhost nginx `ana.nexlabs.cloud`.
 
 ### P4-6 Rilis
