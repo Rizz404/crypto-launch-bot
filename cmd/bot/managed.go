@@ -303,7 +303,7 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 	if cfg.Web.Enabled {
 		handler := managed.NewHTTP(runtimes, cfg.Web.Password.Reveal(), func(v decimal.Decimal) string { return moneyFor().amount(v) })
 		handler.RateLine = func() string { return moneyFor().rateLine() }
-		handler.TOTP = cfg.Web.TOTPSecret.Reveal()
+		handler.Email = cfg.Web.Email
 		hubs := marketHubs(cfg, log)
 		for _, h := range hubs {
 			wg.Go(func() { fail(h.Run(ctx)) })

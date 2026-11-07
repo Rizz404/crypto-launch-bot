@@ -327,9 +327,10 @@ wallets:
 		{"app not confirmed", false, true, false, append(slices.Clone(testnet), live...), "allow_live"},
 		{"no testnet key", true, true, false, live, "needs testnet API credentials"},
 		{"no live key", true, true, false, testnet, "needs live API credentials"},
-		{"live on web without totp", true, true, true, append(slices.Clone(testnet), live...), "TOTP_SECRET"},
-		{"live on web with totp", true, true, true, append(append(slices.Clone(testnet), live...), "TB_WEB__PASSWORD=p", "TB_WEB__TOTP_SECRET=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"), ""},
-		{"bad totp secret", true, true, true, append(append(slices.Clone(testnet), live...), "TB_WEB__PASSWORD=p", "TB_WEB__TOTP_SECRET=nope"), "base32"},
+		{"live on web without password", true, true, true, append(slices.Clone(testnet), live...), "TB_WEB__PASSWORD"},
+		{"live on web with password but no email", true, true, true, append(append(slices.Clone(testnet), live...), "TB_WEB__PASSWORD=p"), "TB_WEB__EMAIL"},
+		{"live on web with email and password", true, true, true, append(append(slices.Clone(testnet), live...), "TB_WEB__PASSWORD=p", "TB_WEB__EMAIL=me@example.com"), ""},
+		{"email without password", true, true, true, append(append(slices.Clone(testnet), live...), "TB_WEB__EMAIL=me@example.com"), "web.email needs"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

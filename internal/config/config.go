@@ -90,12 +90,12 @@ type Config struct {
 type WebConfig struct {
 	Enabled bool   `koanf:"enabled"`
 	Listen  string `koanf:"listen"`
-	// Password enables HTTP basic auth (any user name); only via
-	// TB_WEB__PASSWORD. Required when listening beyond localhost.
+	// Password protects the dashboard; only via TB_WEB__PASSWORD. Required
+	// when listening beyond localhost, and re-asked for live-wallet actions.
 	Password Secret `koanf:"password"`
-	// TOTPSecret (base32, only via TB_WEB__TOTP_SECRET) replaces basic auth
-	// with a login session plus authenticator code, and confirms live orders.
-	TOTPSecret Secret `koanf:"totp_secret"`
+	// Email is the login name (TB_WEB__EMAIL). With it the managed dashboard
+	// uses a login form; without it the legacy dashboard uses basic auth.
+	Email string `koanf:"email"`
 }
 
 // TelegramConfig configures notifications and remote commands.
@@ -344,9 +344,6 @@ func checkNoSecretsInFile(k *koanf.Koanf) error {
 	if k.String("web.password") != "" {
 		errs = append(errs, errors.New("web.password must not be set in the config file, use TB_WEB__PASSWORD"))
 	}
-	if k.String("web.totp_secret") != "" {
-		errs = append(errs, errors.New("web.totp_secret must not be set in the config file, use TB_WEB__TOTP_SECRET"))
-	}
 	if k.String("telegram.token") != "" {
 		errs = append(errs, errors.New("telegram.token must not be set in the config file, use TB_TELEGRAM__TOKEN"))
 	}
@@ -388,12 +385,15 @@ func (c *Config) Validate() error {
 		case c.Web.Password == "" && host != "localhost" && (ip == nil || !ip.IsLoopback()):
 			errs = append(errs, errors.New("web.listen is not localhost: set TB_WEB__PASSWORD"))
 		}
-		if c.Web.TOTPSecret != "" && (c.Web.Password == "" || !managed.ValidTOTPSecret(c.Web.TOTPSecret.Reveal())) {
-			errs = append(errs, errors.New("web.totp_secret must be base32 (at least 16 characters) and needs TB_WEB__PASSWORD"))
+		if c.Web.Email != "" && c.Web.Password == "" {
+			errs = append(errs, errors.New("web.email needs TB_WEB__PASSWORD"))
+		}
+		if c.Web.Password != "" && c.Web.Email == "" && len(c.Wallets) > 0 {
+			errs = append(errs, errors.New("the managed dashboard login needs TB_WEB__EMAIL next to TB_WEB__PASSWORD"))
 		}
 		for _, w := range c.Wallets {
-			if (w.Mode == string(ModeLive) || (w.Mode == "" && c.App.Mode == ModeLive)) && c.Web.TOTPSecret == "" {
-				errs = append(errs, errors.New("a live wallet on the web dashboard needs TB_WEB__TOTP_SECRET for order confirmation"))
+			if (w.Mode == string(ModeLive) || (w.Mode == "" && c.App.Mode == ModeLive)) && c.Web.Password == "" {
+				errs = append(errs, errors.New("a live wallet on the web dashboard needs TB_WEB__PASSWORD for order confirmation"))
 				break
 			}
 		}

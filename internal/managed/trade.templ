@@ -76,7 +76,7 @@ templ tradeHeader(v tradeView) {
 					<a href={ templ.SafeURL(v.WalletHref(id)) } class={ ui.MenuItem } aria-current={ ui.Current(id == v.Wallet) } role="menuitem">{ id }</a>
 				}
 			}
-			if v.TOTP {
+			if v.Auth {
 				<form method="post" action="/logout" hx-boost="false">
 					<button type="submit" class={ ui.BtnSecondary + ui.BtnSmall }>Keluar</button>
 				</form>
@@ -177,7 +177,7 @@ templ orderForm(v tradeView) {
 					}
 				</div>
 				if v.Live() {
-					@totpField()
+					@passwordField()
 				}
 				<p class="text-xs text-muted">Bot dapat memperkecil jumlah agar tetap dalam batas risiko. Jual tanpa SL/TP; spot tidak bisa short.</p>
 				<button
@@ -194,9 +194,9 @@ templ orderForm(v tradeView) {
 	}
 }
 
-templ totpField() {
-	@ui.Field("Kode authenticator (akun live)") {
-		<input name="totp" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required class={ ui.InputClass }/>
+templ passwordField() {
+	@ui.Field("Password (konfirmasi akun live)") {
+		<input type="password" name="password" autocomplete="current-password" required class={ ui.InputClass }/>
 	}
 }
 
@@ -241,7 +241,7 @@ templ positionsTable(v tradeView) {
 								<input type="hidden" name="scope" value={ p.Owner }/>
 								<input type="hidden" name="symbol" value={ p.Symbol }/>
 								if v.Live() {
-									<input name="totp" inputmode="numeric" maxlength="6" placeholder="kode" required class={ ui.InputClass + " !w-20 !py-1 text-xs" }/>
+									<input type="password" name="password" autocomplete="current-password" placeholder="password" required class={ ui.InputClass + " !w-20 !py-1 text-xs" }/>
 								}
 								<button
 									type="submit"
@@ -294,7 +294,7 @@ templ openOrdersTable(v tradeView) {
 									<input type="hidden" name="order" value={ o.Order.ClientID }/>
 									<input type="hidden" name="symbol" value={ v.Symbol }/>
 									if v.Live() {
-										<input name="totp" inputmode="numeric" maxlength="6" placeholder="kode" required class={ ui.InputClass + " !w-20 !py-1 text-xs" }/>
+										<input type="password" name="password" autocomplete="current-password" placeholder="password" required class={ ui.InputClass + " !w-20 !py-1 text-xs" }/>
 									}
 									<button
 										type="submit"
@@ -377,8 +377,8 @@ templ fundsTable(v tradeView) {
 	}
 }
 
-templ Login(totp bool, msg string) {
-	@ui.Shell(ui.Page{Title: "Masuk", Brand: "trading-bot", Footer: "Akses dibatasi IP dan login."}) {
+templ Login(msg string) {
+	@ui.Shell(ui.Page{Title: "Masuk", Brand: "trading-bot", Footer: "Akses dibatasi login."}) {
 		<div class="mx-auto mt-10 max-w-sm">
 			@ui.Card("Masuk", nil) {
 				if msg != "" {
@@ -389,13 +389,11 @@ templ Login(totp bool, msg string) {
 					</div>
 				}
 				<form method="post" action="/login" hx-boost="false" class="space-y-4">
-					@ui.Field("Password") {
-						<input type="password" name="password" autocomplete="current-password" required autofocus class={ ui.InputClass }/>
+					@ui.Field("Email") {
+						<input type="email" name="email" autocomplete="username" required autofocus class={ ui.InputClass }/>
 					}
-					if totp {
-						@ui.Field("Kode authenticator") {
-							<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required class={ ui.InputClass }/>
-						}
+					@ui.Field("Password") {
+						<input type="password" name="password" autocomplete="current-password" required class={ ui.InputClass }/>
 					}
 					<button type="submit" class={ ui.BtnPrimary + " w-full" }>Masuk</button>
 				</form>

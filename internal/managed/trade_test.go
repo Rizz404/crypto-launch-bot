@@ -21,22 +21,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// totpSecret is the RFC 6238 test key "12345678901234567890" in base32.
-const totpSecret = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"
-
-func TestTOTPMatchesRFC6238Vectors(t *testing.T) {
-	for unix, want := range map[int64]string{59: "287082", 1111111109: "081804", 1234567890: "005924", 2000000000: "279037"} {
-		got, err := totpCode(totpSecret, time.Unix(unix, 0))
-		require.NoError(t, err)
-		assert.Equal(t, want, got, "t=%d", unix)
-	}
-	now := time.Unix(1234567890, 0)
-	assert.True(t, checkTOTP(totpSecret, "005924", now.Add(25*time.Second)), "one step of drift is accepted")
-	assert.False(t, checkTOTP(totpSecret, "005924", now.Add(95*time.Second)))
-	assert.False(t, checkTOTP(totpSecret, "", now))
-	assert.False(t, ValidTOTPSecret("short"))
-}
-
 type screenSource struct{ events chan exchange.MarketEvent }
 
 func (s screenSource) Name() string { return "sim" }
@@ -69,21 +53,14 @@ func screen(t *testing.T, mode string) (*HTTP, *Runtime) {
 	src.events <- exchange.MarketEvent{Kind: exchange.MarketDepth, Depth: exchange.DepthUpdate{Symbol: "ETHUSDT", FirstID: 2, FinalID: 2}}
 	src.events <- exchange.MarketEvent{Kind: exchange.MarketTicker, Ticker: exchange.Ticker24{Symbol: "ETHUSDT", Last: d("100.5"), ChangePct: d("1.5")}}
 	h := NewHTTP(map[string]*Runtime{"test": rt}, "pass", nil)
-	h.TOTP = totpSecret
+	h.Email = "me@example.com"
 	h.Markets = func(string) *marketview.Hub { return hub }
 	return h, rt
 }
 
 func login(t *testing.T, h *HTTP) *http.Cookie {
 	t.Helper()
-	c, _ := loginCode(t, h)
-	return c
-}
-
-func loginCode(t *testing.T, h *HTTP) (*http.Cookie, string) {
-	t.Helper()
-	code, _ := totpCode(totpSecret, time.Now())
-	req := httptest.NewRequest("POST", "http://localhost/login", strings.NewReader(url.Values{"password": {"pass"}, "code": {code}}.Encode()))
+	req := httptest.NewRequest("POST", "http://localhost/login", strings.NewReader(url.Values{"email": {" Me@Example.com "}, "password": {"pass"}}.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
@@ -92,27 +69,29 @@ func loginCode(t *testing.T, h *HTTP) (*http.Cookie, string) {
 	c := w.Result().Cookies()[0]
 	require.True(t, c.HttpOnly)
 	require.Equal(t, http.SameSiteStrictMode, c.SameSite)
-	return c, code
+	return c
 }
 
-func TestLoginNeedsPasswordAndFreshCodeThenLocksOut(t *testing.T) {
+func TestLoginNeedsEmailAndPasswordThenLocksOut(t *testing.T) {
 	h, _ := screen(t, "paper")
 	get := httptest.NewRequest("GET", "http://localhost/trade", nil)
 	get.SetBasicAuth("u", "pass")
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, get)
-	assert.Equal(t, http.StatusSeeOther, w.Code, "basic auth is off once TOTP is configured")
+	assert.Equal(t, http.StatusSeeOther, w.Code, "basic auth is off once an email is configured")
 	assert.Equal(t, "/login", w.Header().Get("Location"))
 
-	c, code := loginCode(t, h)
-	replay := httptest.NewRequest("POST", "http://localhost/login", strings.NewReader(url.Values{"password": {"pass"}, "code": {code}}.Encode()))
-	replay.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	w = httptest.NewRecorder()
-	h.ServeHTTP(w, replay)
-	assert.Contains(t, w.Header().Get("Location"), "error=", "a used code cannot log in twice")
-
+	c := login(t, h)
+	for _, form := range []string{"email=other%40example.com&password=pass", "email=me%40example.com&password=wrong", "password=pass"} {
+		bad := httptest.NewRequest("POST", "http://localhost/login", strings.NewReader(form))
+		bad.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		w = httptest.NewRecorder()
+		h.ServeHTTP(w, bad)
+		assert.Contains(t, w.Header().Get("Location"), "error=", form)
+	}
+	assert.False(t, h.sessions.locked(time.Now()), "three failures stay below the limit")
 	for range loginFailures {
-		bad := httptest.NewRequest("POST", "http://localhost/login", strings.NewReader("password=wrong&code=000000"))
+		bad := httptest.NewRequest("POST", "http://localhost/login", strings.NewReader("email=me%40example.com&password=wrong"))
 		bad.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 		h.ServeHTTP(httptest.NewRecorder(), bad)
 	}
@@ -124,16 +103,16 @@ func TestLoginNeedsPasswordAndFreshCodeThenLocksOut(t *testing.T) {
 	h.ServeHTTP(w, get)
 	require.Equal(t, http.StatusOK, w.Code, "an existing session survives the lockout")
 	body := w.Body.String()
-	for _, want := range []string{"Order manual", "a/manual", "data-chart=\"trade\"", "PAPER", "Order book"} {
+	for _, want := range []string{"Order manual", "a/manual", "data-chart=\"trade\"", "PAPER", "Order book", "Keluar"} {
 		assert.Contains(t, body, want)
 	}
 }
 
-func TestLiveWalletActionsNeedAFreshCode(t *testing.T) {
+func TestLiveWalletActionsNeedThePasswordAgain(t *testing.T) {
 	h, rt := screen(t, "live")
 	c := login(t, h)
-	post := func(code string) *httptest.ResponseRecorder {
-		form := url.Values{"csrf": {h.token}, "id": {nonce()}, "operation": {"pause"}, "scope": {"a"}, "totp": {code}}
+	post := func(password string) *httptest.ResponseRecorder {
+		form := url.Values{"csrf": {h.token}, "id": {nonce()}, "operation": {"pause"}, "scope": {"a"}, "password": {password}}
 		req := httptest.NewRequest("POST", "http://localhost/control?wallet=test", strings.NewReader(form.Encode()))
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 		req.AddCookie(c)
@@ -141,15 +120,15 @@ func TestLiveWalletActionsNeedAFreshCode(t *testing.T) {
 		h.ServeHTTP(w, req)
 		return w
 	}
-	w := post("")
-	assert.Contains(t, w.Header().Get("Location"), "TOTP")
-	s, _ := rt.Snapshot(t.Context())
-	assert.NotEqual(t, "paused", s.Instances["a"].Status)
-	// The login used the current code; wait for the next window rather than replay it.
-	code, _ := totpCode(totpSecret, time.Now().Add(30*time.Second))
-	w = post(code)
+	for _, wrong := range []string{"", "nope"} {
+		w := post(wrong)
+		assert.Contains(t, w.Header().Get("Location"), "password")
+		s, _ := rt.Snapshot(t.Context())
+		assert.NotEqual(t, "paused", s.Instances["a"].Status)
+	}
+	w := post("pass")
 	assert.NotContains(t, w.Header().Get("Location"), "error=")
-	s, _ = rt.Snapshot(t.Context())
+	s, _ := rt.Snapshot(t.Context())
 	assert.Equal(t, "paused", s.Instances["a"].Status)
 }
 

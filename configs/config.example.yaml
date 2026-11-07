@@ -157,7 +157,8 @@ telegram:
   fx: true                 # show USDT amounts in USD and IDR (CoinGecko, ECB fallback; hourly)
 
 # Web dashboard served by `bot run`. Off localhost it needs TB_WEB__PASSWORD
-# (HTTP basic auth, any user name); put it behind TLS (reverse proxy or VPN).
+# (HTTP basic auth, any user name). The managed trading screen (wallets:) also
+# needs TB_WEB__EMAIL and shows a login form. Put it behind TLS (reverse proxy or VPN).
 web:
   enabled: true
   listen: 127.0.0.1:8080

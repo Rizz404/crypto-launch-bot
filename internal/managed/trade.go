@@ -37,7 +37,7 @@ type tradeView struct {
 	Symbol    string
 	TF        domain.Timeframe
 	Symbols   []string
-	TOTP      bool
+	Auth      bool
 	Manual    []manualScope
 	Positions []positionRow
 }
@@ -65,7 +65,7 @@ func (h *HTTP) tradeView(q *http.Request, wallet string, wallets []string, s *St
 	if !slices.Contains(marketview.ChartTimeframes, tf) {
 		tf = "15m"
 	}
-	v := tradeView{view: view{Wallet: wallet, Wallets: wallets, Tab: "trade", State: s, Token: h.token, Error: q.URL.Query().Get("error"), money: h.Money, links: h.NavLinks}, Symbol: symbol, TF: tf, Symbols: symbols, TOTP: h.TOTP != ""}
+	v := tradeView{view: view{Wallet: wallet, Wallets: wallets, Tab: "trade", State: s, Token: h.token, Error: q.URL.Query().Get("error"), money: h.Money, links: h.NavLinks}, Symbol: symbol, TF: tf, Symbols: symbols, Auth: h.Password != "" && h.Email != ""}
 	for _, id := range sortedBindings(s) {
 		b := s.Bindings[id]
 		if b.Spec.Name == ManualStrategy && slices.Contains(b.Spec.Symbols, symbol) {
