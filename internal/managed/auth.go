@@ -208,7 +208,7 @@ func (h *HTTP) login(w http.ResponseWriter, q *http.Request) {
 		return
 	}
 	h.startSession(w, q, now)
-	http.Redirect(w, q, "/trade", http.StatusSeeOther)
+	http.Redirect(w, q, "/", http.StatusSeeOther)
 }
 
 // register creates the only account, once, with the setup code from the log.
@@ -274,7 +274,7 @@ func (h *HTTP) register(w http.ResponseWriter, q *http.Request) {
 	h.setupCode = ""
 	h.setupMu.Unlock()
 	h.startSession(w, q, now)
-	http.Redirect(w, q, "/trade", http.StatusSeeOther)
+	http.Redirect(w, q, "/", http.StatusSeeOther)
 }
 
 func passwordProblem(password, confirm string) string {
@@ -305,7 +305,12 @@ func (h *HTTP) account(w http.ResponseWriter, q *http.Request) {
 	}
 	if q.Method == http.MethodGet {
 		htmlPage(w)
-		_ = Account(o.Email, h.token, q.URL.Query().Get("error"), q.URL.Query().Has("done")).Render(q.Context(), w)
+		wallets := sortedWallets(h.Wallets)
+		wallet := ""
+		if len(wallets) > 0 {
+			wallet = wallets[0]
+		}
+		_ = Account(h.view(wallet, wallets, "account", nil, q), o.Email, q.URL.Query().Has("done")).Render(q.Context(), w)
 		return
 	}
 	if !postForm(w, q) {

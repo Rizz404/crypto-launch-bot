@@ -29,8 +29,10 @@ type view struct {
 	Token   string
 	Error   string
 	Rate    string
-	money   func(decimal.Decimal) string
-	links   []ui.NavItem
+	// Trade shows the trading screen in the menu; Auth the account links.
+	Trade, Auth bool
+	money       func(decimal.Decimal) string
+	links       []ui.NavItem
 }
 
 var tabs = []ui.NavItem{
@@ -50,19 +52,58 @@ func (v view) Export() templ.SafeURL {
 func (v view) Href(tab string) string {
 	return "/?wallet=" + url.QueryEscape(v.Wallet) + "&tab=" + tab
 }
-func (v view) Tabs() []ui.NavItem {
-	out := make([]ui.NavItem, len(tabs))
-	for i, t := range tabs {
-		out[i] = ui.NavItem{Key: t.Key, Label: t.Label, Href: v.Href(t.Key)}
+// TabLabel names the current dashboard tab for the page heading.
+func (v view) TabLabel() string {
+	for _, t := range tabs {
+		if t.Key == v.Tab {
+			return t.Label
+		}
 	}
-	return out
+	return tabs[0].Label
 }
-func (v view) WalletNav() []ui.NavItem {
-	out := make([]ui.NavItem, len(v.Wallets))
-	for i, id := range v.Wallets {
-		out[i] = ui.NavItem{Key: id, Label: id, Href: "/?wallet=" + url.QueryEscape(id) + "&tab=" + v.Tab}
+
+// Sidebar is the menu of every page after login. The bot is the core: its
+// four sections come first and open; manual trading is parked until it can
+// trade any pair (its /trade screen still exists, unlinked).
+func (v view) Sidebar() []ui.NavGroup {
+	bot := make([]ui.NavItem, 0, len(tabs)+len(v.links))
+	for _, t := range tabs {
+		bot = append(bot, ui.NavItem{Key: t.Key, Label: t.Label, Href: v.Href(t.Key)})
 	}
-	return append(out, v.links...)
+	bot = append(bot, v.links...)
+	wallets := make([]ui.NavItem, len(v.Wallets))
+	for i, id := range v.Wallets {
+		n := ui.NavItem{Label: id, Href: v.walletHref(id), Current: id == v.Wallet}
+		if n.Current && v.State != nil {
+			n.Hint, n.Tone = ui.ModeLabel(v.State.Spec.Mode), ui.ModeTone(v.State.Spec.Mode)
+		}
+		wallets[i] = n
+	}
+	return []ui.NavGroup{
+		{Title: "Trading bot", Items: bot, Collapsible: true, Open: true},
+		{Items: []ui.NavItem{{Label: "Trading manual", Hint: "Segera", Disabled: true}}},
+		{Title: "Akun trading", Items: wallets, Collapsible: true, Open: true},
+	}
+}
+
+// walletHref switches wallet while staying on the same page.
+func (v view) walletHref(id string) string {
+	switch v.Tab {
+	case "trade":
+		return "/trade?wallet=" + url.QueryEscape(id)
+	case "account":
+		return "/?wallet=" + url.QueryEscape(id)
+	}
+	return "/?wallet=" + url.QueryEscape(id) + "&tab=" + v.Tab
+}
+
+// shellPage is the common page frame; Active selects the menu item.
+func (v view) shellPage(title, footer string) ui.Page {
+	p := ui.Page{Title: title, Brand: "trading-bot", Active: v.Tab, Sidebar: v.Sidebar(), Footer: footer}
+	if v.Auth {
+		p.SideFoot = sideAccount(v.Tab == "account")
+	}
+	return p
 }
 
 func (v view) PnL() decimal.Decimal { return v.State.Equity().Sub(v.State.Spec.Capital) }

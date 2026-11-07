@@ -116,7 +116,7 @@ func TestRegisterOnceWithTheSetupCode(t *testing.T) {
 	require.False(t, exists)
 
 	w = form(t, h, "/register", ok, nil)
-	require.Equal(t, "/trade", w.Header().Get("Location"))
+	require.Equal(t, "/", w.Header().Get("Location"))
 	c := w.Result().Cookies()[0]
 	assert.Equal(t, http.StatusOK, get(t, h, "/trade", c).Code, "registering logs you in")
 	o, exists, _ := h.Owners.Owner(t.Context())
@@ -137,7 +137,7 @@ func login(t *testing.T, h *HTTP) *http.Cookie {
 	t.Helper()
 	w := form(t, h, "/login", url.Values{"email": {" Me@Example.com "}, "password": {testPassword}}, nil)
 	require.Equal(t, http.StatusSeeOther, w.Code)
-	require.Equal(t, "/trade", w.Header().Get("Location"))
+	require.Equal(t, "/", w.Header().Get("Location"))
 	c := w.Result().Cookies()[0]
 	require.True(t, c.HttpOnly)
 	require.Equal(t, http.SameSiteStrictMode, c.SameSite)
@@ -175,6 +175,14 @@ func TestLoginNeedsEmailAndPasswordThenLocksOut(t *testing.T) {
 	for _, want := range []string{"Order manual", "a/manual", "data-chart=\"trade\"", "PAPER", "Order book", "Keluar", "/account"} {
 		assert.Contains(t, body, want)
 	}
+
+	w = get(t, h, "/", c)
+	require.Equal(t, http.StatusOK, w.Code)
+	body = w.Body.String()
+	for _, want := range []string{"Trading bot", "Instance &amp; strategi", "Trading manual", "Segera", "Akun trading", "Ganti password", "Keluar"} {
+		assert.Contains(t, body, want)
+	}
+	assert.NotContains(t, body, `href="/trade`, "manual trading is not linked while it is parked")
 }
 
 func TestAccountChangesPasswordAndEndsOtherSessions(t *testing.T) {
@@ -197,7 +205,7 @@ func TestAccountChangesPasswordAndEndsOtherSessions(t *testing.T) {
 	assert.Equal(t, "/login", get(t, h, "/trade", other).Header().Get("Location"), "other sessions are logged out")
 
 	assert.Contains(t, form(t, h, "/login", url.Values{"email": {"me@example.com"}, "password": {testPassword}}, nil).Header().Get("Location"), "error=")
-	assert.Equal(t, "/trade", form(t, h, "/login", url.Values{"email": {"me@example.com"}, "password": {"brand-new-pass"}}, nil).Header().Get("Location"))
+	assert.Equal(t, "/", form(t, h, "/login", url.Values{"email": {"me@example.com"}, "password": {"brand-new-pass"}}, nil).Header().Get("Location"))
 }
 
 func TestLiveWalletActionsNeedThePasswordAgain(t *testing.T) {

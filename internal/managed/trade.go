@@ -13,7 +13,6 @@ import (
 
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/marketview"
-	"github.com/rizz404/trading-bot/internal/ui"
 )
 
 // Trading screen refresh: the market from memory several times a second, the
@@ -37,7 +36,6 @@ type tradeView struct {
 	Symbol    string
 	TF        domain.Timeframe
 	Symbols   []string
-	Auth      bool
 	Manual    []manualScope
 	Positions []positionRow
 }
@@ -65,7 +63,7 @@ func (h *HTTP) tradeView(q *http.Request, wallet string, wallets []string, s *St
 	if !slices.Contains(marketview.ChartTimeframes, tf) {
 		tf = "15m"
 	}
-	v := tradeView{view: view{Wallet: wallet, Wallets: wallets, Tab: "trade", State: s, Token: h.token, Error: q.URL.Query().Get("error"), money: h.Money, links: h.NavLinks}, Symbol: symbol, TF: tf, Symbols: symbols, Auth: h.Owners != nil}
+	v := tradeView{view: h.view(wallet, wallets, "trade", s, q), Symbol: symbol, TF: tf, Symbols: symbols}
 	for _, id := range sortedBindings(s) {
 		b := s.Bindings[id]
 		if b.Spec.Name == ManualStrategy && slices.Contains(b.Spec.Symbols, symbol) {
@@ -91,9 +89,6 @@ func (h *HTTP) tradeView(q *http.Request, wallet string, wallets []string, s *St
 func (v tradeView) Href(symbol string, tf domain.Timeframe) string {
 	return "/trade?wallet=" + url.QueryEscape(v.Wallet) + "&symbol=" + url.QueryEscape(symbol) + "&tf=" + string(tf)
 }
-func (v tradeView) WalletHref(id string) string {
-	return "/trade?wallet=" + url.QueryEscape(id) + "&symbol=" + url.QueryEscape(v.Symbol) + "&tf=" + string(v.TF)
-}
 func (v tradeView) Live() bool                     { return v.State.Spec.Mode == "live" }
 func (v tradeView) Timeframes() []domain.Timeframe { return marketview.ChartTimeframes }
 func (v tradeView) StreamURL() string {
@@ -101,9 +96,6 @@ func (v tradeView) StreamURL() string {
 }
 func (v tradeView) CandlesURL() string {
 	return "/api/candles?wallet=" + url.QueryEscape(v.Wallet) + "&symbol=" + url.QueryEscape(v.Symbol) + "&tf=" + string(v.TF)
-}
-func (v tradeView) Nav() []ui.NavItem {
-	return append([]ui.NavItem{{Key: "trade", Label: "Trading", Href: v.WalletHref(v.Wallet)}, {Key: "portfolio", Label: "Portofolio", Href: "/?wallet=" + url.QueryEscape(v.Wallet)}}, v.links...)
 }
 
 // OpenOrders are the non-terminal orders, newest first.

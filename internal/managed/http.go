@@ -36,6 +36,11 @@ type HTTP struct {
 	sessions sessions
 }
 
+// view is the page data shared by the dashboard, trading and account pages.
+func (h *HTTP) view(wallet string, wallets []string, tab string, state *State, q *http.Request) view {
+	return view{Wallet: wallet, Wallets: wallets, Tab: tab, State: state, Token: h.token, Error: q.URL.Query().Get("error"), money: h.Money, links: h.NavLinks, Trade: h.Markets != nil, Auth: h.Owners != nil}
+}
+
 func NewHTTP(wallets map[string]*Runtime, password string, money func(decimal.Decimal) string) *HTTP {
 	h := &HTTP{Wallets: wallets, Password: password, Money: money, token: nonce()}
 	if h.Money == nil {
@@ -201,11 +206,7 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 	if !slices.ContainsFunc(tabs, func(t ui.NavItem) bool { return t.Key == tab }) {
 		tab = tabs[0].Key
 	}
-	links := h.NavLinks
-	if h.Markets != nil {
-		links = append([]ui.NavItem{{Key: "trade", Label: "Trading", Href: "/trade?wallet=" + url.QueryEscape(wallet)}}, links...)
-	}
-	v := view{Wallet: wallet, Wallets: wallets, Tab: tab, State: state, Token: h.token, Error: q.URL.Query().Get("error"), money: h.Money, links: links}
+	v := h.view(wallet, wallets, tab, state, q)
 	if h.RateLine != nil {
 		v.Rate = h.RateLine()
 	}

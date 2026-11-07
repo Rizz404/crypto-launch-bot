@@ -1,19 +1,11 @@
 package managed
 
-import (
-	"github.com/rizz404/trading-bot/internal/ui"
-)
+import "github.com/rizz404/trading-bot/internal/ui"
 
 func tradePage(v tradeView) ui.Page {
-	return ui.Page{
-		Title:  v.Symbol + " · Trading",
-		Brand:  "trading-bot",
-		Active: "trade",
-		Nav:    v.Nav(),
-		Charts: true,
-		Wide:   true,
-		Footer: "Data pasar dari websocket Binance, dibagikan server ke semua tab. Order lewat strategi manual memakai modal dan batas risiko instance-nya.",
-	}
+	p := v.shellPage(v.Symbol+" · Trading", "Data pasar dari websocket Binance, dibagikan server ke semua tab. Order lewat strategi manual memakai modal dan batas risiko instance-nya.")
+	p.Charts, p.Wide = true, true
+	return p
 }
 
 templ Trade(v tradeView) {
@@ -32,7 +24,7 @@ templ Trade(v tradeView) {
 			}
 			if v.Live() {
 				@ui.Alert("neg") {
-					<strong>Akun live memakai uang asli.</strong> Setiap aksi meminta kode authenticator baru.
+					<strong>Akun live memakai uang asli.</strong> Setiap aksi meminta password akun lagi.
 				}
 			}
 			<div class="grid grid-cols-1 gap-4 lg:grid-cols-12">
@@ -71,17 +63,9 @@ templ tradeHeader(v tradeView) {
 		<div class="hidden md:block"><div class="font-medium tabular-nums" data-ticker="qv">–</div><div class="text-xs text-muted">Volume 24 jam (USDT)</div></div>
 		<div class="ml-auto flex items-center gap-2">
 			<span class="hidden text-xs text-muted sm:inline" data-stream-state>menghubungkan…</span>
-			@ui.Dropdown(walletLabel(v.Wallet, v.State.Spec.Mode), "right-0") {
-				for _, id := range v.Wallets {
-					<a href={ templ.SafeURL(v.WalletHref(id)) } class={ ui.MenuItem } aria-current={ ui.Current(id == v.Wallet) } role="menuitem">{ id }</a>
-				}
-			}
-			if v.Auth {
-				<a href="/account" class={ ui.BtnSecondary + ui.BtnSmall }>Akun</a>
-				<form method="post" action="/logout" hx-boost="false">
-					<button type="submit" class={ ui.BtnSecondary + ui.BtnSmall }>Keluar</button>
-				</form>
-			}
+			<span class="flex items-center gap-2 text-sm" title="Ganti akun lewat menu samping">
+				@walletLabel(v.Wallet, v.State.Spec.Mode)
+			</span>
 		</div>
 	</div>
 }
@@ -209,7 +193,7 @@ templ accountPanel(v tradeView) {
 			<button type="button" x-on:click="fills" x-bind:aria-current="fillsCurrent" class={ accountTab }>Riwayat</button>
 			<button type="button" x-on:click="funds" x-bind:aria-current="fundsCurrent" class={ accountTab }>Saldo</button>
 		</nav>
-		<div id="account-body" hx-get={ v.WalletHref(v.Wallet) } hx-trigger="account-changed from:window" hx-select="#account-body" hx-swap="outerHTML">
+		<div id="account-body" hx-get={ v.Href(v.Symbol, v.TF) } hx-trigger="account-changed from:window" hx-select="#account-body" hx-swap="outerHTML">
 			<div x-show="isPositions">@positionsTable(v)</div>
 			<div x-show="isOrders" x-cloak>@openOrdersTable(v)</div>
 			<div x-show="isFills" x-cloak>@fillsTable(v)</div>
@@ -416,42 +400,52 @@ templ Register(msg string) {
 	}
 }
 
-templ Account(email, token, msg string, done bool) {
-	@authCard("Akun", msg) {
-		if done {
-			<div class="mb-4">
-				@ui.Alert("pos") {
-					Password diganti. Sesi lain sudah dikeluarkan.
+templ Account(v view, email string, done bool) {
+	@ui.Shell(v.shellPage("Akun", "Akun tunggal pemilik; password di-hash di database.")) {
+		<div class="mx-auto max-w-md space-y-4">
+			@ui.Heading("Akun", "Email login dan ganti password", nil)
+			if v.Error != "" {
+				@ui.Alert("neg") {
+					{ v.Error }
 				}
-			</div>
-		}
-		<p class="mb-4 text-sm text-muted">Masuk sebagai <span class="font-medium text-on-surface">{ email }</span> · <a href="/trade" class={ ui.LinkClass }>Kembali ke trading</a></p>
-		<form method="post" action="/account" hx-boost="false" class="space-y-4">
-			<input type="hidden" name="csrf" value={ token }/>
-			@ui.Field("Password lama") {
-				<input type="password" name="current_password" autocomplete="current-password" required class={ ui.InputClass }/>
 			}
-			@ui.Field("Password baru (minimal 8 karakter)") {
-				<input type="password" name="password" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
+			@ui.Card("Ganti password", nil) {
+				if done {
+					<div class="mb-4">
+						@ui.Alert("pos") {
+							Password diganti. Sesi lain sudah dikeluarkan.
+						}
+					</div>
+				}
+				<p class="mb-4 text-sm text-muted">Masuk sebagai <span class="font-medium text-on-surface">{ email }</span>. Setelah diganti, sesi di perangkat lain ikut keluar.</p>
+				<form method="post" action="/account" hx-boost="false" class="space-y-4">
+					<input type="hidden" name="csrf" value={ v.Token }/>
+					@ui.Field("Password lama") {
+						<input type="password" name="current_password" autocomplete="current-password" required class={ ui.InputClass }/>
+					}
+					@ui.Field("Password baru (minimal 8 karakter)") {
+						<input type="password" name="password" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
+					}
+					@ui.Field("Ulangi password baru") {
+						<input type="password" name="password_confirm" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
+					}
+					<button type="submit" class={ ui.BtnPrimary + " w-full" }>Ganti password</button>
+				</form>
 			}
-			@ui.Field("Ulangi password baru") {
-				<input type="password" name="password_confirm" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
-			}
-			<button type="submit" class={ ui.BtnPrimary + " w-full" }>Ganti password</button>
-		</form>
+		</div>
 	}
 }
 
 templ Login(msg string) {
 	@authCard("Masuk", msg) {
-				<form method="post" action="/login" hx-boost="false" class="space-y-4">
-					@ui.Field("Email") {
-						<input type="email" name="email" autocomplete="username" required autofocus class={ ui.InputClass }/>
-					}
-					@ui.Field("Password") {
-						<input type="password" name="password" autocomplete="current-password" required class={ ui.InputClass }/>
-					}
-					<button type="submit" class={ ui.BtnPrimary + " w-full" }>Masuk</button>
-				</form>
+		<form method="post" action="/login" hx-boost="false" class="space-y-4">
+			@ui.Field("Email") {
+				<input type="email" name="email" autocomplete="username" required autofocus class={ ui.InputClass }/>
+			}
+			@ui.Field("Password") {
+				<input type="password" name="password" autocomplete="current-password" required class={ ui.InputClass }/>
+			}
+			<button type="submit" class={ ui.BtnPrimary + " w-full" }>Masuk</button>
+		</form>
 	}
 }

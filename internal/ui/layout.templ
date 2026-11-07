@@ -11,10 +11,27 @@ type Page struct {
 	Charts bool
 	// Wide uses the full screen width (trading screen).
 	Wide bool
+	// Sidebar replaces the header links with a left menu (managed dashboard);
+	// SideFoot is rendered at its bottom (account links).
+	Sidebar  []NavGroup
+	SideFoot templ.Component
+}
+
+// NavGroup is a block of sidebar links. A Collapsible group is a native
+// <details> sub menu (no script), expanded when Open; a group without a
+// Title renders its items as top-level links.
+type NavGroup struct {
+	Title       string
+	Items       []NavItem
+	Collapsible bool
+	Open        bool
 }
 
 // width is the content width shared by header, main and footer.
 func (p Page) width() string {
+	if len(p.Sidebar) > 0 {
+		return ""
+	}
 	if p.Wide {
 		return "max-w-screen-2xl"
 	}
@@ -30,9 +47,19 @@ func (p Page) mainClass() string {
 
 type NavItem struct {
 	Key, Label, Href string
+	// Hint is a small badge after the label (e.g. the wallet mode), coloured by Tone.
+	Hint, Tone string
+	// Current marks the selected item when Page.Active is not enough (e.g.
+	// the selected wallet); Disabled shows a placeholder without a link.
+	Current, Disabled bool
+}
+
+func (p Page) current(n NavItem) string {
+	return Current(n.Current || (n.Key != "" && n.Key == p.Active))
 }
 
 const navLink = "rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-on-surface aria-[current=page]:bg-badge aria-[current=page]:text-on-badge"
+const sideLink = "flex items-center justify-between gap-2 " + navLink
 
 templ Shell(p Page) {
 	<!DOCTYPE html>
@@ -62,11 +89,13 @@ templ Shell(p Page) {
 						</span>
 						{ p.Brand }
 					</span>
-					<nav class="hidden items-center gap-1 md:flex" aria-label="Utama">
-						for _, n := range p.Nav {
-							<a href={ templ.SafeURL(n.Href) } class={ navLink } aria-current={ Current(n.Key == p.Active) }>{ n.Label }</a>
-						}
-					</nav>
+					if len(p.Sidebar) == 0 {
+						<nav class="hidden items-center gap-1 md:flex" aria-label="Utama">
+							for _, n := range p.Nav {
+								<a href={ templ.SafeURL(n.Href) } class={ navLink } aria-current={ Current(n.Key == p.Active) }>{ n.Label }</a>
+							}
+						</nav>
+					}
 					<div class="ml-auto flex items-center gap-2">
 						@ThemeToggle()
 						<button type="button" class="grid size-9 place-items-center rounded-lg text-on-surface hover:bg-surface-alt md:hidden" x-on:click="toggle" aria-label="Menu">
@@ -74,17 +103,34 @@ templ Shell(p Page) {
 						</button>
 					</div>
 				</div>
-				<nav class="border-t border-outline px-4 py-2 md:hidden" x-show="open" x-cloak aria-label="Utama (seluler)">
-					<div class="flex flex-col gap-1">
-						for _, n := range p.Nav {
-							<a href={ templ.SafeURL(n.Href) } class={ navLink } aria-current={ Current(n.Key == p.Active) }>{ n.Label }</a>
-						}
-					</div>
+				<nav class="max-h-[80vh] overflow-y-auto border-t border-outline px-4 py-2 md:hidden" x-show="open" x-cloak aria-label="Utama (seluler)">
+					if len(p.Sidebar) > 0 {
+						@sideMenu(p)
+					} else {
+						<div class="flex flex-col gap-1">
+							for _, n := range p.Nav {
+								<a href={ templ.SafeURL(n.Href) } class={ navLink } aria-current={ Current(n.Key == p.Active) }>{ n.Label }</a>
+							}
+						</div>
+					}
 				</nav>
 			</header>
-			<main id="main" class={ p.mainClass() }>
-				{ children... }
-			</main>
+			if len(p.Sidebar) > 0 {
+				<div class="flex flex-1">
+					<aside class="hidden w-60 shrink-0 border-r border-outline bg-surface md:block">
+						<nav class="sticky top-16 max-h-[calc(100vh-4rem)] overflow-y-auto p-3" aria-label="Menu">
+							@sideMenu(p)
+						</nav>
+					</aside>
+					<main id="main" class={ "min-w-0 " + p.mainClass() }>
+						{ children... }
+					</main>
+				</div>
+			} else {
+				<main id="main" class={ p.mainClass() }>
+					{ children... }
+				</main>
+			}
 			<footer class="bg-footer text-on-footer">
 				<div class={ "mx-auto flex flex-wrap items-center justify-between gap-2 px-4 py-4 text-xs " + p.width() }>
 					<span>{ p.Brand }</span>
@@ -95,6 +141,56 @@ templ Shell(p Page) {
 			@Toast()
 		</body>
 	</html>
+}
+
+templ sideMenu(p Page) {
+	<div class="flex flex-col gap-1">
+		for _, g := range p.Sidebar {
+			if g.Collapsible {
+				<details class="group" open?={ g.Open }>
+					<summary class="flex cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-on-surface hover:bg-surface-alt [&::-webkit-details-marker]:hidden">
+						<span>{ g.Title }</span>
+						<span class="text-muted transition-transform group-open:rotate-90" aria-hidden="true">▸</span>
+					</summary>
+					<div class="mb-1 ml-3 flex flex-col gap-0.5 border-l border-outline pl-2">
+						for _, n := range g.Items {
+							@sideItem(p, n)
+						}
+					</div>
+				</details>
+			} else {
+				if g.Title != "" {
+					<p class="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted">{ g.Title }</p>
+				}
+				for _, n := range g.Items {
+					@sideItem(p, n)
+				}
+			}
+		}
+		if p.SideFoot != nil {
+			<div class="mt-2 border-t border-outline pt-2">
+				@p.SideFoot
+			</div>
+		}
+	</div>
+}
+
+templ sideItem(p Page, n NavItem) {
+	if n.Disabled {
+		<span class={ sideLink + " cursor-not-allowed opacity-60 hover:text-muted" } aria-disabled="true">
+			<span>{ n.Label }</span>
+			if n.Hint != "" {
+				@Badge(n.Hint, n.Tone)
+			}
+		</span>
+	} else {
+		<a href={ templ.SafeURL(n.Href) } class={ sideLink } aria-current={ p.current(n) }>
+			<span>{ n.Label }</span>
+			if n.Hint != "" {
+				@Badge(n.Hint, n.Tone)
+			}
+		</a>
+	}
 }
 
 templ ThemeToggle() {

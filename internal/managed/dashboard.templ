@@ -1,17 +1,19 @@
 package managed
 
-import (
-	"github.com/rizz404/trading-bot/internal/ui"
-)
+import "github.com/rizz404/trading-bot/internal/ui"
 
 func page(v view) ui.Page {
-	return ui.Page{
-		Title:  "Portofolio bot",
-		Brand:  "trading-bot",
-		Active: v.Wallet,
-		Nav:    v.WalletNav(),
-		Footer: "Nilai koin berubah mengikuti harga. Order hanya selesai setelah status exchange dikonfirmasi.",
-	}
+	return v.shellPage("Portofolio bot", "Nilai koin berubah mengikuti harga. Order hanya selesai setelah status exchange dikonfirmasi.")
+}
+
+// sideAccount sits at the bottom of the sidebar: password page and logout.
+templ sideAccount(onAccount bool) {
+	<div class="flex flex-col gap-1">
+		<a href="/account" class={ ui.MenuItem + " rounded-lg" } aria-current={ ui.Current(onAccount) }>Ganti password</a>
+		<form method="post" action="/logout" hx-boost="false">
+			<button type="submit" class={ ui.MenuItem + " w-full rounded-lg text-left text-neg" }>Keluar</button>
+		</form>
+	</div>
 }
 
 func exportAction(v view) templ.Component {
@@ -24,7 +26,7 @@ templ exportLink(v view) {
 
 templ Dashboard(v view) {
 	@ui.Shell(page(v)) {
-		@ui.Heading("Portofolio bot", "Akun "+v.Wallet+" · "+v.State.Spec.Mode+" · "+v.State.Spec.Exchange, exportAction(v))
+		@ui.Heading(v.TabLabel(), "Portofolio bot · akun "+v.Wallet+" · "+v.State.Spec.Mode+" · "+v.State.Spec.Exchange, exportAction(v))
 		if v.Rate != "" {
 			<p class="-mt-4 text-xs text-muted">{ v.Rate }</p>
 		}
@@ -33,7 +35,6 @@ templ Dashboard(v view) {
 				Aksi ditolak: { v.Error }
 			}
 		}
-		@ui.Tabs(v.Tabs(), v.Tab)
 		switch v.Tab {
 			case "instance":
 				@instancesTab(v)
@@ -56,7 +57,6 @@ templ live(href string) {
 }
 
 // ---- Ringkasan ----
-
 templ summaryTab(v view) {
 	@live(v.Href("ringkasan")) {
 		if u := v.Uncertain(); len(u) > 0 {
@@ -152,7 +152,6 @@ templ uncertainOrders(v view, orders []*Order) {
 }
 
 // ---- Kontrol & batas risiko ----
-
 templ controls(v view, scope, label string) {
 	<div class="flex flex-wrap gap-2" role="group" aria-label={ "Kontrol " + label }>
 		for _, c := range controlSet {
@@ -216,7 +215,6 @@ templ limitsForm(v view, scope string) {
 }
 
 // ---- Instance & strategi ----
-
 templ instancesTab(v view) {
 	<div class="grid gap-6 lg:grid-cols-2">
 		@ui.Card("Tambah instance atau salin template", nil) {
@@ -412,7 +410,6 @@ templ instanceCard(v view, id string) {
 }
 
 // ---- Posisi & order ----
-
 templ positionsTab(v view) {
 	@live(v.Href("posisi")) {
 		@ui.CardFlush("Inventori per strategi", nil) {
@@ -471,7 +468,6 @@ templ positionsTab(v view) {
 }
 
 // ---- Riwayat ----
-
 templ historyTab(v view) {
 	@ui.Card("Sesi dan versi konfigurasi", nil) {
 		if len(v.State.Runs) == 0 {
