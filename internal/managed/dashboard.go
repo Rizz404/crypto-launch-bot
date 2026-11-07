@@ -52,6 +52,7 @@ func (v view) Export() templ.SafeURL {
 func (v view) Href(tab string) string {
 	return "/?wallet=" + url.QueryEscape(v.Wallet) + "&tab=" + tab
 }
+
 // TabLabel names the current dashboard tab for the page heading.
 func (v view) TabLabel() string {
 	for _, t := range tabs {
