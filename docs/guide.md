@@ -12,7 +12,9 @@
 
 ## Kontrol
 
-Lewat dashboard web (tab Ringkasan, Instance & strategi, Posisi & order, Riwayat) atau Telegram.
+Lewat dashboard web atau Telegram. Menu samping web: **Trading bot** (Ringkasan, Instance & strategi,
+Posisi & order, Riwayat; halaman awal setelah login), **Trading manual** (segera hadir), **Akun trading**
+(pindah akun paper/testnet/live), **Ganti password**, **Keluar**.
 
 | Aksi | Efek |
 |---|---|
@@ -30,7 +32,9 @@ dilaporkan bila level notifikasi `info`.
 
 Dashboard memakai Basic Auth dan hanya bind loopback. Jangan buka port ke publik.
 
-## Halaman Trading (Plan 4)
+## Halaman Trading manual (Plan 4, ditunda dari menu)
+
+Belum ditautkan di menu sampai bisa memakai pair bebas; alamat `/trade` masih bekerja.
 
 `/trade`: chart candle live, order book, transaksi pasar, form order manual, serta posisi, order
 terbuka, riwayat dan saldo. Switcher akun di kanan atas (badge PAPER / TESTNET / **LIVE merah**).

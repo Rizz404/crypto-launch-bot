@@ -1,5 +1,17 @@
 # Handover VPS
 
+## Sidebar bot-sentris — 7 November 2026 23:42 WIB
+
+Atas izin user ("boleh kamu deploy"). Source `6a7b799` (fitur `eeedf08` + gofmt; CI `eeedf08` gagal di cek format),
+image `ghcr.io/rizz404/ana-core@sha256:c813f3045d0693042061edc79cc5d31c0a1cdefcef6faea8d8d5355cd65b686b`.
+Backup pra-rilis `backup-20261107T164110Z`. Tanpa migrasi; hanya `bot` dibuat ulang.
+
+- Menu: Trading bot (4 tab, halaman awal setelah login), Trading manual "Segera" (route `/trade` tetap, tidak
+  ditautkan), Akun trading, Ganti password, Keluar. Akun web sudah terdaftar (`/register` 303 ke login).
+- Pemeriksaan: `/healthz` 200, market stream 27, `/login` 200, `/` tanpa sesi 303 ke login, log tanpa error.
+- SSH exec langsung ke IP publik kena TCP reset di jalur (sesi diputus setelah auth); pakai alias
+  `plesk-newest-hindsight` (ProxyJump ke 127.0.0.1) untuk perintah.
+
 ## Login akun database — 7 November 2026 22:17 WIB
 
 Atas izin user ("jalankan ... dan deploy"). Source `f3ae596`, image

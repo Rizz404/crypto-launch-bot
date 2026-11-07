@@ -35,6 +35,8 @@ Ringkasan untuk user: [../plan-4.md](../plan-4.md). Dimulai 1 November 2026 sete
 - [x] Komponen baru di `internal/ui` dengan pola Penguin UI.
 
 ### P4-3 Bot
+- [x] Sidebar bot-sentris (`view.Sidebar`, `ui.NavGroup` collapsible `<details>`): Trading bot (4 tab) terbuka, Trading manual
+      nonaktif "Segera" (route `/trade` tetap ada, tidak ditautkan), Akun trading, Ganti password, Keluar. Login → `/`.
 - [~] Halaman bot: status/PnL/kontrol/buat dari template memakai tab Portofolio yang ada (+ template `manual`). **Belum:** pembanding buy-and-hold dan halaman bot terpisah.
 
 ### P4-4 Intervensi manual

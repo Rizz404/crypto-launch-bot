@@ -38,7 +38,7 @@ whitelist IP belum.
 1. P4-0 Akun paper/testnet/live dalam satu proses.
 2. P4-1 Data pasar bersama (websocket → server → browser).
 3. P4-2 Halaman trading: chart, order book, form order, posisi/order/riwayat.
-4. P4-3 Halaman bot sebagai pusat.
+4. P4-3 Halaman bot sebagai pusat: menu samping Trading bot, halaman awal setelah login.
 5. P4-4 Order manual dan cancel/close per order/posisi.
 6. P4-5 Login + TOTP + whitelist IP.
 7. P4-6 Rilis bertahap: lokal → VPS paper+testnet → live hanya dengan izin.
