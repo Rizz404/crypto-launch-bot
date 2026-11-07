@@ -1,6 +1,6 @@
 # Plan 4 trading screen template: paper, testnet and live wallets in one process.
 # Only the paper wallet is enabled here. Secrets come from the environment:
-#   TB_WEB__EMAIL, TB_WEB__PASSWORD (login of the web screen; live actions ask the password again)
+#   none for the web login: the first visit registers the account at /register with the setup code from the bot log
 #   testnet: TB_EXCHANGES__BINANCE__TESTNET_API_KEY / _SECRET
 #   live:    TB_EXCHANGES__BINANCE__API_KEY / _SECRET, plus app.allow_live and wallets[].allow_live
 app: {mode: paper, allow_live: false, log_level: info, log_format: text}

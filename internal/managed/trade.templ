@@ -77,6 +77,7 @@ templ tradeHeader(v tradeView) {
 				}
 			}
 			if v.Auth {
+				<a href="/account" class={ ui.BtnSecondary + ui.BtnSmall }>Akun</a>
 				<form method="post" action="/logout" hx-boost="false">
 					<button type="submit" class={ ui.BtnSecondary + ui.BtnSmall }>Keluar</button>
 				</form>
@@ -377,10 +378,10 @@ templ fundsTable(v tradeView) {
 	}
 }
 
-templ Login(msg string) {
-	@ui.Shell(ui.Page{Title: "Masuk", Brand: "trading-bot", Footer: "Akses dibatasi login."}) {
+templ authCard(title, msg string) {
+	@ui.Shell(ui.Page{Title: title, Brand: "trading-bot", Footer: "Akses dibatasi login."}) {
 		<div class="mx-auto mt-10 max-w-sm">
-			@ui.Card("Masuk", nil) {
+			@ui.Card(title, nil) {
 				if msg != "" {
 					<div class="mb-4">
 						@ui.Alert("neg") {
@@ -388,6 +389,61 @@ templ Login(msg string) {
 						}
 					</div>
 				}
+				{ children... }
+			}
+		</div>
+	}
+}
+
+templ Register(msg string) {
+	@authCard("Daftar akun", msg) {
+		<p class="mb-4 text-sm text-muted">Belum ada akun. Akun pertama menjadi satu-satunya pemilik; setelah itu pendaftaran ditutup. Kode setup tercetak di log bot di server.</p>
+		<form method="post" action="/register" hx-boost="false" class="space-y-4">
+			@ui.Field("Kode setup") {
+				<input name="setup_code" autocomplete="off" spellcheck="false" required autofocus class={ ui.InputClass }/>
+			}
+			@ui.Field("Email") {
+				<input type="email" name="email" autocomplete="username" required class={ ui.InputClass }/>
+			}
+			@ui.Field("Password (minimal 8 karakter)") {
+				<input type="password" name="password" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
+			}
+			@ui.Field("Ulangi password") {
+				<input type="password" name="password_confirm" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
+			}
+			<button type="submit" class={ ui.BtnPrimary + " w-full" }>Daftar</button>
+		</form>
+	}
+}
+
+templ Account(email, token, msg string, done bool) {
+	@authCard("Akun", msg) {
+		if done {
+			<div class="mb-4">
+				@ui.Alert("pos") {
+					Password diganti. Sesi lain sudah dikeluarkan.
+				}
+			</div>
+		}
+		<p class="mb-4 text-sm text-muted">Masuk sebagai <span class="font-medium text-on-surface">{ email }</span> · <a href="/trade" class={ ui.LinkClass }>Kembali ke trading</a></p>
+		<form method="post" action="/account" hx-boost="false" class="space-y-4">
+			<input type="hidden" name="csrf" value={ token }/>
+			@ui.Field("Password lama") {
+				<input type="password" name="current_password" autocomplete="current-password" required class={ ui.InputClass }/>
+			}
+			@ui.Field("Password baru (minimal 8 karakter)") {
+				<input type="password" name="password" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
+			}
+			@ui.Field("Ulangi password baru") {
+				<input type="password" name="password_confirm" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
+			}
+			<button type="submit" class={ ui.BtnPrimary + " w-full" }>Ganti password</button>
+		</form>
+	}
+}
+
+templ Login(msg string) {
+	@authCard("Masuk", msg) {
 				<form method="post" action="/login" hx-boost="false" class="space-y-4">
 					@ui.Field("Email") {
 						<input type="email" name="email" autocomplete="username" required autofocus class={ ui.InputClass }/>
@@ -397,7 +453,5 @@ templ Login(msg string) {
 					}
 					<button type="submit" class={ ui.BtnPrimary + " w-full" }>Masuk</button>
 				</form>
-			}
-		</div>
 	}
 }

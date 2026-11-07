@@ -90,12 +90,11 @@ type Config struct {
 type WebConfig struct {
 	Enabled bool   `koanf:"enabled"`
 	Listen  string `koanf:"listen"`
-	// Password protects the dashboard; only via TB_WEB__PASSWORD. Required
-	// when listening beyond localhost, and re-asked for live-wallet actions.
+	// Password enables HTTP basic auth (any user name) on the legacy
+	// dashboard; only via TB_WEB__PASSWORD. Required there when listening
+	// beyond localhost. The managed dashboard (wallets) ignores it: its
+	// account is registered in the database.
 	Password Secret `koanf:"password"`
-	// Email is the login name (TB_WEB__EMAIL). With it the managed dashboard
-	// uses a login form; without it the legacy dashboard uses basic auth.
-	Email string `koanf:"email"`
 }
 
 // TelegramConfig configures notifications and remote commands.
@@ -382,20 +381,8 @@ func (c *Config) Validate() error {
 		switch {
 		case err != nil:
 			errs = append(errs, fmt.Errorf("web.listen %q: %w", c.Web.Listen, err))
-		case c.Web.Password == "" && host != "localhost" && (ip == nil || !ip.IsLoopback()):
+		case len(c.Wallets) == 0 && c.Web.Password == "" && host != "localhost" && (ip == nil || !ip.IsLoopback()):
 			errs = append(errs, errors.New("web.listen is not localhost: set TB_WEB__PASSWORD"))
-		}
-		if c.Web.Email != "" && c.Web.Password == "" {
-			errs = append(errs, errors.New("web.email needs TB_WEB__PASSWORD"))
-		}
-		if c.Web.Password != "" && c.Web.Email == "" && len(c.Wallets) > 0 {
-			errs = append(errs, errors.New("the managed dashboard login needs TB_WEB__EMAIL next to TB_WEB__PASSWORD"))
-		}
-		for _, w := range c.Wallets {
-			if (w.Mode == string(ModeLive) || (w.Mode == "" && c.App.Mode == ModeLive)) && c.Web.Password == "" {
-				errs = append(errs, errors.New("a live wallet on the web dashboard needs TB_WEB__PASSWORD for order confirmation"))
-				break
-			}
 		}
 	}
 	if c.Telegram.Enabled {

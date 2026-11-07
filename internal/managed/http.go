@@ -13,6 +13,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/shopspring/decimal"
 )
@@ -24,8 +25,11 @@ type HTTP struct {
 	Wallets  map[string]*Runtime
 	Password string
 	Money    func(decimal.Decimal) string
-	// Email enables the login form (email + Password); empty keeps basic auth.
-	Email string
+	// Owners enables the account login (/register, /login, /account); nil
+	// keeps basic auth with Password.
+	Owners    Owners
+	setupMu   sync.Mutex
+	setupCode string
 	// Markets returns the market hub of a wallet mode (paper and live share mainnet).
 	Markets  func(mode string) *marketview.Hub
 	token    string
@@ -53,13 +57,16 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 	case "/login":
 		h.login(w, q)
 		return
+	case "/register":
+		h.register(w, q)
+		return
 	case "/logout":
 		h.logout(w, q)
 		return
 	}
 	if !h.authorized(q) {
 		switch {
-		case h.Email == "":
+		case h.Owners == nil:
 			w.Header().Set("WWW-Authenticate", `Basic realm="Trading bot"`)
 			http.Error(w, "Autentikasi diperlukan", http.StatusUnauthorized)
 		case q.Method == http.MethodGet && !strings.HasPrefix(q.URL.Path, "/api/") && q.URL.Path != "/stream":
@@ -67,6 +74,10 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 		default:
 			http.Error(w, "Autentikasi diperlukan", http.StatusUnauthorized)
 		}
+		return
+	}
+	if q.URL.Path == "/account" {
+		h.account(w, q)
 		return
 	}
 	wallets := sortedWallets(h.Wallets)
@@ -129,7 +140,7 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 		if confirm == "" {
 			confirm = q.FormValue("password")
 		}
-		if !h.liveConfirmed(st.Spec.Mode, confirm) {
+		if !h.liveConfirmed(q.Context(), st.Spec.Mode, confirm) {
 			err = errors.New("akun live: masukkan password yang benar untuk konfirmasi")
 			if strings.HasPrefix(q.Header.Get("Content-Type"), "application/json") {
 				http.Error(w, err.Error(), http.StatusForbidden)

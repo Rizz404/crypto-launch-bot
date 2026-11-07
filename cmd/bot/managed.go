@@ -303,7 +303,14 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 	if cfg.Web.Enabled {
 		handler := managed.NewHTTP(runtimes, cfg.Web.Password.Reveal(), func(v decimal.Decimal) string { return moneyFor().amount(v) })
 		handler.RateLine = func() string { return moneyFor().rateLine() }
-		handler.Email = cfg.Web.Email
+		handler.Owners = managed.PGOwners{Pool: pool}
+		code, err := handler.Setup(ctx)
+		if err != nil {
+			return fmt.Errorf("web account: %w", err)
+		}
+		if code != "" {
+			log.Warn("web dashboard has no account yet: open /register and enter this one-time setup code", "setup_code", code)
+		}
 		hubs := marketHubs(cfg, log)
 		for _, h := range hubs {
 			wg.Go(func() { fail(h.Run(ctx)) })
