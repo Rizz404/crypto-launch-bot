@@ -1,5 +1,24 @@
 # Handover VPS
 
+## Lab baru paper + testnet — 8 November 2026 23:07 WIB
+
+Atas izin user ("kerjakan sampai selesai, isi sendiri datanya"). Source `c62cc81` (perbaikan panic bind `d067379`,
+toast, kontrol status + menu, switcher IDR/USD, chip candle, tombol "Aktifkan strategi baru" = restart, ID otomatis),
+image `ghcr.io/rizz404/ana-core@sha256:5076e81ac1752aaf57ee1cb1a3d9f8ed53d63028480c5a7c42b66e7ff25aef6d`.
+Backup pra-rilis `backup-20261108T160538Z`.
+
+- **DB baru `tradingbot_plan4_lab`** (`BOT_DB_NAME`), migrasi 1–6; `web_owner` disalin dari `tradingbot_plan4_paper`
+  (DB lama tetap ada, tidak dipakai). Config lama disimpan `configs/config.plan4-paper-20261108.yaml`; blok wallets
+  baru di `/opt/ana-core/wallets-lab-20261108.yaml`.
+- Wallet `paper` dan `testnet` masing-masing 1.000 USDT, 4 instance × 250: `ema-1h` (emacross 1h, parameter eth-trend),
+  `pullback-4h` (trendspot pullback 4h, parameter riset tahap tiga), `dca-1h` (10 USDT, maks 5 beli, TP 3%), `grid`
+  (5 grid 1h, 8 level × 6 USDT, ±8% dari harga 16:05 UTC jaringan masing-masing). Semua 5 pair BTC/ETH/SOL/BNB/XRP.
+  Risk eksplisit: akun max_position 50%, instance/strategi 25%, tanpa batas jumlah posisi, rugi harian 10%,
+  drawdown 30%, notify `warn` (transaksi tidak dikirim satu per satu; ringkasan harian tetap).
+- Pemeriksaan: `/healthz` 200, kline 15 + market 45 stream per jaringan, 16 binding running, observer `problems: []`.
+  **DCA testnet pertama terisi di Binance Spot Testnet** (5 fill dengan trade ID bursa, mis. ETH 742554) — bukti
+  pertama jalur order nyata. Grid menunggu candle 1h pertama.
+
 ## Form strategi pullback/DCA/grid — 8 November 2026 21:47 WIB
 
 Atas izin user ("lanjut sampai kelar"). Source `b1775d6`, image

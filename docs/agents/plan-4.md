@@ -50,8 +50,8 @@ Ringkasan untuk user: [../plan-4.md](../plan-4.md). Dimulai 1 November 2026 sete
 - [x] Whitelist IP di vhost nginx `ana.nexlabs.cloud`: dipasang user lewat `gate.nexlabs.cloud` (7 November 2026).
 
 ### P4-6 Rilis
-- [~] VPS paper + testnet berjalan (testnet sejak 8 November 2026, DB yang sama, wallet terpisah). Belum: bukti order
-      testnet terisi/SL-TP/restart. Live hanya dengan izin. Bybit dihapus dari kode (tidak tersedia di Indonesia).
+- [~] VPS paper + testnet berjalan di DB `tradingbot_plan4_lab` sejak 8 November 2026 (4 strategi × 5 pair per wallet).
+      Order testnet pertama terisi (DCA, 5 fill). Belum: bukti SL/TP dan jual terisi, restart dengan saldo cocok. Live hanya dengan izin. Bybit dihapus dari kode (tidak tersedia di Indonesia).
 
 ## Status (1 November 2026)
 
