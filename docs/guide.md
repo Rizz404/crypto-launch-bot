@@ -46,6 +46,9 @@ terbuka, riwayat dan saldo. Switcher akun di kanan atas (badge PAPER / TESTNET /
 - Login email + password. Akun (satu pemilik) disimpan di database, password di-hash PBKDF2, bukan di env.
   Selama belum ada akun, `/login` mengarah ke `/register`, yang meminta **kode setup sekali pakai** dari log bot
   (`docker logs ana-core-bot-1 | grep setup_code`). Setelah akun dibuat, register tertutup.
+- Form **Tambah strategi** (Instance & strategi, instance harus dijeda): Momentum, Tren pullback, EMA cross, DCA,
+  Grid (satu pair, butuh batas bawah/atas dan jumlah level) dan Manual. Pair bisa beberapa, dipisah koma.
+  Strategi baru aktif setelah bot di-restart; salah ketik pair membuat bot menolak start.
 - Ganti password di `/account` (tombol **Akun** di header); sesi lain ikut keluar. Aksi akun live meminta
   password akun lagi.
 - Data pasar: satu websocket Binance per jaringan untuk semua tab; browser tidak memakai kuota API.

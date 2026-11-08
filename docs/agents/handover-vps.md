@@ -1,5 +1,17 @@
 # Handover VPS
 
+## Form strategi pullback/DCA/grid — 8 November 2026 21:47 WIB
+
+Atas izin user ("lanjut sampai kelar"). Source `b1775d6`, image
+`ghcr.io/rizz404/ana-core@sha256:9c48e84ad35da0f9d99b8b18b88dae8ee805057c2da0cd18b1602a90ebc9af4c`.
+Backup pra-rilis `backup-20261108T144746Z`. Config server tidak diubah: feed strategi diambil dari binding di state
+saat startup, jadi `marketdata.symbols` tidak perlu BNB/XRP. Pemeriksaan: `/healthz` 200, kline stream mainnet 4 dan
+testnet 3, user stream testnet, market stream 27/27, observer `problems: []`.
+
+Rencana user (lewat form, per wallet paper dan testnet): `main` + `ema-1h` (BTC/SOL/BNB/XRP), instance `pullback`,
+`dca`, `grid` masing-masing 250 USDT dari `main`. Setelah form diisi: cek semua pair binding tradable di state
+(salah ketik membuat bot menolak start), restart `bot`, lalu user menekan Lanjutkan.
+
 ## Wallet testnet + Bybit dihapus — 8 November 2026 20:37 WIB
 
 Atas izin user. Source `a2c5e56` (Bybit dihapus dari kode), image
