@@ -111,6 +111,9 @@ metrics_port = port("BOT_METRICS_PORT", 19100)
 prometheus_port = port("PROMETHEUS_PORT", 19090)
 grafana_port = port("GRAFANA_PORT", 13000)
 disk = shutil.disk_usage(REPO)
+# The research worker is stopped since Plan 3 closed; set OBSERVE_RESEARCH=1 when it runs again.
+research = env_value("OBSERVE_RESEARCH", "0") == "1"
+services = {"bot", "db", "dns", "prometheus", "grafana"} | ({"research"} if research else set())
 sample = {
     "time": now.isoformat(),
     "containers": attempt(containers),
@@ -119,18 +122,21 @@ sample = {
     "prometheus": attempt(lambda: json.loads(http("http://127.0.0.1:%d/api/v1/targets" % prometheus_port))),
     "mode": mode,
     "database": attempt(lambda: database(exchange)),
-    "research_health": attempt(lambda: http("http://127.0.0.1:19102/healthz").strip()),
-    "research_database": attempt(lambda: database("binance", "tradingbot_research_stage_three")),
+    "research_expected": research,
     "metrics": attempt(lambda: [line for line in http("http://127.0.0.1:%d/metrics" % metrics_port).splitlines()
                                 if line.startswith(("tradingbot_", "process_start_time_seconds "))]),
     "disk_free_bytes": disk.free,
     "load": os.getloadavg(),
 }
+if research:
+    sample["research_health"] = attempt(lambda: http("http://127.0.0.1:19102/healthz").strip())
+    sample["research_database"] = attempt(lambda: database("binance", "tradingbot_research_stage_three"))
 problems = [key for key in ("containers", "health", "grafana", "prometheus", "database", "metrics", "research_health", "research_database")
-            if not sample[key]["ok"]]
+            if key in sample and not sample[key]["ok"]]
 if sample["containers"]["ok"]:
-    rows = sample["containers"]["data"]
-    if {r["service"] for r in rows} != {"bot", "research", "db", "dns", "prometheus", "grafana"} or any(
+    # `ps -a` also lists the stopped research container; ignore it unless research is expected.
+    rows = [r for r in sample["containers"]["data"] if research or r["service"] != "research"]
+    if {r["service"] for r in rows} != services or any(
             r["status"] != "running" or r["oom_killed"] for r in rows):
         problems.append("container_state")
     # A crash loop keeps the container "running" between restarts; compare
@@ -146,7 +152,7 @@ if sample["containers"]["ok"]:
     if any(r["restarts"] > previous.get(r["id"], r["restarts"]) for r in rows):
         problems.append("container_restarted")
 for key in ("database", "research_database"):
-    if not sample[key]["ok"]:
+    if key not in sample or not sample[key]["ok"]:
         continue
     prefix = "research_" if key == "research_database" else ""
     series = sample[key]["data"]["series"]

@@ -6,9 +6,11 @@ Secrets travel from the laptop's .env through the SSH pipe only, e.g.:
 Non-secret settings can be piped the same way:
   echo TB_APP__MODE=testnet | ssh plesk-newest 'python3 .../vps-set-env.py'
   echo BOT_IMAGE=ghcr.io/rizz404/ana-core@sha256:... | ssh plesk-newest 'python3 .../vps-set-env.py'
+  echo OBSERVE_RESEARCH=1 | ssh plesk-newest 'python3 .../vps-set-env.py'
 The file is rewritten atomically with mode 600. Only TB_* names and
-BOT_IMAGE/BOT_DB_NAME are accepted.
-Takes effect when the bot container is recreated.
+BOT_IMAGE/BOT_DB_NAME/OBSERVE_RESEARCH are accepted.
+Takes effect when the bot container is recreated; OBSERVE_RESEARCH is read
+by vps-observe.py on its next run.
 """
 import os
 import pathlib
@@ -21,8 +23,8 @@ for line in sys.stdin.read().splitlines():
     if not line.strip():
         continue
     name, sep, value = line.partition("=")
-    if not sep or not re.fullmatch(r"TB_[A-Z0-9_]+|BOT_IMAGE|BOT_DB_NAME", name) or not value or "\n" in value:
-        sys.exit("refusing input line for %r: expected TB_NAME=value, BOT_IMAGE=value or BOT_DB_NAME=value" % name)
+    if not sep or not re.fullmatch(r"TB_[A-Z0-9_]+|BOT_IMAGE|BOT_DB_NAME|OBSERVE_RESEARCH", name) or not value or "\n" in value:
+        sys.exit("refusing input line for %r: expected TB_NAME=value, BOT_IMAGE=value, BOT_DB_NAME=value or OBSERVE_RESEARCH=value" % name)
     updates[name] = value.strip()
 if not updates:
     sys.exit("no KEY=VALUE lines on stdin")
