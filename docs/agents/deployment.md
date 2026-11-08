@@ -128,7 +128,7 @@ mengganti resolver global sebagai perbaikan. Log WS mencatat tahap
 
 ## Worker riset tambahan — 29 Oktober
 
-Enam kasus tahap tiga telah aktif; [T0, source/config/digest dan bukti](../testing/research-stage-three.md). Service `research` memakai profil terpisah dan DB tetap `tradingbot_research_stage_three`, sehingga tidak mengganti `BOT_DB_NAME` atau config wallet P2. Jangan mengikuti langkah menghentikan worker lama pada prosedur penggantian trial berikut untuk sekadar memeriksa worker tambahan ini. Backup paper mencakup kedua DB dan profil; observer paper sekarang mengharuskan enam service dan dua worker sehat.
+Enam kasus tahap tiga telah aktif; [T0, source/config/digest dan bukti](../testing/research-stage-three.md). Service `research` memakai profil terpisah dan DB tetap `tradingbot_research_stage_three`, sehingga tidak mengganti `BOT_DB_NAME` atau config wallet P2. Jangan mengikuti langkah menghentikan worker lama pada prosedur penggantian trial berikut untuk sekadar memeriksa worker tambahan ini. Backup paper mencakup kedua DB dan profil. Sejak Plan 3 ditutup (1 November 2026) service `research` dihentikan (container tetap ada, status exited); observer tidak lagi mewajibkannya kecuali `OBSERVE_RESEARCH=1`, lihat [Timer dan observasi](#timer-dan-observasi).
 
 ## Update atau trial baru yang telah diizinkan
 
@@ -189,9 +189,18 @@ bukan jaminan akuntansi/order benar dan tidak melakukan recovery otomatis.
 Periksa aturan gap/universe bila config berubah. Detail kesalahan ada di
 `journalctl -u ana-core-observe.service` atau service backup.
 
+Flag non-rahasia `OBSERVE_RESEARCH` di `.env.vps` (set lewat `vps-set-env.py`)
+menentukan apakah worker `research` diwajibkan. Default `0`: observer mengharapkan
+lima service (`bot`, `db`, `dns`, `prometheus`, `grafana`), mengabaikan container
+`research` yang exited dan tidak memeriksa health/DB riset. `1` mengembalikan
+pemeriksaan enam service dan dua worker. Target Prometheus `research:9100` sudah
+dilepas dari `prometheus.vps.yml`; pasang lagi (lihat komentar di file) bersama
+`OBSERVE_RESEARCH=1` bila worker itu dinyalakan kembali.
+
 Saat trial selesai, matikan observe timer; pertahankan backup serta DB sesuai
-kebutuhan. Status saat ini: observe dan backup active untuk trial riset. Jangan mengaktifkan
-ulang keduanya secara membabi buta dari runbook lama.
+kebutuhan. Status saat ini: observe timer dimatikan karena observer lama selalu
+gagal tanpa `research`; observer sudah disesuaikan, menunggu rilis sebelum timer
+diaktifkan lagi. Jangan mengaktifkan ulang timer secara membabi buta dari runbook lama.
 
 ## Operasi pilot P3 terpisah
 

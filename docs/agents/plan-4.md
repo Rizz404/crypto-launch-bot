@@ -47,7 +47,7 @@ Ringkasan untuk user: [../plan-4.md](../plan-4.md). Dimulai 1 November 2026 sete
 - [x] Login sesi email + password; akun tunggal di tabel `web_owner` (migrasi 6, PBKDF2-SHA256 600k),
       `/register` sekali dengan kode setup dari log, `/account` ganti password, konfirmasi password untuk wallet live,
       rate limit login. TOTP dihapus 7 November 2026. `TB_WEB__PASSWORD` hanya untuk dashboard legacy/catalyst.
-- [ ] Whitelist IP di vhost nginx `ana.nexlabs.cloud`.
+- [x] Whitelist IP di vhost nginx `ana.nexlabs.cloud`: dipasang user lewat `gate.nexlabs.cloud` (7 November 2026).
 
 ### P4-6 Rilis
 - [ ] Lokal paper + testnet, lalu VPS paper + testnet dengan DB baru. Live hanya dengan izin.
@@ -56,8 +56,9 @@ Ringkasan untuk user: [../plan-4.md](../plan-4.md). Dimulai 1 November 2026 sete
 
 Implementasi P4-0, P4-1, P4-2, P4-4, P4-5 (bagian aplikasi) dirilis paper di VPS 1 November 23:24 WIB
 (source `048ae24`, [handover VPS](handover-vps.md)).
-Bukti: [uji lokal](../testing/plan-4-local.md). Belum: whitelist IP nginx (perubahan VPS), uji testnet
-nyata (butuh API key testnet), buy-and-hold di halaman bot, observer VPS untuk layout tanpa `research`.
+Bukti: [uji lokal](../testing/plan-4-local.md). Whitelist IP nginx dipasang user lewat `gate.nexlabs.cloud`
+(7 November 2026). Belum: uji testnet nyata (butuh API key testnet), buy-and-hold di halaman bot;
+observer sudah disesuaikan, menunggu rilis.
 
 Catatan desain:
 - Hub `internal/marketview`: satu combined stream per jaringan (`@depth@100ms`, `@aggTrade`, `@ticker`,
