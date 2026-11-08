@@ -272,3 +272,48 @@ func TestCandlesAndStreamServeFromTheHub(t *testing.T) {
 	assert.Equal(t, [][2]string{{"99", "2"}}, payload.Bids)
 	assert.Equal(t, "100.5", payload.Ticker.Last)
 }
+
+func TestBindFormTemplatesBuildValidStrategies(t *testing.T) {
+	s, err := NewState(spec())
+	require.NoError(t, err)
+	require.NoError(t, s.Apply(Command{ID: "pause", Operation: "pause", Scope: "a"}))
+	bind := func(v url.Values) (*BindingSpec, error) {
+		v.Set("id", nonce())
+		v.Set("operation", "bind")
+		v.Set("scope", "a")
+		req := httptest.NewRequest("POST", "http://localhost/control", strings.NewReader(v.Encode()))
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		require.NoError(t, req.ParseForm())
+		c, err := formCommand(req)
+		if err != nil {
+			return nil, err
+		}
+		return c.Binding, s.Apply(c)
+	}
+
+	b, err := bind(url.Values{"binding_id": {"pullback"}, "strategy": {"pullback"}, "symbol": {"btcusdt, ETHUSDT SOLUSDT"}, "timeframe": {"4h"}})
+	require.NoError(t, err)
+	assert.Equal(t, "trendspot", b.Name)
+	assert.Equal(t, []string{"BTCUSDT", "ETHUSDT", "SOLUSDT"}, b.Symbols, "several pairs share one binding")
+	assert.Equal(t, "pullback", b.Params["mode"])
+
+	b, err = bind(url.Values{"binding_id": {"dca"}, "strategy": {"dca"}, "symbol": {"ETHUSDT"}, "timeframe": {"1h"}, "quote": {"20"}})
+	require.NoError(t, err)
+	assert.Equal(t, "1h", b.Params["interval"])
+	assert.Equal(t, 20.0, b.Params["quote_amount"])
+
+	_, err = bind(url.Values{"binding_id": {"grid"}, "strategy": {"grid"}, "symbol": {"ETHUSDT"}, "quote": {"10"}, "lower": {"2000"}, "upper": {"2600"}, "levels": {"8"}})
+	require.NoError(t, err)
+
+	for name, v := range map[string]url.Values{
+		"dca without order size":  {"binding_id": {"dca2"}, "strategy": {"dca"}, "symbol": {"ETHUSDT"}},
+		"grid without range":      {"binding_id": {"grid2"}, "strategy": {"grid"}, "symbol": {"ETHUSDT"}, "quote": {"10"}},
+		"grid with several pairs": {"binding_id": {"grid3"}, "strategy": {"grid"}, "symbol": {"ETHUSDT,BTCUSDT"}, "quote": {"10"}, "lower": {"2000"}, "upper": {"2600"}, "levels": {"8"}},
+	} {
+		_, err := bind(v)
+		assert.Error(t, err, name)
+	}
+	for _, id := range []string{"a/pullback", "a/dca", "a/grid"} {
+		assert.Equal(t, "paused", s.Bindings[id].Status, id)
+	}
+}

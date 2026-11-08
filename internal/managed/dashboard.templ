@@ -385,22 +385,38 @@ templ instanceCard(v view, id string) {
 					@ui.Field("Strategi") {
 						<select name="strategy" class={ ui.InputClass }>
 							<option value="momentum">Momentum mengikuti tren</option>
+							<option value="pullback">Tren pullback (parameter riset tahap tiga)</option>
 							<option value="emacross">EMA cross</option>
+							<option value="dca">DCA (beli berkala, take profit 3%)</option>
+							<option value="grid">Grid (satu pair)</option>
 							<option value="manual">Manual (order dari halaman Trading)</option>
 						</select>
 					}
-					@ui.Field("Pair") {
-						<input name="symbol" placeholder="ETHUSDT" required class={ ui.InputClass }/>
+					@ui.Field("Pair (pisahkan dengan koma)") {
+						<input name="symbol" placeholder="BTCUSDT, ETHUSDT" required class={ ui.InputClass }/>
 					}
-					@ui.Field("Candle") {
+					@ui.Field("Candle / interval DCA") {
 						<select name="timeframe" class={ ui.InputClass }>
 							<option>4h</option>
 							<option>1d</option>
 							<option>1h</option>
+							<option>15m</option>
 						</select>
 					}
 					@ui.Field("Batas modal opsional (USDT)") {
 						<input name="amount" value="0" inputmode="decimal" class={ ui.InputClass }/>
+					}
+					@ui.Field("Nominal per order (USDT, DCA/grid)") {
+						<input name="quote" inputmode="decimal" placeholder="20" class={ ui.InputClass }/>
+					}
+					@ui.Field("Grid: batas bawah / atas") {
+						<div class="flex gap-2">
+							<input name="lower" inputmode="decimal" placeholder="bawah" class={ ui.InputClass }/>
+							<input name="upper" inputmode="decimal" placeholder="atas" class={ ui.InputClass }/>
+						</div>
+					}
+					@ui.Field("Grid: jumlah level") {
+						<input name="levels" inputmode="numeric" placeholder="10" class={ ui.InputClass }/>
 					}
 					<div class="flex items-end"><button type="submit" class={ ui.BtnPrimary }>Simpan konfigurasi</button></div>
 				</form>

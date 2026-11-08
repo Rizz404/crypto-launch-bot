@@ -232,6 +232,11 @@ func backURL(q *http.Request, wallet string) string {
 	return u
 }
 
+// formFloat parses a decimal form field such as a price or an order size.
+func formFloat(q *http.Request, name string) (float64, error) {
+	return strconv.ParseFloat(strings.TrimSpace(q.FormValue(name)), 64)
+}
+
 func formCommand(q *http.Request) (Command, error) {
 	c := Command{ID: q.FormValue("id"), Operation: q.FormValue("operation"), Scope: q.FormValue("scope"), From: q.FormValue("from"), To: q.FormValue("to"), Name: q.FormValue("name"), Policy: q.FormValue("policy"), Order: q.FormValue("order"), Confirm: q.FormValue("confirm") == "yes"}
 	if c.ID == "" {
@@ -297,12 +302,37 @@ func formCommand(q *http.Request) (Command, error) {
 			params["momentum_min"] = 0.05
 		case "emacross":
 			params["allow_short"] = false
+		case "pullback":
+			// Research stage three parameters, shortlisted by the 29 October cost replay.
+			name = "trendspot"
+			for k, v := range map[string]any{"mode": "pullback", "entry_period": 55, "exit_period": 20, "trend_period": 200,
+				"rsi_period": 14, "rsi_entry": 40, "rsi_exit": 65, "atr_period": 14, "stop_atr": 2.5, "target_atr": 5, "trail_atr": 0} {
+				params[k] = v
+			}
+		case "dca", "grid":
+			quote, err := formFloat(q, "quote")
+			if err != nil || quote <= 0 {
+				return c, errors.New("nominal per order (USDT) wajib diisi untuk DCA dan grid")
+			}
+			if name == "dca" {
+				params["interval"], params["quote_amount"], params["max_buys"], params["take_profit"] = tf, quote, 5, 0.03
+				break
+			}
+			lower, err1 := formFloat(q, "lower")
+			upper, err2 := formFloat(q, "upper")
+			levels, err3 := strconv.Atoi(strings.TrimSpace(q.FormValue("levels")))
+			if err1 != nil || err2 != nil || err3 != nil {
+				return c, errors.New("grid butuh batas bawah, batas atas dan jumlah level")
+			}
+			params["lower"], params["upper"], params["levels"], params["quote_per_level"] = lower, upper, levels, quote
 		case ManualStrategy:
 			params = nil
 		default:
 			return c, errors.New("template strategi tidak tersedia")
 		}
-		c.Binding = &BindingSpec{ID: q.FormValue("binding_id"), Name: name, Symbols: []string{q.FormValue("symbol")}, Params: params, Cap: c.Amount}
+		// Several pairs share one binding (and its instance cash); grid allows only one.
+		symbols := strings.FieldsFunc(strings.ToUpper(q.FormValue("symbol")), func(r rune) bool { return r == ',' || r == ' ' })
+		c.Binding = &BindingSpec{ID: q.FormValue("binding_id"), Name: name, Symbols: symbols, Params: params, Cap: c.Amount}
 	}
 	return c, nil
 }
