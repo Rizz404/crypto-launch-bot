@@ -31,20 +31,29 @@ type HTTP struct {
 	setupMu   sync.Mutex
 	setupCode string
 	// Markets returns the market hub of a wallet mode (paper and live share mainnet).
-	Markets  func(mode string) *marketview.Hub
+	Markets func(mode string) *marketview.Hub
+	// Fiat converts amounts for the USD/IDR line; nil shows USDT only.
+	Fiat Fiat
+	// Restart stops the process so the supervisor starts it again, which
+	// activates strategies added from the dashboard; nil hides the action.
+	Restart  func()
 	token    string
 	sessions sessions
 }
 
 // view is the page data shared by the dashboard, trading and account pages.
 func (h *HTTP) view(wallet string, wallets []string, tab string, state *State, q *http.Request) view {
-	return view{Wallet: wallet, Wallets: wallets, Tab: tab, State: state, Token: h.token, Error: q.URL.Query().Get("error"), money: h.Money, links: h.NavLinks, Trade: h.Markets != nil, Auth: h.Owners != nil}
+	v := view{Wallet: wallet, Wallets: wallets, Tab: tab, State: state, Token: h.token, Error: q.URL.Query().Get("error"), OK: q.URL.Query().Get("ok"), money: h.Money, fiat: h.Fiat, links: h.NavLinks, Trade: h.Markets != nil, Auth: h.Owners != nil}
+	if rt := h.Wallets[wallet]; rt != nil && state != nil && h.Restart != nil {
+		v.Inactive = rt.Inactive(state)
+	}
+	return v
 }
 
 func NewHTTP(wallets map[string]*Runtime, password string, money func(decimal.Decimal) string) *HTTP {
 	h := &HTTP{Wallets: wallets, Password: password, Money: money, token: nonce()}
 	if h.Money == nil {
-		h.Money = func(v decimal.Decimal) string { return v.StringFixed(4) + " USDT" }
+		h.Money = usdtText
 	}
 	return h
 }
@@ -154,6 +163,16 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 			}
 			return
 		}
+		if c.Operation == "restart" {
+			if h.Restart == nil || !c.Confirm {
+				formError(w, q, wallet, errors.New("restart bot belum dikonfirmasi"))
+				return
+			}
+			// Answer first: the shutdown closes this server too.
+			http.Redirect(w, q, backURL(q, wallet)+"&ok="+url.QueryEscape("Bot sedang restart. Muat ulang halaman ini dalam ±30 detik."), http.StatusSeeOther)
+			go h.Restart()
+			return
+		}
 		if err := rt.Command(q.Context(), c); err != nil {
 			if strings.HasPrefix(q.Header.Get("Content-Type"), "application/json") {
 				http.Error(w, err.Error(), http.StatusConflict)
@@ -162,7 +181,7 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 			}
 			return
 		}
-		http.Redirect(w, q, backURL(q, wallet), http.StatusSeeOther)
+		http.Redirect(w, q, backURL(q, wallet)+"&ok="+url.QueryEscape(doneMessage(c)), http.StatusSeeOther)
 		return
 	}
 	if q.Method != http.MethodGet {
@@ -216,6 +235,49 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 
 // formError returns a rejected browser action to the dashboard, where the
 // reason is shown, instead of a bare text page. JSON clients keep status codes.
+// doneMessage is the toast after a successful action.
+func doneMessage(c Command) string {
+	scope := c.Scope
+	if scope == "account" {
+		scope = "seluruh akun"
+	}
+	switch c.Operation {
+	case "pause":
+		return "Entry baru dijeda: " + scope
+	case "resume":
+		return "Dilanjutkan: " + scope
+	case "cancel":
+		return "Order pending dibatalkan: " + scope
+	case "flatten":
+		return "Posisi sedang ditutup: " + scope
+	case "finish":
+		return "Eksperimen sedang diakhiri: " + scope
+	case "kill":
+		return "Penghentian darurat aktif: " + scope
+	case "reset":
+		return "Batas risiko direset: " + scope
+	case "archive":
+		return "Diarsipkan: " + scope
+	case "limits":
+		return "Batas risiko disimpan: " + scope
+	case "create", "clone":
+		return "Instance dibuat. Pindahkan modal ke instance ini sebelum menambah strategi."
+	case "transfer":
+		return "Modal " + idNumber(c.Amount, 2) + " USDT dipindahkan dari " + c.From + " ke " + c.To
+	case "bind", "edit_binding":
+		return "Strategi disimpan. Tekan \"Aktifkan strategi baru\" supaya mulai berjalan."
+	case "rename", "notify":
+		return "Pengaturan instance disimpan"
+	case "place_order":
+		return "Order dikirim"
+	case "cancel_order":
+		return "Pembatalan order dikirim"
+	case "close_position":
+		return "Penutupan posisi dikirim"
+	}
+	return "Aksi berhasil"
+}
+
 func formError(w http.ResponseWriter, q *http.Request, wallet string, err error) {
 	http.Redirect(w, q, backURL(q, wallet)+"&error="+url.QueryEscape(err.Error()), http.StatusSeeOther)
 }

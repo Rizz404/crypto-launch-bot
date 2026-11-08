@@ -138,8 +138,17 @@ func TestDashboardPreview(t *testing.T) {
 	hub := &marketview.Hub{Source: previewSource{}, Symbols: []string{"ETHUSDT"}, Timeframes: marketview.ChartTimeframes, Log: slog.New(slog.DiscardHandler)}
 	go func() { _ = hub.Run(t.Context()) }()
 
-	h := NewHTTP(map[string]*Runtime{"fixture-paper": rt}, "", nil)
+	// An empty wallet, like the fresh production start: build instances from the dashboard.
+	fresh, err := NewMemory(Spec{ID: "fresh", Exchange: "sim", Mode: "paper", Quote: "USDT", Capital: d("1000")})
+	require.NoError(t, err)
+	freshRT, err := NewRuntime(t.Context(), fresh, broker.NewSim(broker.SimConfig{Exchange: "sim"}), testInstruments(), d("0.001"), nil, nil)
+	require.NoError(t, err)
+
+	h := NewHTTP(map[string]*Runtime{"fixture-paper": rt, "fresh": freshRT}, "", nil)
 	h.Markets = func(string) *marketview.Hub { return hub }
+	h.Fiat = func() (decimal.Decimal, decimal.Decimal, bool) { return d("0.999"), d("18090"), true }
+	// The real bot exits and the container restarts; the preview only reports it.
+	h.Restart = func() { t.Log("restart requested: in production the bot restarts and new strategies start") }
 	h.Owners = &MemOwners{}
 	hash, err := hashPassword(previewPassword)
 	require.NoError(t, err)

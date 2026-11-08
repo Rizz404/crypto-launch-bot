@@ -138,10 +138,14 @@
     }));
 
     Alpine.data("toast", () => ({
-      shown: false, message: "", timer: null,
+      shown: false, message: "", tone: "neg", timer: null,
+      get isPos() { return this.tone === "pos"; },
+      get isNeg() { return this.tone !== "pos"; },
+      get frame() { return this.tone === "pos" ? "border-pos/50" : "border-neg/50"; },
       show(e) {
         const d = e.detail;
-        this.message = typeof d === "string" ? d : (d && d.value) || "";
+        this.message = typeof d === "string" ? d : (d && (d.message || d.value)) || "";
+        this.tone = (d && d.tone) || "neg";
         if (!this.message) return;
         this.shown = true;
         clearTimeout(this.timer);
@@ -149,7 +153,45 @@
       },
       hide() { this.shown = false; },
     }));
+
+    // USD or IDR under USDT amounts; the choice is kept in the browser.
+    Alpine.data("fiat", () => ({
+      mode: "idr",
+      init() {
+        try { this.mode = localStorage.getItem("fiat") || "idr"; } catch (e) {}
+        applyFiat(document);
+      },
+      get label() { return this.mode === "usd" ? "USD" : "IDR"; },
+      toggle() {
+        this.mode = this.mode === "usd" ? "idr" : "usd";
+        try { localStorage.setItem("fiat", this.mode); } catch (e) {}
+        applyFiat(document);
+      },
+    }));
   });
+
+  function applyFiat(root) {
+    let mode = "idr";
+    try { mode = localStorage.getItem("fiat") || "idr"; } catch (e) {}
+    root.querySelectorAll("[data-fiat]").forEach((el) => {
+      el.textContent = (mode === "usd" ? el.dataset.usd : el.dataset.idr) || "";
+    });
+  }
+
+  // Server notices (?ok= / ?error= after an action) become one toast, then
+  // leave the URL so a reload does not repeat them.
+  function notices(root) {
+    root.querySelectorAll("[data-toast]").forEach((el) => {
+      window.dispatchEvent(new CustomEvent("toast", { detail: { message: el.dataset.toast, tone: el.dataset.toastTone } }));
+      el.remove();
+    });
+    const u = new URL(location.href);
+    if (u.searchParams.has("ok") || u.searchParams.has("error")) {
+      u.searchParams.delete("ok");
+      u.searchParams.delete("error");
+      history.replaceState(history.state, "", u);
+    }
+  }
 
   // Replace hx-confirm: styled dialog, same semantics (cancel => no request).
   document.addEventListener("htmx:confirm", (e) => {
@@ -328,8 +370,10 @@
   document.addEventListener("htmx:beforeSwap", (e) => {
     if (source && e.detail.target === document.body) { source.close(); source = null; liveSeries = null; }
   });
+  // Alpine's toast listener must exist before the first notice is dispatched.
+  document.addEventListener("alpine:initialized", () => notices(document));
   document.addEventListener("DOMContentLoaded", () => render(document));
-  document.addEventListener("htmx:afterSettle", (e) => render(e.target));
+  document.addEventListener("htmx:afterSettle", (e) => { render(e.target); applyFiat(e.target); notices(e.target); });
   window.addEventListener("themechange", () => {
     charts.forEach((chart, el) => {
       chart.remove();

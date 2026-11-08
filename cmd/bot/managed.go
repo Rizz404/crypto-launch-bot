@@ -301,8 +301,14 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 		})
 	}
 	if cfg.Web.Enabled {
-		handler := managed.NewHTTP(runtimes, cfg.Web.Password.Reveal(), func(v decimal.Decimal) string { return moneyFor().amount(v) })
+		handler := managed.NewHTTP(runtimes, cfg.Web.Password.Reveal(), nil)
 		handler.RateLine = func() string { return moneyFor().rateLine() }
+		handler.Fiat = func() (decimal.Decimal, decimal.Decimal, bool) {
+			m := moneyFor()
+			return m.rates.USD, m.rates.IDR, m.ok
+		}
+		// Same graceful stop as Telegram /stop; the container restart policy starts it again.
+		handler.Restart = cancel
 		handler.Owners = managed.PGOwners{Pool: pool}
 		code, err := handler.Setup(ctx)
 		if err != nil {

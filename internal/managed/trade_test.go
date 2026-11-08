@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -17,6 +18,7 @@ import (
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/exchange"
 	"github.com/rizz404/trading-bot/internal/marketview"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -315,5 +317,74 @@ func TestBindFormTemplatesBuildValidStrategies(t *testing.T) {
 	}
 	for _, id := range []string{"a/pullback", "a/dca", "a/grid"} {
 		assert.Equal(t, "paused", s.Bindings[id].Status, id)
+	}
+}
+
+func TestIndonesianNumbers(t *testing.T) {
+	for in, want := range map[string]string{"1001.2357": "1.001,24", "250": "250,00", "0": "0,00", "-1234567.891": "-1.234.567,89", "-0.001": "0,00"} {
+		assert.Equal(t, want, idNumber(d(in), 2), in)
+	}
+	assert.Equal(t, "4.522.573", idNumber(d("4522572.6"), 0))
+}
+
+func TestActionsShowAToastAndTheMatchingButton(t *testing.T) {
+	h, _ := screen(t, "paper")
+	var restarted atomic.Bool
+	h.Restart = func() { restarted.Store(true) }
+	h.Fiat = func() (decimal.Decimal, decimal.Decimal, bool) { return d("0.999"), d("18090"), true }
+	c := login(t, h)
+	control := func(op string, extra url.Values) *httptest.ResponseRecorder {
+		v := url.Values{"csrf": {h.token}, "id": {nonce()}, "operation": {op}, "scope": {"account"}}
+		for k, x := range extra {
+			v[k] = x
+		}
+		return form(t, h, "/control?wallet=test&tab=ringkasan", v, c)
+	}
+
+	body := get(t, h, "/?wallet=test", c).Body.String()
+	assert.Contains(t, body, "Berjalan")
+	assert.Contains(t, body, ">Jeda entry<")
+	assert.Contains(t, body, "≈ Rp 18.090.000", "fiat line under the account value")
+	assert.Contains(t, body, `data-usd="≈ $999,00"`)
+
+	w := control("pause", nil)
+	assert.Contains(t, w.Header().Get("Location"), "ok=", "a successful action reports back")
+	page := get(t, h, w.Header().Get("Location"), c).Body.String()
+	assert.Contains(t, page, `data-toast="Entry baru dijeda: seluruh akun"`)
+	assert.Contains(t, page, `data-toast-tone="pos"`)
+	assert.Contains(t, page, "Dijeda")
+	assert.Contains(t, page, ">Lanjutkan<", "a paused account offers resume first")
+
+	w = control("restart", nil)
+	assert.Contains(t, w.Header().Get("Location"), "error=", "restart needs the confirmation dialog")
+	w = control("restart", url.Values{"confirm": {"yes"}})
+	assert.Contains(t, w.Header().Get("Location"), "ok=")
+	require.Eventually(t, func() bool { return restarted.Load() }, time.Second, 10*time.Millisecond)
+}
+
+func TestIDsAreGeneratedFromNames(t *testing.T) {
+	assert.Equal(t, "pullback-4h-btc-eth", slug("  Pullback 4h — BTC & ETH! ", "instance"))
+	assert.Equal(t, "instance", slug("🚀", "instance"))
+	assert.Len(t, slug(strings.Repeat("abc ", 30), "x"), 39, "capped without a trailing dash")
+
+	s, err := NewState(spec())
+	require.NoError(t, err)
+	for range 2 {
+		require.NoError(t, s.Apply(Command{ID: nonce(), Operation: "create", Instance: &InstanceSpec{Name: "Pullback 4h"}}))
+	}
+	require.NoError(t, s.Apply(Command{ID: nonce(), Operation: "create", Instance: &InstanceSpec{Name: "Account"}}))
+	assert.NotNil(t, s.Instances["pullback-4h"])
+	assert.NotNil(t, s.Instances["pullback-4h-2"], "a repeated name gets a suffix")
+	assert.NotNil(t, s.Instances["account-2"], "reserved IDs are skipped")
+
+	bind := func(name string, symbols []string, params map[string]any) {
+		require.NoError(t, s.Apply(Command{ID: nonce(), Operation: "bind", Scope: "pullback-4h", Binding: &BindingSpec{Name: name, Symbols: symbols, Params: params}}))
+	}
+	pullback := map[string]any{"mode": "pullback", "timeframe": "4h"}
+	bind("trendspot", []string{"BTCUSDT", "ETHUSDT"}, pullback)
+	bind("trendspot", []string{"BTCUSDT", "ETHUSDT"}, pullback)
+	bind("grid", []string{"BTCUSDT"}, map[string]any{"timeframe": "1h", "lower": 1.0, "upper": 2.0, "levels": 2, "quote_per_level": 6.0})
+	for _, id := range []string{"pullback-4h/pullback-4h", "pullback-4h/pullback-4h-2", "pullback-4h/grid-1h-btc"} {
+		assert.NotNil(t, s.Bindings[id], id)
 	}
 }

@@ -28,11 +28,16 @@ type view struct {
 	State   *State
 	Token   string
 	Error   string
-	Rate    string
+	// OK is the result of the last action, shown once as a toast.
+	OK   string
+	Rate string
 	// Trade shows the trading screen in the menu; Auth the account links.
 	Trade, Auth bool
-	money       func(decimal.Decimal) string
-	links       []ui.NavItem
+	// Inactive lists strategies added since the last start (no engine yet).
+	Inactive []string
+	money    func(decimal.Decimal) string
+	fiat     Fiat
+	links    []ui.NavItem
 }
 
 var tabs = []ui.NavItem{
@@ -100,7 +105,13 @@ func (v view) walletHref(id string) string {
 
 // shellPage is the common page frame; Active selects the menu item.
 func (v view) shellPage(title, footer string) ui.Page {
-	p := ui.Page{Title: title, Brand: "trading-bot", Active: v.Tab, Sidebar: v.Sidebar(), Footer: footer}
+	p := ui.Page{Title: title, Brand: "trading-bot", Active: v.Tab, Sidebar: v.Sidebar(), Footer: footer, Currency: v.fiat != nil}
+	switch {
+	case v.Error != "":
+		p.Notice, p.NoticeTone = v.Error, "neg"
+	case v.OK != "":
+		p.Notice, p.NoticeTone = v.OK, "pos"
+	}
 	if v.Auth {
 		p.SideFoot = sideAccount(v.Tab == "account")
 	}
@@ -265,6 +276,83 @@ func sortedWallets(wallets map[string]*Runtime) []string {
 	return ids
 }
 
+// ScopeStatus summarizes the account, an instance or a strategy: running,
+// paused, mixed (some instances paused), halted, closing, stopped, archived or empty.
+func (v view) ScopeStatus(scope string) string {
+	if b := v.State.Bindings[scope]; b != nil {
+		if b.Halted {
+			return "halted"
+		}
+		return b.Status
+	}
+	if i := v.State.Instances[scope]; i != nil {
+		if i.Halted {
+			return "halted"
+		}
+		return i.Status
+	}
+	if v.State.Halted {
+		return "halted"
+	}
+	seen := map[string]bool{}
+	for _, i := range v.State.Instances {
+		if i.Status != "archived" {
+			seen[i.Status] = true
+		}
+	}
+	switch {
+	case len(seen) == 0:
+		return "empty"
+	case len(seen) > 1 && seen["running"]:
+		return "mixed"
+	case seen["running"]:
+		return "running"
+	case seen["paused"]:
+		return "paused"
+	}
+	for status := range seen {
+		return status
+	}
+	return "empty"
+}
+
+var statusText = map[string]string{"running": "Berjalan", "paused": "Dijeda", "mixed": "Sebagian dijeda", "halted": "Dihentikan (batas risiko)",
+	"closing": "Sedang menutup", "stopped": "Berakhir", "archived": "Diarsipkan", "empty": "Belum ada instance"}
+
+func (v view) StatusText(status string) string {
+	if t, ok := statusText[status]; ok {
+		return t
+	}
+	return status
+}
+
+// Primary are the buttons shown next to the status; the rest go in the menu.
+func (v view) Primary(scope string) []control {
+	switch v.ScopeStatus(scope) {
+	case "running":
+		return controlSet[:1]
+	case "paused", "closing", "stopped":
+		return controlSet[1:2]
+	case "mixed":
+		return controlSet[:2]
+	case "halted":
+		return []control{controlSet[7]}
+	}
+	return nil
+}
+
+// More are the menu actions: everything except pause/resume, safe ones first.
+func (v view) More() (safe, danger []control) {
+	for _, c := range controlSet[2:] {
+		if c.Danger {
+			danger = append(danger, c)
+		} else {
+			safe = append(safe, c)
+		}
+	}
+	return safe, danger
+}
+
 // control describes one lifecycle button. Confirm ones go through the
 // confirmation dialog, which is also what sets the server's confirm flag.
 type control struct {
@@ -282,6 +370,17 @@ var controlSet = []control{
 	{Op: "kill", Label: "Penghentian darurat", Confirm: true, Danger: true, Effect: "Halt permanen sampai di-reset. Reset tidak menghapus selisih saldo."},
 	{Op: "reset", Label: "Reset batas risiko", Confirm: true, Effect: "Menghapus halt risiko. Selisih saldo tidak ikut terhapus."},
 	{Op: "archive", Label: "Arsipkan", Confirm: true, Effect: "Hanya berhasil bila order selesai dan posisi kosong atau tinggal debu."},
+}
+
+// bindTimeframes are the kline intervals Binance offers (domain.ParseTimeframe).
+var bindTimeframes = []string{"1m", "3m", "5m", "15m", "30m", "1h", "2h", "4h", "6h", "8h", "12h", "1d", "3d", "1w"}
+
+// primaryClass highlights the action that changes the current status.
+func primaryClass(c control) string {
+	if c.Op == "resume" {
+		return ui.BtnPrimary + ui.BtnSmall
+	}
+	return c.Class()
 }
 
 func (c control) Class() string {

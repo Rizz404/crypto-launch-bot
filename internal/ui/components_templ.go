@@ -582,6 +582,10 @@ func Stat(label, value, tone, hint string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templ_7745c5c3_Var15.Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		if hint != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<div class=\"mt-0.5 text-xs text-muted\">")
 			if templ_7745c5c3_Err != nil {
@@ -590,7 +594,7 @@ func Stat(label, value, tone, hint string) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(hint)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 191, Col: 48}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 192, Col: 48}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -655,7 +659,7 @@ func Badge(text, tone string) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 197, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 198, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -782,7 +786,7 @@ func Empty(msg string) templ.Component {
 		var templ_7745c5c3_Var31 string
 		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(msg)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 210, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 211, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 		if templ_7745c5c3_Err != nil {
@@ -862,7 +866,7 @@ func Field(label string) templ.Component {
 		var templ_7745c5c3_Var34 string
 		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 224, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 225, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 		if templ_7745c5c3_Err != nil {
@@ -918,7 +922,7 @@ func Tabs(items []NavItem, active string) templ.Component {
 			var templ_7745c5c3_Var36 templ.SafeURL
 			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(t.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 234, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 235, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 			if templ_7745c5c3_Err != nil {
@@ -931,7 +935,7 @@ func Tabs(items []NavItem, active string) templ.Component {
 			var templ_7745c5c3_Var37 string
 			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.ResolveAttributeValue(Current(t.Key == active))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 235, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 236, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var37)
 			if templ_7745c5c3_Err != nil {
@@ -944,7 +948,7 @@ func Tabs(items []NavItem, active string) templ.Component {
 			var templ_7745c5c3_Var38 string
 			templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 237, Col: 13}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 238, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 			if templ_7745c5c3_Err != nil {
@@ -1002,7 +1006,7 @@ func Fold(title string, open bool) templ.Component {
 		var templ_7745c5c3_Var40 string
 		templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 246, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components.templ`, Line: 247, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 		if templ_7745c5c3_Err != nil {

@@ -76,6 +76,11 @@ func (s *State) Apply(c Command) error {
 			return errors.New("instance definition required")
 		}
 		spec := *c.Instance
+		if spec.ID == "" {
+			spec.ID = uniqueID(slug(spec.Name, "instance"), func(id string) bool {
+				return s.Instances[id] != nil || id == "account" || id == "reserve"
+			})
+		}
 		if c.Operation == "clone" {
 			source := s.Instances[c.Scope]
 			if source == nil {
@@ -126,6 +131,9 @@ func (s *State) Apply(c Command) error {
 			return errors.New("pause the instance before editing strategies")
 		}
 		spec := *c.Binding
+		if spec.ID == "" && c.Operation == "bind" {
+			spec.ID = uniqueID(bindingBase(spec), func(id string) bool { return s.Bindings[instance.ID+"/"+id] != nil })
+		}
 		check := s.Spec
 		check.Instances = []InstanceSpec{{ID: instance.ID, Strategies: []BindingSpec{spec}}}
 		if err := check.Validate(); err != nil {
