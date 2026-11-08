@@ -131,6 +131,19 @@ func sortedBindings(s *State) []string {
 	slices.Sort(out)
 	return out
 }
+
+// running lists the bindings that have an engine. A strategy added through
+// the dashboard is stored in the state but only gets one at the next start.
+func (r *Runtime) running(s *State) []string {
+	return slices.DeleteFunc(sortedBindings(s), func(id string) bool { return r.engines[id] == nil })
+}
+
+// Inactive lists the strategies that wait for the next start.
+func (r *Runtime) Inactive(s *State) []string {
+	return slices.DeleteFunc(sortedBindings(s), func(id string) bool {
+		return r.engines[id] != nil || s.Bindings[id].Status == "archived"
+	})
+}
 func (r *Runtime) checkpoint(ctx context.Context, owner string, raw []byte) error {
 	if r.CheckLease != nil {
 		if err := r.CheckLease(ctx); err != nil {
@@ -435,7 +448,7 @@ func (r *Runtime) record(ctx context.Context, c domain.Candle, closed bool, book
 	if err != nil {
 		return err
 	}
-	for _, id := range sortedBindings(s) {
+	for _, id := range r.running(s) {
 		if (!slices.Contains(s.Bindings[id].Spec.Symbols, c.Symbol) || (!closed && !r.engines[id].HasPriceHandler())) && !r.mustClose(s, id) {
 			continue
 		}
@@ -478,7 +491,7 @@ func (r *Runtime) Tick(ctx context.Context, now time.Time) error {
 	if err != nil {
 		return err
 	}
-	for _, id := range sortedBindings(s) {
+	for _, id := range r.running(s) {
 		if !r.mustClose(s, id) && !r.engines[id].TimerDue(now) {
 			continue
 		}
@@ -578,7 +591,7 @@ func (r *Runtime) drain(ctx context.Context) error {
 			// A late execution can arrive after its entry plan was canceled.
 			// Rebase only after the inbox is empty, then enforce the native-stop
 			// policy of directional strategies instead of leaving orphan coins.
-			for _, owner := range sortedBindings(s) {
+			for _, owner := range r.running(s) {
 				b := s.Bindings[owner]
 				if b.Spec.Name != "trendspot" && b.Spec.Name != "emacross" {
 					continue

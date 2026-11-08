@@ -76,3 +76,22 @@ func TestManualOrdersRunThroughTheBindingEngine(t *testing.T) {
 }
 
 var engineNoOrder = engine.ErrNoOrder
+
+// A strategy added from the dashboard has no engine until the next start;
+// candles, ticks and commands must skip it instead of crashing the bot.
+func TestStrategyAddedAtRuntimeWaitsForRestart(t *testing.T) {
+	repo, err := NewMemory(spec())
+	require.NoError(t, err)
+	now := time.Now().UTC().Truncate(time.Minute)
+	clock := func() time.Time { return now }
+	rt, err := NewRuntime(t.Context(), repo, broker.NewSim(broker.SimConfig{Exchange: "sim", Clock: clock}), testInstruments(), d("0.001"), clock, slog.New(slog.NewTextHandler(io.Discard, nil)))
+	require.NoError(t, err)
+	require.NoError(t, rt.Start(t.Context()))
+	require.NoError(t, rt.Command(t.Context(), Command{ID: "pause", Operation: "pause", Scope: "a"}))
+	require.NoError(t, rt.Command(t.Context(), Command{ID: "bind", Operation: "bind", Scope: "a", Binding: &BindingSpec{ID: "ema", Name: "emacross", Symbols: []string{"ETHUSDT"}, Params: map[string]any{"timeframe": "1h"}}}))
+	now = now.Add(time.Minute)
+	require.NoError(t, rt.Record(t.Context(), domain.Candle{Exchange: "sim", Market: domain.Spot, Symbol: "ETHUSDT", Timeframe: "1m", OpenTime: now.Add(-time.Minute), Open: d("100"), High: d("100"), Low: d("100"), Close: d("100"), Closed: true}, true))
+	require.NoError(t, rt.Tick(t.Context(), now))
+	require.ErrorContains(t, rt.Command(t.Context(), Command{ID: "resume", Operation: "resume", Scope: "a"}), "restart runtime")
+	require.NoError(t, rt.Command(t.Context(), Command{ID: "pause-again", Operation: "pause", Scope: "a"}))
+}
