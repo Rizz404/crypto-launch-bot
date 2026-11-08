@@ -34,7 +34,7 @@ import (
 const envPrefix = "TB_"
 
 // SupportedExchanges have market data and trading adapters.
-var SupportedExchanges = []string{"binance", "bybit"}
+var SupportedExchanges = []string{"binance"}
 
 // Mode is the execution mode of the bot.
 type Mode string

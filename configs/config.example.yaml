@@ -19,9 +19,6 @@ exchanges:
   binance:
     enabled: true
     testnet: true
-  bybit:
-    enabled: false
-    testnet: true
 
 # Live candles recorded by `bot run`. Data comes from mainnet unless
 # app.mode is testnet (then stored under the exchange name "binance-testnet").
@@ -99,17 +96,6 @@ strategies:
     leverage: 1
     params: {entry_rate: 0.0003, exit_rate: 0.00005, quote_amount: 100}
 
-  # Cross-exchange perp spread (needs margin on both exchanges).
-  - id: xspread-btc
-    name: xspread
-    enabled: false
-    exchange: binance
-    market: futures
-    symbols: [BTCUSDT]
-    legs: [{exchange: bybit, market: futures, symbol: BTCUSDT}]
-    leverage: 2
-    params: {entry_bps: 30, exit_bps: 5, quote_amount: 100}
-
   # Basic market maker (post-only quotes around the last price).
   - id: mm-btc
     name: mm
@@ -164,7 +150,5 @@ web:
   listen: 127.0.0.1:8080
 
 # Notes on exchanges:
-# - Binance and Bybit symbols use the exchange-native format "BTCUSDT".
-# - Bybit unified accounts share one wallet between spot and futures:
-#   the bot trades only one market at a time on Bybit.
-# - Testnet mode uses the Binance and Bybit testing environments.
+# - Binance symbols use the exchange-native format "BTCUSDT".
+# - Testnet mode uses the Binance testing environments.

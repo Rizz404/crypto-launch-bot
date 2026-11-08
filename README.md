@@ -1,6 +1,6 @@
 # trading-bot
 
-Bot trading crypto otomatis dalam Go (Binance dan Bybit; spot + futures).
+Bot trading crypto otomatis dalam Go (Binance; spot + futures).
 Status proyek dan rencana: [Plan 3](docs/plan-3.md). Hasil riset strategi: [riset strategi](docs/strategy-2.md).
 Cara kerja, kontrol dan deploy: [panduan](docs/guide.md).
 
@@ -35,7 +35,7 @@ Download data historis:
 ./bin/datafetch -market spot -symbols BTCUSDT,ETHUSDT -tf 1m -from 2026-09-01
 ```
 
-> **Jaringan:** kalau DNS lokal memblokir domain exchange (semua host Binance/Bybit
+> **Jaringan:** kalau DNS lokal memblokir domain exchange (semua host Binance
 > me-resolve ke IP yang sama), bot tidak bisa terhubung ke mainnet. Perbaiki DNS sistem
 > (misalnya DNS-over-TLS di systemd-resolved). Testnet Binance tidak terkena blokir ini.
 

@@ -178,12 +178,6 @@ func newSession(ctx context.Context, cfg *config.Config, store *storage.Store, s
 				if lb.Exchange() != exName {
 					return nil, fmt.Errorf("broker name %s does not match account %s", lb.Exchange(), exName)
 				}
-				if uw, ok := lb.(broker.UnifiedWallet); ok && uw.UnifiedWallet() && len(marketsByExchange[exName]) > 1 {
-					// One wallet backs both markets; separate ledgers would
-					// count the same cash twice.
-					return nil, fmt.Errorf("%s uses one wallet for spot and futures: trade a single market there (found %v)",
-						base, marketsByExchange[exName])
-				}
 				s.lives[exName] = lb
 				s.eng.AddBroker(lb)
 			}

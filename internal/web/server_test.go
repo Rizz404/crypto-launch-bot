@@ -93,7 +93,7 @@ func TestParseSeriesRejectsInvalidInput(t *testing.T) {
 		_, err := parseSeries(v)
 		assert.Error(t, err, v)
 	}
-	k, err := parseSeries("bybit:futures:BTCUSDT:1h")
+	k, err := parseSeries("binance-testnet:futures:BTCUSDT:1h")
 	assert.NoError(t, err)
 	assert.True(t, strings.Contains(chartHref(k, 12), "run=12"))
 }

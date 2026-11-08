@@ -97,7 +97,7 @@ func TestGridLevelsFillRestartAndStop(t *testing.T) {
 	assert.Empty(t, s.OnCandle(fresh(c, 101)), "stopped grid stays stopped")
 }
 
-// Spot buys on Binance/Bybit pay the commission in the base coin: the sell
+// Spot buys on Binance pay the commission in the base coin: the sell
 // leg must not ask for more than arrived (rejected as insufficient balance).
 // The first candles after a start come from warmup or backfill; intents on
 // them are dropped by the engine, so the grid must wait for a live candle.

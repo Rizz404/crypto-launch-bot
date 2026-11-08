@@ -10,8 +10,6 @@ exchanges:
   binance:
     enabled: true
     testnet: true
-  bybit:
-    enabled: false
 
 marketdata:
   exchange: binance
