@@ -1,5 +1,21 @@
 # Handover VPS
 
+## Wallet testnet + Bybit dihapus — 8 November 2026 20:37 WIB
+
+Atas izin user. Source `a2c5e56` (Bybit dihapus dari kode), image
+`ghcr.io/rizz404/ana-core@sha256:2869b5fb304213679bfd137cf523c665509a78eeb6cc7c63306b5310663f423a`.
+Backup pra-rilis `backup-20261108T133638Z`; config lama disimpan `configs/config.before-testnet-20261108.yaml`.
+
+- `.env.vps`: `TB_EXCHANGES__BINANCE__TESTNET_API_KEY/_SECRET` diisi (key Spot Testnet, dicek read-only:
+  `canTrade`, saldo ±9.549 USDT). `TB_EXCHANGES__BINANCE__API_KEY/_SECRET` (slot live) masih berisi key lama
+  dari Plan 2; tidak dipakai (tanpa wallet live, compose memaksa `TB_APP__ALLOW_LIVE=false`).
+- `configs/config.yaml`: wallet `testnet` 1.000 USDT, instance `main`, `eth-trend` dengan parameter sama dengan paper.
+  Wallet paper tidak berubah (hash config per wallet).
+- Pemeriksaan: user stream `binance-testnet` subscribed, market stream mainnet dan testnet 27 stream, rekonsiliasi
+  testnet 13:37:43 UTC tanpa attention/halt, `/healthz` 200, observer `problems: []`.
+- Wallet paper `main` berstatus **paused** sejak control `pause` scope account lewat web, 7 Nov 15:26 UTC
+  (journal seq 131163); bukan dari rilis.
+
 ## Observer tanpa research — 8 November 2026 19:41 WIB
 
 Atas izin user ("lanjut"). Repo server di `b1ebbfe` (CI lulus termasuk `monitoring`); image bot tetap

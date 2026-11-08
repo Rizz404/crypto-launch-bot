@@ -50,7 +50,8 @@ Ringkasan untuk user: [../plan-4.md](../plan-4.md). Dimulai 1 November 2026 sete
 - [x] Whitelist IP di vhost nginx `ana.nexlabs.cloud`: dipasang user lewat `gate.nexlabs.cloud` (7 November 2026).
 
 ### P4-6 Rilis
-- [ ] Lokal paper + testnet, lalu VPS paper + testnet dengan DB baru. Live hanya dengan izin.
+- [~] VPS paper + testnet berjalan (testnet sejak 8 November 2026, DB yang sama, wallet terpisah). Belum: bukti order
+      testnet terisi/SL-TP/restart. Live hanya dengan izin. Bybit dihapus dari kode (tidak tersedia di Indonesia).
 
 ## Status (1 November 2026)
 
