@@ -58,7 +58,7 @@ Implementasi P4-0, P4-1, P4-2, P4-4, P4-5 (bagian aplikasi) dirilis paper di VPS
 (source `048ae24`, [handover VPS](handover-vps.md)).
 Bukti: [uji lokal](../testing/plan-4-local.md). Whitelist IP nginx dipasang user lewat `gate.nexlabs.cloud`
 (7 November 2026). Belum: uji testnet nyata (butuh API key testnet), buy-and-hold di halaman bot;
-observer sudah disesuaikan, menunggu rilis.
+observer tanpa `research` aktif lagi sejak 8 November 2026.
 
 Catatan desain:
 - Hub `internal/marketview`: satu combined stream per jaringan (`@depth@100ms`, `@aggTrade`, `@ticker`,

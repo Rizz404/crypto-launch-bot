@@ -1,5 +1,14 @@
 # Handover VPS
 
+## Observer tanpa research — 8 November 2026 19:41 WIB
+
+Atas izin user ("lanjut"). Repo server di `b1ebbfe` (CI lulus termasuk `monitoring`); image bot tetap
+`sha256:c813f304…` karena kode Go tidak berubah. Hanya `prometheus` di-restart; bot dan DB tidak disentuh.
+
+- Target Prometheus `research:9100` dilepas; target aktif tinggal `tradingbot/container` (up).
+- `OBSERVE_RESEARCH` tidak di-set di `.env.vps` (default 0). Observer manual dan via systemd: `problems: []`.
+- Unit observe di `/etc/systemd/system` sama dengan repo; `ana-core-observe.timer` di-enable lagi (tiap 5 menit).
+
 ## Sidebar bot-sentris — 7 November 2026 23:42 WIB
 
 Atas izin user ("boleh kamu deploy"). Source `6a7b799` (fitur `eeedf08` + gofmt; CI `eeedf08` gagal di cek format),

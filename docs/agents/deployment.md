@@ -198,9 +198,8 @@ dilepas dari `prometheus.vps.yml`; pasang lagi (lihat komentar di file) bersama
 `OBSERVE_RESEARCH=1` bila worker itu dinyalakan kembali.
 
 Saat trial selesai, matikan observe timer; pertahankan backup serta DB sesuai
-kebutuhan. Status saat ini: observe timer dimatikan karena observer lama selalu
-gagal tanpa `research`; observer sudah disesuaikan, menunggu rilis sebelum timer
-diaktifkan lagi. Jangan mengaktifkan ulang timer secara membabi buta dari runbook lama.
+kebutuhan. Status saat ini: observe dan backup timer active
+(observe aktif lagi 8 November 2026 dengan `OBSERVE_RESEARCH` default 0). Jangan mengaktifkan ulang timer secara membabi buta dari runbook lama.
 
 ## Operasi pilot P3 terpisah
 
