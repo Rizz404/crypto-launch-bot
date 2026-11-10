@@ -19,7 +19,7 @@ umur pool, listing atau first-seen bot.
 
 | Integrasi | Bukti resmi dan cakupan | Akses/biaya/batas | Keputusan dan gap |
 |---|---|---|---|
-| PinkSale BSC | [Panduan partisipasi](https://docs.pinksale.finance/investing/how-to-buy-a-presale), [daftar launchpad](https://www.pinksale.finance/launchpads) | Discovery website tanpa koneksi wallet; crawl wajib robots. Tidak ditemukan kontrak API discovery publik stabil dalam referensi yang dibaca. Biaya akses scraping/SLA belum terverifikasi | Pilih Spider pada daftar dan tautan `/launchpad/bsc/…`; jangan gunakan endpoint internal tidak terdokumentasi. HTML kosong/JS, struktur berubah dan pagination menjadi gap |
+| PinkSale BSC | [Panduan partisipasi](https://docs.pinksale.finance/investing/how-to-buy-a-presale), [daftar launchpad](https://www.pinksale.finance/launchpads) | Discovery website tanpa koneksi wallet; crawl wajib robots. Tidak ditemukan kontrak API discovery publik stabil dalam referensi yang dibaca. Biaya akses scraping/SLA belum terverifikasi | Pilih Spider pada daftar dan tautan `/launchpad/bsc/…`; jangan gunakan endpoint internal tidak terdokumentasi. HTML kosong/JS, struktur berubah dan pagination menjadi gap. **10 November:** daftar dirender JS tanpa tautan sale dan sitemap 404; halaman detail dirender server. Sumber seed daftar perlu diputuskan user |
 | PancakeSwap V2 BSC | [Alamat resmi](https://developer.pancakeswap.finance/contracts/v2/addresses), [interface registry publisher](https://raw.githubusercontent.com/pancakeswap/pancake-swap-core/master/contracts/interfaces/IPancakeFactory.sol) | Baca registry via JSON-RPC; tidak membayar gas untuk call publik. Kuota tergantung RPC | Pilih factory `0xca143ce32fe78f1f7019d7d551a6402fc5350c73`; registry `allPairsLength/allPairs`, lalu token0/token1. Tautan source dari halaman alamat resmi mengembalikan 404 saat riset; kecocokan ABI deployed belum diuji. V3/Infinity tidak termasuk |
 | RPC BSC | [Endpoint dan batas RPC](https://docs.bnbchain.org/bnb-smart-chain/developers/json_rpc/json-rpc-endpoint/), [finality API](https://docs.bnbchain.org/bnb-smart-chain/developers/json_rpc/bsc-api-list/) | Endpoint publik tercantum, batas terdokumentasi 10.000 request/5 menit; `eth_getLogs` dinonaktifkan pada endpoint mainnet yang disebut di halaman | Pilih `https://bsc-dataseed.bnbchain.org`; verifikasi chain ID 0x38, header finalized, code/call pada nomor block tersebut. Tanpa fallback latest; tidak memakai scanner log historis |
 | DEX Screener | [Referensi API](https://docs.dexscreener.com/api/reference) | Endpoint pasangan publik; tarif/SLA dan kuota endpoint pasangan belum dipastikan dari halaman yang berhasil dibaca. Tidak ada langganan dipasang | Pelengkap metadata/likuiditas per pool, bukan sumber identitas primer. Cocokkan chain, pool dan kedua token dengan registry. `pairCreatedAt` adalah klaim pembuatan pool, bukan bukti trade pertama |
@@ -92,8 +92,11 @@ memakai syscall Unix, Go sesuai go.mod, binary Spider pinned 2.53.9-p3.1 bagi
 presale, serta akses publik DNS/TLS ke host terpilih. Tidak memerlukan token
 Telegram, key trading, key OmniRoute atau database untuk P4-1/P4-2.
 
-Gap penerimaan yang masih terbuka: crawl sumber nyata/robots, parsing sale
-nyata, akses RPC/GoPlus/Binance dari host sasaran, ukuran exchangeInfo, latensi,
-coverage/backfill dan seluruh tes adapter. Masing-masing harus memiliki bukti
+Pada 10 November, tes adapter lulus dan BSC RPC, GoPlus, DexScreener serta
+Binance terjangkau dari laptop user (WSL). Ukuran exchangeInfo dan pruning
+state RPC ditangani ([checkpoint](testing/plan-4-local.md#verifikasi-10-november-2026)).
+Gap penerimaan yang masih terbuka: sumber seed daftar presale, crawl Spider
+nyata, parsing sale melalui aplikasi, akses dari host sasaran, latensi dan
+coverage/backfill pada pass berulang. Masing-masing harus memiliki bukti
 baru sebelum dinyatakan diterima; batas tersebut tidak disembunyikan oleh
 selesainya riset referensi atau penulisan kode.

@@ -15,6 +15,12 @@ menjadi [website trading](trading-website.md) dengan label `TW-*`; dokumen
 detail repo itu ada di `agents/` ([handover trading-bot](agents/handover-agent.md)).
 Status VPS di sana checkpoint repo lain dan tidak diperiksa dari repo ini.
 
+**Verifikasi 10 November 2026:** atas permintaan user, build, seluruh unit test,
+race test, replay paper fixture dan satu pass nyata CEX/DEX dijalankan dan
+lulus setelah tiga perbaikan (`c2a0863`). Discovery presale masih menghasilkan
+0 kandidat karena daftar PinkSale dirender JS; user menunda pemilihan sumber
+seed dan build Spider. Hasil serta gap: [checkpoint](testing/plan-4-local.md#verifikasi-10-november-2026).
+
 ## Keputusan terbaru
 
 - Ubah arah repo ini; docs dan bukti lama diarsipkan di lokasi yang tetap.
@@ -68,15 +74,16 @@ menerima output AI sebagai order otomatis atau mengirim transaksi venue.
 [Kontrak paper](presale-paper.md), [fixture contoh](../configs/launch.paper.fixture.json).
 
 Handover lama mencatat komponen/report P3 pernah dirilis dan pilot belum aktif
-pada checkpoint-nya; status itu historis. Tidak ada pemeriksaan server atau
-pelaksanaan tes baru dalam tugas ini. Jangan menyimpulkan proses sekarang
+pada checkpoint-nya; status itu historis. Tidak ada pemeriksaan server. Jangan menyimpulkan proses sekarang
 aktif/mati atau checkout sekarang lulus dari laporan lama.
 
 ## Langkah berikutnya
 
-1. Selesaikan penerimaan P4-2–P4-4 saat ada tugas/izin verifikasi: tes/build relevan,
-   crawl PinkSale, RPC/GoPlus/Binance, ABI/field/finality, error/recovery serta
-   coverage/budget. Jangan menyatakan lulus dari gofmt atau checklist kode.
+1. Selesaikan sisa penerimaan P4-2–P4-4. Tes/build dan satu pass CEX/DEX sudah
+   lulus 10 November. Yang tersisa: keputusan user soal sumber seed daftar
+   presale (Telegram resmi, API tidak terdokumentasi, atau lainnya), build Spider
+   pinned dan crawl presale, pass berulang untuk coverage/budget/recovery,
+   serta pool DEX yang sudah punya metadata pasar.
 2. Gap v1 terlihat di laporan: crawl maksimal lima halaman, tail pool terbatas,
    rotasi simbol CEX, sale ABI/factory belum terverifikasi, tanggal pool bukan
    trade pertama, dan policy holder/likuiditas/kemampuan exit belum ditetapkan.

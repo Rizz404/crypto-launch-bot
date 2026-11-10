@@ -1,6 +1,7 @@
 # Simulasi dan adapter paper — P4-4
 
-**29 Oktober 2026. Implementasi development, belum diuji/build/dijalankan.**
+**29 Oktober 2026. Implementasi development.** Pada 10 November, tes/race dan
+replay fixture contoh dijalankan dan lulus (18 langkah, replay ulang identik).
 Mode yang tersedia adalah replay sintetis offline; tidak memiliki signer,
 client order exchange, RPC submit, wallet atau jalur uang asli. Penerimaan
 runtime P4-2/P4-3 tetap terbuka. Tidak memulai pilot.

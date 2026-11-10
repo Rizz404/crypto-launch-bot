@@ -2,8 +2,8 @@
 
 **29 Oktober 2026.** User menyetujui profil paper dan kuota di bawah melalui
 pertanyaan terstruktur, sesudah meminta commit P4-1/P4-2 lalu lanjut P4-3.
-Commit sebelumnya **`108b3fa`**. Implementasi baru belum diuji/build atau
-menjalankan inference; tidak mengaktifkan pilot atau uang asli.
+Commit sebelumnya **`108b3fa`**. Unit test lulus pada 10 November; inference
+nyata belum dijalankan. Tidak mengaktifkan pilot atau uang asli.
 
 ## Policy yang dibekukan
 

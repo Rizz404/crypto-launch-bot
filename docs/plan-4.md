@@ -58,6 +58,17 @@ guard dan batasnya. Fixture contoh tiga jalur serta test source ditulis,
 tetapi belum dijalankan. Wire quote/receipt sumber nyata dan ABI transaksi
 launchpad belum diterima; tidak ada signer, order live atau pilot.
 
+## Checkpoint verifikasi — 10 November
+
+Setelah merge trading-bot, user meminta uji P4-2–P4-4 dengan test dan sumber
+publik gratis. Build, seluruh unit test (29 paket), race test, replay paper
+fixture serta satu pass nyata CEX dan DEX lulus. Tiga bug ditemukan dan
+diperbaiki di `c2a0863`: exchangeInfo melebihi batas 4 MB, simbol lama yang
+ID 0-nya tidak tersimpan hanya ditahan, dan state BSC terpangkas sebelum pass
+selesai. Discovery presale belum bisa menghasilkan kandidat karena daftar
+PinkSale dirender JavaScript; user memilih menunda sumber seed. Rincian dan
+batasnya ada di [checkpoint lokal](testing/plan-4-local.md#verifikasi-10-november-2026).
+
 ## Fase dan kriteria selesai
 
 ### P4-0 — Reset dokumentasi
@@ -87,7 +98,9 @@ jalur presale/DEX/CEX tanpa integrasi sasaran, dan dependensi akses diketahui.
 - [x] Tulis pemeriksaan pasar/on-chain serta laporan terima/tahan/tolak;
   seluruh entry tetap mati. Verifikasi pra-transaksi menjadi kewajiban P4-4.
 - [ ] Terima hasil tes dan sumber nyata: parsing/robots, API/RPC, finality,
-  gap/recovery, coverage dan budget; belum dijalankan pada checkpoint ini.
+  gap/recovery, coverage dan budget. 10 November: tes lulus, pass nyata CEX/DEX
+  lulus setelah perbaikan; presale terhalang daftar PinkSale berbasis JS,
+  Spider belum di-build, coverage berulang belum diuji.
 
 Selesai ketika kandidat dapat ditelusuri sampai sumber, informasi basi/konflik
 tidak meloloskan entry, dan penemuan tidak bergantung daftar ticker statis P3.
@@ -102,6 +115,7 @@ tidak meloloskan entry, dan penemuan tidak bergantung daftar ticker statis P3.
   serta kuota melalui pertanyaan terstruktur. Pilot belum diaktifkan.
 - [ ] Verifikasi kode/tes dan kualitas model nyata pada ketiga jalur; sumber
   P4-2 tetap harus diterima sebelum pilot. Checklist kode bukan hasil runtime.
+  10 November: unit test lulus; inference nyata belum dijalankan.
 
 Selesai ketika output AI tervalidasi, tidak dapat menaikkan batas policy, dan
 ketiga jalur punya aturan simulasi serta parameter yang disepakati.
@@ -116,6 +130,8 @@ ketiga jalur punya aturan simulasi serta parameter yang disepakati.
   vesting, finality/reorg dan transaksi gagal tanpa aksi finansial ganda.
 - [ ] Terima hasil tes/regresi, recovery dan sumber quote/receipt nyata sebelum
   pilot. Implementasi fixture bukan bukti integrasi venue atau runtime lulus.
+  10 November: tes/race dan replay fixture (idempotent) lulus; sumber
+  quote/receipt nyata belum.
 
 Selesai ketika pengujian relevan pada [rencana evaluasi](presale-evaluation.md)
 punya bukti baru dan tidak ada adapter yang diam-diam memakai uang asli.
@@ -145,7 +161,9 @@ termasuk kegagalan serta keterbatasan; keberhasilan satu jalur tidak mewakili ti
 Pekerjaan berikutnya adalah penerimaan P4-2–P4-4 sebelum monitoring/pilot P4-5,
 bukan resume pilot P3. Commit docs dan discovery sudah dibuat sesuai permintaan;
 checkpoint P4-3/P4-4 kemudian diminta user untuk di-commit; hash terbaru ada
-di `git log`. Tidak ada push, inference berbayar,
-runtime aplikasi, tes/build, deploy atau transaksi dalam lanjutan ini. Data,
+di `git log`. Tidak ada push, inference berbayar, deploy atau transaksi.
+Tes/build dan pass CEX/DEX nyata baru dijalankan 10 November atas permintaan
+user. Langkah berikutnya: pilih sumber seed daftar presale, build Spider,
+lalu uji pass berulang dan inference. Data,
 ledger, modal dan T0 tetap dipertahankan; status server belum diperiksa.
 [Handover](handover-agent.md) dan [arsip](archive.md) menyimpan jejak historis.

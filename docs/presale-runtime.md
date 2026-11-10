@@ -1,7 +1,9 @@
 # Discovery, verifikasi dan analisis Plan 4
 
-**Implementasi development 29 Oktober 2026; belum diuji/dijalankan.**
-[Pilihan integrasi](presale-integrations.md) dan [checkpoint](testing/plan-4-local.md)
+**Implementasi development 29 Oktober 2026.** Pada 10 November, `report`,
+`replay-paper` dan satu pass nyata `collect -source cex|dex` dijalankan di WSL
+dan lulus setelah perbaikan; presale dan `analyze` belum.
+[Pilihan integrasi](presale-integrations.md) dan [checkpoint](testing/plan-4-local.md#verifikasi-10-november-2026)
 menjelaskan sumber serta batas bukti. Bukan runtime transaksi atau pilot.
 
 ## Perintah
@@ -9,8 +11,8 @@ menjelaskan sumber serta batas bukti. Bukan runtime transaksi atau pilot.
 CLI `cmd/launch` terpisah dari `bot` dan `catalyst`. Build melalui target build
 yang sudah ada kini juga menyertakan `bin/launch`. Jalankan pada Linux/WSL atau
 container yang sesuai; archive reuse masih memakai syscall Unix. Belum ada
-image/deployment/daemon khusus Plan 4. Perintah berikut referensi, tidak
-dijalankan dalam pekerjaan ini.
+image/deployment/daemon khusus Plan 4. Perintah berikut referensi; arsip uji
+manual sebaiknya diarahkan ke direktori sementara dengan `-archive`.
 
 ```sh
 ./bin/launch -action report
@@ -98,6 +100,20 @@ likuiditas/exit. Karena itu DEX/presale tetap held kecuali ada alasan reject.
 Mapping kontrak token Binance juga belum dibuat; ID venue tidak menjadi
 klaim identitas lintas-chain. Cursor DEX mengejar pool baru sesudah bootstrap;
 history sebelum bootstrap dan refresh semua kandidat lama belum dicakup.
+
+Perilaku sumber yang teramati 10 November:
+
+- CEX memakai `exchangeInfo` dengan `symbolStatus=TRADING`; daftar tanpa
+  filter melebihi batas respons 4 MB. Bila trade ID 0 sudah tidak tersimpan,
+  trade tertua yang tersisa menjadi fakta `oldest_retained_trade_at`; lebih
+  tua dari 30 hari berarti ditolak, tanpa mengklaim waktu listing.
+- Node publik BSC memangkas state ±1–2 menit di belakang finalized. DEX dan
+  presale mengambil ulang blok finalized bila snapshot berumur lebih dari
+  15 detik sebelum membaca tiap pool/sale.
+- Daftar `/launchpads` PinkSale dirender JavaScript dan tidak memuat tautan
+  sale, jadi collect presale saat ini berakhir dengan
+  `no_parseable_bsc_sale_pages_or_javascript_required`. Halaman detail sale
+  dirender server. Sumber seed daftar belum dipilih.
 
 Gunakan satu collector serial per arsip. Lock penulisan arsip menjaga record,
 bukan koordinasi kuota lintas proses; proses paralel dapat menggandakan request.
