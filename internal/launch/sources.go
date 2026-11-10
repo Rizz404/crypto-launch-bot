@@ -100,6 +100,11 @@ func (c *Client) discoverPresales(ctx context.Context, binary string) Batch {
 		if !ok {
 			continue
 		}
+		if chainErr == nil {
+			var refreshProof []string
+			block, refreshProof, chainErr = c.refresh(ctx, block)
+			chainProof = append(chainProof, refreshProof...)
+		}
 		candidate.EvidenceIDs = append(candidate.EvidenceIDs, chainProof...)
 		if chainErr != nil {
 			candidate.Gaps = append(candidate.Gaps, chainErr.Error())
@@ -131,7 +136,8 @@ func (c *Client) discoverCEX(ctx context.Context, limit int, scanned map[string]
 	var info struct {
 		Symbols []binanceSymbol `json:"symbols"`
 	}
-	rootID, err := c.fetch(ctx, "https://data-api.binance.vision/api/v3/exchangeInfo?permissions=SPOT&showPermissionSets=false", nil, &info)
+	// The unfiltered SPOT list (mostly BREAK symbols) exceeds maxBody; only TRADING pairs can be entered.
+	rootID, err := c.fetch(ctx, "https://data-api.binance.vision/api/v3/exchangeInfo?permissions=SPOT&showPermissionSets=false&symbolStatus=TRADING", nil, &info)
 	if rootID != "" {
 		b.EvidenceIDs = []string{rootID}
 	}
@@ -166,6 +172,10 @@ func (c *Client) discoverCEX(ctx context.Context, limit int, scanned map[string]
 		candidate.EvidenceIDs = append(candidate.EvidenceIDs, id)
 		if e != nil || len(trades) != 1 || trades[0].ID == nil || *trades[0].ID != 0 || trades[0].At <= 0 {
 			candidate.Gaps = append(candidate.Gaps, "first_trade_history_unavailable")
+			if e == nil && len(trades) == 1 && trades[0].At > 0 {
+				// Listing is no later than the oldest retained trade.
+				candidate.Facts["oldest_retained_trade_at"] = time.UnixMilli(trades[0].At).UTC().Format(time.RFC3339)
+			}
 		} else {
 			candidate.StartsAt = time.UnixMilli(trades[0].At).UTC()
 			candidate.TimeBasis = "first_trade_id_zero"

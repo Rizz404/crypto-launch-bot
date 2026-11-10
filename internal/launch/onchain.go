@@ -42,6 +42,18 @@ func (c *Client) finalized(ctx context.Context) (chainSnapshot, []string, error)
 	return block, ids, nil
 }
 
+// Public BSC nodes prune state after roughly a minute, shorter than a rate-limited pass;
+// one candidate needs about six requests (~13s) against the snapshot.
+const snapshotMaxAge = 15 * time.Second
+
+func (c *Client) refresh(ctx context.Context, block chainSnapshot) (chainSnapshot, []string, error) {
+	ts, err := strconv.ParseInt(strings.TrimPrefix(block.Timestamp, "0x"), 16, 64)
+	if err == nil && time.Since(time.Unix(ts, 0)) <= snapshotMaxAge {
+		return block, nil, nil
+	}
+	return c.finalized(ctx)
+}
+
 func (c *Client) call(ctx context.Context, to, data, block string) (string, string, error) {
 	var value string
 	id, err := c.rpc(ctx, "eth_call", []any{map[string]string{"to": to, "data": data}, block}, &value)
@@ -154,6 +166,14 @@ func (c *Client) discoverDEX(ctx context.Context, limit int, next *uint64) Batch
 		b.Gaps = append(b.Gaps, "factory_backlog_pending")
 	}
 	for index := start; index < end; index++ {
+		// The factory registry is append-only, so a newer finalized block still holds every index below count.
+		fresh, refreshProof, refreshErr := c.refresh(ctx, block)
+		proof = append(proof, refreshProof...)
+		if refreshErr != nil {
+			b.Gaps = append(b.Gaps, refreshErr.Error())
+			break
+		}
+		block = fresh
 		value, id, err = c.call(ctx, pancakeFactory, allPairs+fmt.Sprintf("%064x", index), block.Number)
 		pool, parseErr := abiAddress(value)
 		if err != nil || parseErr != nil {
@@ -228,5 +248,6 @@ func (c *Client) discoverDEX(ctx context.Context, limit int, next *uint64) Batch
 		b.Candidates = append(b.Candidates, candidate)
 		cursor = index + 1
 	}
+	b.EvidenceIDs = proof
 	return b
 }

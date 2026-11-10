@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -190,6 +191,10 @@ func TestCEXHistoryRequiresTradeZeroAndKeepsVenueIdentity(t *testing.T) {
 		c.HTTP = &http.Client{Transport: roundTrip(func(req *http.Request) (*http.Response, error) {
 			body := `{"symbols":[{"symbol":"MEMEUSDT","baseAsset":"MEME","quoteAsset":"USDT","status":"TRADING"}]}`
 			switch req.URL.Path {
+			case "/api/v3/exchangeInfo":
+				if req.URL.Query().Get("symbolStatus") != "TRADING" {
+					t.Fatal("unfiltered exchangeInfo exceeds the response limit")
+				}
 			case "/api/v3/aggTrades":
 				if req.URL.Query().Get("fromId") != "0" {
 					t.Fatal("first trade query omitted")
@@ -207,6 +212,73 @@ func TestCEXHistoryRequiresTradeZeroAndKeepsVenueIdentity(t *testing.T) {
 		if strings.Contains(trade, `"a":0`) != (b.Candidates[0].TimeBasis == "first_trade_id_zero") {
 			t.Fatal("partial history treated as verified listing time")
 		}
+	}
+}
+
+func TestCEXOldRetainedTradeRejectsWithoutClaimingListingTime(t *testing.T) {
+	c := sampleCEX()
+	c.StartsAt, c.TimeBasis = time.Time{}, ""
+	c.Gaps = []string{"first_trade_history_unavailable"}
+	c.Facts["oldest_retained_trade_at"] = testNow.Add(-MaxAge - time.Hour).Format(time.RFC3339)
+	c.Seal()
+	if r := Verify(c, testNow, nil); r.Status != "rejected" || !slices.Contains(r.Reasons, "listing_older_than_30_days") {
+		t.Fatalf("old retained trade not rejected: %+v", r)
+	}
+	c.Facts["oldest_retained_trade_at"] = testNow.Add(-time.Hour).Format(time.RFC3339)
+	c.Seal()
+	if r := Verify(c, testNow, nil); r.Status != "held" || slices.Contains(r.Reasons, "listing_older_than_30_days") {
+		t.Fatalf("recent retained trade must stay held: %+v", r)
+	}
+}
+
+func TestDEXRefreshesPrunedSnapshotBeforePoolReads(t *testing.T) {
+	c := NewClient(catalyst.Archive{Dir: t.TempDir()})
+	c.limiter = rate.NewLimiter(rate.Inf, 1)
+	blocks := 0
+	var callBlocks []string
+	c.HTTP = &http.Client{Transport: roundTrip(func(req *http.Request) (*http.Response, error) {
+		reply := func(result string) (*http.Response, error) {
+			return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{"jsonrpc":"2.0","id":1,"result":` + result + `}`))}, nil
+		}
+		if req.URL.Host != "bsc-dataseed.bnbchain.org" {
+			return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{"pairs":null}`))}, nil
+		}
+		var body struct {
+			Method string            `json:"method"`
+			Params []json.RawMessage `json:"params"`
+		}
+		_ = json.NewDecoder(req.Body).Decode(&body)
+		switch body.Method {
+		case "eth_chainId":
+			return reply(`"0x38"`)
+		case "eth_getBlockByNumber":
+			blocks++
+			ts := time.Now().Unix()
+			if blocks == 1 {
+				ts = time.Now().Add(-time.Minute).Unix() // fresh enough to start, too old for pool reads
+			}
+			return reply(fmt.Sprintf(`{"number":"0x%x","hash":"0x%064x","timestamp":"0x%x"}`, 100+blocks, blocks, ts))
+		case "eth_getCode":
+			return reply(`"0x"`)
+		}
+		var call struct{ Data string }
+		_ = json.Unmarshal(body.Params[0], &call)
+		var block string
+		_ = json.Unmarshal(body.Params[1], &block)
+		switch {
+		case call.Data == allPairsLength:
+			return reply(`"0x` + fmt.Sprintf("%064x", 1) + `"`)
+		case strings.HasPrefix(call.Data, allPairs):
+			callBlocks = append(callBlocks, block)
+			return reply(`"0x000000000000000000000000` + strings.Repeat("ab", 20) + `"`)
+		case call.Data == token0:
+			return reply(`"0x000000000000000000000000` + strings.Repeat("cd", 20) + `"`)
+		}
+		return reply(`"0x000000000000000000000000` + strings.Repeat("ef", 20) + `"`)
+	})}
+	b := c.discoverDEX(context.Background(), 1, nil)
+	if blocks != 2 || len(callBlocks) != 1 || callBlocks[0] != "0x66" || len(b.Candidates) != 1 {
+		t.Fatalf("stale snapshot reused: blocks=%d calls=%v batch=%+v", blocks, callBlocks, b)
 	}
 }
 

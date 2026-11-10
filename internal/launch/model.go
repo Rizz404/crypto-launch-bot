@@ -128,6 +128,9 @@ func Verify(c Candidate, now time.Time, sourceGaps []string) Review {
 	}
 	if c.StartsAt.IsZero() {
 		hold("schedule_unknown")
+		if oldest, err := time.Parse(time.RFC3339, c.Facts["oldest_retained_trade_at"]); c.Kind == "cex" && err == nil && now.Sub(oldest) > MaxAge {
+			reject("listing_older_than_30_days")
+		}
 	} else if c.Kind != "presale" {
 		if c.StartsAt.After(now) {
 			hold("listing_not_open")
