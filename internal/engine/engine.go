@@ -9,6 +9,7 @@ package engine
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"hash/fnv"
 	"log/slog"
@@ -351,6 +352,30 @@ func (e *Engine) OnPrice(ctx context.Context, c domain.Candle) {
 	}
 }
 
+// HasPriceHandler reports whether an intrabar update can run strategy logic.
+func (e *Engine) HasPriceHandler() bool {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	for _, inst := range e.instances {
+		if _, ok := inst.s.(strategy.PriceHandler); ok {
+			return true
+		}
+	}
+	return false
+}
+
+// TimerDue reports whether Tick has scheduled strategy work to perform.
+func (e *Engine) TimerDue(now time.Time) bool {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	for _, inst := range e.instances {
+		if _, ok := inst.s.(strategy.TimerHandler); ok && !now.Before(inst.nextTimer) {
+			return true
+		}
+	}
+	return false
+}
+
 // Tick runs strategies that implement strategy.TimerHandler when due.
 func (e *Engine) Tick(ctx context.Context, now time.Time) {
 	e.mu.Lock()
@@ -539,3 +564,49 @@ func (e *Engine) account(k domain.PositionKey) *portfolio.Account {
 }
 
 var errNoBroker = fmt.Errorf("no broker for exchange")
+
+// ErrNoOrder means an operator intent produced no order: sizing, a risk or
+// exchange minimum, a paused engine or a pending order of the symbol held it.
+var ErrNoOrder = errors.New("no order created; check size, capital, risk limits and strategy status")
+
+// Submit applies operator intents (the manual trading screen) to strategy id
+// with the same sizing, risk checks and protection as the strategy's own.
+func (e *Engine) Submit(ctx context.Context, id string, intents []strategy.Intent) error {
+	e.mu.Lock()
+	defer e.unlockAndDrain(ctx)
+	inst := e.instanceByID(id)
+	if inst == nil {
+		return fmt.Errorf("unknown strategy %q", id)
+	}
+	before := make(map[string]bool, len(e.orders))
+	for id := range e.orders {
+		before[id] = true
+	}
+	e.apply(ctx, inst, intents)
+	// Fills are queued and drained after this check, so a new order is still open here.
+	for id := range e.orders {
+		if !before[id] {
+			return nil
+		}
+	}
+	return ErrNoOrder
+}
+
+// Cancel cancels one open entry or strategy order of the engine. It reports
+// false when no such order is open here.
+func (e *Engine) Cancel(ctx context.Context, clientID string) bool {
+	e.mu.Lock()
+	defer e.unlockAndDrain(ctx)
+	o, ok := e.orders[clientID]
+	// Protective legs stay: without them the runtime would flatten the position.
+	if !ok || (o.Tag != domain.TagStrategy && o.Tag != domain.TagEntry) {
+		return false
+	}
+	for key, plan := range e.entries {
+		if plan.orderID == clientID {
+			delete(e.entries, key)
+		}
+	}
+	e.cancel(ctx, clientID)
+	return true
+}

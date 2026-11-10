@@ -13,8 +13,6 @@ exchanges:
   binance:
     enabled: true
     testnet: true
-  bybit:
-    enabled: false
 
 # One strategy per symbol: strategies on the same symbol would share one
 # position and disturb each other.

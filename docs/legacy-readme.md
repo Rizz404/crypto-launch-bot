@@ -12,19 +12,19 @@ Bot trading crypto otomatis dalam Go (Binance dan Bybit; spot + futures).
 Rencana aktif dan progres ada di [Plan 3](plan-3.md): riset katalis/AI,
 hold berbasis tesis, proteksi dan pekerjaan tersisa dari platform multi-instance.
 Collector/validator dan replay paper lokal tersedia; worker/pilot AI belum
-aktif. [Development katalis](catalyst-runtime.md). Runtime managed Binance
+aktif. [Development katalis](agents/catalyst-runtime.md). Runtime managed Binance
 Spot sudah dirilis; checkpoint 23 Oktober mencatat paper pembanding tahap dua
 6 instance/18 binding BTC/ETH/SOL dengan T0 22 Oktober 19:58:45 WIB, modal awal
 747,83957456237531 USDT virtual. Rilis notifikasi terbaru tidak mereset T0.
-Status dan review hari 1/3/7: [handover VPS](handover-vps.md).
-[Panduan penggunaan](managed-runtime.md) dan
+Status dan review hari 1/3/7: [handover VPS](agents/handover-vps.md).
+[Panduan penggunaan](agents/managed-runtime.md) dan
 [handover agent](handover-agent.md) mencatat fitur, hasil tes, dan batasnya.
-[Plan 1](plan.md) dan [Plan 2](plan-2.md) selesai sebagai siklus dan
+[Plan 1](agents/archive/plan.md) dan [Plan 2](agents/archive/plan-2.md) selesai sebagai siklus dan
 menjadi arsip; seluruh pekerjaan terbuka diteruskan ke Plan 3.
 [Indeks dokumentasi](readme.md).
 
 Rilis dan deploy VPS mengikuti alur GitHub Actions → GHCR → image dengan digest
-tetap. Panduan: [docs/deployment.md](deployment.md). Konfigurasi VPS memakai
+tetap. Panduan: [docs/deployment.md](agents/deployment.md). Konfigurasi VPS memakai
 mode paper secara default. Observasi paper 24 jam Plan 1 sudah lulus;
 uji multi-strategi testnet berikutnya dihentikan lebih awal pada 20 Oktober.
 Trial ETH berikutnya juga sudah ditutup; trial riset memakai DB baru.
@@ -80,7 +80,7 @@ podman compose -f deploy/compose.yml --profile bot up -d --build
 | `mm` | market making sederhana (quote post-only) |
 | `trendspot` | eksperimen Spot: breakout, momentum, atau pullback dalam tren naik |
 
-Contoh konfigurasi ada di [configs/config.example.yaml](../configs/config.example.yaml). Unit/contract test lokal dan integration paper dengan restart sudah berjalan. Bukti siklus pertama ada di [Plan 1](plan.md#hasil-testing-2026-10-17);
+Contoh konfigurasi ada di [configs/config.example.yaml](../configs/config.example.yaml). Unit/contract test lokal dan integration paper dengan restart sudah berjalan. Bukti siklus pertama ada di [Plan 1](agents/archive/plan.md#hasil-testing-2026-10-17);
 pekerjaan lanjutan ada di [Plan 3](plan-3.md). Pembanding lama dan matriks
 ekspansinya tetap tercatat di [riset strategi](strategy-2.md).
 

@@ -1,11 +1,12 @@
 # Dokumentasi presale dan listing baru
 
-**Checkpoint 29 Oktober 2026:** arah repository diganti melalui perombakan
-dokumentasi. [Plan 4](plan-4.md) menjadi satu-satunya roadmap aktif. Lanjutan
-user: P4-1 diriset, discovery/verifikasi P4-2 di-commit, dan kode/schema/policy
-AI P4-3 ditulis sesuai profil yang dipilih, lalu journal/adapter paper sintetis
-P4-4 ditambahkan. Belum ada hasil tes/build,
-integrasi runtime, inference baru, pilot atau transaksi strategi baru.
+**Checkpoint 10 November 2026:** [Plan 4](plan-4.md) tetap satu-satunya
+roadmap aktif repo ini. Repo `Rizz404/trading-bot` (lanjutan dari commit
+dasar yang sama, aktif sampai 8 November) sudah di-merge: UI bersama,
+website trading, marketview Binance, perbaikan catalyst dan penghapusan
+Bybit ikut masuk. Plan 4 milik repo itu (website trading) disimpan sebagai
+[website trading](trading-website.md) dengan tahap `TW-*` agar tidak bentrok
+dengan tahap `P4-*` presale.
 
 ## Dokumen aktif
 
@@ -20,15 +21,18 @@ integrasi runtime, inference baru, pilot atau transaksi strategi baru.
 | [Discovery/report](presale-runtime.md) | CLI P4-2, arsip dan status riset tanpa transaksi |
 | [Analisis/policy](presale-analysis.md) | P4-3: profil disetujui, schema/validator, kuota dan metode evaluasi |
 | [Simulasi paper](presale-paper.md) | P4-4: journal, adapter fixture tiga jalur, settlement dan recovery |
-| [Checkpoint P4](testing/plan-4-local.md) | Implementasi, review statis dan verifikasi yang belum dilakukan |
+| [Checkpoint P4](testing/plan-4-local.md) | Implementasi dan hasil verifikasi |
 | [Risiko](presale-risk.md) | Gate transaksi, dana terkunci dan kegagalan |
 | [Evaluasi](presale-evaluation.md) | Simulasi, skenario pengujian dan penerimaan pilot/live |
+| [Website trading](trading-website.md) | Hasil impor trading-bot: dashboard, akun multi-mode, order manual |
+| [Panduan web/kontrol](guide.md) | Cara kerja wallet/instance/binding dan kontrol dashboard |
 | [Arsip](archive.md) | Seluruh panduan dan keputusan Plan 1–3 |
 | [Bukti historis](testing/readme.md) | Laporan dan data pendukung lama |
 
-Keputusan terbaru menggantikan penundaan presale/token baru pada Plan 3.
-Instruksi resume, status aktif, jadwal, parameter dan izin dalam arsip berlaku
-pada konteks historisnya; tidak menjadi perintah melanjutkan pilot P3.
+`agents/` berisi dokumen detail dari trading-bot (handover, runtime, deploy,
+arsip Plan 1–3). Status VPS di sana adalah checkpoint repo itu, bukan hasil
+pemeriksaan dari repo ini. Instruksi resume, jadwal, parameter dan izin dalam
+arsip berlaku pada konteks historisnya; tidak menjadi perintah operasi.
 
 ## Aturan dokumentasi
 

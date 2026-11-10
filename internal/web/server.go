@@ -6,10 +6,8 @@ import (
 	"cmp"
 	"context"
 	"crypto/subtle"
-	"embed"
 	"encoding/json"
 	"fmt"
-	"io/fs"
 	"log/slog"
 	"math"
 	"net/http"
@@ -25,11 +23,9 @@ import (
 	"github.com/rizz404/trading-bot/internal/portfolio"
 	"github.com/rizz404/trading-bot/internal/storage"
 	"github.com/rizz404/trading-bot/internal/strategy"
+	"github.com/rizz404/trading-bot/internal/ui"
 	"github.com/rizz404/trading-bot/internal/web/views"
 )
-
-//go:embed static
-var staticFS embed.FS
 
 // Live is the running trading session, if any.
 type Live interface {
@@ -62,8 +58,7 @@ func New(store *storage.Store, live Live, password string, log *slog.Logger) *Se
 // Handler returns the HTTP handler with authentication applied.
 func (s *Server) Handler() http.Handler {
 	mux := http.NewServeMux()
-	static, _ := fs.Sub(staticFS, "static")
-	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServerFS(static)))
+	mux.Handle("GET /static/", ui.Handler())
 	mux.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusNoContent) })
 
 	mux.HandleFunc("GET /{$}", s.overview)
@@ -160,7 +155,7 @@ func (s *Server) partialStatus(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) partialPositions(w http.ResponseWriter, r *http.Request) {
 	if s.live == nil {
-		s.render(w, r, views.Empty("No trading session."))
+		s.render(w, r, ui.Empty("Tidak ada sesi trading."))
 		return
 	}
 	var rows []views.PositionRow
@@ -184,7 +179,7 @@ func (s *Server) partialPositions(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) partialOrders(w http.ResponseWriter, r *http.Request) {
 	if s.live == nil {
-		s.render(w, r, views.Empty("No trading session."))
+		s.render(w, r, ui.Empty("Tidak ada sesi trading."))
 		return
 	}
 	orders := s.live.OpenOrders()
@@ -395,7 +390,7 @@ func (s *Server) chart(w http.ResponseWriter, r *http.Request) {
 		selected = list[0].String()
 	}
 	if selected == "" {
-		page.Note = "No candles recorded in the last 7 days. Run the bot or datafetch first."
+		page.Note = "Tidak ada candle tersimpan dalam 7 hari terakhir. Jalankan bot atau datafetch lebih dulu."
 		s.render(w, r, views.Chart(page))
 		return
 	}
@@ -409,10 +404,15 @@ func (s *Server) chart(w http.ResponseWriter, r *http.Request) {
 	}
 	runID, _ := strconv.ParseInt(r.URL.Query().Get("run"), 10, 64)
 	page.Selected = selected
+	for _, k := range list {
+		if k.Exchange == key.Exchange && k.Market == key.Market && k.Symbol == key.Symbol {
+			page.Timeframes = append(page.Timeframes, views.Link{Label: string(k.Timeframe), Href: chartHref(k, runID), Active: k.Timeframe == key.Timeframe})
+		}
+	}
 	page.Src = "/api/candles?series=" + key.String()
 	if runID > 0 {
 		page.Src += "&run=" + strconv.FormatInt(runID, 10)
-		page.Note = fmt.Sprintf("Showing trades of run #%d.", runID)
+		page.Note = fmt.Sprintf("Menampilkan trade dari run #%d.", runID)
 	}
 	s.render(w, r, views.Chart(page))
 }
@@ -461,9 +461,9 @@ func (s *Server) backtest(w http.ResponseWriter, r *http.Request) {
 		EquitySrc: "/api/equity?run=" + strconv.FormatInt(id, 10),
 		Metrics: [][2]string{
 			{"Return", pct(m["TotalReturn"])}, {"CAGR", pct(m["CAGR"])}, {"Max drawdown", pct(m["MaxDrawdown"])},
-			{"Sharpe", num(m["Sharpe"])}, {"Sortino", num(m["Sortino"])}, {"Trades", num0(m["Trades"])},
-			{"Win rate", pct(m["WinRate"])}, {"Profit factor", num(m["ProfitFactor"])}, {"Avg trade", num(m["AvgTrade"])},
-			{"Fees", num(m["TotalFees"])}, {"Funding", num(m["TotalFunding"])},
+			{"Sharpe", num(m["Sharpe"])}, {"Sortino", num(m["Sortino"])}, {"Jumlah trade", num0(m["Trades"])},
+			{"Win rate", pct(m["WinRate"])}, {"Profit factor", num(m["ProfitFactor"])}, {"Rata-rata trade", num(m["AvgTrade"])},
+			{"Fee", num(m["TotalFees"])}, {"Funding", num(m["TotalFunding"])},
 			{"Equity", num(m["InitialEquity"]) + " → " + num(m["FinalEquity"])},
 		},
 	}

@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-const collectorAgent = "trading-bot-catalyst-research"
+const collectorAgent = "ana-scout-research"
 
 func (c *Collector) checkRobots(ctx context.Context, source string) error {
 	u, err := url.Parse(source)

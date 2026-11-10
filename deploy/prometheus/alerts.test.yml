@@ -34,7 +34,7 @@ tests:
       - eval_time: 15m
         alertname: TradingBotDown
         exp_alerts:
-          - exp_labels: {severity: critical}
+          - exp_labels: {severity: critical, job: tradingbot, instance: host}
             exp_annotations: {summary: Trading bot metrics endpoint is down}
       - eval_time: 15m
         alertname: KillSwitchActive
@@ -67,7 +67,7 @@ tests:
       - series: 'up{job="tradingbot",instance="host"}'
         values: '1x20'
       - series: 'up{job="tradingbot",instance="container"}'
-        values: '0x20'
+        values: '1x20'
       - series: 'tradingbot_kill_switch'
         values: '0x20'
       - series: 'tradingbot_marketdata_last_candle_close_timestamp_seconds{timeframe="1m"}'
@@ -87,3 +87,17 @@ tests:
       - {eval_time: 15m, alertname: EngineErrors, exp_alerts: []}
       - {eval_time: 15m, alertname: SlowOrderPlacement, exp_alerts: []}
       - {eval_time: 15m, alertname: ExchangeWeightHigh, exp_alerts: []}
+
+  - name: healthy p2 cannot hide failed research
+    interval: 1m
+    input_series:
+      - series: 'up{job="tradingbot",instance="container"}'
+        values: '1x20'
+      - series: 'up{job="tradingbot",instance="research"}'
+        values: '0x20'
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: TradingBotDown
+        exp_alerts:
+          - exp_labels: {severity: critical, job: tradingbot, instance: research}
+            exp_annotations: {summary: Trading bot metrics endpoint is down}

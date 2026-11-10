@@ -1,0 +1,451 @@
+package managed
+
+import "github.com/rizz404/trading-bot/internal/ui"
+
+func tradePage(v tradeView) ui.Page {
+	p := v.shellPage(v.Symbol+" · Trading", "Data pasar dari websocket Binance, dibagikan server ke semua tab. Order lewat strategi manual memakai modal dan batas risiko instance-nya.")
+	p.Charts, p.Wide = true, true
+	return p
+}
+
+templ Trade(v tradeView) {
+	@ui.Shell(tradePage(v)) {
+		<section data-trade data-stream={ v.StreamURL() } class="space-y-4">
+			@tradeHeader(v)
+			if v.Error != "" {
+				@ui.Alert("neg") {
+					Aksi ditolak: { v.Error }
+				}
+			}
+			if v.State.Attention != "" {
+				@ui.Alert("warn") {
+					Perlu diperiksa: { v.State.Attention }. Entry baru ditahan.
+				}
+			}
+			if v.Live() {
+				@ui.Alert("neg") {
+					<strong>Akun live memakai uang asli.</strong> Setiap aksi meminta password akun lagi.
+				}
+			}
+			<div class="grid grid-cols-1 gap-4 lg:grid-cols-12">
+				<div class="min-w-0 space-y-4 lg:col-span-8 xl:col-span-9">
+					@ui.CardFlush("", timeframeNav(v)) {
+						<div data-chart="trade" data-src={ v.CandlesURL() } class="h-[440px] w-full"></div>
+					}
+					<div class="grid grid-cols-1 gap-4 xl:grid-cols-[22rem_minmax(0,1fr)]">
+						@orderForm(v)
+						@accountPanel(v)
+					</div>
+				</div>
+				<div class="min-w-0 space-y-4 lg:col-span-4 xl:col-span-3">
+					@orderBook()
+					@tradeTape()
+				</div>
+			</div>
+		</section>
+	}
+}
+
+templ tradeHeader(v tradeView) {
+	<div class="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-xl border border-outline bg-surface px-4 py-3 shadow-sm">
+		@ui.Dropdown(symbolLabel(v.Symbol), "left-0") {
+			for _, s := range v.Symbols {
+				<a href={ templ.SafeURL(v.Href(s, v.TF)) } class={ ui.MenuItem } aria-current={ ui.Current(s == v.Symbol) } role="menuitem">{ s }</a>
+			}
+		}
+		<div>
+			<div class="text-xl font-semibold tabular-nums" data-ticker="last">–</div>
+			<div class="text-xs text-muted">Harga terakhir</div>
+		</div>
+		<div><div class="font-medium tabular-nums" data-ticker="pct">–</div><div class="text-xs text-muted">24 jam</div></div>
+		<div class="hidden sm:block"><div class="font-medium tabular-nums" data-ticker="high">–</div><div class="text-xs text-muted">Tertinggi 24 jam</div></div>
+		<div class="hidden sm:block"><div class="font-medium tabular-nums" data-ticker="low">–</div><div class="text-xs text-muted">Terendah 24 jam</div></div>
+		<div class="hidden md:block"><div class="font-medium tabular-nums" data-ticker="qv">–</div><div class="text-xs text-muted">Volume 24 jam (USDT)</div></div>
+		<div class="ml-auto flex items-center gap-2">
+			<span class="hidden text-xs text-muted sm:inline" data-stream-state>menghubungkan…</span>
+			<span class="flex items-center gap-2 text-sm" title="Ganti akun lewat menu samping">
+				@walletLabel(v.Wallet, v.State.Spec.Mode)
+			</span>
+		</div>
+	</div>
+}
+
+templ symbolLabel(s string) {
+	<span class="font-semibold">{ s }</span>
+}
+
+templ walletLabel(id, mode string) {
+	<span>{ id }</span>
+	@ui.ModeBadge(mode)
+}
+
+templ timeframeNav(v tradeView) {
+	<nav class={ ui.SegGroup } aria-label="Timeframe">
+		for _, tf := range v.Timeframes() {
+			<a href={ templ.SafeURL(v.Href(v.Symbol, tf)) } class={ ui.SegItem } aria-current={ ui.Current(tf == v.TF) }>{ string(tf) }</a>
+		}
+	</nav>
+}
+
+templ orderBook() {
+	@ui.CardFlush("Order book", nil) {
+		<div class="px-3 py-2 text-xs" data-book>
+			<div class="grid grid-cols-3 pb-1 text-muted"><span>Harga</span><span class="text-right">Jumlah</span><span class="text-right">Total</span></div>
+			<div data-asks class="flex flex-col-reverse"></div>
+			<div class="my-1 border-y border-outline py-1.5 text-center text-sm font-semibold tabular-nums" data-spread>–</div>
+			<div data-bids></div>
+			<p class="py-4 text-center text-muted" data-book-wait>Menyinkronkan order book…</p>
+		</div>
+	}
+}
+
+templ tradeTape() {
+	@ui.CardFlush("Transaksi pasar", nil) {
+		<div class="max-h-[360px] overflow-y-auto px-3 py-2 text-xs">
+			<div class="grid grid-cols-3 pb-1 text-muted"><span>Harga</span><span class="text-right">Jumlah</span><span class="text-right">Waktu</span></div>
+			<div data-tape></div>
+		</div>
+	}
+}
+
+templ orderForm(v tradeView) {
+	@ui.Card("Order manual", nil) {
+		if len(v.Manual) == 0 {
+			<p class="text-muted">Belum ada strategi <code>manual</code> untuk { v.Symbol } di akun ini. Tambahkan binding <code>name: manual</code> ke instance (config atau tab Instance), lalu restart bot. Posisi bot tetap bisa ditutup dari tabel Posisi.</p>
+		} else {
+			<form method="post" action={ templ.SafeURL("/control?wallet=" + v.Wallet) } x-data="orderForm" class="space-y-3">
+				<input type="hidden" name="csrf" value={ v.Token }/>
+				<input type="hidden" name="id" value={ v.Request() }/>
+				<input type="hidden" name="operation" value="place_order"/>
+				<input type="hidden" name="view" value="trade"/>
+				<input type="hidden" name="symbol" value={ v.Symbol }/>
+				<input type="hidden" name="tf" value={ string(v.TF) }/>
+				<input type="hidden" name="confirm" value="no"/>
+				<input type="hidden" name="side" x-bind:value="side"/>
+				<input type="hidden" name="order_type" x-bind:value="type"/>
+				<div class="grid grid-cols-2 gap-1 rounded-lg border border-outline bg-surface-alt p-0.5">
+					<button type="button" x-on:click="buy" x-bind:aria-pressed="isBuy" class="rounded-md py-1.5 text-sm font-semibold text-muted aria-pressed:bg-pos aria-pressed:text-page">Beli</button>
+					<button type="button" x-on:click="sell" x-bind:aria-pressed="isSell" class="rounded-md py-1.5 text-sm font-semibold text-muted aria-pressed:bg-neg aria-pressed:text-page">Jual</button>
+				</div>
+				<div class={ ui.SegGroup }>
+					<button type="button" x-on:click="market" x-bind:aria-pressed="isMarket" class={ ui.SegItem }>Market</button>
+					<button type="button" x-on:click="limit" x-bind:aria-pressed="isLimit" class={ ui.SegItem }>Limit</button>
+				</div>
+				@ui.Field("Strategi manual (modal instance)") {
+					<select name="scope" x-ref="scope" x-on:change="pick" class={ ui.InputClass }>
+						for _, m := range v.Manual {
+							<option value={ m.ID } data-cash={ dec(m.Cash) } data-hold={ dec(m.Hold) }>{ m.ID }</option>
+						}
+					</select>
+				}
+				<p class="text-xs text-muted">Tersedia: <span class="tabular-nums" x-text="available"></span></p>
+				<div x-show="isLimit" x-cloak>
+					@ui.Field("Harga limit (USDT)") {
+						<input name="price" x-ref="price" x-model="price" inputmode="decimal" autocomplete="off" class={ ui.InputClass }/>
+					}
+				</div>
+				@ui.Field("Jumlah (" + v.Symbol + " koin)") {
+					<input name="quantity" x-ref="qty" x-model="qty" inputmode="decimal" autocomplete="off" required class={ ui.InputClass }/>
+				}
+				<div class="grid grid-cols-4 gap-1">
+					<button type="button" data-pct="25" x-on:click="percent" class={ ui.BtnSecondary + ui.BtnSmall }>25%</button>
+					<button type="button" data-pct="50" x-on:click="percent" class={ ui.BtnSecondary + ui.BtnSmall }>50%</button>
+					<button type="button" data-pct="75" x-on:click="percent" class={ ui.BtnSecondary + ui.BtnSmall }>75%</button>
+					<button type="button" data-pct="100" x-on:click="percent" class={ ui.BtnSecondary + ui.BtnSmall }>100%</button>
+				</div>
+				<div x-show="protectable" class="grid grid-cols-2 gap-2">
+					@ui.Field("Stop loss") {
+						<input name="stop_loss" inputmode="decimal" autocomplete="off" placeholder="opsional" class={ ui.InputClass }/>
+					}
+					@ui.Field("Take profit") {
+						<input name="take_profit" inputmode="decimal" autocomplete="off" placeholder="opsional" class={ ui.InputClass }/>
+					}
+				</div>
+				if v.Live() {
+					@passwordField()
+				}
+				<p class="text-xs text-muted">Bot dapat memperkecil jumlah agar tetap dalam batas risiko. Jual tanpa SL/TP; spot tidak bisa short.</p>
+				<button
+					type="submit"
+					x-bind:class="submitClass"
+					x-text="submitLabel"
+					data-confirm="Kirim order?"
+					x-bind:data-confirm-body="summary"
+					data-confirm-label="Kirim order"
+					data-confirm-set="confirm=yes"
+				></button>
+			</form>
+		}
+	}
+}
+
+templ passwordField() {
+	@ui.Field("Password (konfirmasi akun live)") {
+		<input type="password" name="password" autocomplete="current-password" required class={ ui.InputClass }/>
+	}
+}
+
+templ accountPanel(v tradeView) {
+	<section class="min-w-0 rounded-xl border border-outline bg-surface shadow-sm" x-data="accountTabs">
+		<nav class="flex gap-1 overflow-x-auto border-b border-outline px-2" aria-label="Akun">
+			<button type="button" x-on:click="positions" x-bind:aria-current="posCurrent" class={ accountTab }>Posisi ({ itoa(len(v.Positions)) })</button>
+			<button type="button" x-on:click="orders" x-bind:aria-current="ordersCurrent" class={ accountTab }>Order terbuka ({ itoa(len(v.OpenOrders())) })</button>
+			<button type="button" x-on:click="fills" x-bind:aria-current="fillsCurrent" class={ accountTab }>Riwayat</button>
+			<button type="button" x-on:click="funds" x-bind:aria-current="fundsCurrent" class={ accountTab }>Saldo</button>
+		</nav>
+		<div id="account-body" hx-get={ v.Href(v.Symbol, v.TF) } hx-trigger="account-changed from:window" hx-select="#account-body" hx-swap="outerHTML">
+			<div x-show="isPositions">@positionsTable(v)</div>
+			<div x-show="isOrders" x-cloak>@openOrdersTable(v)</div>
+			<div x-show="isFills" x-cloak>@fillsTable(v)</div>
+			<div x-show="isFunds" x-cloak>@fundsTable(v)</div>
+		</div>
+	</section>
+}
+
+const accountTab = "-mb-px whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted hover:text-on-surface aria-[current=page]:border-primary aria-[current=page]:text-on-surface"
+
+templ positionsTable(v tradeView) {
+	if len(v.Positions) == 0 {
+		@ui.Empty("Tidak ada posisi terbuka.")
+	} else {
+		@ui.Table() {
+			<thead><tr><th>Pair</th><th>Strategi</th><th>Jumlah</th><th>Harga rata-rata</th><th>Harga kini</th><th>Nilai</th><th>PnL</th><th></th></tr></thead>
+			<tbody>
+				for _, p := range v.Positions {
+					<tr>
+						<td><a href={ templ.SafeURL(v.Href(p.Symbol, v.TF)) } class={ ui.LinkClass }>{ p.Symbol }</a></td>
+						<td class="text-xs">{ p.Owner }</td>
+						<td>{ dec(p.Qty) }</td>
+						<td>{ dec(p.Avg.Round(4)) }</td>
+						<td>{ dec(p.Mark) }</td>
+						<td>{ v.Money(p.Value) }</td>
+						<td class={ ui.Tone(v.PnLTone(p.PnL)) }>{ v.Money(p.PnL) }</td>
+						<td>
+							<form method="post" action={ templ.SafeURL("/control?wallet=" + v.Wallet) }>
+								@hiddenTrade(v, "close_position")
+								<input type="hidden" name="scope" value={ p.Owner }/>
+								<input type="hidden" name="symbol" value={ p.Symbol }/>
+								if v.Live() {
+									<input type="password" name="password" autocomplete="current-password" placeholder="password" required class={ ui.InputClass + " !w-20 !py-1 text-xs" }/>
+								}
+								<button
+									type="submit"
+									class={ ui.BtnDanger + ui.BtnSmall }
+									data-confirm={ "Tutup posisi " + p.Symbol + "?" }
+									data-confirm-body={ "Strategi " + p.Owner + "\nMembatalkan proteksi lalu menjual " + dec(p.Qty) + " " + p.Symbol + " dengan order market. Bot tidak dihentikan; pause dulu bila tidak ingin entry ulang." }
+									data-confirm-label="Tutup posisi"
+									data-confirm-tone="danger"
+									data-confirm-set="confirm=yes"
+								>Tutup</button>
+							</form>
+						</td>
+					</tr>
+				}
+			</tbody>
+		}
+	}
+}
+
+templ hiddenTrade(v tradeView, op string) {
+	<input type="hidden" name="csrf" value={ v.Token }/>
+	<input type="hidden" name="id" value={ v.Request() }/>
+	<input type="hidden" name="operation" value={ op }/>
+	<input type="hidden" name="view" value="trade"/>
+	<input type="hidden" name="tf" value={ string(v.TF) }/>
+	<input type="hidden" name="confirm" value="no"/>
+}
+
+templ openOrdersTable(v tradeView) {
+	if orders := v.OpenOrders(); len(orders) == 0 {
+		@ui.Empty("Tidak ada order terbuka.")
+	} else {
+		@ui.Table() {
+			<thead><tr><th>Waktu</th><th>Pair</th><th>Strategi</th><th>Sisi / tipe</th><th>Harga</th><th>Jumlah</th><th>Terisi</th><th>Status</th><th></th></tr></thead>
+			<tbody>
+				for _, o := range orders {
+					<tr>
+						<td class="text-xs">{ ts(o.Order.CreatedAt) }</td>
+						<td>{ o.Order.Symbol }</td>
+						<td class="text-xs">{ o.Owner }<br/><span class="text-muted">{ o.Order.Tag }</span></td>
+						<td class={ sideTone(string(o.Order.Side)) }>{ string(o.Order.Side) } · { string(o.Order.Type) }</td>
+						<td>{ orderPrice(o) }</td>
+						<td>{ dec(o.Order.Quantity) }</td>
+						<td>{ dec(o.Order.FilledQty) }</td>
+						<td>@ui.Badge(o.State, "")</td>
+						<td>
+							if v.Cancellable(o) {
+								<form method="post" action={ templ.SafeURL("/control?wallet=" + v.Wallet) }>
+									@hiddenTrade(v, "cancel_order")
+									<input type="hidden" name="order" value={ o.Order.ClientID }/>
+									<input type="hidden" name="symbol" value={ v.Symbol }/>
+									if v.Live() {
+										<input type="password" name="password" autocomplete="current-password" placeholder="password" required class={ ui.InputClass + " !w-20 !py-1 text-xs" }/>
+									}
+									<button
+										type="submit"
+										class={ ui.BtnSecondary + ui.BtnSmall }
+										data-confirm="Batalkan order?"
+										data-confirm-body={ o.Owner + "\n" + string(o.Order.Side) + " " + dec(o.Order.Quantity) + " " + o.Order.Symbol + " @ " + orderPrice(o) }
+										data-confirm-label="Batalkan"
+										data-confirm-set="confirm=yes"
+									>Batalkan</button>
+								</form>
+							} else if o.Order.Tag == "stop_loss" || o.Order.Tag == "take_profit" {
+								<span class="text-xs text-muted">proteksi · tutup posisi</span>
+							}
+						</td>
+					</tr>
+				}
+			</tbody>
+		}
+	}
+}
+
+func sideTone(side string) string {
+	if side == "buy" {
+		return "text-pos"
+	}
+	return "text-neg"
+}
+
+func orderPrice(o *Order) string {
+	switch {
+	case o.Order.Price.IsPositive():
+		return dec(o.Order.Price)
+	case o.Order.StopPrice.IsPositive():
+		return "picu " + dec(o.Order.StopPrice)
+	}
+	return "market"
+}
+
+templ fillsTable(v tradeView) {
+	if fills := v.Fills(); len(fills) == 0 {
+		@ui.Empty("Belum ada transaksi.")
+	} else {
+		@ui.Table() {
+			<thead><tr><th>Waktu</th><th>Pair</th><th>Strategi</th><th>Sisi</th><th>Harga</th><th>Jumlah</th><th>Komisi</th><th>Hasil realisasi</th></tr></thead>
+			<tbody>
+				for _, e := range fills {
+					<tr>
+						<td class="text-xs">{ ts(e.Fill.Time) }</td>
+						<td>{ e.Fill.Symbol }</td>
+						<td class="text-xs">{ e.Owner }</td>
+						<td class={ sideTone(string(e.Fill.Side)) }>{ string(e.Fill.Side) }</td>
+						<td>{ dec(e.Fill.Price) }</td>
+						<td>{ dec(e.Fill.Quantity) }</td>
+						<td>{ dec(e.Fill.Fee) }</td>
+						<td class={ ui.Tone(v.PnLTone(e.Realized)) }>{ v.Money(e.Realized) }</td>
+					</tr>
+				}
+			</tbody>
+		}
+	}
+}
+
+templ fundsTable(v tradeView) {
+	@ui.Table() {
+		<thead><tr><th>Instance</th><th>Status</th><th>Kas</th><th>Bebas dipakai</th><th>Nilai</th><th>PnL</th></tr></thead>
+		<tbody>
+			<tr><td>Cadangan akun</td><td></td><td>{ v.Money(v.State.Reserve) }</td><td>{ v.Money(v.State.Reserve) }</td><td>{ v.Money(v.State.Reserve) }</td><td></td></tr>
+			for _, id := range v.InstanceIDs() {
+				<tr>
+					<td>{ v.State.Instances[id].Name }<br/><span class="text-xs text-muted">{ id }</span></td>
+					<td>@ui.Badge(v.State.Instances[id].Status, v.StatusTone(v.State.Instances[id].Status))</td>
+					<td>{ v.Money(v.State.Instances[id].Cash) }</td>
+					<td>{ v.Money(v.FreeCash(id)) }</td>
+					<td>{ v.Money(v.State.InstanceEquity(id)) }</td>
+					<td class={ ui.Tone(v.PnLTone(v.InstancePnL(id))) }>{ v.Money(v.InstancePnL(id)) }</td>
+				</tr>
+			}
+			<tr><td class="font-semibold">Total akun</td><td></td><td></td><td></td><td class="font-semibold">{ v.Money(v.State.Equity()) }</td><td class={ ui.Tone(v.PnLTone(v.PnL())) }>{ v.Money(v.PnL()) }</td></tr>
+		</tbody>
+	}
+}
+
+templ authCard(title, msg string) {
+	@ui.Shell(ui.Page{Title: title, Brand: "trading-bot", Footer: "Akses dibatasi login."}) {
+		<div class="mx-auto mt-10 max-w-sm">
+			@ui.Card(title, nil) {
+				if msg != "" {
+					<div class="mb-4">
+						@ui.Alert("neg") {
+							{ msg }
+						}
+					</div>
+				}
+				{ children... }
+			}
+		</div>
+	}
+}
+
+templ Register(msg string) {
+	@authCard("Daftar akun", msg) {
+		<p class="mb-4 text-sm text-muted">Belum ada akun. Akun pertama menjadi satu-satunya pemilik; setelah itu pendaftaran ditutup. Kode setup tercetak di log bot di server.</p>
+		<form method="post" action="/register" hx-boost="false" class="space-y-4">
+			@ui.Field("Kode setup") {
+				<input name="setup_code" autocomplete="off" spellcheck="false" required autofocus class={ ui.InputClass }/>
+			}
+			@ui.Field("Email") {
+				<input type="email" name="email" autocomplete="username" required class={ ui.InputClass }/>
+			}
+			@ui.Field("Password (minimal 8 karakter)") {
+				<input type="password" name="password" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
+			}
+			@ui.Field("Ulangi password") {
+				<input type="password" name="password_confirm" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
+			}
+			<button type="submit" class={ ui.BtnPrimary + " w-full" }>Daftar</button>
+		</form>
+	}
+}
+
+templ Account(v view, email string, done bool) {
+	@ui.Shell(v.shellPage("Akun", "Akun tunggal pemilik; password di-hash di database.")) {
+		<div class="mx-auto max-w-md space-y-4">
+			@ui.Heading("Akun", "Email login dan ganti password", nil)
+			if v.Error != "" {
+				@ui.Alert("neg") {
+					{ v.Error }
+				}
+			}
+			@ui.Card("Ganti password", nil) {
+				if done {
+					<div class="mb-4">
+						@ui.Alert("pos") {
+							Password diganti. Sesi lain sudah dikeluarkan.
+						}
+					</div>
+				}
+				<p class="mb-4 text-sm text-muted">Masuk sebagai <span class="font-medium text-on-surface">{ email }</span>. Setelah diganti, sesi di perangkat lain ikut keluar.</p>
+				<form method="post" action="/account" hx-boost="false" class="space-y-4">
+					<input type="hidden" name="csrf" value={ v.Token }/>
+					@ui.Field("Password lama") {
+						<input type="password" name="current_password" autocomplete="current-password" required class={ ui.InputClass }/>
+					}
+					@ui.Field("Password baru (minimal 8 karakter)") {
+						<input type="password" name="password" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
+					}
+					@ui.Field("Ulangi password baru") {
+						<input type="password" name="password_confirm" autocomplete="new-password" minlength="8" required class={ ui.InputClass }/>
+					}
+					<button type="submit" class={ ui.BtnPrimary + " w-full" }>Ganti password</button>
+				</form>
+			}
+		</div>
+	}
+}
+
+templ Login(msg string) {
+	@authCard("Masuk", msg) {
+		<form method="post" action="/login" hx-boost="false" class="space-y-4">
+			@ui.Field("Email") {
+				<input type="email" name="email" autocomplete="username" required autofocus class={ ui.InputClass }/>
+			}
+			@ui.Field("Password") {
+				<input type="password" name="password" autocomplete="current-password" required class={ ui.InputClass }/>
+			}
+			<button type="submit" class={ ui.BtnPrimary + " w-full" }>Masuk</button>
+		</form>
+	}
+}

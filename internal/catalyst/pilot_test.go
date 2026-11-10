@@ -251,13 +251,25 @@ func TestPilotResearchAuthAndHealth(t *testing.T) {
 	require.True(t, strings.Contains(w.Body.String(), "research_ready_is_separate"))
 }
 
+func TestResearchPageKeepsArchivedDecisionAfterRestart(t *testing.T) {
+	p := &Pilot{Policy: testPolicy(), Archive: Archive{Dir: t.TempDir()}}
+	_, err := p.Archive.Put("reviews", Review{ID: "archived-review", PolicyHash: Hash(p.Policy), At: time.Now(),
+		Analysis: Analysis{Action: "WATCH", Symbol: "ETHUSDT", Reason: "archived decision survives restart"}, Error: "archived validation error"})
+	require.NoError(t, err)
+	r := httptest.NewRequest(http.MethodGet, "/research", nil)
+	r.SetBasicAuth("pilot", "fixture-password-123")
+	w := httptest.NewRecorder()
+	p.HTTP("fixture-password-123").ServeHTTP(w, r)
+	require.Equal(t, http.StatusOK, w.Code)
+	require.Contains(t, w.Body.String(), "archived decision survives restart")
+	require.Contains(t, w.Body.String(), "archived validation error")
+	require.Empty(t, p.Status().DecisionID, "the display must not mutate worker or trading state")
+}
+
 func TestResearchPageEscapesUntrustedSourceText(t *testing.T) {
 	var out strings.Builder
-	data := struct {
-		Status PilotStatus
-		Report Report
-	}{PilotStatus{Reason: `<img src=x onerror=alert(1)>`}, Report{Documents: []DocumentSummary{{URL: "javascript:alert(1)", Title: "<script>alert(1)</script>"}}}}
-	require.NoError(t, researchPage.Execute(&out, data))
+	data := researchData{PilotStatus{Action: "WATCH", Reason: `<img src=x onerror=alert(1)>`}, Report{Documents: []DocumentSummary{{URL: "javascript:alert(1)", Title: "<script>alert(1)</script>"}}}}
+	require.NoError(t, Research(data).Render(t.Context(), &out))
 	page := out.String()
 	for _, raw := range []string{"<script>alert", "<img src=x", `href="javascript:`} {
 		require.NotContains(t, page, raw)

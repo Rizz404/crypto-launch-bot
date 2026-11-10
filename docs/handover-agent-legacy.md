@@ -14,7 +14,7 @@ verifikasi checkout sebelum bekerja, jangan menganggap commit lokal sudah dirili
 ## Status dan prioritas
 
 **Checkpoint terbaru — pause 28 Oktober sekitar 22.12 WIB:** user meminta
-berhenti karena limit. **Mulai dari [handover pilot](catalyst-pilot-handover.md)**
+berhenti karena limit. **Mulai dari [handover pilot](agents/catalyst-pilot-handover.md)**
 sebelum meneruskan rilis komponen/Spider di bawah. User memilih paper 1.000 USDT
 virtual dan maksimal 12 panggilan AI/hari, 2.048 token output/call. Runner,
 market/event/budget, book fills dan overlay pilot sudah ditulis sebagai WIP;
@@ -28,13 +28,13 @@ config diekspor pada `c8a3439`, implementasi/image/CI P3 pada `1afbd80`.
 image GHCR dipasang di `/opt/trading-bot-catalyst`, default `report` exited 0.
 Metadata 35 container lama tetap identik; P2 tidak direstart. Ini bukan aktivasi
 runner/pilot atau izin uang asli. Source/digest, isolasi dan batas bukti:
-[handover VPS](handover-vps.md#rilis-komponen-p3--28-oktober) dan
+[handover VPS](agents/handover-vps.md#rilis-komponen-p3--28-oktober) dan
 [bukti rilis](testing/catalyst-release.json).
 
 **Handover terbaru — Spider, 28 Oktober:** user meluruskan alur menjadi daftar
 website → Spider → AI + data pasar menentukan buy/hold/sell → validator/paper,
 lalu meminta handover sebelum melanjutkan. **Mulai dari
-[handover Spider](catalyst-spider-handover.md).** CLI collect sudah memakai Spider;
+[handover Spider](agents/catalyst-spider-handover.md).** CLI collect sudah memakai Spider;
 failure ekstraksi, cache/arsip dan proxy ditutup dengan tes fixture lokal.
 Image khusus berhasil dibangun/smoke lokal; binary 2.53.9 memerlukan patch
 flush stdout (versi 2.53.9-p3.1) agar JSON halaman terakhir tidak hilang.
@@ -71,7 +71,7 @@ mengklaim checkout terbaru sudah lulus tes lama.
   `internal/catalyst`/`cmd/catalyst` menambah collector berarsip, adapter chat-completions,
   validator, strategi paper dan replay menggunakan managed/Sim. Penundaan AI awal
   digantikan izin evaluasi OmniRoute pada 26 Oktober; hasil terbaru ada di atas.
-  [Kontrak](catalyst-runtime.md), [hasil lokal](testing/plan-3-local.md) dan
+  [Kontrak](agents/catalyst-runtime.md), [hasil lokal](testing/plan-3-local.md) dan
   [tabel progres](plan-3.md#checkpoint-development-23-oktober) memisahkan fixture
   dari penerimaan pilot. Gate verifikasi event/book nyata, runner, durability,
   UI/Telegram dan operasi belum selesai; jangan mencentang seluruh fase.
@@ -83,7 +83,7 @@ mengklaim checkout terbaru sudah lulus tes lama.
   gerbang kapasitas/API dan temuan keselamatan terkait tetap berlaku.
 - **Checkpoint operasi terbaru dari dokumen VPS, 23 Oktober 20.52 WIB:**
   runtime `9c18962`, perbaikan notifikasi `afdab52`, image digest/source serta
-  bukti di [handover VPS](handover-vps.md#rilis-notifikasi-transaksi--23-oktober-2026)
+  bukti di [handover VPS](agents/handover-vps.md#rilis-notifikasi-transaksi--23-oktober-2026)
   dan [rilis notifikasi](testing/telegram-notification-release.json).
   Snapshot mencatat enam instance/18 binding, kas 746,92125354748169 USDT,
   22 eksekusi, tanpa posisi/pending/halt/attention. Ini checkpoint historis,
@@ -134,7 +134,7 @@ mengklaim checkout terbaru sudah lulus tes lama.
   dibandingkan/disinkronisasi. Sebanyak 32 contoh diterima API (11 dari VPS
   sebelum arahan, 21 sisanya dari lokal; satu duplikat saat peralihan mungkin).
   Izin lokal khusus pesan demo, bukan `bot run`/trial. Prosedur/ekspor contoh:
-  [runtime managed](managed-runtime.md#uji-format-telegram-dari-lokal).
+  [runtime managed](agents/managed-runtime.md#uji-format-telegram-dari-lokal).
 
 ## Lanjutkan dari sini
 
@@ -142,18 +142,18 @@ mengklaim checkout terbaru sudah lulus tes lama.
    yang belum di-commit. Jangan commit/push tanpa permintaan user.
    User sudah mengizinkan commit dan push/deploy untuk trial ini; perubahan
    strategi/modal atau deployment berikutnya tetap harus mengikuti cakupan izin.
-2. Baca [handover Spider](catalyst-spider-handover.md), [Plan 3](plan-3.md) dan
+2. Baca [handover Spider](agents/catalyst-spider-handover.md), [Plan 3](plan-3.md) dan
    runtime katalis. Verifikasi egress adversarial/kontrak situs Spider, lalu kontrak sumber/event,
    verifikasi tepercaya serta adapter pasar/runner terisolasi. Setup OmniRoute
    dan evaluasi sintetis selesai; combo/failover dan shadow prospektif masih terbuka.
    P3-R/P3-O tetap untuk pembanding/operasi bila diperlukan. Bekukan policy
    pilot dan evaluasi sebelum aktivasi, tanpa mengubah eksperimen P2.
 3. Saat user kembali, review trial aktif dari T0 tersebut dan bandingkan bukti
-   VPS/Telegram dengan [handover VPS](handover-vps.md). Restart bersama lama
+   VPS/Telegram dengan [handover VPS](agents/handover-vps.md). Restart bersama lama
    terbukti berkaitan penghentian service Docker, bukan reboot host; pemicunya
    belum ditelusuri. Jangan restart Docker untuk proyek bot.
 4. Jangan mengaktifkan ulang trial ETH lama atau mengubah parameter trial aktif.
-   Trial berikutnya memakai ledger/DB baru dan prosedur [deployment](deployment.md).
+   Trial berikutnya memakai ledger/DB baru dan prosedur [deployment](agents/deployment.md).
 
 ## Batas kerja
 
@@ -185,7 +185,7 @@ mengklaim checkout terbaru sudah lulus tes lama.
 - Binding baru/edit perlu restart untuk feed/indikator; buat/clone mulai paused
   tanpa modal. Stop proses mempertahankan order/posisi, berbeda dari finish.
 - Komisi memakai trade asli, termasuk aset base/BNB. Dust tidak boleh dihapus
-  untuk memalsukan status flat. Recovery lengkap: [runtime](managed-runtime.md).
+  untuk memalsukan status flat. Recovery lengkap: [runtime](agents/managed-runtime.md).
 
 ## Bukti dan keterbatasan
 

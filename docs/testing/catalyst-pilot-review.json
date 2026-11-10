@@ -1,0 +1,379 @@
+{
+  "captured_at": "2026-10-29T14:14:09.167192+00:00",
+  "review_kind": "Preliminary read-only observation before day-one scheduled review at 2026-10-29 22:53 WIB",
+  "pilot_t0": "2026-10-28T15:53:00Z",
+  "ledger_started_at": "2026-10-28T15:53:13.569901322Z",
+  "capital_usdt": "1000",
+  "instances": {
+    "research": {
+      "Cash": "1000",
+      "Funded": "1000",
+      "Status": "running",
+      "Halted": false
+    }
+  },
+  "nonzero_holdings": 0,
+  "pending_events": 0,
+  "nonterminal_orders": 0,
+  "hot_execution_count": 0,
+  "attention": "",
+  "halted": false,
+  "status": {
+    "StartedAt": "2026-10-28T16:32:25.511539894Z",
+    "TickAt": "2026-10-29T14:14:08.551633363Z",
+    "ResearchAt": "2026-10-29T14:02:44.419598277Z",
+    "Prices": {
+      "DOGEUSDT": "2026-10-29T14:14:07.779717612Z",
+      "ETHUSDT": "2026-10-29T14:14:07.552041358Z",
+      "SOLUSDT": "2026-10-29T14:14:07.665424981Z"
+    },
+    "SourceGaps": null,
+    "DecisionID": "83431ba065efa7c0279086b0def3cdc5b446123e6df9e8af0f67b669669a3ecd",
+    "Action": "WATCH",
+    "Symbol": "",
+    "Reason": "No Events are supplied, so there is no exact event key, schedule, or literal primary-source date to support an entry. There are no existing positions to hold or exit. Watch for verified, dated primary evidence; do not treat old development updates or an already-live product as a future catalyst.",
+    "Error": "invalid action, symbol or reason"
+  },
+  "report": {
+    "ShadowOnly": true,
+    "PolicyHash": "b11fc4a1b144dd71c41dc1ffdf0a9f3e85edbd63b91bb1ec3f5d55899aa85f12",
+    "Sources": [
+      {
+        "source_id": "ethereum-blog",
+        "at": "2026-10-29T14:02:25.552173358Z",
+        "evidence_id": "c4a87992743cddc376d984f9dc8d9eb37db54496271a8444bfec044e45b0d582",
+        "status": "ok",
+        "http_status": 200
+      },
+      {
+        "source_id": "anza-blog",
+        "at": "2026-10-29T14:02:31.047459306Z",
+        "evidence_id": "ccde8719829e8ad33fcb646c9078749ccf29bfc37c34e9e932b26ee2d93a1cf3",
+        "status": "ok",
+        "http_status": 200
+      },
+      {
+        "source_id": "dogecoin-blog",
+        "at": "2026-10-29T14:02:37.016017595Z",
+        "evidence_id": "836b2d75f3bead6b5b13a16785447651f2dfc24d277b5ee797c9b3a97d744c77",
+        "status": "ok",
+        "http_status": 200
+      }
+    ],
+    "Reviews": [
+      {
+        "ID": "39248f237e23d1048134109efe1e9da5137b881b40afe3c2c5cdbcb7cb15a735",
+        "Action": "WATCH",
+        "Symbol": "DOGEUSDT",
+        "Reason": "No verified upcoming event is supplied: Events is null. The evidence contains older Dogecoin development information, an already-live Ethereum product, and a dated Solana blog item, but none supports a future event with an exact event key and schedule. No position is open. Market snapshots show substantial quote volume for ETHUSDT and SOLUSDT and lower volume for DOGEUSDT, but liquidity does not remedy the missing catalyst or provide executable prices.",
+        "Error": "citation source outside policy",
+        "RequestedModel": "cx/gpt-6-luna-low",
+        "ServedModel": "gpt-6-luna",
+        "At": "2026-10-28T15:53:15.079668012Z",
+        "ExpiresAt": "2026-10-28T15:58:15.079668012Z",
+        "Valid": false,
+        "LatencyMS": 5069,
+        "InputTokens": 10058,
+        "OutputTokens": 436
+      },
+      {
+        "ID": "5865db917c368a4a17376cc260713479c18134b94d1997afd55714d7f32d6918",
+        "Action": "WATCH",
+        "Symbol": "DOGEUSDT",
+        "Reason": "No Events are supplied, so no event with an exact key, type, symbol, timestamp, and literal date can be selected for entry. No position is reported. Do not infer a future event from an old blog post, an approximate release estimate, or a product already described as live.",
+        "Error": "",
+        "RequestedModel": "cx/gpt-6-luna-low",
+        "ServedModel": "gpt-6-luna",
+        "At": "2026-10-28T18:02:27.986336783Z",
+        "ExpiresAt": "2026-10-28T18:07:27.986336783Z",
+        "Valid": true,
+        "LatencyMS": 6135,
+        "InputTokens": 10059,
+        "OutputTokens": 399
+      },
+      {
+        "ID": "cb553b8093451be6b7263f7b0bff5312c515c2518749f7425e999c685a80cde5",
+        "Action": "WATCH",
+        "Symbol": "DOGEUSDT",
+        "Reason": "No qualifying future event is supplied in Events, which is null. DOGE's cited release estimate is imprecise and outside the 14-day horizon from the review time; Ethereum's zkAPI is already live, while the Solana evidence is a dated guide, not an upcoming catalyst. No existing positions are provided. Market snapshots show substantial quoted volume for ETHUSDT and SOLUSDT and lower volume for DOGEUSDT, but liquidity does not resolve the lack of a verified event.",
+        "Error": "",
+        "RequestedModel": "cx/gpt-6-luna-low",
+        "ServedModel": "gpt-6-luna",
+        "At": "2026-10-29T00:02:45.198058609Z",
+        "ExpiresAt": "2026-10-29T00:07:45.198058609Z",
+        "Valid": true,
+        "LatencyMS": 4052,
+        "InputTokens": 10058,
+        "OutputTokens": 438
+      },
+      {
+        "ID": "b4588d989d43c0caab8c03382d3690992c89975ef7ef8ba1dba936323d5eebef",
+        "Action": "WATCH",
+        "Symbol": "DOGEUSDT",
+        "Reason": "No Events are supplied, and the available primary-source material does not verify a future event with a literal event date. The Dogecoin post is historical and says libdogecoin 0.1.3 was expected within the next month or so; that is not a confirmed schedule. Market snapshots show trading liquidity, but market availability alone does not establish a catalyst. No position is supplied.",
+        "Error": "",
+        "RequestedModel": "cx/gpt-6-luna-low",
+        "ServedModel": "gpt-6-luna",
+        "At": "2026-10-29T06:02:46.751543004Z",
+        "ExpiresAt": "2026-10-29T06:07:46.751543004Z",
+        "Valid": true,
+        "LatencyMS": 4072,
+        "InputTokens": 10059,
+        "OutputTokens": 374
+      },
+      {
+        "ID": "83431ba065efa7c0279086b0def3cdc5b446123e6df9e8af0f67b669669a3ecd",
+        "Action": "WATCH",
+        "Symbol": "",
+        "Reason": "No Events are supplied, so there is no exact event key, schedule, or literal primary-source date to support an entry. There are no existing positions to hold or exit. Watch for verified, dated primary evidence; do not treat old development updates or an already-live product as a future catalyst.",
+        "Error": "invalid action, symbol or reason",
+        "RequestedModel": "cx/gpt-6-luna-low",
+        "ServedModel": "gpt-6-luna",
+        "At": "2026-10-29T12:02:40.44853133Z",
+        "ExpiresAt": "2026-10-29T12:07:40.44853133Z",
+        "Valid": false,
+        "LatencyMS": 5009,
+        "InputTokens": 10058,
+        "OutputTokens": 408
+      }
+    ],
+    "Documents": [
+      {
+        "SourceID": "ethereum-blog",
+        "EvidenceID": "c4a87992743cddc376d984f9dc8d9eb37db54496271a8444bfec044e45b0d582",
+        "ID": "48b2bdcac983d21112ba4b8e33536cd264691e15356445d1b9ba6d21ba92c5bf",
+        "Revision": "d67a604aa6fc44f3b7beae9e110bcc3210742f68f2a37ce6b8ba2ddbb8033ac1",
+        "URL": "https://blog.ethereum.org/2026/10/01/introducing-zkapi",
+        "Kind": "page",
+        "Title": "Introducing zkAPI: private usage credits for any API | Ethereum Foundation Blog",
+        "PublishedText": "2026-10-01T00:00:00+00:00",
+        "UpdatedText": "",
+        "FirstSeenAt": "2026-10-28T15:52:57.403285143Z"
+      },
+      {
+        "SourceID": "ethereum-blog",
+        "EvidenceID": "c4a87992743cddc376d984f9dc8d9eb37db54496271a8444bfec044e45b0d582",
+        "ID": "49ae0e96efa64897d1f9fbff1ec02b994cc2f1528c90c35ca4197109436cf5ea",
+        "Revision": "92ec82bee63b015671ed9830f0eb98c608b6f1b3759fdf1ba7cad70cb681623f",
+        "URL": "https://blog.ethereum.org/2026/10/05/transaction-assertions",
+        "Kind": "page",
+        "Title": "How native transaction assertions could enforce a transaction's final outcome | Ethereum Foundation Blog",
+        "PublishedText": "2026-10-05T00:00:00+00:00",
+        "UpdatedText": "",
+        "FirstSeenAt": "2026-10-28T15:52:57.403285143Z"
+      },
+      {
+        "SourceID": "ethereum-blog",
+        "EvidenceID": "c4a87992743cddc376d984f9dc8d9eb37db54496271a8444bfec044e45b0d582",
+        "ID": "3d68d934ca4e0f68fd609fa1566d674c3f5f7fe66e84659cc3fb43105d3c78a7",
+        "Revision": "641ee19c4f0d2ec68df9b85d4e2494bd4f126b9fe1648100dcfe15af138cdf30",
+        "URL": "https://blog.ethereum.org/2026/10/16/glamsterdam-hoodi-announcement",
+        "Kind": "page",
+        "Title": "Glamsterdam Hoodi Testnet Announcement | Ethereum Foundation Blog",
+        "PublishedText": "2026-10-16T00:00:00+00:00",
+        "UpdatedText": "",
+        "FirstSeenAt": "2026-10-28T15:52:57.403285143Z"
+      },
+      {
+        "SourceID": "ethereum-blog",
+        "EvidenceID": "c4a87992743cddc376d984f9dc8d9eb37db54496271a8444bfec044e45b0d582",
+        "ID": "51da1c44804ad515ae0bcec05c318e475d6c2254311859d5362cccdea8e5fe07",
+        "Revision": "9229d11e17494bdd52a9c0abaf8de22c6d40588d210bb9464c2da333ce2e362c",
+        "URL": "https://blog.ethereum.org/2026/10/22/glamsterdam-hoodi-delay",
+        "Kind": "page",
+        "Title": "Glamsterdam on Hoodi Postponed | Ethereum Foundation Blog",
+        "PublishedText": "2026-10-22T00:00:00+00:00",
+        "UpdatedText": "",
+        "FirstSeenAt": "2026-10-28T15:52:57.403285143Z"
+      },
+      {
+        "SourceID": "ethereum-blog",
+        "EvidenceID": "c4a87992743cddc376d984f9dc8d9eb37db54496271a8444bfec044e45b0d582",
+        "ID": "d6f8e8d0975243cee60281095ac1482fb502717e277b89d9f3a16f764706c3a4",
+        "Revision": "7da565c7d6744c5f542c57d5af2bea5e73831c502f3c118b6ede26f2ad407aa6",
+        "URL": "https://blog.ethereum.org/en",
+        "Kind": "page",
+        "Title": "Home | Ethereum Foundation Blog",
+        "PublishedText": "2026-10-22T00:00:00+00:00",
+        "UpdatedText": "",
+        "FirstSeenAt": "2026-10-28T15:52:57.403285143Z"
+      },
+      {
+        "SourceID": "dogecoin-blog",
+        "EvidenceID": "836b2d75f3bead6b5b13a16785447651f2dfc24d277b5ee797c9b3a97d744c77",
+        "ID": "c2422fab69cabe3b545a350fbb62d40b3d5ab7165662a3483fa6ae74baa40508",
+        "Revision": "ef876e6b3d1794aa123beefd67839c7ebdda7e06fad8da15481a05a563e8abaf",
+        "URL": "https://foundation.dogecoin.com/blog/",
+        "Kind": "page",
+        "Title": "Blogs - Dogecoin Foundation",
+        "PublishedText": "",
+        "UpdatedText": "",
+        "FirstSeenAt": "2026-10-28T14:10:39.766581855Z"
+      },
+      {
+        "SourceID": "dogecoin-blog",
+        "EvidenceID": "836b2d75f3bead6b5b13a16785447651f2dfc24d277b5ee797c9b3a97d744c77",
+        "ID": "fb25fdd8123bb783ef884399070b902edef03dceacbe650da5d5e3a535458737",
+        "Revision": "0d67f90804ae9079814656133654fab476a5d2e55bb99bd3420cfdc33680265a",
+        "URL": "https://foundation.dogecoin.com/blog/2023-09-27-devblog/",
+        "Kind": "page",
+        "Title": "Development Blog 27th September 2023 - Dogecoin Foundation",
+        "PublishedText": "2023-09-27 00:00:00 +0000 UTC",
+        "UpdatedText": "2023-09-27T00:00:00+00:00",
+        "FirstSeenAt": "2026-10-28T15:53:11.344944614Z"
+      },
+      {
+        "SourceID": "dogecoin-blog",
+        "EvidenceID": "836b2d75f3bead6b5b13a16785447651f2dfc24d277b5ee797c9b3a97d744c77",
+        "ID": "5986a46ece1622b2c20177d4522176e8b708010e75b029677254b62f0659eb22",
+        "Revision": "52e636596a303f92178331f9100e3b6f8f55da49c8393eb2f5cc59316e6a7cdb",
+        "URL": "https://foundation.dogecoin.com/blog/2024-02-09-devblog/",
+        "Kind": "page",
+        "Title": "Development Blog - February 2024 - Dogecoin Foundation",
+        "PublishedText": "2024-02-08 00:00:00 +0000 UTC",
+        "UpdatedText": "2024-02-08T00:00:00+00:00",
+        "FirstSeenAt": "2026-10-28T14:10:39.766581855Z"
+      },
+      {
+        "SourceID": "dogecoin-blog",
+        "EvidenceID": "836b2d75f3bead6b5b13a16785447651f2dfc24d277b5ee797c9b3a97d744c77",
+        "ID": "63d67320c13f04a04ba7284cec900d0bea5e0276b1d115d5072051a90fef62a9",
+        "Revision": "f1980576e8443a378841d9a34a89077513c1ec70a22b99b4533d7d881fe8b663",
+        "URL": "https://foundation.dogecoin.com/blog/2024-05-24-kabosu-obituary/",
+        "Kind": "page",
+        "Title": "We Mourn The Passing Of Kabosu, The Beloved Shiba Inu Who Inspired The Doge Meme And Dogecoin Cryptocurrency. - Dogecoin Foundation",
+        "PublishedText": "2024-05-23 00:00:00 +0000 UTC",
+        "UpdatedText": "2024-05-23T00:00:00+00:00",
+        "FirstSeenAt": "2026-10-28T14:10:39.766581855Z"
+      },
+      {
+        "SourceID": "dogecoin-blog",
+        "EvidenceID": "836b2d75f3bead6b5b13a16785447651f2dfc24d277b5ee797c9b3a97d744c77",
+        "ID": "0b12da9ae56ef045b97b37518149e594baa484fbe9533d9826de173a18c8c9f8",
+        "Revision": "f756423faa8df42761d1a01a0d6e27b20df77788dbbea1b293532a707a33f684",
+        "URL": "https://foundation.dogecoin.com/blog/2025-04-10-devblog/",
+        "Kind": "page",
+        "Title": "Development Blog - April 2025 - Dogecoin Foundation",
+        "PublishedText": "2025-04-10 00:00:00 +0000 UTC",
+        "UpdatedText": "2025-04-10T00:00:00+00:00",
+        "FirstSeenAt": "2026-10-28T15:53:11.344944614Z"
+      },
+      {
+        "SourceID": "anza-blog",
+        "EvidenceID": "ccde8719829e8ad33fcb646c9078749ccf29bfc37c34e9e932b26ee2d93a1cf3",
+        "ID": "a1935f278fa3cfda0e16f32cea7a0c554a28412a4b12ddb0670f4e854b30697d",
+        "Revision": "ca313e2ee319b3579a5daec88519e6581a55f876b63ddc7db1dabbdb026578d1",
+        "URL": "https://www.anza.xyz/blog",
+        "Kind": "page",
+        "Title": "Blog | Anza",
+        "PublishedText": "2026-09-16T00:00:00.000Z",
+        "UpdatedText": "",
+        "FirstSeenAt": "2026-10-28T15:53:03.761649355Z"
+      },
+      {
+        "SourceID": "anza-blog",
+        "EvidenceID": "ccde8719829e8ad33fcb646c9078749ccf29bfc37c34e9e932b26ee2d93a1cf3",
+        "ID": "95a019b986087a6964d22be7e159e5595f8a7ff3e27e94d1c810da8654f8551d",
+        "Revision": "4c712e02582366da08d89ceb085f73f7827dd4bcbf2de776548d9cb0ff2a8cce",
+        "URL": "https://www.anza.xyz/blog/kit-v7-introducing-react-hooks-and-transaction-introspection",
+        "Kind": "page",
+        "Title": "Kit v7: Introducing React Hooks and Transaction Introspection - Anza",
+        "PublishedText": "2026-07-15T00:00:00.000Z",
+        "UpdatedText": "",
+        "FirstSeenAt": "2026-10-28T15:53:03.761649355Z"
+      },
+      {
+        "SourceID": "anza-blog",
+        "EvidenceID": "ccde8719829e8ad33fcb646c9078749ccf29bfc37c34e9e932b26ee2d93a1cf3",
+        "ID": "a9e063f9e2b5144572768f03eb93b638332d33d77b49e93f6b8278cfb104d9db",
+        "Revision": "dee07227e309fa65e0199da15ef0ffe824b86778173529b4f7f99fdbc4e55920",
+        "URL": "https://www.anza.xyz/blog/migrating-solana-programs-to-sbpfv3",
+        "Kind": "page",
+        "Title": "Migrating Solana Programs to SBPFv3 - Anza",
+        "PublishedText": "2026-09-16T00:00:00.000Z",
+        "UpdatedText": "",
+        "FirstSeenAt": "2026-10-28T15:53:03.761649355Z"
+      },
+      {
+        "SourceID": "anza-blog",
+        "EvidenceID": "ccde8719829e8ad33fcb646c9078749ccf29bfc37c34e9e932b26ee2d93a1cf3",
+        "ID": "b3ecaf891804aa5d510579019723cb991d0cd5df4a0c9e3503e506d92cc40b2b",
+        "Revision": "749550dbecb124d7bbefab3fb8e599e12d2e7fc38650cd99ad9ca8fc53eb7637",
+        "URL": "https://www.anza.xyz/blog/quantumglow-will-solana%E2%80%99s-performance-survive-quantum-computing",
+        "Kind": "page",
+        "Title": "Quantumglow: Will Solana\u2019s Performance Survive Quantum Computing? - Anza",
+        "PublishedText": "2026-07-30T00:00:00.000Z",
+        "UpdatedText": "",
+        "FirstSeenAt": "2026-10-28T15:53:03.761649355Z"
+      },
+      {
+        "SourceID": "anza-blog",
+        "EvidenceID": "ccde8719829e8ad33fcb646c9078749ccf29bfc37c34e9e932b26ee2d93a1cf3",
+        "ID": "8c73fc7552dfd52733c940557ef7cc2c81e058c48213c592164cd435cb511768",
+        "Revision": "7f22a5d20b29b16a3dc3a30655ee72409bfad4f9502540907d92ce567ec4f54b",
+        "URL": "https://www.anza.xyz/blog/wincode-bincode-compatible-rust-serializer",
+        "Kind": "page",
+        "Title": "The Design Behind wincode, a Faster Rust Serializer - Anza",
+        "PublishedText": "2026-09-03T00:00:00.000Z",
+        "UpdatedText": "",
+        "FirstSeenAt": "2026-10-28T15:53:03.761649355Z"
+      }
+    ],
+    "InputTokens": 50292,
+    "OutputTokens": 2055,
+    "InvalidReviews": 2,
+    "CostUSD": null
+  },
+  "ai_budget_slots_by_wib_day": {
+    "2026-10-28": 1,
+    "2026-10-29": 4
+  },
+  "current_wib_day": "2026-10-29",
+  "archive_file_count": 282,
+  "archive_file_bytes": 8598839,
+  "http_checks": {
+    "/": {
+      "unauthenticated_status": 401,
+      "authenticated_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "cache_control": "no-store",
+      "frame_options": "DENY",
+      "csp": "default-src 'none'; style-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+      "body_bytes": 19578,
+      "heading_present": true
+    },
+    "/research": {
+      "unauthenticated_status": 401,
+      "authenticated_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "cache_control": "no-store",
+      "frame_options": "DENY",
+      "csp": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+      "body_bytes": 4709,
+      "heading_present": true
+    },
+    "/research.json": {
+      "unauthenticated_status": 401,
+      "authenticated_status": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "frame_options": "DENY",
+      "csp": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+      "body_bytes": 13067
+    },
+    "/api/state?wallet=catalyst": {
+      "unauthenticated_status": 401,
+      "authenticated_status": 200,
+      "content_type": "application/json",
+      "cache_control": "no-store",
+      "frame_options": "DENY",
+      "csp": "default-src 'none'; style-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+      "body_bytes": 25569
+    }
+  },
+  "limitations": [
+    "No browser executable available locally; HTTP checks do not establish visual/mobile QA.",
+    "No inference, source crawl, order/control, restart or strategy change performed.",
+    "Report ShadowOnly is CLI report metadata, not a claim the worker is in shadow mode; paper ledger checked separately."
+  ]
+}

@@ -34,7 +34,7 @@ import (
 const envPrefix = "TB_"
 
 // SupportedExchanges have market data and trading adapters.
-var SupportedExchanges = []string{"binance", "bybit"}
+var SupportedExchanges = []string{"binance"}
 
 // Mode is the execution mode of the bot.
 type Mode string
@@ -90,8 +90,10 @@ type Config struct {
 type WebConfig struct {
 	Enabled bool   `koanf:"enabled"`
 	Listen  string `koanf:"listen"`
-	// Password enables HTTP basic auth (any user name); only via
-	// TB_WEB__PASSWORD. Required when listening beyond localhost.
+	// Password enables HTTP basic auth (any user name) on the legacy
+	// dashboard; only via TB_WEB__PASSWORD. Required there when listening
+	// beyond localhost. The managed dashboard (wallets) ignores it: its
+	// account is registered in the database.
 	Password Secret `koanf:"password"`
 }
 
@@ -172,6 +174,22 @@ type ExchangeConfig struct {
 	Testnet   bool   `koanf:"testnet"`
 	APIKey    Secret `koanf:"api_key"`
 	APISecret Secret `koanf:"api_secret"`
+	// Testnet credentials let testnet and live wallets run in one process.
+	TestnetAPIKey    Secret `koanf:"testnet_api_key"`
+	TestnetAPISecret Secret `koanf:"testnet_api_secret"`
+}
+
+// Credentials returns the API key pair for testnet or mainnet orders. The
+// legacy api_key pair counts as testnet only when testnet: true, so a mainnet
+// key is never sent to testnet or the other way round.
+func (e ExchangeConfig) Credentials(testnet bool) (key, secret Secret) {
+	switch {
+	case testnet && e.TestnetAPIKey != "":
+		return e.TestnetAPIKey, e.TestnetAPISecret
+	case testnet == e.Testnet:
+		return e.APIKey, e.APISecret
+	}
+	return "", ""
 }
 
 // MarketDataConfig selects which live candles the bot records.
@@ -198,7 +216,7 @@ type UniverseConfig struct {
 }
 
 // secretKeys may only be set through the environment.
-var secretKeys = []string{"api_key", "api_secret"}
+var secretKeys = []string{"api_key", "api_secret", "testnet_api_key", "testnet_api_secret"}
 
 // DefaultExcludeBases are assets that are pegged or wrapped, and therefore
 // not worth trading against USDT.
@@ -363,7 +381,7 @@ func (c *Config) Validate() error {
 		switch {
 		case err != nil:
 			errs = append(errs, fmt.Errorf("web.listen %q: %w", c.Web.Listen, err))
-		case c.Web.Password == "" && host != "localhost" && (ip == nil || !ip.IsLoopback()):
+		case len(c.Wallets) == 0 && c.Web.Password == "" && host != "localhost" && (ip == nil || !ip.IsLoopback()):
 			errs = append(errs, errors.New("web.listen is not localhost: set TB_WEB__PASSWORD"))
 		}
 	}
@@ -408,16 +426,29 @@ func (c *Config) Validate() error {
 	walletIDs, walletExchanges := map[string]bool{}, map[string]bool{}
 	for idx := range c.Wallets {
 		w := &c.Wallets[idx]
-		w.Mode = string(c.App.Mode)
+		if w.Mode == "" {
+			w.Mode = string(c.App.Mode)
+		}
 		if err := w.Validate(); err != nil {
 			errs = append(errs, fmt.Errorf("wallets[%d]: %w", idx, err))
 		}
-		if walletIDs[w.ID] || walletExchanges[w.Exchange] {
+		// One physical wallet per exchange and mode: paper, testnet and live may run together.
+		physical := w.Exchange + ":" + w.Mode
+		if walletIDs[w.ID] || walletExchanges[physical] {
 			errs = append(errs, errors.New("duplicate managed wallet id or physical exchange wallet"))
 		}
-		walletIDs[w.ID], walletExchanges[w.Exchange] = true, true
-		if !c.Exchanges[w.Exchange].Enabled {
+		walletIDs[w.ID], walletExchanges[physical] = true, true
+		ex := c.Exchanges[w.Exchange]
+		if !ex.Enabled {
 			errs = append(errs, fmt.Errorf("managed exchange %s is not enabled", w.Exchange))
+		}
+		if w.Mode == string(ModeLive) && (!c.App.AllowLive || !w.AllowLive) {
+			errs = append(errs, fmt.Errorf("wallets[%d] sends real orders: set app.allow_live and wallets[%d].allow_live to true", idx, idx))
+		}
+		if w.Mode == string(ModeTestnet) || w.Mode == string(ModeLive) {
+			if key, secret := ex.Credentials(w.Mode == string(ModeTestnet)); key == "" || secret == "" {
+				errs = append(errs, fmt.Errorf("wallets[%d]: exchanges.%s needs %s API credentials", idx, w.Exchange, w.Mode))
+			}
 		}
 	}
 	if len(c.Wallets) > 0 {
@@ -465,7 +496,8 @@ func (c *Config) Validate() error {
 	}
 
 	for name, ex := range c.Exchanges {
-		if !ex.Enabled {
+		// Managed wallets choose their mode and credentials themselves (checked above).
+		if !ex.Enabled || len(c.Wallets) > 0 {
 			continue
 		}
 		// Guard against sending real orders by accident, and against a

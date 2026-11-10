@@ -4,7 +4,7 @@
 
 Kode lokal P2-1 sampai P2-6 sudah diimplementasikan; pengujian/fixing P2-7/P2-8
 mencakup suite lama serta suite baru. **Tidak ada deployment atau trial baru.**
-Status ini bukan bukti live siap. [Handover](../handover-agent.md).
+Status ini bukan bukti live siap. [Handover](../agents/handover-agent.md).
 
 Pemeriksaan yang telah lulus dalam sesi ini:
 

@@ -55,7 +55,70 @@ type failRepo struct {
 
 type countedLoads struct {
 	Repository
-	loads int
+	loads       int
+	checkpoints int
+}
+
+func (r *countedLoads) Update(ctx context.Context, id, op string, payload any, fn func(*State) error) error {
+	if op == "engine_checkpoint" {
+		r.checkpoints++
+	}
+	return r.Repository.Update(ctx, id, op, payload, fn)
+}
+
+func TestUnchangedCheckpointSkipsTransactionButChecksLease(t *testing.T) {
+	mem, err := NewMemory(spec())
+	require.NoError(t, err)
+	repo := &countedLoads{Repository: mem}
+	rt, err := NewRuntime(t.Context(), repo, broker.NewSim(broker.SimConfig{Exchange: "sim"}), testInstruments(), d("0.001"), nil, nil)
+	require.NoError(t, err)
+	require.NoError(t, rt.Start(t.Context()))
+	require.NoError(t, rt.save(t.Context(), "a/one"))
+	repo.checkpoints = 0
+	require.NoError(t, rt.save(t.Context(), "a/one"))
+	require.Zero(t, repo.checkpoints, "an unchanged engine must not lock/re-encode the ledger")
+	rt.engines["a/one"].SetPaused(true)
+	require.NoError(t, rt.save(t.Context(), "a/one"))
+	require.Equal(t, 1, repo.checkpoints, "a changed engine must still be committed")
+	rt.CheckLease = func(context.Context) error { return errors.New("lease lost") }
+	require.ErrorContains(t, rt.save(t.Context(), "a/one"), "lease lost")
+}
+
+func TestRecordSkipsOtherSymbolsButStillClosesHaltedOwners(t *testing.T) {
+	sp := spec()
+	sp.Instances[1].Strategies[0].Symbols = []string{"BTCUSDT"}
+	mem, err := NewMemory(sp)
+	require.NoError(t, err)
+	ins := testInstruments()
+	btc := ins[0]
+	btc.Symbol, btc.Base = "BTCUSDT", "BTC"
+	ins = append(ins, btc)
+	rt, err := NewRuntime(t.Context(), mem, broker.NewSim(broker.SimConfig{Exchange: "sim"}), ins, d("0.001"), nil, nil)
+	require.NoError(t, err)
+	require.NoError(t, rt.Start(t.Context()))
+	before, err := mem.Load(t.Context())
+	require.NoError(t, err)
+	c := domain.Candle{Exchange: "sim", Market: domain.Spot, Symbol: "ETHUSDT", Timeframe: "1m", OpenTime: time.Now(), Close: d("100")}
+	require.NoError(t, rt.Record(t.Context(), c, false))
+	after, err := mem.Load(t.Context())
+	require.NoError(t, err)
+	require.Equal(t, before.Bindings["b/two"].Engine, after.Bindings["b/two"].Engine, "an unrelated price must not checkpoint this engine")
+	require.NoError(t, mem.Update(t.Context(), "holding", "fixture", nil, func(s *State) error {
+		s.Mark("BTCUSDT", d("100"))
+		s.Holding("b/two", "BTCUSDT").Quantity = d("1")
+		s.Holding("b/two", "BTCUSDT").Cost = d("100")
+		s.Instances["b"].Cash = d("300")
+		s.Instances["b"].Halted = true
+		return nil
+	}))
+	require.NoError(t, rt.Record(t.Context(), c, false))
+	after, err = mem.Load(t.Context())
+	require.NoError(t, err)
+	found := false
+	for _, o := range after.Orders {
+		found = found || (o.Owner == "b/two" && o.Order.Symbol == "BTCUSDT" && o.Order.Side == domain.Sell)
+	}
+	require.True(t, found, "a parent risk halt must close BTC even when the incoming price is ETH")
 }
 
 func (r *countedLoads) Load(ctx context.Context) (*State, error) {
@@ -83,6 +146,37 @@ func TestIdleDirectionalDrainSharesOneLedgerSnapshot(t *testing.T) {
 	require.Equal(t, 1, repo.loads, "idle checks must not reread the full ledger for each binding")
 	require.Equal(t, "450", rt.accounts["a/one"].Snapshot().Balance.String())
 	require.Equal(t, "450", rt.accounts["b/two"].Snapshot().Balance.String())
+}
+
+func TestIdleDirectionalTickDoesNotLoadOrCheckpointEachEngine(t *testing.T) {
+	sp := spec()
+	for i := range sp.Instances {
+		sp.Instances[i].Strategies[0].Name = "emacross"
+		sp.Instances[i].Strategies[0].Params = nil
+	}
+	mem, err := NewMemory(sp)
+	require.NoError(t, err)
+	repo := &countedLoads{Repository: mem}
+	rt, err := NewRuntime(t.Context(), repo, broker.NewSim(broker.SimConfig{Exchange: "sim"}), testInstruments(), d("0.001"), nil, nil)
+	require.NoError(t, err)
+	require.NoError(t, rt.Start(t.Context()))
+	repo.loads, repo.checkpoints = 0, 0
+	require.NoError(t, rt.Tick(t.Context(), time.Now()))
+	require.Equal(t, 2, repo.loads, "idle tick must not reread the ledger per directional binding")
+	require.Zero(t, repo.checkpoints)
+}
+
+func TestTimerDueRetainsScheduledWork(t *testing.T) {
+	mem, err := NewMemory(spec())
+	require.NoError(t, err)
+	rt, err := NewRuntime(t.Context(), mem, broker.NewSim(broker.SimConfig{Exchange: "sim"}), testInstruments(), d("0.001"), nil, nil)
+	require.NoError(t, err)
+	now := time.Now()
+	e := rt.engines["a/one"]
+	require.True(t, e.TimerDue(now))
+	e.Tick(t.Context(), now)
+	require.False(t, e.TimerDue(now.Add(time.Second)))
+	require.True(t, e.TimerDue(now.Add(time.Minute)))
 }
 
 func (f *failRepo) Update(ctx context.Context, id, op string, payload any, fn func(*State) error) error {

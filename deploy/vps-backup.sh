@@ -30,7 +30,7 @@ for db in "${databases[@]}"; do
   dc exec -T db pg_restore --list < "$work/$file" > "$work/archive-list-$db.txt"
   dumps+=("$file")
 done
-tar -czf "$work/config.tar.gz" .env.vps configs/config.yaml
+tar -czf "$work/config.tar.gz" .env.vps configs/config.yaml configs/managed.research-stage-three.yaml
 git rev-parse HEAD > "$work/source-commit.txt"
 (cd "$work" && sha256sum "${dumps[@]}" config.tar.gz > SHA256SUMS)
 chmod 600 "$work"/*

@@ -1,0 +1,43 @@
+{
+  "at": "2026-10-29T15:29:24.335Z",
+  "browser": "headless Chromium via temporary Playwright installation; GET requests only; no project dependency added",
+  "results": [
+    {
+      "path": "/research",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "status": 200,
+      "archivedReasonVisible": true,
+      "validationErrorVisible": true,
+      "title": "Riset P3",
+      "heading": "Riset katalis \u00b7 paper",
+      "documentWidth": 1440,
+      "viewportWidth": 1440,
+      "bodyText": "Riset katalis \u00b7 paper\n\nDana, posisi, proteksi dan kontrol\n\nHanya uang virtual. Batas AI 12 panggilan per hari WIB.\n\nOperasi\n\nTimer terakhir: 2026-10-29 15:29:21.41423002 +0000 UTC. Riset terakhir: 2026-10-29 15:23:41.612364939 +0000 UTC.\n\ni",
+      "screenshot": "docs/testing/catalyst-browser-release/research-1440.png"
+    },
+    {
+      "path": "/research",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": 200,
+      "archivedReasonVisible": true,
+      "validationErrorVisible": true,
+      "title": "Riset P3",
+      "heading": "Riset katalis \u00b7 paper",
+      "documentWidth": 390,
+      "viewportWidth": 390,
+      "bodyText": "Riset katalis \u00b7 paper\n\nDana, posisi, proteksi dan kontrol\n\nHanya uang virtual. Batas AI 12 panggilan per hari WIB.\n\nOperasi\n\nTimer terakhir: 2026-10-29 15:29:23.414225543 +0000 UTC. Riset terakhir: 2026-10-29 15:23:41.612364939 +0000 UTC.\n\n",
+      "screenshot": "docs/testing/catalyst-browser-release/research-390.png"
+    }
+  ],
+  "source": "d30b93b33307bad5a8736a6685b7e556aaee6040",
+  "limitations": [
+    "GET only; no form actions, Safari or physical device testing.",
+    "Old invalid WATCH remains visible and is correctly flagged; no new model inference was forced for this test."
+  ]
+}

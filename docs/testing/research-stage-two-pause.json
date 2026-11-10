@@ -1,0 +1,111 @@
+{
+  "recorded_at": "2026-10-29T14:10:30.903174+00:00",
+  "authorization": "User approved preceding plan on 2026-10-29, including pause entry of the two EMA 1m instances.",
+  "method": "Existing authenticated HTTP control with CSRF; pause only, no cancel/flatten/restart.",
+  "before": {
+    "started_at": "2026-10-22T12:58:45.651873337Z",
+    "capital": "747.83957456237531",
+    "config_hash": "af4c6a5018dfac769769c92cb7b88b95a0000e5fbfebf57e78e09117c2bb4b36",
+    "instances": {
+      "ema-base-1m": {
+        "Status": "running",
+        "Cash": "106.54853492910256",
+        "Funded": "110.79104808331486",
+        "Halted": false
+      },
+      "ema-trend-1m": {
+        "Status": "running",
+        "Cash": "107.59957014421984",
+        "Funded": "110.79104808331486",
+        "Halted": false
+      },
+      "ema-trend-4h": {
+        "Status": "running",
+        "Cash": "110.79104808331486",
+        "Funded": "110.79104808331486",
+        "Halted": false
+      },
+      "tren-2000k": {
+        "Status": "running",
+        "Cash": "110.79104808331486",
+        "Funded": "110.79104808331486",
+        "Halted": false
+      },
+      "tren-5000k": {
+        "Status": "running",
+        "Cash": "276.97762020828715",
+        "Funded": "276.97762020828715",
+        "Halted": false
+      },
+      "tren-500k": {
+        "Status": "running",
+        "Cash": "27.69776202082872",
+        "Funded": "27.69776202082872",
+        "Halted": false
+      }
+    },
+    "nonzero_holdings": [],
+    "pending_events": 0,
+    "nonterminal_orders": 0,
+    "executions": 210
+  },
+  "actions": [
+    {
+      "scope": "ema-base-1m",
+      "operation": "pause",
+      "at": "2026-10-29T14:10:28.244559+00:00"
+    },
+    {
+      "scope": "ema-trend-1m",
+      "operation": "pause",
+      "at": "2026-10-29T14:10:30.881938+00:00"
+    }
+  ],
+  "after": {
+    "started_at": "2026-10-22T12:58:45.651873337Z",
+    "capital": "747.83957456237531",
+    "config_hash": "af4c6a5018dfac769769c92cb7b88b95a0000e5fbfebf57e78e09117c2bb4b36",
+    "instances": {
+      "ema-base-1m": {
+        "Status": "paused",
+        "Cash": "106.54853492910256",
+        "Funded": "110.79104808331486",
+        "Halted": false
+      },
+      "ema-trend-1m": {
+        "Status": "paused",
+        "Cash": "107.59957014421984",
+        "Funded": "110.79104808331486",
+        "Halted": false
+      },
+      "ema-trend-4h": {
+        "Status": "running",
+        "Cash": "110.79104808331486",
+        "Funded": "110.79104808331486",
+        "Halted": false
+      },
+      "tren-2000k": {
+        "Status": "running",
+        "Cash": "110.79104808331486",
+        "Funded": "110.79104808331486",
+        "Halted": false
+      },
+      "tren-5000k": {
+        "Status": "running",
+        "Cash": "276.97762020828715",
+        "Funded": "276.97762020828715",
+        "Halted": false
+      },
+      "tren-500k": {
+        "Status": "running",
+        "Cash": "27.69776202082872",
+        "Funded": "27.69776202082872",
+        "Halted": false
+      }
+    },
+    "nonzero_holdings": [],
+    "pending_events": 0,
+    "nonterminal_orders": 0,
+    "executions": 210
+  }
+}

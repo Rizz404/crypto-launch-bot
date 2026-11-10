@@ -7,7 +7,6 @@ web: {enabled: true, listen: '127.0.0.1:18080'}
 telegram: {enabled: false}
 exchanges:
   binance: {enabled: true, testnet: false}
-  bybit: {enabled: false}
 marketdata:
   exchange: binance
   markets: [spot]

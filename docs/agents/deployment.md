@@ -1,0 +1,243 @@
+> **ARSIP — 29 Oktober 2026.** Dokumen ini merekam proyek Plan 1–3.
+> Roadmap aktif: [Plan 4](../plan-4.md); arahan terkini: [handover agent](../handover-agent.md).
+> Pernyataan aktif, izin, jadwal, parameter dan instruksi resume di bawah berlaku
+> pada checkpoint historisnya, bukan arahan melanjutkan pilot P3 atau transaksi.
+> Pengarsipan tidak menghentikan proses lama. Lihat [indeks arsip](../archive.md).
+
+---
+
+# Deployment
+
+**Server pindah 29 Oktober 23:48 WIB:** seluruh runtime di `plesk-newest` sebagai `ana-core`/`ana-scout` (`/opt/ana-*`, source `e74a9af`); `plesk` hanya rollback sampai ±5 November. Detail akses di [handover agent](handover-agent.md). [Laporan migrasi](../testing/server-migration.md).
+
+**Status 29 Oktober 2026:** P2 dan pilot AI P3 aktif pada binary `d30b93b`; helper/timer P3 terpasang. Dua EMA 1m P2 tetap pause. Lihat [rilis operasi](../testing/paper-operations-release.md) dan [handover VPS](handover-vps.md). Bagian rilis komponen Spider di bawah adalah riwayat sebelum pilot aktif, bukan status worker saat ini.
+
+Ekspansi enam kasus paper BTC/ETH memakai worker/DB terpisah dalam proyek paper; ikuti [protokol tahap tiga](../testing/research-stage-three.md) untuk konfigurasi, aktivasi, T0 dan review. Roadmap tetap [Plan 3](plan-3.md). Tidak ada izin transaksi dengan uang asli.
+
+## Penempatan komponen Spider
+
+**28 Oktober — izin terbaru:** user mengizinkan commit, push dan deploy.
+Rilis awal hanya memasang komponen CLI/image dan menjalankan default `report`
+sekali di proyek P3 terpisah. Runner/pilot trading belum tersedia/diterima.
+CI mempublikasikan `ghcr.io/rizz404/ana-scout:sha-<commit>` (sebelum 29 Oktober `trading-bot-catalyst`) setelah
+checks/integration/monitoring serta smoke/protokol khusus lulus. Rilis source
+`2998f38` dan pemasangan VPS **28 Oktober 21.00 WIB** sudah terverifikasi;
+report exited 0 dan 35 container lama tetap identik. Gunakan digest tetap pada
+[bukti rilis](../testing/catalyst-release.json); jangan mengganti runtime P2.
+
+User menetapkan Spider sebagai collector utama P3 pada 26 Oktober. Inspeksi
+kapasitas VPS hanya baca sudah dilakukan; rencana awal memakai project/path
+`ana-scout` / `/opt/ana-scout` yang terpisah dari P2.
+`Dockerfile.catalyst` dan `deploy/compose.catalyst.yml` disiapkan 28 Oktober,
+build/smoke image linux/amd64 serta binary/protokol fixture tanpa jaringan lulus.
+CI image/protokol, publikasi GHCR dan deployment komponen/report sudah lulus.
+Manifest serta batas resource diverifikasi pada container VPS yang exited 0.
+[Handover Spider](catalyst-spider-handover.md) memuat gate collector/pilot yang
+masih terbuka; komponen terpasang tidak mengaktifkan gate tersebut otomatis.
+
+Image khusus memakai crate CLI tepat `2.53.9`, checksum terverifikasi dan
+Cargo.lock upstream (`--locked`), features `headers,status_code` dan tanpa
+default Chrome/cloud. Patch `build/spider-cli.patch` mem-flush stdout sebelum
+shutdown agar halaman terakhir tidak hilang; binary mengaku versi `2.53.9-p3.1`
+dan collector menolak versi tanpa patch. Compose meminta
+`CATALYST_IMAGE` dari image **khusus P3** dengan digest GHCR tetap;
+image bot P2 tidak menyertakan Spider. Default adalah `report`, volume arsip
+sendiri, non-root/read-only, tanpa port/restart otomatis, 0,5 CPU/512 MiB/pids
+128. File ini tidak memasang worker/model/DB atau mengaktifkan pilot.
+Sebelum aktivasi collector/pilot: uji egress adversarial/situs publik, retensi,
+input pasar/event dan resource dengan beban sebenarnya. Dua halaman fixture
+berhasil dalam budget, tetapi belum membuktikan kapasitas situs/beban pilot.
+
+Checkout server berada di `/opt/ana-scout/repo`; image digest ada di
+`.env.catalyst-image` root mode 600. File itu hanya menyimpan referensi image,
+bukan key OmniRoute/trading. Bukti server ada di direktori `../evidence`.
+Untuk mengulang pemeriksaan report pada rilis yang sama:
+
+```sh
+cd /opt/ana-scout/repo
+docker compose --env-file .env.catalyst-image -f deploy/compose.catalyst.yml up --abort-on-container-exit --exit-code-from catalyst </dev/null
+```
+
+Status `exited 0` adalah hasil normal aksi sekali jalan, bukan worker mati.
+Rollback komponen awal: `docker compose --env-file .env.catalyst-image -f deploy/compose.catalyst.yml stop catalyst`;
+pertahankan volume arsip dan bukti, jangan `down -v`. Tidak ada DB P3 yang
+dimigrasikan atau perlu dikembalikan. Pembaruan berikutnya tetap mengunci
+checkout/source label/digest yang sama dan menyimpan bukti sebelum/sesudah.
+
+## Rilis dan persiapan
+
+- Source dari repo private `Rizz404/trading-bot`; image dari CI/GHCR dengan
+  pasangan commit dan digest tetap. Jangan salin source laptop atau pakai `latest`.
+- CI memeriksa format, modul, vet/lint, race test, build lima CLI, integrasi DB/
+  migrasi/restart, alert Prometheus dan smoke image. Publikasi hanya dari `main`;
+  PR membangun tanpa publikasi. Image bot mendukung amd64/arm64; image katalis
+  saat ini amd64 untuk VPS yang sudah diverifikasi.
+- Binary catalyst ditambahkan untuk development/report/replay; entrypoint bot
+  dan manifest P2 tidak berubah. Adapter AI/runner prospective belum diterima;
+  adanya binary di image bukan izin mengaktifkan worker baru.
+- Gunakan deploy key read-only dan akses GHCR `read:packages`. Jangan mencetak
+  token/password atau memasukkannya ke argumen perintah, repo maupun chat.
+- VPS Plesk bersama: scope bot P2 di `/opt/ana-core` dan P3 terpisah
+  di `/opt/ana-scout`. Jangan mengubah service/port proyek lain, Plesk, firewall,
+  DNS host atau Docker daemon; jangan restart host/Docker, prune atau `down -v`.
+- Periksa resource/disk, port loopback, subnet resolver dan baseline sebelum
+  perubahan. Jika baseline historis berbeda, simpan penyebab/selisih dan snapshot
+  baru untuk perbandingan sebelum/sesudah; jangan menghapus bukti lama.
+
+Instalasi pertama membuat `.env.vps` mode 600 dan `configs/config.yaml` dari
+contoh VPS. Jangan menimpanya saat update. Password DB, dashboard dan Grafana
+harus berbeda; password DB hex agar aman dalam URL. Direktori backup mode 700,
+file backup 600. Config bind-mount harus terbaca UID container 65532;
+trial saat ini memakai owner 65532:65532 mode 600. File env tetap root mode 600.
+Paper memakai harga publik tanpa key perdagangan.
+
+| Pengaturan | Penggunaan |
+|---|---|
+| `BOT_IMAGE` | `ghcr.io/rizz404/ana-core@sha256:<digest>` dari CI |
+| `BOT_DB_NAME` | Database trial yang tepat; trial baru menggunakan DB baru |
+| `TB_APP__MODE` | `paper` / `testnet`, harus cocok dengan config |
+| `TB_APP__ALLOW_LIVE` | Dipaksa `false` oleh manifest; live memerlukan P3-LIVE |
+| `TB_TELEGRAM__TOKEN` | Secret via environment; whitelist di YAML server |
+| `TB_WEB__PASSWORD` | Auth dashboard; jangan buka port publik |
+
+Pasang env melalui `deploy/vps-set-env.py` (stdin SSH), menerima `TB_*`,
+`BOT_IMAGE`, `BOT_DB_NAME`. Telegram hanya satu long-poller per token; `/help`
+menjelaskan kontrol. Kurs USDT/USD/IDR berasal CoinGecko dengan fallback
+Frankfurter, hanya tampilan dan bukan input trading.
+
+## Compose dan resource
+
+Semua perintah berikut dari `/opt/ana-core/repo` di VPS:
+
+```sh
+dc() { docker compose --env-file .env.vps -f deploy/compose.vps.yml "$@" </dev/null; }
+```
+
+DB 1 GiB/1 CPU; bot 512 MiB/1 CPU; Prometheus dan Grafana masing-masing 512 MiB/0,5 CPU;
+DNS 128 MiB/0,25 CPU. Batas aktual mengikuti manifest. Log 3 × 10 MB/container;
+Prometheus retensi 7 hari/1 GB tidak membatasi seluruh pemakaian disk/WAL.
+DB/monitoring memakai volume persisten. Port loopback: web 18080, metrics 19100,
+Prometheus 19090, Grafana 13000. DB tidak diekspos ke host. Hanya dashboard P2 yang
+dipublikasikan lewat proxy Plesk di `ana.nexlabs.cloud` ([detail](handover-vps.md#dashboard-publik-ananexlabscloud--1-november)); port host tetap loopback.
+
+CoreDNS melayani bot melalui DoT Cloudflare, network `172.31.253.0/29`, IP
+`172.31.253.2`; Docker tetap meresolusi service `db`. Pastikan subnet kosong pada
+instalasi baru. CoreDNS memakai root dengan hanya capability `NET_BIND_SERVICE`,
+read-only dan `no-new-privileges` karena file capability binary port 53.
+Periksa resolver sebelum mulai bot:
+
+```sh
+nsenter -t "$(docker inspect -f '{{.State.Pid}}' ana-core-dns-1)" -n dig +short @127.0.0.1 A stream.binance.com
+```
+
+Jawaban `139.255.196.196`/`182.23.79.195` berarti halaman blokir. Jangan
+mengganti resolver global sebagai perbaikan. Log WS mencatat tahap
+`dns|connect|tls|upgrade`.
+
+## Worker riset tambahan — 29 Oktober
+
+Enam kasus tahap tiga telah aktif; [T0, source/config/digest dan bukti](../testing/research-stage-three.md). Service `research` memakai profil terpisah dan DB tetap `tradingbot_research_stage_three`, sehingga tidak mengganti `BOT_DB_NAME` atau config wallet P2. Jangan mengikuti langkah menghentikan worker lama pada prosedur penggantian trial berikut untuk sekadar memeriksa worker tambahan ini. Backup paper mencakup kedua DB dan profil. Sejak Plan 3 ditutup (1 November 2026) service `research` dihentikan (container tetap ada, status exited); observer tidak lagi mewajibkannya kecuali `OBSERVE_RESEARCH=1`, lihat [Timer dan observasi](#timer-dan-observasi).
+
+## Update atau trial baru yang telah diizinkan
+
+1. Catat source/digest/config hash, modal/ledger, mode dan waktu; jalankan
+   `python3 deploy/vps-baseline-check.py`, simpan selisih yang sudah ada.
+2. Buat backup `bash deploy/vps-backup.sh`. Hentikan bot lama secara graceful;
+   finish lebih dahulu jika eksperimen harus menyelesaikan order/inventori.
+3. Fetch dari GitHub dan checkout commit yang cocok dengan digest CI.
+   Update env melalui helper, tanpa mencetak file rahasia; `dc pull`.
+4. Uji migrasi pada DB salinan. Trial baru memakai DB/wallet baru dengan modal
+   eksplisit, bukan resume saldo lama. Set `BOT_DB_NAME` sebelum migrasi target.
+5. Jalankan `dc run --interactive=false --rm --no-deps bot migrate status`,
+   lalu `migrate up` hanya pada target yang sudah diperiksa. Managed perlu
+   migrasi 4/5; jangan down pada DB berisi history/dana.
+6. Mulai infrastruktur yang diperlukan, cek DNS, baru mulai bot. Jangan
+   menjalankan worker legacy dan managed bersamaan pada wallet/mode yang sama.
+7. Periksa source/digest log, mode paper, saldo awal, indikator siap, feed 1m/4h,
+   order/proteksi, persistence, Telegram dan resource. Managed `/healthz` mengecek DB, lease dan freshness consumer;
+   legacy hanya DB. Health P3 membedakan runtime/feed dari kesiapan riset.
+   Bandingkan baseline/snapshot proyek lain sesudah perubahan.
+8. Catat waktu mulai aktual dan hasil pemeriksaan. Parameter dibekukan;
+   perubahan strategi mendapat versi eksperimen baru, tanpa promosi live otomatis.
+
+Config managed bootstrap diberi hash; mengedit YAML lama lalu resume bisa
+menghasilkan ketidakcocokan. Ikuti [runtime managed](managed-runtime.md).
+Testnet memerlukan key Spot Testnet dan config khusus; fee testnet nol bukan
+model biaya live. Futures memerlukan key/config Demo terpisah dan masih ditunda.
+
+## Backup, restore dan rollback
+
+`deploy/vps-backup.sh` menyimpan semua DB proyek beserta config privat, commit,
+daftar arsip dan checksum; mempertahankan tujuh backup sukses terbaru. Dump
+utama `database.dump`, trial lain `database-<nama>.dump`. Validasi daftar isi dan
+checksum tidak menggantikan restore drill. Backup satu server tidak melindungi
+kehilangan VPS; salinan luar server ditunda user sampai live.
+
+Restore hanya ke DB sementara yang diizinkan, tanpa menimpa trial. Untuk
+TimescaleDB: buat DB/extension, panggil `timescaledb_pre_restore()`, jalankan
+`pg_restore --exit-on-error`, lalu `timescaledb_post_restore()`. Bandingkan
+schema/jumlah baris/ledger dengan sumber, baru hapus DB sementara. Peringatan
+circular foreign-key pada katalog TimescaleDB pernah muncul; jangan menganggap
+restore lulus hanya karena warning tersebut dikenal. Bukti historis ada di
+[operasi VPS](../testing/vps-ops.json) dan [start P2-9](../testing/p2-9-vps-start.json).
+
+Rollback mengembalikan commit dan image digest yang cocok **setelah** memeriksa
+kompatibilitas schema, menghentikan pemilik wallet baru dan menyelesaikan order
+managed. Rollback image tidak mengembalikan DB. Jangan down migrasi 4/5 yang
+sudah menyimpan history. Referensi rilis lama ada di [handover VPS](handover-vps.md).
+
+## Timer dan observasi
+
+Unit `deploy/systemd/ana-core-*` hanya untuk proyek ini. Observe mencatat
+sampel tiap lima menit, retensi 14 hari; backup harian sekitar 03.15 UTC dan
+`Persistent` menangani jadwal yang terlewat. Unit membatasi CPU/memori.
+
+`vps-observe.py` memeriksa container, metrics, feed, monitoring dan disk; hasil
+bukan jaminan akuntansi/order benar dan tidak melakukan recovery otomatis.
+Periksa aturan gap/universe bila config berubah. Detail kesalahan ada di
+`journalctl -u ana-core-observe.service` atau service backup.
+
+Flag non-rahasia `OBSERVE_RESEARCH` di `.env.vps` (set lewat `vps-set-env.py`)
+menentukan apakah worker `research` diwajibkan. Default `0`: observer mengharapkan
+lima service (`bot`, `db`, `dns`, `prometheus`, `grafana`), mengabaikan container
+`research` yang exited dan tidak memeriksa health/DB riset. `1` mengembalikan
+pemeriksaan enam service dan dua worker. Target Prometheus `research:9100` sudah
+dilepas dari `prometheus.vps.yml`; pasang lagi (lihat komentar di file) bersama
+`OBSERVE_RESEARCH=1` bila worker itu dinyalakan kembali.
+
+Saat trial selesai, matikan observe timer; pertahankan backup serta DB sesuai
+kebutuhan. Status saat ini: observe dan backup timer active
+(observe aktif lagi 8 November 2026 dengan `OBSERVE_RESEARCH` default 0). Jangan mengaktifkan ulang timer secara membabi buta dari runbook lama.
+
+## Operasi pilot P3 terpisah
+
+Helper dan timer P3 **sudah dipasang pada 29 Oktober 22:23 WIB**, source
+`d30b93b`. Backup/restore flat, trigger observer dan QA punya bukti di
+[laporan rilis](../testing/paper-operations-release.md). Tidak perlu memasang atau
+menjalankan ulang hanya karena membaca runbook ini.
+
+Sesudah source rilis disetujui, diambil dari GitHub dan CI/GHCR lulus, helper
+berjalan dari `/opt/ana-scout/repo`:
+
+```sh
+bash deploy/catalyst-backup.sh
+python3 deploy/catalyst-observe.py
+```
+
+Backup menghentikan **hanya worker P3** sementara agar DB, tesis inbox, bukti
+dan kuota AI konsisten, lalu menyalakan container yang sama jika sebelumnya
+running. Tidak menyentuh P2. Dump/arsip/env privat dan checksum disimpan di
+`/opt/ana-scout/backups/`, 0700/0600; tidak menghapus backup lama
+otomatis atau menyalin secret keluar VPS. Restore hanya ke DB/direktori salinan.
+
+Empat unit `deploy/systemd/ana-scout-*` sudah dipasang untuk observe tiap
+lima menit dan backup 03:45 UTC + jitter maksimal sepuluh menit (10:45 WIB).
+Pemasangan berikutnya mengikuti izin rilis; tidak perlu restart Docker/host.
+Observer exit 1 menandai unit failed dengan nama masalah di journal, tanpa
+pesan Telegram atau recovery otomatis. Ia membedakan health runtime/feed
+dari sumber/riset/review invalid, budget, disk dan backup yang tertinggal.
+Kuota tepat 12/hari adalah batas normal, bukan pelanggaran.
+
+Backup luar server tetap ditunda sampai live; restore flat bukan bukti worker
+dapat pulih dengan posisi/order aktif. Ikuti jadwal review pilot dari T0 ledger,
+bukan waktu restart proses terakhir.

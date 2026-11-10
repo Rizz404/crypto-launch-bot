@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Compare the other projects on a shared server with evidence/baseline.json.
 
-Run on the VPS (as root) before and after every change to trading-bot-paper:
-  python3 /opt/trading-bot-paper/repo/deploy/vps-baseline-check.py
+Run on the VPS (as root) before and after every change to ana-core:
+  python3 /opt/ana-core/repo/deploy/vps-baseline-check.py
 Containers that restarted only because the host booted are counted separately,
 so a real change (missing, stopped, restarted, new) still stands out.
 Exit status 1 when something other than the host boot changed.
@@ -15,7 +15,7 @@ import sys
 
 BASELINE = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else \
     pathlib.Path(__file__).resolve().parent.parent.parent / "evidence" / "baseline.json"
-PROJECT = "trading-bot-paper"
+PROJECT = "ana-core"
 
 
 def run(args):

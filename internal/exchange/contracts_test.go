@@ -5,7 +5,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
@@ -20,7 +19,6 @@ import (
 	"github.com/rizz404/trading-bot/internal/domain"
 	"github.com/rizz404/trading-bot/internal/exchange"
 	"github.com/rizz404/trading-bot/internal/exchange/binance"
-	"github.com/rizz404/trading-bot/internal/exchange/bybit"
 )
 
 type roundTrip func(*http.Request) (*http.Response, error)
@@ -38,10 +36,8 @@ type adapter struct {
 
 func adapters(client *http.Client) []adapter {
 	b := binance.New(binance.Options{Testnet: true, HTTPClient: client})
-	y := bybit.New(bybit.Options{Testnet: true, HTTPClient: client})
 	return []adapter{
 		{"binance-testnet", "BTCUSDT", b, binance.NewTrader(b, "test-key", "test-secret", []domain.Market{domain.Futures})},
-		{"bybit-testnet", "BTCUSDT", y, bybit.NewTrader(y, "test-key", "test-secret", []domain.Market{domain.Futures})},
 	}
 }
 
@@ -52,12 +48,8 @@ func TestMarketDataContract(t *testing.T) {
 		switch r.URL.Path {
 		case "/fapi/v1/exchangeInfo":
 			return reply(`{"symbols":[{"symbol":"BTCUSDT","baseAsset":"BTC","quoteAsset":"USDT","status":"TRADING","contractType":"PERPETUAL","filters":[{"filterType":"PRICE_FILTER","tickSize":"0.1"},{"filterType":"LOT_SIZE","stepSize":"0.001","minQty":"0.001"}]}]}`), nil
-		case "/v5/market/instruments-info":
-			return reply(`{"retCode":0,"result":{"list":[{"symbol":"BTCUSDT","contractType":"LinearPerpetual","status":"Trading","baseCoin":"BTC","quoteCoin":"USDT","priceFilter":{"tickSize":"0.1"},"lotSizeFilter":{"qtyStep":"0.001","minOrderQty":"0.001","minNotionalValue":"5"}}]}}`), nil
 		case "/fapi/v1/klines":
 			return reply(`[[1767225600000,"100","110","90","105","2",1767229199999,"210",10,"1","105","0"],[1767229200000,"105","115","95","110","3",1767232799999,"330",12,"1","110","0"]]`), nil
-		case "/v5/market/kline":
-			return reply(`{"retCode":0,"result":{"list":[["1767229200000","105","115","95","110","3","330"],["1767225600000","100","110","90","105","2","210"]]}}`), nil
 		default:
 			t.Errorf("unexpected request %s", r.URL.Path)
 			return reply(`{}`), nil
@@ -89,12 +81,6 @@ func TestMarketDataContract(t *testing.T) {
 
 func TestLiveOrderContractAndSignatures(t *testing.T) {
 	client := &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
-		var raw []byte
-		if r.Body != nil {
-			var err error
-			raw, err = io.ReadAll(r.Body)
-			require.NoError(t, err)
-		}
 		if strings.Contains(r.URL.Host, "binance") {
 			q := r.URL.Query()
 			sig := q.Get("signature")
@@ -107,19 +93,6 @@ func TestLiveOrderContractAndSignatures(t *testing.T) {
 				assert.Equal(t, "MARKET", q.Get("type"))
 			}
 			return reply(`{"orderId":123,"status":"NEW"}`), nil
-		}
-		var body map[string]any
-		require.NoError(t, json.Unmarshal(raw, &body))
-		if strings.Contains(r.URL.Host, "bybit") {
-			assert.Equal(t, "test-key", r.Header.Get("X-BAPI-API-KEY"))
-			payload := r.Header.Get("X-BAPI-TIMESTAMP") + "test-key" + r.Header.Get("X-BAPI-RECV-WINDOW") + string(raw)
-			assert.Equal(t, signature(payload), r.Header.Get("X-BAPI-SIGN"))
-			assert.Equal(t, "tbtest123", body["orderLinkId"])
-			if strings.HasSuffix(r.URL.Path, "/create") {
-				assert.Equal(t, "0.02", body["qty"])
-				assert.Equal(t, "Market", body["orderType"])
-			}
-			return reply(`{"retCode":0,"result":{"orderId":"123"}}`), nil
 		}
 		t.Errorf("unexpected request %s", r.URL.Host)
 		return reply(`{}`), nil

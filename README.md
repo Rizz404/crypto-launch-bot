@@ -7,8 +7,15 @@ dan transaksi otomatis setelah validasi risiko.
 **Arah baru ditetapkan 29 Oktober 2026. [Plan 4](docs/plan-4.md) adalah
 satu-satunya roadmap aktif.** Discovery/verifikasi P4-2 sudah di-commit dan
 kode analisis/policy P4-3 serta journal/adapter paper sintetis P4-4 ditulis.
-Tes/build, integrasi nyata, evaluasi
-model baru dan pilot belum dijalankan.
+Lihat [checkpoint P4](docs/testing/plan-4-local.md) untuk hasil
+verifikasi terbaru; evaluasi model baru dan pilot belum dijalankan.
+
+Sejak 10 November repo `Rizz404/trading-bot` sudah di-merge ke sini:
+website trading (`/trade`, akun paper/testnet/live, order manual, login
+email + password), UI bersama `internal/ui`, stream Binance `internal/marketview`,
+perbaikan catalyst, dan penghapusan Bybit. Ringkasannya ada di
+[website trading](docs/trading-website.md); cara kerja dan kontrol di
+[panduan](docs/guide.md).
 
 ## Cakupan
 
@@ -38,6 +45,7 @@ program memvalidasi batas dan melaksanakan aksi yang diizinkan.
 | [Discovery/report](docs/presale-runtime.md) | CLI development, kontrak laporan dan batasnya |
 | [Analisis/policy](docs/presale-analysis.md) | Profil paper disepakati, AI, validator dan kuota |
 | [Simulasi paper](docs/presale-paper.md) | Replay fixture tiga jalur dan journal virtual terisolasi |
+| [Website trading](docs/trading-website.md) | Dashboard/trading web hasil merge trading-bot |
 | [Arsip](docs/archive.md) | Plan 1–3, runtime lama dan bukti historis |
 
 Kode collector, adapter AI, ledger, paper simulator, dashboard dan Telegram

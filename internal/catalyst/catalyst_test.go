@@ -157,6 +157,8 @@ func TestAnalystNoToolsAndDurableRequestDedup(t *testing.T) {
 		definition := schema["schema"].(map[string]any)
 		require.Equal(t, false, definition["additionalProperties"])
 		require.Contains(t, definition["required"], "hold_rationale")
+		properties := definition["properties"].(map[string]any)
+		require.Equal(t, float64(1), properties["symbol"].(map[string]any)["minLength"], "WATCH must still select a configured symbol")
 		raw, _ := json.Marshal(input.Review.Analysis)
 		envelope, _ := json.Marshal(map[string]any{"model": "served/model", "choices": []any{map[string]any{"finish_reason": "stop", "message": map[string]any{"content": string(raw)}}}, "usage": map[string]int{"prompt_tokens": 20, "completion_tokens": 10}})
 		return response(200, "application/json", string(envelope)), nil
@@ -362,7 +364,7 @@ func TestRobotsRulesAndCollectorPollingBudget(t *testing.T) {
 		{"User-agent: *\nDisallow: /\nAllow: /news", "/news/item", true},
 		{"User-agent: *\nDisallow: /news/*/hidden$", "/news/a/hidden", false},
 		{"User-agent: other\nDisallow: /", "/news", true},
-		{"User-agent: *\nDisallow: /\nUser-agent: trading-bot-catalyst-research\nAllow: /news", "/news", true},
+		{"User-agent: *\nDisallow: /\nUser-agent: ana-scout-research\nAllow: /news", "/news", true},
 	} {
 		require.Equal(t, row.allowed, robotsAllow(row.body, row.path), row.body)
 	}

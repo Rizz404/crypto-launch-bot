@@ -1,0 +1,45 @@
+{
+  "completed": 12,
+  "failed": 0,
+  "total_job_seconds": 77.353627333,
+  "summary": [
+    {
+      "candidate": "pullback4h",
+      "cost_profile": "standard",
+      "mean_independent_return_pct": 1.0871969415853406,
+      "closed_trades_total": 44,
+      "worst_case_drawdown_pct": 3.0862694128705037,
+      "positive_cases": 2
+    },
+    {
+      "candidate": "pullback4h",
+      "cost_profile": "stress",
+      "mean_independent_return_pct": 0.1594861334590821,
+      "closed_trades_total": 44,
+      "worst_case_drawdown_pct": 3.322733799886404,
+      "positive_cases": 2
+    },
+    {
+      "candidate": "breakout1d",
+      "cost_profile": "standard",
+      "mean_independent_return_pct": -0.17248720920315375,
+      "closed_trades_total": 9,
+      "worst_case_drawdown_pct": 2.093893080159811,
+      "positive_cases": 1
+    },
+    {
+      "candidate": "breakout1d",
+      "cost_profile": "stress",
+      "mean_independent_return_pct": -0.2592716704691263,
+      "closed_trades_total": 9,
+      "worst_case_drawdown_pct": 2.1296547844907256,
+      "positive_cases": 1
+    }
+  ],
+  "limitations": [
+    "Retrospective on a previously inspected year, not an untouched holdout.",
+    "Independent cases, not pooled portfolio return.",
+    "Conservative final return deducts estimated exit costs on remaining inventory; period drawdown metric is not recomputed after that adjustment.",
+    "No new trading instance or VPS configuration activated."
+  ]
+}

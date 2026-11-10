@@ -1,0 +1,45 @@
+# Plan 4 trading screen template: paper, testnet and live wallets in one process.
+# Only the paper wallet is enabled here. Secrets come from the environment:
+#   none for the web login: the first visit registers the account at /register with the setup code from the bot log
+#   testnet: TB_EXCHANGES__BINANCE__TESTNET_API_KEY / _SECRET
+#   live:    TB_EXCHANGES__BINANCE__API_KEY / _SECRET, plus app.allow_live and wallets[].allow_live
+app: {mode: paper, allow_live: false, log_level: info, log_format: text}
+database: {max_conns: 8}
+exchanges:
+  binance: {enabled: true, testnet: false}
+marketdata:
+  exchange: binance
+  markets: [spot]
+  symbols: [BTCUSDT, ETHUSDT, SOLUSDT]
+  timeframes: [1m, 15m, 1h, 4h]
+  initial_backfill: 300
+web: {enabled: true, listen: '127.0.0.1:18080'}
+metrics: {enabled: false}
+telegram: {enabled: false, notify_level: warn, daily_summary: false, fx: false}
+strategies: []
+wallets:
+  - id: paper
+    mode: paper
+    exchange: binance
+    quote: USDT
+    capital: '1000'
+    instances:
+      - id: main
+        name: Bot utama
+        allocation: '1000'
+        notify: warn
+        strategies:
+          - id: eth-trend
+            name: emacross
+            symbols: [ETHUSDT]
+            params: {timeframe: 1h, fast: 12, slow: 26, trend_ema: 100, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, exit_on_cross: true, allow_short: false}
+          # Operator orders from the trading screen share this instance's capital and risk limits.
+          - id: manual
+            name: manual
+            symbols: [BTCUSDT, ETHUSDT, SOLUSDT]
+  # - id: test
+  #   mode: testnet
+  #   exchange: binance
+  #   quote: USDT
+  #   capital: '100'
+  #   instances: [{id: main, name: Testnet, allocation: '100', strategies: [{id: manual, name: manual, symbols: [BTCUSDT, ETHUSDT]}]}]

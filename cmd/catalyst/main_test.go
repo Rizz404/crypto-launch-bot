@@ -55,7 +55,7 @@ func TestAnalyzeWithoutCredentialsAndReplayWithoutFixtureFailClosed(t *testing.T
 func TestDedicatedEnvAndProcessPrecedence(t *testing.T) {
 	// This test only constructs the adapter; it makes no HTTP request.
 	path := filepath.Join(t.TempDir(), ".env.catalyst")
-	require.NoError(t, os.WriteFile(path, []byte("TB_CATALYST_BASE_URL=https://route-gateway.fbe.co.id/v1\nTB_CATALYST_MODEL=fixture-model\nTB_CATALYST_API_KEY='fixture-key'\n"), 0600))
+	require.NoError(t, os.WriteFile(path, []byte("TB_CATALYST_BASE_URL=https://route-gateway.nexlabs.cloud/v1\nTB_CATALYST_MODEL=fixture-model\nTB_CATALYST_API_KEY='fixture-key'\n"), 0600))
 	for _, key := range []string{"TB_CATALYST_BASE_URL", "TB_CATALYST_MODEL", "TB_CATALYST_API_KEY"} {
 		value, present := os.LookupEnv(key)
 		t.Cleanup(func() {
@@ -69,7 +69,7 @@ func TestDedicatedEnvAndProcessPrecedence(t *testing.T) {
 	}
 	a, err := loadAnalyst(path)
 	require.NoError(t, err)
-	require.Equal(t, "https://route-gateway.fbe.co.id/v1", a.BaseURL)
+	require.Equal(t, "https://route-gateway.nexlabs.cloud/v1", a.BaseURL)
 	require.Equal(t, "fixture-model", a.Model)
 	t.Setenv("TB_CATALYST_MODEL", "process-model")
 	a, err = loadAnalyst(path)

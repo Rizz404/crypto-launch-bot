@@ -6,6 +6,15 @@ sesuai permintaan user. Lanjutan terbaru menulis analisis/policy P4-3 sesuai
 profil yang dipilih, lalu paper/simulasi P4-4; tes/build, evaluasi model baru,
 integrasi runtime dan pilot belum dijalankan. Mulai dari [indeks docs](readme.md).
 
+**Merge 10 November 2026:** `Rizz404/trading-bot` sampai `562c73e` (49 commit
+sesudah basis bersama `f6ffcd6`) di-merge atas permintaan user. Masuk: UI
+bersama, website trading `/trade` multi-mode, marketview Binance, strategi
+manual, login email/password, perbaikan catalyst (simbol nonempty, Telegram
+tanpa WATCH/REJECT), gateway nexlabs dan penghapusan Bybit. Plan 4 repo itu
+menjadi [website trading](trading-website.md) dengan label `TW-*`; dokumen
+detail repo itu ada di `agents/` ([handover trading-bot](agents/handover-agent.md)).
+Status VPS di sana checkpoint repo lain dan tidak diperiksa dari repo ini.
+
 ## Keputusan terbaru
 
 - Ubah arah repo ini; docs dan bukti lama diarsipkan di lokasi yang tetap.
@@ -21,7 +30,8 @@ integrasi runtime dan pilot belum dijalankan. Mulai dari [indeks docs](readme.md
   [kontrak P4-3](presale-analysis.md). Target otomatisasi bukan izin uang asli.
 - User menyatakan masih memakai token Telegram lama dan memilih persiapannya
   nanti. P4-1/P4-2 tidak membutuhkannya; jangan membaca/mengubah/mengirim token.
-- Folder kerja kini `D:\kodingan\personal\crypto-launch-bot`, remote Git kosong.
+- Folder kerja kini `D:\kodingan\personal\crypto-launch-bot`, remote
+  `Rizz404/crypto-launch-bot`.
   Commit docs/discovery dan checkpoint P4-3/P4-4 diminta user;
   gunakan `git log` untuk hash checkpoint terbaru. Tidak ada
   tidak ada push/deploy, perubahan DB atau runtime VPS.

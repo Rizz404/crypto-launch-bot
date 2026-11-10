@@ -4,11 +4,27 @@ PROMETHEUS_IMAGE ?= docker.io/prom/prometheus:v3.15.0
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 
-.PHONY: generate build test test-integration test-monitoring lint fmt up down logs migrate run image clean
+.PHONY: generate css build test test-integration test-monitoring lint fmt up down logs migrate run image clean
 
-# templ templates -> *_templ.go (committed)
+# shortcut: linux-x64 only; add the other platforms' asset names + sha256 when someone needs them.
+TAILWIND_VERSION := 4.3.3
+TAILWIND_SHA256 := dc61b3ac6b8c9ca874c0cc4c57b2409791a64c5540404ca5f5367360babc313a
+TAILWIND := bin/tools/tailwindcss
+
+$(TAILWIND):
+	mkdir -p $(dir $@)
+	curl -fsSL -o $@ https://github.com/tailwindlabs/tailwindcss/releases/download/v$(TAILWIND_VERSION)/tailwindcss-linux-x64
+	echo "$(TAILWIND_SHA256)  $@" | sha256sum -c -
+	chmod +x $@
+
+# Tailwind -> internal/ui/static/app.css (committed). Needs the templ output first.
+css: $(TAILWIND)
+	$(TAILWIND) -i internal/ui/input.css -o internal/ui/static/app.css --minify
+
+# templ templates -> *_templ.go and the Tailwind bundle (both committed)
 generate:
-	go tool templ generate -path internal/web/views
+	go tool templ generate -path internal
+	$(MAKE) css
 
 build:
 	go build -trimpath -ldflags "$(LDFLAGS)" -o bin/bot ./cmd/bot

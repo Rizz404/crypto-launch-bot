@@ -1,0 +1,1845 @@
+{
+  "subject": "User-authorized six prospective paper strategy cases; no live trading",
+  "activation": {
+    "started_at": "2026-10-29T16:14:15.536014+00:00",
+    "config_source": "e56d051fc6724036a6d9fa85188921aa132590fc",
+    "binary_source": "d30b93b33307bad5a8736a6685b7e556aaee6040",
+    "pre_activation_backup": "Backup completed: /opt/trading-bot-paper/repo/../backups/backup-20261029T161418Z",
+    "health": {
+      "status": 200,
+      "body": "ok\n"
+    },
+    "container": {
+      "id": "bcb97d16273518d74f3f2af57fe78bfeba62f5f830255deb884b94e72ba123f9",
+      "image": "sha256:fbf28da706e06aebf022e964e12ee1e29183eb948a5b6261dd7617b5a7f7665e",
+      "started_at": "2026-10-29T16:14:23.76927879Z",
+      "status": "running",
+      "source": "d30b93b33307bad5a8736a6685b7e556aaee6040",
+      "restarts": 0,
+      "oom_killed": false,
+      "image_reference": "ghcr.io/rizz404/trading-bot@sha256:fbf28da706e06aebf022e964e12ee1e29183eb948a5b6261dd7617b5a7f7665e",
+      "memory_limit": 536870912,
+      "nano_cpus": 500000000
+    },
+    "completed_at": "2026-10-29T16:14:27.180514+00:00"
+  },
+  "initial_check": {
+    "at": "2026-10-29T16:14:54.640579+00:00",
+    "dashboard_authenticated_status": 200,
+    "dashboard_unauthenticated_status": 401,
+    "research_health": {
+      "status": 200,
+      "body": "ok\n"
+    },
+    "p2_health": {
+      "status": 200,
+      "body": "ok\n"
+    },
+    "p3_health": {
+      "status": 200,
+      "body": "{\"runtime_feed\":\"ok\",\"research_ready_is_separate\":true}"
+    },
+    "config_sha256": "97ef11ff6c1ad7128047721ad64b02d3926b10db3dfd6172886731469a9561d0",
+    "database": {
+      "wallet_count": 1,
+      "series": [
+        {
+          "symbol": "BTCUSDT",
+          "timeframe": "15m",
+          "bars": 300,
+          "last_open": "2026-10-29T15:45:00+00:00"
+        },
+        {
+          "symbol": "BTCUSDT",
+          "timeframe": "1h",
+          "bars": 300,
+          "last_open": "2026-10-29T15:00:00+00:00"
+        },
+        {
+          "symbol": "BTCUSDT",
+          "timeframe": "1m",
+          "bars": 300,
+          "last_open": "2026-10-29T16:13:00+00:00"
+        },
+        {
+          "symbol": "BTCUSDT",
+          "timeframe": "4h",
+          "bars": 300,
+          "last_open": "2026-10-29T12:00:00+00:00"
+        },
+        {
+          "symbol": "ETHUSDT",
+          "timeframe": "15m",
+          "bars": 300,
+          "last_open": "2026-10-29T15:45:00+00:00"
+        },
+        {
+          "symbol": "ETHUSDT",
+          "timeframe": "1h",
+          "bars": 300,
+          "last_open": "2026-10-29T15:00:00+00:00"
+        },
+        {
+          "symbol": "ETHUSDT",
+          "timeframe": "1m",
+          "bars": 300,
+          "last_open": "2026-10-29T16:13:00+00:00"
+        },
+        {
+          "symbol": "ETHUSDT",
+          "timeframe": "4h",
+          "bars": 300,
+          "last_open": "2026-10-29T12:00:00+00:00"
+        }
+      ],
+      "runs": null,
+      "schema_version": 5
+    },
+    "prometheus_targets": [
+      {
+        "discoveredLabels": {
+          "__address__": "bot:9100",
+          "__always_scrape_classic_histograms__": "false",
+          "__convert_classic_histograms_to_nhcb__": "false",
+          "__metrics_path__": "/metrics",
+          "__scheme__": "http",
+          "__scrape_interval__": "15s",
+          "__scrape_native_histograms__": "false",
+          "__scrape_timeout__": "10s",
+          "instance": "container",
+          "job": "tradingbot"
+        },
+        "labels": {
+          "instance": "container",
+          "job": "tradingbot"
+        },
+        "scrapePool": "tradingbot",
+        "scrapeUrl": "http://bot:9100/metrics",
+        "globalUrl": "http://bot:9100/metrics",
+        "lastError": "",
+        "lastScrape": "2026-10-29T16:14:47.987496507Z",
+        "lastScrapeDuration": 0.002154633,
+        "health": "up",
+        "scrapeInterval": "15s",
+        "scrapeTimeout": "10s"
+      },
+      {
+        "discoveredLabels": {
+          "__address__": "research:9100",
+          "__always_scrape_classic_histograms__": "false",
+          "__convert_classic_histograms_to_nhcb__": "false",
+          "__metrics_path__": "/metrics",
+          "__scheme__": "http",
+          "__scrape_interval__": "15s",
+          "__scrape_native_histograms__": "false",
+          "__scrape_timeout__": "10s",
+          "instance": "research",
+          "job": "tradingbot"
+        },
+        "labels": {
+          "instance": "research",
+          "job": "tradingbot"
+        },
+        "scrapePool": "tradingbot",
+        "scrapeUrl": "http://research:9100/metrics",
+        "globalUrl": "http://research:9100/metrics",
+        "lastError": "",
+        "lastScrape": "2026-10-29T16:14:49.557060803Z",
+        "lastScrapeDuration": 0.001976064,
+        "health": "up",
+        "scrapeInterval": "15s",
+        "scrapeTimeout": "10s"
+      }
+    ],
+    "observer": {
+      "exit_code": 0,
+      "result": {
+        "time": "2026-10-29T16:14:54.920858+00:00",
+        "problems": []
+      }
+    },
+    "p3_observer": {
+      "exit_code": 1,
+      "result": {
+        "time": "2026-10-29T16:14:56.730608+00:00",
+        "problems": [
+          "research_error",
+          "latest_review_invalid"
+        ]
+      }
+    },
+    "p3_status": {
+      "StartedAt": "2026-10-29T15:23:22.386207101Z",
+      "TickAt": "2026-10-29T16:14:56.414224101Z",
+      "ResearchAt": "2026-10-29T16:08:28.739284567Z",
+      "Prices": {
+        "DOGEUSDT": "2026-10-29T16:14:54.614300428Z",
+        "ETHUSDT": "2026-10-29T16:14:56.414033283Z",
+        "SOLUSDT": "2026-10-29T16:14:54.513614141Z"
+      },
+      "SourceGaps": null,
+      "DecisionID": "83431ba065efa7c0279086b0def3cdc5b446123e6df9e8af0f67b669669a3ecd",
+      "Action": "WATCH",
+      "Symbol": "",
+      "Reason": "No Events are supplied, so there is no exact event key, schedule, or literal primary-source date to support an entry. There are no existing positions to hold or exit. Watch for verified, dated primary evidence; do not treat old development updates or an already-live product as a future catalyst.",
+      "Error": "invalid action, symbol or reason"
+    },
+    "p3_latest_review": {
+      "ID": "83431ba065efa7c0279086b0def3cdc5b446123e6df9e8af0f67b669669a3ecd",
+      "Action": "WATCH",
+      "Symbol": "",
+      "Reason": "No Events are supplied, so there is no exact event key, schedule, or literal primary-source date to support an entry. There are no existing positions to hold or exit. Watch for verified, dated primary evidence; do not treat old development updates or an already-live product as a future catalyst.",
+      "Error": "invalid action, symbol or reason",
+      "RequestedModel": "cx/gpt-6-luna-low",
+      "ServedModel": "gpt-6-luna",
+      "At": "2026-10-29T12:02:40.44853133Z",
+      "ExpiresAt": "2026-10-29T12:07:40.44853133Z",
+      "Valid": false,
+      "LatencyMS": 5009,
+      "InputTokens": 10058,
+      "OutputTokens": 408
+    },
+    "initial_ledger": {
+      "Runs": [
+        {
+          "ID": "e406d06f4487ecdb6afa20e22c65c1af",
+          "Mode": "paper",
+          "Status": "running",
+          "ConfigurationHash": "523dfb844b9ce72cb17b226d7d9843727121f670ea831554f6810e86dee98dc4",
+          "StartedAt": "2026-10-29T16:14:26.402915478Z",
+          "EndedAt": "0001-01-01T00:00:00Z",
+          "Configuration": {
+            "wallet": {
+              "ID": "research-stage-three",
+              "Mode": "paper",
+              "Risk": {
+                "CloseOnKill": true,
+                "MaxDrawdown": 0.2,
+                "MaxLeverage": 1,
+                "PositionPct": 0.1,
+                "RiskPerTrade": 0.01,
+                "DailyLossLimit": 0.05,
+                "MaxExposurePct": 0.75,
+                "MaxPositionPct": 0.25,
+                "MaxOpenPositions": 6
+              },
+              "Quote": "USDT",
+              "Capital": "664.74628849988916",
+              "Exchange": "binance",
+              "Instances": [
+                {
+                  "ID": "pullback-btc-4h",
+                  "Name": "Pullback 4h BTC",
+                  "Risk": {
+                    "CloseOnKill": true,
+                    "MaxDrawdown": 0.2,
+                    "MaxLeverage": 1,
+                    "PositionPct": 0.1,
+                    "RiskPerTrade": 0.01,
+                    "DailyLossLimit": 0.05,
+                    "MaxExposurePct": 0.25,
+                    "MaxPositionPct": 0.25,
+                    "MaxOpenPositions": 1
+                  },
+                  "Notify": "off",
+                  "Allocation": "110.79104808331486",
+                  "Strategies": [
+                    {
+                      "ID": "signal",
+                      "Cap": "0",
+                      "Name": "trendspot",
+                      "Risk": {
+                        "CloseOnKill": true,
+                        "MaxDrawdown": 0.2,
+                        "MaxLeverage": 1,
+                        "PositionPct": 0.1,
+                        "RiskPerTrade": 0.01,
+                        "DailyLossLimit": 0.05,
+                        "MaxExposurePct": 0.25,
+                        "MaxPositionPct": 0.25,
+                        "MaxOpenPositions": 1
+                      },
+                      "Params": {
+                        "mode": "pullback",
+                        "rsi_exit": 65,
+                        "stop_atr": 2.5,
+                        "rsi_entry": 40,
+                        "timeframe": "4h",
+                        "trail_atr": 0,
+                        "atr_period": 14,
+                        "rsi_period": 14,
+                        "target_atr": 5,
+                        "exit_period": 20,
+                        "entry_period": 55,
+                        "trend_period": 200
+                      },
+                      "Symbols": [
+                        "BTCUSDT"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ID": "pullback-eth-4h",
+                  "Name": "Pullback 4h ETH",
+                  "Risk": {
+                    "CloseOnKill": true,
+                    "MaxDrawdown": 0.2,
+                    "MaxLeverage": 1,
+                    "PositionPct": 0.1,
+                    "RiskPerTrade": 0.01,
+                    "DailyLossLimit": 0.05,
+                    "MaxExposurePct": 0.25,
+                    "MaxPositionPct": 0.25,
+                    "MaxOpenPositions": 1
+                  },
+                  "Notify": "off",
+                  "Allocation": "110.79104808331486",
+                  "Strategies": [
+                    {
+                      "ID": "signal",
+                      "Cap": "0",
+                      "Name": "trendspot",
+                      "Risk": {
+                        "CloseOnKill": true,
+                        "MaxDrawdown": 0.2,
+                        "MaxLeverage": 1,
+                        "PositionPct": 0.1,
+                        "RiskPerTrade": 0.01,
+                        "DailyLossLimit": 0.05,
+                        "MaxExposurePct": 0.25,
+                        "MaxPositionPct": 0.25,
+                        "MaxOpenPositions": 1
+                      },
+                      "Params": {
+                        "mode": "pullback",
+                        "rsi_exit": 65,
+                        "stop_atr": 2.5,
+                        "rsi_entry": 40,
+                        "timeframe": "4h",
+                        "trail_atr": 0,
+                        "atr_period": 14,
+                        "rsi_period": 14,
+                        "target_atr": 5,
+                        "exit_period": 20,
+                        "entry_period": 55,
+                        "trend_period": 200
+                      },
+                      "Symbols": [
+                        "ETHUSDT"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ID": "ema-btc-15m",
+                  "Name": "EMA tren 15m BTC",
+                  "Risk": {
+                    "CloseOnKill": true,
+                    "MaxDrawdown": 0.2,
+                    "MaxLeverage": 1,
+                    "PositionPct": 0.1,
+                    "RiskPerTrade": 0.01,
+                    "DailyLossLimit": 0.05,
+                    "MaxExposurePct": 0.25,
+                    "MaxPositionPct": 0.25,
+                    "MaxOpenPositions": 1
+                  },
+                  "Notify": "off",
+                  "Allocation": "110.79104808331486",
+                  "Strategies": [
+                    {
+                      "ID": "signal",
+                      "Cap": "0",
+                      "Name": "emacross",
+                      "Risk": {
+                        "CloseOnKill": true,
+                        "MaxDrawdown": 0.2,
+                        "MaxLeverage": 1,
+                        "PositionPct": 0.1,
+                        "RiskPerTrade": 0.01,
+                        "DailyLossLimit": 0.05,
+                        "MaxExposurePct": 0.25,
+                        "MaxPositionPct": 0.25,
+                        "MaxOpenPositions": 1
+                      },
+                      "Params": {
+                        "fast": 12,
+                        "slow": 26,
+                        "stop_atr": 2,
+                        "timeframe": "15m",
+                        "trail_atr": 0,
+                        "trend_ema": 100,
+                        "atr_period": 14,
+                        "rsi_period": 14,
+                        "target_atr": 3,
+                        "allow_short": false,
+                        "rsi_long_max": 70,
+                        "exit_on_cross": true,
+                        "rsi_short_min": 30
+                      },
+                      "Symbols": [
+                        "BTCUSDT"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ID": "ema-eth-15m",
+                  "Name": "EMA tren 15m ETH",
+                  "Risk": {
+                    "CloseOnKill": true,
+                    "MaxDrawdown": 0.2,
+                    "MaxLeverage": 1,
+                    "PositionPct": 0.1,
+                    "RiskPerTrade": 0.01,
+                    "DailyLossLimit": 0.05,
+                    "MaxExposurePct": 0.25,
+                    "MaxPositionPct": 0.25,
+                    "MaxOpenPositions": 1
+                  },
+                  "Notify": "off",
+                  "Allocation": "110.79104808331486",
+                  "Strategies": [
+                    {
+                      "ID": "signal",
+                      "Cap": "0",
+                      "Name": "emacross",
+                      "Risk": {
+                        "CloseOnKill": true,
+                        "MaxDrawdown": 0.2,
+                        "MaxLeverage": 1,
+                        "PositionPct": 0.1,
+                        "RiskPerTrade": 0.01,
+                        "DailyLossLimit": 0.05,
+                        "MaxExposurePct": 0.25,
+                        "MaxPositionPct": 0.25,
+                        "MaxOpenPositions": 1
+                      },
+                      "Params": {
+                        "fast": 12,
+                        "slow": 26,
+                        "stop_atr": 2,
+                        "timeframe": "15m",
+                        "trail_atr": 0,
+                        "trend_ema": 100,
+                        "atr_period": 14,
+                        "rsi_period": 14,
+                        "target_atr": 3,
+                        "allow_short": false,
+                        "rsi_long_max": 70,
+                        "exit_on_cross": true,
+                        "rsi_short_min": 30
+                      },
+                      "Symbols": [
+                        "ETHUSDT"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ID": "ema-btc-1h",
+                  "Name": "EMA tren 1h BTC",
+                  "Risk": {
+                    "CloseOnKill": true,
+                    "MaxDrawdown": 0.2,
+                    "MaxLeverage": 1,
+                    "PositionPct": 0.1,
+                    "RiskPerTrade": 0.01,
+                    "DailyLossLimit": 0.05,
+                    "MaxExposurePct": 0.25,
+                    "MaxPositionPct": 0.25,
+                    "MaxOpenPositions": 1
+                  },
+                  "Notify": "off",
+                  "Allocation": "110.79104808331486",
+                  "Strategies": [
+                    {
+                      "ID": "signal",
+                      "Cap": "0",
+                      "Name": "emacross",
+                      "Risk": {
+                        "CloseOnKill": true,
+                        "MaxDrawdown": 0.2,
+                        "MaxLeverage": 1,
+                        "PositionPct": 0.1,
+                        "RiskPerTrade": 0.01,
+                        "DailyLossLimit": 0.05,
+                        "MaxExposurePct": 0.25,
+                        "MaxPositionPct": 0.25,
+                        "MaxOpenPositions": 1
+                      },
+                      "Params": {
+                        "fast": 12,
+                        "slow": 26,
+                        "stop_atr": 2,
+                        "timeframe": "1h",
+                        "trail_atr": 0,
+                        "trend_ema": 100,
+                        "atr_period": 14,
+                        "rsi_period": 14,
+                        "target_atr": 3,
+                        "allow_short": false,
+                        "rsi_long_max": 70,
+                        "exit_on_cross": true,
+                        "rsi_short_min": 30
+                      },
+                      "Symbols": [
+                        "BTCUSDT"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ID": "ema-eth-1h",
+                  "Name": "EMA tren 1h ETH",
+                  "Risk": {
+                    "CloseOnKill": true,
+                    "MaxDrawdown": 0.2,
+                    "MaxLeverage": 1,
+                    "PositionPct": 0.1,
+                    "RiskPerTrade": 0.01,
+                    "DailyLossLimit": 0.05,
+                    "MaxExposurePct": 0.25,
+                    "MaxPositionPct": 0.25,
+                    "MaxOpenPositions": 1
+                  },
+                  "Notify": "off",
+                  "Allocation": "110.79104808331486",
+                  "Strategies": [
+                    {
+                      "ID": "signal",
+                      "Cap": "0",
+                      "Name": "emacross",
+                      "Risk": {
+                        "CloseOnKill": true,
+                        "MaxDrawdown": 0.2,
+                        "MaxLeverage": 1,
+                        "PositionPct": 0.1,
+                        "RiskPerTrade": 0.01,
+                        "DailyLossLimit": 0.05,
+                        "MaxExposurePct": 0.25,
+                        "MaxPositionPct": 0.25,
+                        "MaxOpenPositions": 1
+                      },
+                      "Params": {
+                        "fast": 12,
+                        "slow": 26,
+                        "stop_atr": 2,
+                        "timeframe": "1h",
+                        "trail_atr": 0,
+                        "trend_ema": 100,
+                        "atr_period": 14,
+                        "rsi_period": 14,
+                        "target_atr": 3,
+                        "allow_short": false,
+                        "rsi_long_max": 70,
+                        "exit_on_cross": true,
+                        "rsi_short_min": 30
+                      },
+                      "Symbols": [
+                        "ETHUSDT"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "bindings": {
+              "ema-btc-1h/signal": {
+                "ID": "signal",
+                "Cap": "0",
+                "Name": "emacross",
+                "Risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "Params": {
+                  "fast": 12,
+                  "slow": 26,
+                  "stop_atr": 2,
+                  "timeframe": "1h",
+                  "trail_atr": 0,
+                  "trend_ema": 100,
+                  "atr_period": 14,
+                  "rsi_period": 14,
+                  "target_atr": 3,
+                  "allow_short": false,
+                  "rsi_long_max": 70,
+                  "exit_on_cross": true,
+                  "rsi_short_min": 30
+                },
+                "Symbols": [
+                  "BTCUSDT"
+                ]
+              },
+              "ema-eth-1h/signal": {
+                "ID": "signal",
+                "Cap": "0",
+                "Name": "emacross",
+                "Risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "Params": {
+                  "fast": 12,
+                  "slow": 26,
+                  "stop_atr": 2,
+                  "timeframe": "1h",
+                  "trail_atr": 0,
+                  "trend_ema": 100,
+                  "atr_period": 14,
+                  "rsi_period": 14,
+                  "target_atr": 3,
+                  "allow_short": false,
+                  "rsi_long_max": 70,
+                  "exit_on_cross": true,
+                  "rsi_short_min": 30
+                },
+                "Symbols": [
+                  "ETHUSDT"
+                ]
+              },
+              "ema-btc-15m/signal": {
+                "ID": "signal",
+                "Cap": "0",
+                "Name": "emacross",
+                "Risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "Params": {
+                  "fast": 12,
+                  "slow": 26,
+                  "stop_atr": 2,
+                  "timeframe": "15m",
+                  "trail_atr": 0,
+                  "trend_ema": 100,
+                  "atr_period": 14,
+                  "rsi_period": 14,
+                  "target_atr": 3,
+                  "allow_short": false,
+                  "rsi_long_max": 70,
+                  "exit_on_cross": true,
+                  "rsi_short_min": 30
+                },
+                "Symbols": [
+                  "BTCUSDT"
+                ]
+              },
+              "ema-eth-15m/signal": {
+                "ID": "signal",
+                "Cap": "0",
+                "Name": "emacross",
+                "Risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "Params": {
+                  "fast": 12,
+                  "slow": 26,
+                  "stop_atr": 2,
+                  "timeframe": "15m",
+                  "trail_atr": 0,
+                  "trend_ema": 100,
+                  "atr_period": 14,
+                  "rsi_period": 14,
+                  "target_atr": 3,
+                  "allow_short": false,
+                  "rsi_long_max": 70,
+                  "exit_on_cross": true,
+                  "rsi_short_min": 30
+                },
+                "Symbols": [
+                  "ETHUSDT"
+                ]
+              },
+              "pullback-btc-4h/signal": {
+                "ID": "signal",
+                "Cap": "0",
+                "Name": "trendspot",
+                "Risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "Params": {
+                  "mode": "pullback",
+                  "rsi_exit": 65,
+                  "stop_atr": 2.5,
+                  "rsi_entry": 40,
+                  "timeframe": "4h",
+                  "trail_atr": 0,
+                  "atr_period": 14,
+                  "rsi_period": 14,
+                  "target_atr": 5,
+                  "exit_period": 20,
+                  "entry_period": 55,
+                  "trend_period": 200
+                },
+                "Symbols": [
+                  "BTCUSDT"
+                ]
+              },
+              "pullback-eth-4h/signal": {
+                "ID": "signal",
+                "Cap": "0",
+                "Name": "trendspot",
+                "Risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "Params": {
+                  "mode": "pullback",
+                  "rsi_exit": 65,
+                  "stop_atr": 2.5,
+                  "rsi_entry": 40,
+                  "timeframe": "4h",
+                  "trail_atr": 0,
+                  "atr_period": 14,
+                  "rsi_period": 14,
+                  "target_atr": 5,
+                  "exit_period": 20,
+                  "entry_period": 55,
+                  "trend_period": 200
+                },
+                "Symbols": [
+                  "ETHUSDT"
+                ]
+              }
+            },
+            "instances": {
+              "ema-btc-1h": {
+                "name": "EMA tren 1h BTC",
+                "risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "notify": "off"
+              },
+              "ema-eth-1h": {
+                "name": "EMA tren 1h ETH",
+                "risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "notify": "off"
+              },
+              "ema-btc-15m": {
+                "name": "EMA tren 15m BTC",
+                "risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "notify": "off"
+              },
+              "ema-eth-15m": {
+                "name": "EMA tren 15m ETH",
+                "risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "notify": "off"
+              },
+              "pullback-btc-4h": {
+                "name": "Pullback 4h BTC",
+                "risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "notify": "off"
+              },
+              "pullback-eth-4h": {
+                "name": "Pullback 4h ETH",
+                "risk": {
+                  "CloseOnKill": true,
+                  "MaxDrawdown": 0.2,
+                  "MaxLeverage": 1,
+                  "PositionPct": 0.1,
+                  "RiskPerTrade": 0.01,
+                  "DailyLossLimit": 0.05,
+                  "MaxExposurePct": 0.25,
+                  "MaxPositionPct": 0.25,
+                  "MaxOpenPositions": 1
+                },
+                "notify": "off"
+              }
+            }
+          }
+        }
+      ],
+      "Samples": [
+        {
+          "At": "2026-10-29T16:00:00Z",
+          "Account": "664.74628849988916",
+          "Instances": {
+            "ema-btc-15m": "110.79104808331486",
+            "ema-btc-1h": "110.79104808331486",
+            "ema-eth-15m": "110.79104808331486",
+            "ema-eth-1h": "110.79104808331486",
+            "pullback-btc-4h": "110.79104808331486",
+            "pullback-eth-4h": "110.79104808331486"
+          }
+        }
+      ],
+      "PriceAt": {
+        "BTCUSDT": "2026-10-29T17:00:00Z",
+        "ETHUSDT": "2026-10-29T16:15:00Z"
+      },
+      "ReconciledAt": "0001-01-01T00:00:00Z",
+      "Executions": null,
+      "FeeAssets": {},
+      "PendingFees": {},
+      "FeeQuote": "0",
+      "FeeIssue": "",
+      "Pending": null,
+      "Version": 1,
+      "Spec": {
+        "ID": "research-stage-three",
+        "Exchange": "binance",
+        "Mode": "paper",
+        "Quote": "USDT",
+        "Capital": "664.74628849988916",
+        "Risk": {
+          "RiskPerTrade": 0.01,
+          "PositionPct": 0.1,
+          "MaxPositionPct": 0.25,
+          "MaxLeverage": 1,
+          "MaxOpenPositions": 6,
+          "MaxExposurePct": 0.75,
+          "DailyLossLimit": 0.05,
+          "MaxDrawdown": 0.2,
+          "CloseOnKill": true
+        },
+        "Instances": [
+          {
+            "ID": "pullback-btc-4h",
+            "Name": "Pullback 4h BTC",
+            "Allocation": "110.79104808331486",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            },
+            "Notify": "off",
+            "Strategies": [
+              {
+                "ID": "signal",
+                "Name": "trendspot",
+                "Symbols": [
+                  "BTCUSDT"
+                ],
+                "Params": {
+                  "atr_period": 14,
+                  "entry_period": 55,
+                  "exit_period": 20,
+                  "mode": "pullback",
+                  "rsi_entry": 40,
+                  "rsi_exit": 65,
+                  "rsi_period": 14,
+                  "stop_atr": 2.5,
+                  "target_atr": 5,
+                  "timeframe": "4h",
+                  "trail_atr": 0,
+                  "trend_period": 200
+                },
+                "Cap": "0",
+                "Risk": {
+                  "RiskPerTrade": 0.01,
+                  "PositionPct": 0.1,
+                  "MaxPositionPct": 0.25,
+                  "MaxLeverage": 1,
+                  "MaxOpenPositions": 1,
+                  "MaxExposurePct": 0.25,
+                  "DailyLossLimit": 0.05,
+                  "MaxDrawdown": 0.2,
+                  "CloseOnKill": true
+                }
+              }
+            ]
+          },
+          {
+            "ID": "pullback-eth-4h",
+            "Name": "Pullback 4h ETH",
+            "Allocation": "110.79104808331486",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            },
+            "Notify": "off",
+            "Strategies": [
+              {
+                "ID": "signal",
+                "Name": "trendspot",
+                "Symbols": [
+                  "ETHUSDT"
+                ],
+                "Params": {
+                  "atr_period": 14,
+                  "entry_period": 55,
+                  "exit_period": 20,
+                  "mode": "pullback",
+                  "rsi_entry": 40,
+                  "rsi_exit": 65,
+                  "rsi_period": 14,
+                  "stop_atr": 2.5,
+                  "target_atr": 5,
+                  "timeframe": "4h",
+                  "trail_atr": 0,
+                  "trend_period": 200
+                },
+                "Cap": "0",
+                "Risk": {
+                  "RiskPerTrade": 0.01,
+                  "PositionPct": 0.1,
+                  "MaxPositionPct": 0.25,
+                  "MaxLeverage": 1,
+                  "MaxOpenPositions": 1,
+                  "MaxExposurePct": 0.25,
+                  "DailyLossLimit": 0.05,
+                  "MaxDrawdown": 0.2,
+                  "CloseOnKill": true
+                }
+              }
+            ]
+          },
+          {
+            "ID": "ema-btc-15m",
+            "Name": "EMA tren 15m BTC",
+            "Allocation": "110.79104808331486",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            },
+            "Notify": "off",
+            "Strategies": [
+              {
+                "ID": "signal",
+                "Name": "emacross",
+                "Symbols": [
+                  "BTCUSDT"
+                ],
+                "Params": {
+                  "allow_short": false,
+                  "atr_period": 14,
+                  "exit_on_cross": true,
+                  "fast": 12,
+                  "rsi_long_max": 70,
+                  "rsi_period": 14,
+                  "rsi_short_min": 30,
+                  "slow": 26,
+                  "stop_atr": 2,
+                  "target_atr": 3,
+                  "timeframe": "15m",
+                  "trail_atr": 0,
+                  "trend_ema": 100
+                },
+                "Cap": "0",
+                "Risk": {
+                  "RiskPerTrade": 0.01,
+                  "PositionPct": 0.1,
+                  "MaxPositionPct": 0.25,
+                  "MaxLeverage": 1,
+                  "MaxOpenPositions": 1,
+                  "MaxExposurePct": 0.25,
+                  "DailyLossLimit": 0.05,
+                  "MaxDrawdown": 0.2,
+                  "CloseOnKill": true
+                }
+              }
+            ]
+          },
+          {
+            "ID": "ema-eth-15m",
+            "Name": "EMA tren 15m ETH",
+            "Allocation": "110.79104808331486",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            },
+            "Notify": "off",
+            "Strategies": [
+              {
+                "ID": "signal",
+                "Name": "emacross",
+                "Symbols": [
+                  "ETHUSDT"
+                ],
+                "Params": {
+                  "allow_short": false,
+                  "atr_period": 14,
+                  "exit_on_cross": true,
+                  "fast": 12,
+                  "rsi_long_max": 70,
+                  "rsi_period": 14,
+                  "rsi_short_min": 30,
+                  "slow": 26,
+                  "stop_atr": 2,
+                  "target_atr": 3,
+                  "timeframe": "15m",
+                  "trail_atr": 0,
+                  "trend_ema": 100
+                },
+                "Cap": "0",
+                "Risk": {
+                  "RiskPerTrade": 0.01,
+                  "PositionPct": 0.1,
+                  "MaxPositionPct": 0.25,
+                  "MaxLeverage": 1,
+                  "MaxOpenPositions": 1,
+                  "MaxExposurePct": 0.25,
+                  "DailyLossLimit": 0.05,
+                  "MaxDrawdown": 0.2,
+                  "CloseOnKill": true
+                }
+              }
+            ]
+          },
+          {
+            "ID": "ema-btc-1h",
+            "Name": "EMA tren 1h BTC",
+            "Allocation": "110.79104808331486",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            },
+            "Notify": "off",
+            "Strategies": [
+              {
+                "ID": "signal",
+                "Name": "emacross",
+                "Symbols": [
+                  "BTCUSDT"
+                ],
+                "Params": {
+                  "allow_short": false,
+                  "atr_period": 14,
+                  "exit_on_cross": true,
+                  "fast": 12,
+                  "rsi_long_max": 70,
+                  "rsi_period": 14,
+                  "rsi_short_min": 30,
+                  "slow": 26,
+                  "stop_atr": 2,
+                  "target_atr": 3,
+                  "timeframe": "1h",
+                  "trail_atr": 0,
+                  "trend_ema": 100
+                },
+                "Cap": "0",
+                "Risk": {
+                  "RiskPerTrade": 0.01,
+                  "PositionPct": 0.1,
+                  "MaxPositionPct": 0.25,
+                  "MaxLeverage": 1,
+                  "MaxOpenPositions": 1,
+                  "MaxExposurePct": 0.25,
+                  "DailyLossLimit": 0.05,
+                  "MaxDrawdown": 0.2,
+                  "CloseOnKill": true
+                }
+              }
+            ]
+          },
+          {
+            "ID": "ema-eth-1h",
+            "Name": "EMA tren 1h ETH",
+            "Allocation": "110.79104808331486",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            },
+            "Notify": "off",
+            "Strategies": [
+              {
+                "ID": "signal",
+                "Name": "emacross",
+                "Symbols": [
+                  "ETHUSDT"
+                ],
+                "Params": {
+                  "allow_short": false,
+                  "atr_period": 14,
+                  "exit_on_cross": true,
+                  "fast": 12,
+                  "rsi_long_max": 70,
+                  "rsi_period": 14,
+                  "rsi_short_min": 30,
+                  "slow": 26,
+                  "stop_atr": 2,
+                  "target_atr": 3,
+                  "timeframe": "1h",
+                  "trail_atr": 0,
+                  "trend_ema": 100
+                },
+                "Cap": "0",
+                "Risk": {
+                  "RiskPerTrade": 0.01,
+                  "PositionPct": 0.1,
+                  "MaxPositionPct": 0.25,
+                  "MaxLeverage": 1,
+                  "MaxOpenPositions": 1,
+                  "MaxExposurePct": 0.25,
+                  "DailyLossLimit": 0.05,
+                  "MaxDrawdown": 0.2,
+                  "CloseOnKill": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "ConfigHash": "a4a7cea5cc50b2f7f6f0fb46d995064263f2eccdf41b7ab799b543b24231fd03",
+      "Reserve": "0",
+      "Instances": {
+        "ema-btc-15m": {
+          "ID": "ema-btc-15m",
+          "Name": "EMA tren 15m BTC",
+          "Status": "running",
+          "Notify": "off",
+          "Cash": "110.79104808331486",
+          "Funded": "110.79104808331486",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Risk": {
+            "RiskPerTrade": 0.01,
+            "PositionPct": 0.1,
+            "MaxPositionPct": 0.25,
+            "MaxLeverage": 1,
+            "MaxOpenPositions": 1,
+            "MaxExposurePct": 0.25,
+            "DailyLossLimit": 0.05,
+            "MaxDrawdown": 0.2,
+            "CloseOnKill": true
+          },
+          "Halted": false,
+          "Reason": ""
+        },
+        "ema-btc-1h": {
+          "ID": "ema-btc-1h",
+          "Name": "EMA tren 1h BTC",
+          "Status": "running",
+          "Notify": "off",
+          "Cash": "110.79104808331486",
+          "Funded": "110.79104808331486",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Risk": {
+            "RiskPerTrade": 0.01,
+            "PositionPct": 0.1,
+            "MaxPositionPct": 0.25,
+            "MaxLeverage": 1,
+            "MaxOpenPositions": 1,
+            "MaxExposurePct": 0.25,
+            "DailyLossLimit": 0.05,
+            "MaxDrawdown": 0.2,
+            "CloseOnKill": true
+          },
+          "Halted": false,
+          "Reason": ""
+        },
+        "ema-eth-15m": {
+          "ID": "ema-eth-15m",
+          "Name": "EMA tren 15m ETH",
+          "Status": "running",
+          "Notify": "off",
+          "Cash": "110.79104808331486",
+          "Funded": "110.79104808331486",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Risk": {
+            "RiskPerTrade": 0.01,
+            "PositionPct": 0.1,
+            "MaxPositionPct": 0.25,
+            "MaxLeverage": 1,
+            "MaxOpenPositions": 1,
+            "MaxExposurePct": 0.25,
+            "DailyLossLimit": 0.05,
+            "MaxDrawdown": 0.2,
+            "CloseOnKill": true
+          },
+          "Halted": false,
+          "Reason": ""
+        },
+        "ema-eth-1h": {
+          "ID": "ema-eth-1h",
+          "Name": "EMA tren 1h ETH",
+          "Status": "running",
+          "Notify": "off",
+          "Cash": "110.79104808331486",
+          "Funded": "110.79104808331486",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Risk": {
+            "RiskPerTrade": 0.01,
+            "PositionPct": 0.1,
+            "MaxPositionPct": 0.25,
+            "MaxLeverage": 1,
+            "MaxOpenPositions": 1,
+            "MaxExposurePct": 0.25,
+            "DailyLossLimit": 0.05,
+            "MaxDrawdown": 0.2,
+            "CloseOnKill": true
+          },
+          "Halted": false,
+          "Reason": ""
+        },
+        "pullback-btc-4h": {
+          "ID": "pullback-btc-4h",
+          "Name": "Pullback 4h BTC",
+          "Status": "running",
+          "Notify": "off",
+          "Cash": "110.79104808331486",
+          "Funded": "110.79104808331486",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Risk": {
+            "RiskPerTrade": 0.01,
+            "PositionPct": 0.1,
+            "MaxPositionPct": 0.25,
+            "MaxLeverage": 1,
+            "MaxOpenPositions": 1,
+            "MaxExposurePct": 0.25,
+            "DailyLossLimit": 0.05,
+            "MaxDrawdown": 0.2,
+            "CloseOnKill": true
+          },
+          "Halted": false,
+          "Reason": ""
+        },
+        "pullback-eth-4h": {
+          "ID": "pullback-eth-4h",
+          "Name": "Pullback 4h ETH",
+          "Status": "running",
+          "Notify": "off",
+          "Cash": "110.79104808331486",
+          "Funded": "110.79104808331486",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Risk": {
+            "RiskPerTrade": 0.01,
+            "PositionPct": 0.1,
+            "MaxPositionPct": 0.25,
+            "MaxLeverage": 1,
+            "MaxOpenPositions": 1,
+            "MaxExposurePct": 0.25,
+            "DailyLossLimit": 0.05,
+            "MaxDrawdown": 0.2,
+            "CloseOnKill": true
+          },
+          "Halted": false,
+          "Reason": ""
+        }
+      },
+      "Bindings": {
+        "ema-btc-15m/signal": {
+          "ID": "ema-btc-15m/signal",
+          "InstanceID": "ema-btc-15m",
+          "Status": "running",
+          "Reason": "",
+          "LastNotice": "",
+          "Spec": {
+            "ID": "signal",
+            "Name": "emacross",
+            "Symbols": [
+              "BTCUSDT"
+            ],
+            "Params": {
+              "allow_short": false,
+              "atr_period": 14,
+              "exit_on_cross": true,
+              "fast": 12,
+              "rsi_long_max": 70,
+              "rsi_period": 14,
+              "rsi_short_min": 30,
+              "slow": 26,
+              "stop_atr": 2,
+              "target_atr": 3,
+              "timeframe": "15m",
+              "trail_atr": 0,
+              "trend_ema": 100
+            },
+            "Cap": "0",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            }
+          },
+          "Realized": "0",
+          "Fees": "0",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Halted": false
+        },
+        "ema-btc-1h/signal": {
+          "ID": "ema-btc-1h/signal",
+          "InstanceID": "ema-btc-1h",
+          "Status": "running",
+          "Reason": "",
+          "LastNotice": "",
+          "Spec": {
+            "ID": "signal",
+            "Name": "emacross",
+            "Symbols": [
+              "BTCUSDT"
+            ],
+            "Params": {
+              "allow_short": false,
+              "atr_period": 14,
+              "exit_on_cross": true,
+              "fast": 12,
+              "rsi_long_max": 70,
+              "rsi_period": 14,
+              "rsi_short_min": 30,
+              "slow": 26,
+              "stop_atr": 2,
+              "target_atr": 3,
+              "timeframe": "1h",
+              "trail_atr": 0,
+              "trend_ema": 100
+            },
+            "Cap": "0",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            }
+          },
+          "Realized": "0",
+          "Fees": "0",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Halted": false
+        },
+        "ema-eth-15m/signal": {
+          "ID": "ema-eth-15m/signal",
+          "InstanceID": "ema-eth-15m",
+          "Status": "running",
+          "Reason": "",
+          "LastNotice": "",
+          "Spec": {
+            "ID": "signal",
+            "Name": "emacross",
+            "Symbols": [
+              "ETHUSDT"
+            ],
+            "Params": {
+              "allow_short": false,
+              "atr_period": 14,
+              "exit_on_cross": true,
+              "fast": 12,
+              "rsi_long_max": 70,
+              "rsi_period": 14,
+              "rsi_short_min": 30,
+              "slow": 26,
+              "stop_atr": 2,
+              "target_atr": 3,
+              "timeframe": "15m",
+              "trail_atr": 0,
+              "trend_ema": 100
+            },
+            "Cap": "0",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            }
+          },
+          "Realized": "0",
+          "Fees": "0",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Halted": false
+        },
+        "ema-eth-1h/signal": {
+          "ID": "ema-eth-1h/signal",
+          "InstanceID": "ema-eth-1h",
+          "Status": "running",
+          "Reason": "",
+          "LastNotice": "",
+          "Spec": {
+            "ID": "signal",
+            "Name": "emacross",
+            "Symbols": [
+              "ETHUSDT"
+            ],
+            "Params": {
+              "allow_short": false,
+              "atr_period": 14,
+              "exit_on_cross": true,
+              "fast": 12,
+              "rsi_long_max": 70,
+              "rsi_period": 14,
+              "rsi_short_min": 30,
+              "slow": 26,
+              "stop_atr": 2,
+              "target_atr": 3,
+              "timeframe": "1h",
+              "trail_atr": 0,
+              "trend_ema": 100
+            },
+            "Cap": "0",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            }
+          },
+          "Realized": "0",
+          "Fees": "0",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Halted": false
+        },
+        "pullback-btc-4h/signal": {
+          "ID": "pullback-btc-4h/signal",
+          "InstanceID": "pullback-btc-4h",
+          "Status": "running",
+          "Reason": "",
+          "LastNotice": "",
+          "Spec": {
+            "ID": "signal",
+            "Name": "trendspot",
+            "Symbols": [
+              "BTCUSDT"
+            ],
+            "Params": {
+              "atr_period": 14,
+              "entry_period": 55,
+              "exit_period": 20,
+              "mode": "pullback",
+              "rsi_entry": 40,
+              "rsi_exit": 65,
+              "rsi_period": 14,
+              "stop_atr": 2.5,
+              "target_atr": 5,
+              "timeframe": "4h",
+              "trail_atr": 0,
+              "trend_period": 200
+            },
+            "Cap": "0",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            }
+          },
+          "Realized": "0",
+          "Fees": "0",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Halted": false
+        },
+        "pullback-eth-4h/signal": {
+          "ID": "pullback-eth-4h/signal",
+          "InstanceID": "pullback-eth-4h",
+          "Status": "running",
+          "Reason": "",
+          "LastNotice": "",
+          "Spec": {
+            "ID": "signal",
+            "Name": "trendspot",
+            "Symbols": [
+              "ETHUSDT"
+            ],
+            "Params": {
+              "atr_period": 14,
+              "entry_period": 55,
+              "exit_period": 20,
+              "mode": "pullback",
+              "rsi_entry": 40,
+              "rsi_exit": 65,
+              "rsi_period": 14,
+              "stop_atr": 2.5,
+              "target_atr": 5,
+              "timeframe": "4h",
+              "trail_atr": 0,
+              "trend_period": 200
+            },
+            "Cap": "0",
+            "Risk": {
+              "RiskPerTrade": 0.01,
+              "PositionPct": 0.1,
+              "MaxPositionPct": 0.25,
+              "MaxLeverage": 1,
+              "MaxOpenPositions": 1,
+              "MaxExposurePct": 0.25,
+              "DailyLossLimit": 0.05,
+              "MaxDrawdown": 0.2,
+              "CloseOnKill": true
+            }
+          },
+          "Realized": "0",
+          "Fees": "0",
+          "Peak": "110.79104808331486",
+          "DayStart": "110.79104808331486",
+          "Day": "2026-10-29T00:00:00Z",
+          "Halted": false
+        }
+      },
+      "Holdings": {},
+      "Orders": {},
+      "Seen": {},
+      "Prices": {
+        "BTCUSDT": "81658.61",
+        "ETHUSDT": "2366.67"
+      },
+      "Baseline": {},
+      "Requests": {
+        "run/e406d06f4487ecdb6afa20e22c65c1af": "9b164401ec2a062ecd4e3d0e2cece28ec76aa85165a522ca46dc73178f3bfb24"
+      },
+      "RequestAt": {
+        "run/e406d06f4487ecdb6afa20e22c65c1af": "2026-10-29T16:14:26.403216843Z"
+      },
+      "History": null,
+      "Attention": "",
+      "Peak": "664.74628849988916",
+      "DayStart": "664.74628849988916",
+      "Day": "2026-10-29T00:00:00Z",
+      "Halted": false,
+      "Reason": "",
+      "StartedAt": "2026-10-29T16:14:26.402915148Z"
+    }
+  },
+  "preservation": {
+    "at": "2026-10-29T16:14:57.835925+00:00",
+    "unchanged_existing_containers": 37,
+    "expected_container_changes": [
+      "/trading-bot-paper-research-1",
+      "/trading-bot-paper-prometheus-1"
+    ],
+    "p2_financial_projection_equal": true,
+    "p3_financial_projection_equal": true,
+    "p2_mounted_config_equal": true,
+    "p3_budget_equal": true,
+    "p2_total_fills": 214
+  },
+  "local_validation": {
+    "config_tests": "go test ./internal/config -run Test(ResearchStage|ManagedExamples) -count=1: pass",
+    "operational_fixtures": "python3 -m unittest discover -s deploy -p test_*.py: 5 pass",
+    "monitoring": "make test-monitoring CONTAINER_ENGINE=podman: pass",
+    "compose": "VPS docker compose config --quiet: pass",
+    "diff": "git diff --check: pass"
+  },
+  "limits": [
+    "Initial health and financial preservation are verified, profitability is not.",
+    "No forced signal, order or AI inference.",
+    "No active-position restore/outage simulation for this new cohort.",
+    "P3 old invalid WATCH remains flagged."
+  ],
+  "post_activation_backup": {
+    "at": "2026-10-29T16:15:42.958826+00:00",
+    "backup": "/opt/trading-bot-paper/repo/../backups/backup-20261029T161540Z",
+    "checksums_ok": true,
+    "research_dump_directory_validated": true,
+    "config_members": [
+      ".env.vps",
+      "configs/config.yaml",
+      "configs/managed.research-stage-three.yaml"
+    ],
+    "resource_sample": [
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "1.82%",
+        "Container": "trading-bot-paper-research-1",
+        "ID": "bcb97d162735",
+        "MemPerc": "9.09%",
+        "MemUsage": "46.53MiB / 512MiB",
+        "Name": "trading-bot-paper-research-1",
+        "NetIO": "32.6MB / 2.65MB",
+        "PIDs": "8"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "12.76%",
+        "Container": "trading-bot-paper-bot-1",
+        "ID": "4e0b70509306",
+        "MemPerc": "18.66%",
+        "MemUsage": "95.55MiB / 512MiB",
+        "Name": "trading-bot-paper-bot-1",
+        "NetIO": "27.9GB / 521MB",
+        "PIDs": "8"
+      },
+      {
+        "BlockIO": "180MB / 197GB",
+        "CPUPerc": "13.71%",
+        "Container": "trading-bot-paper-db-1",
+        "ID": "9d17669ad57f",
+        "MemPerc": "14.76%",
+        "MemUsage": "151.2MiB / 1GiB",
+        "Name": "trading-bot-paper-db-1",
+        "NetIO": "93.1GB / 24.8TB",
+        "PIDs": "18"
+      },
+      {
+        "BlockIO": "4.1kB / 15.1MB",
+        "CPUPerc": "1.97%",
+        "Container": "trading-bot-catalyst-catalyst-1",
+        "ID": "7f3d5ab0dee4",
+        "MemPerc": "7.28%",
+        "MemUsage": "37.3MiB / 512MiB",
+        "Name": "trading-bot-catalyst-catalyst-1",
+        "NetIO": "2.41GB / 258MB",
+        "PIDs": "10"
+      }
+    ]
+  },
+  "ci": {
+    "conclusion": "success",
+    "databaseId": 40908911546,
+    "headSha": "e56d051fc6724036a6d9fa85188921aa132590fc",
+    "jobs": [
+      {
+        "name": "Database and paper recovery",
+        "conclusion": "success"
+      },
+      {
+        "name": "Go checks and unit tests",
+        "conclusion": "success"
+      },
+      {
+        "name": "Prometheus alerts",
+        "conclusion": "success"
+      },
+      {
+        "name": "Isolated Spider image and protocol",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build and publish container",
+        "conclusion": "success"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/Rizz404/trading-bot/actions/runs/40908911546"
+  },
+  "follow_up": {
+    "at": "2026-10-29T16:17:41.907886+00:00",
+    "post_start_candles": [
+      {
+        "symbol": "BTCUSDT",
+        "timeframe": "1m",
+        "first_open": "2026-10-29T16:15:00+00:00",
+        "last_open": "2026-10-29T16:16:00+00:00",
+        "bars": 2
+      },
+      {
+        "symbol": "ETHUSDT",
+        "timeframe": "1m",
+        "first_open": "2026-10-29T16:15:00+00:00",
+        "last_open": "2026-10-29T16:16:00+00:00",
+        "bars": 2
+      }
+    ],
+    "units": {
+      "trading-bot-paper-backup.timer": {
+        "LastTriggerUSec": "Thu 2026-10-29 03:16:05 UTC",
+        "Result": "success",
+        "ActiveState": "active",
+        "SubState": "waiting",
+        "UnitFileState": "enabled"
+      },
+      "trading-bot-paper-observe.timer": {
+        "LastTriggerUSec": "Thu 2026-10-29 16:17:39 UTC",
+        "Result": "success",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "trading-bot-paper-observe.service": {
+        "Result": "success",
+        "ExecMainStartTimestamp": "Thu 2026-10-29 16:17:39 UTC",
+        "ExecMainStatus": "0",
+        "ActiveState": "activating",
+        "SubState": "start",
+        "UnitFileState": "static"
+      },
+      "trading-bot-catalyst-backup.timer": {
+        "LastTriggerUSec": "",
+        "Result": "success",
+        "ActiveState": "active",
+        "SubState": "waiting",
+        "UnitFileState": "enabled"
+      },
+      "trading-bot-catalyst-observe.timer": {
+        "LastTriggerUSec": "Thu 2026-10-29 16:13:27 UTC",
+        "Result": "success",
+        "ActiveState": "active",
+        "SubState": "waiting",
+        "UnitFileState": "enabled"
+      }
+    },
+    "research_health": 200
+  },
+  "automatic_observer": {
+    "at": "2026-10-29T16:18:10.332841+00:00",
+    "observer_unit": {
+      "Result": "success",
+      "ExecMainStartTimestamp": "Thu 2026-10-29 16:17:39 UTC",
+      "ExecMainStatus": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "latest_sample_time": "2026-10-29T16:17:40.014798+00:00",
+    "latest_problems": []
+  }
+}

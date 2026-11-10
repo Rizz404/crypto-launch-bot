@@ -256,3 +256,46 @@ func TestFeedBackfillsAndDeduplicates(t *testing.T) {
 		assert.Len(t, slices.Compact(slices.Clone(ts)), len(ts), "no duplicates")
 	}
 }
+
+func TestFeedHealthWaitsForConsumerAndChecksEverySeries(t *testing.T) {
+	now := time.Now().UTC().Truncate(time.Minute)
+	src := &fakeSource{limit: 1000}
+	entered, release := make(chan struct{}), make(chan struct{})
+	f := &Feed{Source: src, Store: newMemStore(), Market: domain.Futures,
+		Subs:     []exchange.KlineSub{{Symbol: "BTCUSDT", Timeframe: "1m"}, {Symbol: "ETHUSDT", Timeframe: "1m"}},
+		last:     make(map[domain.SeriesKey]time.Time),
+		OnCandle: func(domain.Candle) { close(entered); <-release },
+	}
+	done := make(chan error, 1)
+	go func() {
+		done <- f.deliver(t.Context(), []domain.Candle{candle("BTCUSDT", "1m", now.Add(-time.Minute), true)})
+	}()
+	<-entered
+	assert.ErrorContains(t, f.Health(now), "BTCUSDT")
+	close(release)
+	require.NoError(t, <-done)
+	require.ErrorContains(t, f.Health(now), "ETHUSDT")
+	f.OnCandle = nil
+	require.NoError(t, f.deliver(t.Context(), []domain.Candle{candle("ETHUSDT", "1m", now.Add(-time.Minute), true)}))
+	require.NoError(t, f.Health(now))
+	require.Error(t, f.Health(now.Add(3*time.Minute+time.Nanosecond)))
+	require.Error(t, f.Health(now.Add(-time.Second)), "future close times must not be healthy")
+}
+
+func TestFeedHealthAcceptsStoredLongTimeframeWithoutRedelivery(t *testing.T) {
+	now := time.Now().UTC()
+	tf := domain.Timeframe("4h")
+	src := &fakeSource{limit: 1000}
+	store := newMemStore()
+	_, err := store.InsertCandles(t.Context(), []domain.Candle{candle("BTCUSDT", tf, tf.Truncate(now).Add(-4*time.Hour), true)})
+	require.NoError(t, err)
+	f := &Feed{Source: src, Store: store, Market: domain.Futures,
+		Subs: []exchange.KlineSub{{Symbol: "BTCUSDT", Timeframe: tf}}, last: make(map[domain.SeriesKey]time.Time),
+		OnCandle: func(domain.Candle) { t.Error("stored bars must not be delivered twice") },
+	}
+	n, err := f.backfillSeries(t.Context(), f.key(f.Subs[0]))
+	require.NoError(t, err)
+	require.Zero(t, n)
+	require.Zero(t, src.calls)
+	require.NoError(t, f.Health(time.Now()))
+}

@@ -1,8 +1,8 @@
 # Audit awal transaksi dan akuntansi
 
 Audit historis **20 Oktober 2026**, tahap P2-0. Dua fix reconciliation lokal dan
-regression tersedia saat audit; implementasi historis ada di [Plan 2](../plan-2.md),
-kelanjutan aktif di [P3-O4](../plan-3.md#p3-o--penerimaan-operasi-dan-tindak-lanjut-audit).
+regression tersedia saat audit; implementasi historis ada di [Plan 2](../agents/archive/plan-2.md),
+kelanjutan aktif di [P3-O4](../agents/plan-3.md#p3-o--penerimaan-operasi-dan-tindak-lanjut-audit).
 Laporan ini bukan daftar bug terkini atau izin live.
 
 ## Bukti dan metode
@@ -77,7 +77,7 @@ Finish harus menahan entry, menyelesaikan order unknown, memilih retain/flatten,
 memproses cancel/fill sampai terminal selama recorder aktif, lalu snapshot saldo/
 order, flush, tutup run dan atur timer/backup. Gagal/ambigu tetap closing/attention.
 Dust tidak boleh dibuang untuk membuat flat. Ini kontrak audit; implementasi
-lanjutan diperiksa di [runtime](../managed-runtime.md).
+lanjutan diperiksa di [runtime](../agents/managed-runtime.md).
 
 DCA trial memang tanpa stop loss dan memakai raw intent; `Unprotected()` benar
 mendeteksi ketiadaan native stop. ERROR saat startup perlu policy/tingkat pesan

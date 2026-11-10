@@ -1,0 +1,13 @@
+[Unit]
+Description=Record health evidence for ana-core only
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/ana-core/repo
+ExecStart=/usr/bin/python3 /opt/ana-core/repo/deploy/vps-observe.py
+UMask=0077
+Nice=10
+CPUQuota=10%
+MemoryMax=128M
+TimeoutStartSec=90

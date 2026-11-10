@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily local backup of ana-core
+
+[Timer]
+OnCalendar=*-*-* 03:15:00 UTC
+RandomizedDelaySec=10min
+Persistent=true
+Unit=ana-core-backup.service
+
+[Install]
+WantedBy=timers.target

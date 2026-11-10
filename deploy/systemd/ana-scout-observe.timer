@@ -1,0 +1,11 @@
+[Unit]
+Description=Check the P3 paper pilot every five minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+AccuracySec=15s
+Unit=ana-scout-observe.service
+
+[Install]
+WantedBy=timers.target

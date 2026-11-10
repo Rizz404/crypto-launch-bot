@@ -1,0 +1,106 @@
+# Independent prospective cases: two symbols x three frozen strategy variants.
+# No existing trial capital, ledger or parameters are changed.
+app: {mode: paper, allow_live: false, log_level: info, log_format: json}
+database: {max_conns: 4}
+exchanges:
+  binance: {enabled: true, testnet: false}
+marketdata:
+  exchange: binance
+  markets: [spot]
+  symbols: [BTCUSDT, ETHUSDT]
+  timeframes: [1m, 15m, 1h, 4h]
+  initial_backfill: 300
+web: {enabled: true, listen: '127.0.0.1:18082'}
+metrics: {enabled: true, listen: '127.0.0.1:19102'}
+telegram: {enabled: false, notify_level: info, daily_summary: false, fx: false}
+strategies: []
+backtest:
+  slippage_bps: 2
+  fees:
+    spot: {maker: 0.001, taker: 0.001}
+wallets:
+  - id: research-stage-three
+    exchange: binance
+    quote: USDT
+    # Six independent Rp2 million virtual cases at the historical Rp18,052 rate.
+    capital: '664.74628849988916'
+    risk: &account_risk
+      risk_per_trade: 0.01
+      position_pct: 0.10
+      max_position_pct: 0.25
+      max_leverage: 1
+      max_open_positions: 6
+      max_exposure_pct: 0.75
+      daily_loss_limit: 0.05
+      max_drawdown: 0.20
+      close_on_kill: true
+    instances:
+      - id: pullback-btc-4h
+        name: Pullback 4h BTC
+        allocation: '110.79104808331486'
+        risk: &instance_risk
+          <<: *account_risk
+          max_open_positions: 1
+          max_exposure_pct: 0.25
+        notify: 'off'
+        strategies:
+          - id: signal
+            name: trendspot
+            symbols: [BTCUSDT]
+            risk: *instance_risk
+            params: {mode: pullback, timeframe: 4h, entry_period: 55, exit_period: 20, trend_period: 200, rsi_period: 14, rsi_entry: 40, rsi_exit: 65, atr_period: 14, stop_atr: 2.5, target_atr: 5, trail_atr: 0}
+      - id: pullback-eth-4h
+        name: Pullback 4h ETH
+        allocation: '110.79104808331486'
+        risk: *instance_risk
+        notify: 'off'
+        strategies:
+          - id: signal
+            name: trendspot
+            symbols: [ETHUSDT]
+            risk: *instance_risk
+            params: {mode: pullback, timeframe: 4h, entry_period: 55, exit_period: 20, trend_period: 200, rsi_period: 14, rsi_entry: 40, rsi_exit: 65, atr_period: 14, stop_atr: 2.5, target_atr: 5, trail_atr: 0}
+      - id: ema-btc-15m
+        name: EMA tren 15m BTC
+        allocation: '110.79104808331486'
+        risk: *instance_risk
+        notify: 'off'
+        strategies:
+          - id: signal
+            name: emacross
+            symbols: [BTCUSDT]
+            risk: *instance_risk
+            params: {timeframe: 15m, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 100, exit_on_cross: true}
+      - id: ema-eth-15m
+        name: EMA tren 15m ETH
+        allocation: '110.79104808331486'
+        risk: *instance_risk
+        notify: 'off'
+        strategies:
+          - id: signal
+            name: emacross
+            symbols: [ETHUSDT]
+            risk: *instance_risk
+            params: {timeframe: 15m, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 100, exit_on_cross: true}
+      - id: ema-btc-1h
+        name: EMA tren 1h BTC
+        allocation: '110.79104808331486'
+        risk: *instance_risk
+        notify: 'off'
+        strategies:
+          - id: signal
+            name: emacross
+            symbols: [BTCUSDT]
+            risk: *instance_risk
+            params: {timeframe: 1h, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 100, exit_on_cross: true}
+      - id: ema-eth-1h
+        name: EMA tren 1h ETH
+        allocation: '110.79104808331486'
+        risk: *instance_risk
+        notify: 'off'
+        strategies:
+          - id: signal
+            name: emacross
+            symbols: [ETHUSDT]
+            risk: *instance_risk
+            params: {timeframe: 1h, fast: 12, slow: 26, rsi_period: 14, rsi_long_max: 70, rsi_short_min: 30, atr_period: 14, stop_atr: 2, target_atr: 3, trail_atr: 0, allow_short: false, trend_ema: 100, exit_on_cross: true}

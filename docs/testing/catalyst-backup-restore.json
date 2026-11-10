@@ -1,0 +1,97 @@
+{
+  "at": "2026-10-29T14:20:56.617985+00:00",
+  "backup": "/opt/trading-bot-catalyst/backups/backup-20261029T141857Z",
+  "checksums_verified": true,
+  "restore_database": "tradingbot_catalyst_restore_verify",
+  "restored_counts": {
+    "wallets": 1,
+    "journal": 8,
+    "archive": 0,
+    "migration_version": 5
+  },
+  "financial_projection_equal": true,
+  "financial_projection": {
+    "wallet": "paper:catalyst-catalyst-paper-v1",
+    "started_at": "2026-10-28T15:53:13.569901322Z",
+    "config_hash": "0451f322e03852e106d57d0b8986f98072201ed04f4fb4cbd507265fa91cc85d",
+    "capital": "1000",
+    "reserve": "0",
+    "instances": {
+      "research": {
+        "cash": "1000",
+        "funded": "1000",
+        "status": "running"
+      }
+    },
+    "bindings": {
+      "research/ethusdt": {
+        "fees": "0",
+        "status": "running",
+        "realized": "0"
+      },
+      "research/solusdt": {
+        "fees": "0",
+        "status": "running",
+        "realized": "0"
+      },
+      "research/dogeusdt": {
+        "fees": "0",
+        "status": "running",
+        "realized": "0"
+      }
+    },
+    "holdings": {},
+    "pending": null
+  },
+  "content_addressed_records_verified": 271,
+  "restored_budget_slots": {
+    "2026-10-28": 1,
+    "2026-10-29": 4
+  },
+  "restored_archive_files": 283,
+  "live_volume_untouched": true,
+  "scratch_database_dropped": true,
+  "scratch_archive_removed": true,
+  "containers_before_at": "2026-10-29T14:18:53.913664+00:00",
+  "containers_after_at": "2026-10-29T14:18:57.821161+00:00",
+  "unchanged_other_containers": 37,
+  "worker_before": {
+    "name": "/trading-bot-catalyst-catalyst-1",
+    "id": "d5d1b875541d09d99db19baed6e79c6e62d6d58f3eec0df7cff2af843eaaa471",
+    "image": "sha256:4579285aee19eeab366b4f87f6eb08d0340f8be8b1a5f2b4833b5ac3a3904cdf",
+    "started": "2026-10-28T16:32:24.629785648Z",
+    "status": "running",
+    "restarts": 0
+  },
+  "worker_after": {
+    "name": "/trading-bot-catalyst-catalyst-1",
+    "id": "d5d1b875541d09d99db19baed6e79c6e62d6d58f3eec0df7cff2af843eaaa471",
+    "image": "sha256:4579285aee19eeab366b4f87f6eb08d0340f8be8b1a5f2b4833b5ac3a3904cdf",
+    "started": "2026-10-29T14:18:56.532862489Z",
+    "status": "running",
+    "restarts": 0
+  },
+  "post_checks": {
+    "at": "2026-10-29T14:38:12.583358+00:00",
+    "backup_permissions": {
+      "directory": "0o700",
+      "files": {
+        "database.dump": "0o600",
+        "archive-list.txt": "0o600",
+        "archive.tar.gz": "0o600",
+        "config.tar.gz": "0o600",
+        "source-commit.txt": "0o600",
+        "image.txt": "0o600",
+        "created-at.txt": "0o600",
+        "SHA256SUMS": "0o600"
+      }
+    },
+    "p3_health_after_backup": {
+      "status": 200,
+      "body": {
+        "runtime_feed": "ok",
+        "research_ready_is_separate": true
+      }
+    }
+  }
+}

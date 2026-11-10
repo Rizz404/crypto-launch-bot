@@ -1,0 +1,11 @@
+[Unit]
+Description=Sample ana-core every five minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+AccuracySec=15s
+Unit=ana-core-observe.service
+
+[Install]
+WantedBy=timers.target

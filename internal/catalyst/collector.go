@@ -178,7 +178,7 @@ func (c *Collector) fetch(ctx context.Context, source Source) (Evidence, int, er
 	if err != nil {
 		return Evidence{}, 0, errors.New("invalid source request")
 	}
-	req.Header.Set("User-Agent", "trading-bot-catalyst-research/1.0")
+	req.Header.Set("User-Agent", collectorAgent+"/1.0")
 	req.Header.Set("Accept", "application/rss+xml, application/atom+xml, application/json, text/html, text/plain")
 	resp, err := c.client.Do(req)
 	if err != nil {

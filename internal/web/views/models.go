@@ -2,6 +2,11 @@
 // view models they render. Values are pre-formatted strings.
 package views
 
+import "strconv"
+
+func itoa(n int) string     { return strconv.Itoa(n) }
+func itoa64(n int64) string { return strconv.FormatInt(n, 10) }
+
 // Status is the live session summary.
 type Status struct {
 	Mode          string
@@ -52,11 +57,15 @@ type RunDetail struct {
 	Charts    []Link
 }
 
-type Link struct{ Label, Href string }
+type Link struct {
+	Label, Href string
+	Active      bool
+}
 
 type ChartPage struct {
-	Series   []Link
-	Selected string
-	Src      string
-	Note     string
+	Series     []Link
+	Timeframes []Link
+	Selected   string
+	Src        string
+	Note       string
 }

@@ -1,0 +1,605 @@
+package managed
+
+import (
+	"strings"
+
+	"github.com/shopspring/decimal"
+
+	"github.com/rizz404/trading-bot/internal/ui"
+)
+
+func page(v view) ui.Page {
+	return v.shellPage("Portofolio bot", "Nilai koin berubah mengikuti harga. Order hanya selesai setelah status exchange dikonfirmasi.")
+}
+
+// sideAccount sits at the bottom of the sidebar: password page and logout.
+templ sideAccount(onAccount bool) {
+	<div class="flex flex-col gap-1">
+		<a href="/account" class={ ui.MenuItem + " rounded-lg" } aria-current={ ui.Current(onAccount) }>Ganti password</a>
+		<form method="post" action="/logout" hx-boost="false">
+			<button type="submit" class={ ui.MenuItem + " w-full rounded-lg text-left text-neg" }>Keluar</button>
+		</form>
+	</div>
+}
+
+func exportAction(v view) templ.Component {
+	return exportLink(v)
+}
+
+templ exportLink(v view) {
+	<a href={ v.Export() } hx-boost="false" class={ ui.BtnSecondary + ui.BtnSmall }>Ekspor status</a>
+}
+
+templ Dashboard(v view) {
+	@ui.Shell(page(v)) {
+		@ui.Heading(v.TabLabel(), "Portofolio bot · akun "+v.Wallet+" · "+v.State.Spec.Mode+" · "+v.State.Spec.Exchange, exportAction(v))
+		if v.Rate != "" {
+			<p class="-mt-4 text-xs text-muted">{ v.Rate }</p>
+		}
+		if v.Error != "" {
+			@ui.Alert("neg") {
+				Aksi ditolak: { v.Error }
+			}
+		}
+		@inactiveNotice(v)
+		switch v.Tab {
+			case "instance":
+				@instancesTab(v)
+			case "posisi":
+				@positionsTab(v)
+			case "riwayat":
+				@historyTab(v)
+			default:
+				@summaryTab(v)
+		}
+	}
+}
+
+// live re-fetches its own tab and swaps only itself, so open forms elsewhere
+// on the page are never replaced. hx-select avoids a separate partial route.
+templ live(href string) {
+	<div id="live" class="space-y-6" hx-get={ href } hx-trigger="every 15s" hx-select="#live" hx-swap="outerHTML">
+		{ children... }
+	</div>
+}
+
+// ---- Ringkasan ----
+templ summaryTab(v view) {
+	@live(v.Href("ringkasan")) {
+		if u := v.Uncertain(); len(u) > 0 {
+			@uncertainOrders(v, u)
+		}
+		if v.State.Attention != "" {
+			@ui.Alert("warn") {
+				Perlu diperiksa: { v.State.Attention }. Entry baru ditahan.
+			}
+		}
+		if v.State.Halted {
+			@ui.Alert("neg") {
+				Batas risiko akun aktif: { v.State.Reason }
+			}
+		}
+		@ui.StatGrid() {
+			@ui.Stat("Nilai akun bot", v.Money(v.State.Equity()), "", "") {
+				@fiat(v, v.State.Equity())
+			}
+			@ui.Stat("PnL net akun", v.Money(v.PnL()), v.PnLTone(v.PnL()), "Drawdown saat ini: "+v.Drawdown(v.State.Equity(), v.State.Peak)) {
+				@fiat(v, v.PnL())
+			}
+			@ui.Stat("Cadangan belum dialokasikan", v.Money(v.State.Reserve), "", "") {
+				@fiat(v, v.State.Reserve)
+			}
+			@ui.Stat("Mulai", ts(v.State.StartedAt), "", "")
+		}
+		@ui.Card("Grafik equity", nil) {
+			<p class="mb-3 text-xs text-muted">Grafik equity per jam, maksimal 30 hari. Perubahan alokasi internal tidak menambah nilai akun.</p>
+			if len(v.State.Samples) > 1 {
+				{{ lo, hi := v.ChartRange() }}
+				{{ first, last := v.SampleSpan() }}
+				<svg class="h-48 w-full text-link" viewBox="0 0 1000 200" preserveAspectRatio="none" role="img" aria-label="Grafik nilai akun bot">
+					<path d={ v.ChartPath() } fill="none" stroke="currentColor" stroke-width="3" vector-effect="non-scaling-stroke"></path>
+				</svg>
+				<p class="mt-2 text-xs text-muted">Rentang { v.Money(lo) } – { v.Money(hi) } · { ts(first) } → { ts(last) }</p>
+			} else {
+				@ui.Empty("Grafik tersedia setelah dua sampel jam berbeda.")
+			}
+		}
+		@ui.Card("Harga dan kesehatan", nil) {
+			<p>Reconciliation exchange terakhir: { ts(v.State.ReconciledAt) }</p>
+			if rows := v.Prices(); len(rows) > 0 {
+				<div class="mt-3">
+					@ui.Table() {
+						<thead><tr><th>Pair</th><th>Harga</th><th>Terakhir berubah</th></tr></thead>
+						<tbody>
+							for _, r := range rows {
+								<tr><td>{ r.Symbol }</td><td>{ r.Price.String() }</td><td>{ ts(r.At) }</td></tr>
+							}
+						</tbody>
+					}
+				</div>
+			}
+			<p class="mt-3 text-xs text-muted">Perubahan harga terakhir juga menunjukkan apakah feed masih masuk. Penundaan feed atau selisih saldo menahan entry.</p>
+		}
+	}
+	@ui.Card("Kontrol akun", nil) {
+		<div class="space-y-4">
+			@controls(v, "account", "Seluruh akun bot")
+			@limitsForm(v, "account")
+		</div>
+	}
+}
+
+templ uncertainOrders(v view, orders []*Order) {
+	@ui.Card("Order perlu verifikasi", nil) {
+		<p class="mb-3 text-muted">Status order berikut belum pasti. Verifikasi menanyakan exchange: order yang tidak ada dilepas reservasinya, order yang ada disinkronkan. Tersedia lima menit setelah order dibuat.</p>
+		@ui.Table() {
+			<thead><tr><th>Order / pemilik</th><th>Pair / sisi</th><th>Status ledger</th><th></th></tr></thead>
+			<tbody>
+				for _, o := range orders {
+					<tr>
+						<td><code class="font-mono text-xs">{ o.Order.ClientID }</code><br/><span class="text-xs text-muted">{ o.Owner } · { ts(o.Order.CreatedAt) }</span></td>
+						<td>{ o.Order.Symbol } { string(o.Order.Side) } { o.Order.Quantity.String() }</td>
+						<td>@ui.Badge(o.State, "warn")</td>
+						<td>
+							<form method="post" action={ v.Action() }>
+								<input type="hidden" name="csrf" value={ v.Token }/>
+								<input type="hidden" name="id" value={ nonce() }/>
+								<input type="hidden" name="operation" value="resolve_order"/>
+								<input type="hidden" name="order" value={ o.Order.ClientID }/>
+								<input type="hidden" name="confirm" value="no"/>
+								<button
+									type="submit"
+									class={ ui.BtnPrimary + ui.BtnSmall }
+									data-confirm="Verifikasi order ke exchange?"
+									data-confirm-body={ "Order " + o.Order.ClientID + " (" + o.Owner + ")\nOrder yang tidak ada di exchange dilepas reservasinya; yang ada disinkronkan." }
+									data-confirm-label="Verifikasi"
+									data-confirm-set="confirm=yes"
+								>Verifikasi</button>
+							</form>
+						</td>
+					</tr>
+				}
+			</tbody>
+		}
+	}
+}
+
+// ---- Kontrol & batas risiko ----
+templ controls(v view, scope, label string) {
+	<div class="flex flex-wrap items-center gap-2" role="group" aria-label={ "Kontrol " + label }>
+		@ui.Badge(v.StatusText(v.ScopeStatus(scope)), v.StatusTone(v.ScopeStatus(scope)))
+		for _, c := range v.Primary(scope) {
+			@controlForm(v, scope, label, c, primaryClass(c))
+		}
+		@ui.Dropdown(moreLabel(), "right-0") {
+			{{ safe, danger := v.More() }}
+			for _, c := range safe {
+				@controlForm(v, scope, label, c, ui.MenuItem+" w-full text-left")
+			}
+			<div class="my-1 border-t border-outline"></div>
+			for _, c := range danger {
+				@controlForm(v, scope, label, c, ui.MenuItem+" w-full text-left text-neg")
+			}
+		}
+	</div>
+}
+
+templ moreLabel() {
+	<span>Lainnya</span>
+}
+
+templ controlForm(v view, scope, label string, c control, class string) {
+	<form method="post" action={ v.Action() }>
+		<input type="hidden" name="csrf" value={ v.Token }/>
+		<input type="hidden" name="id" value={ nonce() }/>
+		<input type="hidden" name="scope" value={ scope }/>
+		<input type="hidden" name="operation" value={ c.Op }/>
+		if c.Policy != "" {
+			<input type="hidden" name="policy" value={ c.Policy }/>
+		}
+		if c.Confirm {
+			<input type="hidden" name="confirm" value="no"/>
+		}
+		<button type="submit" class={ class } title={ c.Effect } { c.Attrs(label)... }>{ c.Label }</button>
+	</form>
+}
+
+// inactiveNotice offers the restart that activates strategies saved from the form.
+templ inactiveNotice(v view) {
+	if len(v.Inactive) > 0 {
+		@ui.Alert("warn") {
+			<div class="flex flex-1 flex-wrap items-center justify-between gap-3">
+				<div>
+					<p class="font-medium">{ itoa(len(v.Inactive)) } strategi baru belum aktif</p>
+					<p class="text-xs text-muted">{ strings.Join(v.Inactive, ", ") }. Strategi baru mulai berjalan setelah bot restart (±30 detik). Posisi dan order tetap tersimpan.</p>
+				</div>
+				<form method="post" action={ v.Action() }>
+					<input type="hidden" name="csrf" value={ v.Token }/>
+					<input type="hidden" name="id" value={ nonce() }/>
+					<input type="hidden" name="operation" value="restart"/>
+					<input type="hidden" name="confirm" value="no"/>
+					<button
+						type="submit"
+						class={ ui.BtnPrimary + ui.BtnSmall }
+						data-confirm="Aktifkan strategi baru?"
+						data-confirm-body="Bot akan restart sekitar 30 detik untuk menyiapkan data candle strategi baru. Semua akun ikut restart; posisi dan order tetap tersimpan."
+						data-confirm-label="Restart bot"
+						data-confirm-set="confirm=yes"
+					>Aktifkan strategi baru</button>
+				</form>
+			</div>
+		}
+	}
+}
+
+templ limitsForm(v view, scope string) {
+	{{ l := v.Limits(scope) }}
+	@ui.Fold("Batas risiko · "+scope, false) {
+		<form method="post" action={ v.Action() } class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+			<input type="hidden" name="csrf" value={ v.Token }/>
+			<input type="hidden" name="id" value={ nonce() }/>
+			<input type="hidden" name="operation" value="limits"/>
+			<input type="hidden" name="scope" value={ scope }/>
+			<input type="hidden" name="confirm" value="no"/>
+			@ui.Field("Risiko per entry (%)") {
+				<input name="risk_pct" value={ l.Risk } inputmode="decimal" required class={ ui.InputClass }/>
+			}
+			@ui.Field("Batas per koin (%)") {
+				<input name="position_pct" value={ l.Position } inputmode="decimal" required class={ ui.InputClass }/>
+			}
+			@ui.Field("Total exposure (%)") {
+				<input name="exposure_pct" value={ l.Exposure } inputmode="decimal" required class={ ui.InputClass }/>
+			}
+			@ui.Field("Rugi harian (%)") {
+				<input name="daily_pct" value={ l.Daily } inputmode="decimal" required class={ ui.InputClass }/>
+			}
+			@ui.Field("Drawdown (%)") {
+				<input name="drawdown_pct" value={ l.Drawdown } inputmode="decimal" required class={ ui.InputClass }/>
+			}
+			@ui.Field("Batas modal strategi (USDT, 0 = pool)") {
+				<input name="amount" value={ l.Cap } inputmode="decimal" class={ ui.InputClass }/>
+			}
+			<div class="sm:col-span-2 lg:col-span-3">
+				<button
+					type="submit"
+					class={ ui.BtnPrimary }
+					data-confirm={ "Terapkan batas risiko " + scope + "?" }
+					data-confirm-body="Batas parent tetap berlaku. 0 menonaktifkan batas yang dipilih."
+					data-confirm-label="Simpan batas"
+					data-confirm-set="confirm=yes"
+				>Simpan batas</button>
+			</div>
+		</form>
+		<p class="text-xs text-muted">Persentase posisi/exposure memakai equity instance untuk strategi. Batas parent tetap berlaku; 0 menonaktifkan batas yang dipilih. Batas modal hanya berlaku pada scope strategi.</p>
+	}
+}
+
+// ---- Instance & strategi ----
+templ instancesTab(v view) {
+	<div class="grid gap-6 lg:grid-cols-2">
+		@ui.Card("Tambah instance atau salin template", nil) {
+			<p class="mb-3 text-muted">Instance baru dimulai tanpa modal dan dijeda. Transfer dana sebelum menjalankannya. Strategi baru diaktifkan pada startup berikutnya agar feed dan indikator siap.</p>
+			<form method="post" action={ v.Action() } class="grid gap-3 sm:grid-cols-2">
+				<input type="hidden" name="csrf" value={ v.Token }/>
+				<input type="hidden" name="id" value={ nonce() }/>
+				@ui.Field("Aksi") {
+					<select name="operation" class={ ui.InputClass }>
+						<option value="create">Buat baru</option>
+						<option value="clone">Salin konfigurasi</option>
+					</select>
+				}
+				@ui.Field("Sumber template") {
+					<select name="scope" class={ ui.InputClass }>
+						for _, id := range v.InstanceIDs() {
+							<option>{ id }</option>
+						}
+					</select>
+				}
+				@ui.Field("ID (opsional)") {
+					<input name="instance_id" placeholder="otomatis dari nama" pattern="[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}" class={ ui.InputClass }/>
+				}
+				@ui.Field("Nama") {
+					<input name="name" required class={ ui.InputClass }/>
+				}
+				<div class="sm:col-span-2"><button type="submit" class={ ui.BtnPrimary }>Simpan</button></div>
+			</form>
+		}
+		@ui.Card("Pindahkan modal bebas", nil) {
+			<p class="mb-3 text-muted">Hanya kas bebas yang bisa dipindahkan. Dana dalam order dan nilai koin tidak bisa dipindahkan sebagai saldo tunai.</p>
+			<form method="post" action={ v.Action() } class="grid gap-3 sm:grid-cols-2">
+				<input type="hidden" name="csrf" value={ v.Token }/>
+				<input type="hidden" name="id" value={ nonce() }/>
+				<input type="hidden" name="operation" value="transfer"/>
+				@ui.Field("Dari") {
+					<select name="from" class={ ui.InputClass }>
+						<option value="reserve">Cadangan</option>
+						for _, id := range v.InstanceIDs() {
+							<option>{ id }</option>
+						}
+					</select>
+				}
+				@ui.Field("Ke") {
+					<select name="to" class={ ui.InputClass }>
+						<option value="reserve">Cadangan</option>
+						for _, id := range v.InstanceIDs() {
+							<option>{ id }</option>
+						}
+					</select>
+				}
+				@ui.Field("USDT") {
+					<input name="amount" inputmode="decimal" required class={ ui.InputClass }/>
+				}
+				<div class="flex items-end">
+					<button
+						type="submit"
+						class={ ui.BtnPrimary }
+						data-confirm="Pindahkan modal bebas?"
+						data-confirm-body="Hanya kas bebas yang berpindah. Transfer bukan keuntungan."
+						data-confirm-label="Transfer"
+					>Transfer</button>
+				</div>
+			</form>
+		}
+	</div>
+	@ui.Card("Seluruh akun bot", nil) {
+		@controls(v, "account", "Seluruh akun bot")
+	}
+	for _, id := range v.InstanceIDs() {
+		@instanceCard(v, id)
+	}
+}
+
+templ instanceCard(v view, id string) {
+	{{ i := v.State.Instances[id] }}
+	<section class="rounded-xl border border-outline bg-surface shadow-sm">
+		<header class="flex flex-wrap items-center justify-between gap-2 border-b border-outline px-5 py-3">
+			<h2 class="text-base font-semibold">{ i.Name } <span class="ml-1 text-xs font-normal text-muted">{ id }</span></h2>
+			@ui.Badge(i.Status, v.StatusTone(i.Status))
+		</header>
+		<div class="space-y-4 p-5">
+			@ui.StatGrid() {
+				@ui.Stat("Modal neto", v.Money(i.Funded), "", "") {
+					@fiat(v, i.Funded)
+				}
+				@ui.Stat("Saldo bebas", v.Money(v.FreeCash(id)), "", "") {
+					@fiat(v, v.FreeCash(id))
+				}
+				@ui.Stat("Nilai instance", v.Money(v.State.InstanceEquity(id)), "", "") {
+					@fiat(v, v.State.InstanceEquity(id))
+				}
+				@ui.Stat("PnL net", v.Money(v.InstancePnL(id)), v.PnLTone(v.InstancePnL(id)), "Drawdown "+v.Drawdown(v.State.InstanceEquity(id), i.Peak)) {
+					@fiat(v, v.InstancePnL(id))
+				}
+			}
+			if i.Halted {
+				@ui.Alert("neg") {
+					Batas risiko instance aktif
+				}
+			}
+			@controls(v, id, "Instance "+id)
+			@limitsForm(v, id)
+			@ui.Fold("Ubah nama / notifikasi", false) {
+				<div class="grid gap-4 sm:grid-cols-2">
+					<form method="post" action={ v.Action() } class="grid gap-3">
+						<input type="hidden" name="csrf" value={ v.Token }/>
+						<input type="hidden" name="id" value={ nonce() }/>
+						<input type="hidden" name="scope" value={ id }/>
+						<input type="hidden" name="operation" value="rename"/>
+						@ui.Field("Nama") {
+							<input name="name" value={ i.Name } required class={ ui.InputClass }/>
+						}
+						<div><button type="submit" class={ ui.BtnSecondary }>Simpan nama</button></div>
+					</form>
+					<form method="post" action={ v.Action() } class="grid gap-3">
+						<input type="hidden" name="csrf" value={ v.Token }/>
+						<input type="hidden" name="id" value={ nonce() }/>
+						<input type="hidden" name="scope" value={ id }/>
+						<input type="hidden" name="operation" value="notify"/>
+						@ui.Field("Notifikasi Telegram") {
+							<select name="name" class={ ui.InputClass }>
+								for _, lvl := range []string{"info", "warn", "error", "off"} {
+									<option value={ lvl } selected?={ lvl == i.Notify }>{ lvl }</option>
+								}
+							</select>
+						}
+						<div><button type="submit" class={ ui.BtnSecondary }>Simpan notifikasi</button></div>
+					</form>
+				</div>
+			}
+			@ui.Table() {
+				<thead><tr><th>Strategi</th><th>Status / alasan</th><th>PnL terealisasi</th><th>Komisi</th></tr></thead>
+				<tbody>
+					for _, owner := range v.BindingIDs(id) {
+						{{ b := v.State.Bindings[owner] }}
+						<tr>
+							<td class="!whitespace-normal">{ b.Spec.Name } · { v.Symbols(b) }<br/><span class="text-xs text-muted">{ owner }</span></td>
+							<td class="!whitespace-normal">
+								@ui.Badge(b.Status, v.StatusTone(b.Status))
+								if b.Reason != "" {
+									<span class="ml-1">{ b.Reason }</span>
+								}
+								<br/>
+								<span class="text-xs text-muted">
+									if b.LastNotice != "" {
+										{ b.LastNotice }
+									} else {
+										Menunggu sinyal atau jadwal berikutnya; saldo, minimum order, dan risiko tetap diperiksa.
+									}
+								</span>
+							</td>
+							<td>@amount(v, b.Realized)<span class="text-xs text-muted">Belum terealisasi: { v.Money(v.Unrealized(owner)) }</span></td>
+							<td>@amount(v, b.Fees)</td>
+						</tr>
+						<tr>
+							<td colspan="4" class="!whitespace-normal">
+								@ui.Fold("Kontrol & batas · "+owner, false) {
+									@controls(v, owner, "Strategi "+owner)
+									@limitsForm(v, owner)
+								}
+							</td>
+						</tr>
+					}
+				</tbody>
+			}
+			@ui.Fold("Tambah strategi (jeda instance dahulu)", false) {
+				<form method="post" action={ v.Action() } class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+					<input type="hidden" name="csrf" value={ v.Token }/>
+					<input type="hidden" name="id" value={ nonce() }/>
+					<input type="hidden" name="operation" value="bind"/>
+					<input type="hidden" name="scope" value={ id }/>
+					@ui.Field("ID strategi (opsional)") {
+						<input name="binding_id" placeholder="otomatis, mis. pullback-4h" pattern="[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}" class={ ui.InputClass }/>
+					}
+					@ui.Field("Strategi") {
+						<select name="strategy" class={ ui.InputClass }>
+							<option value="momentum">Momentum mengikuti tren</option>
+							<option value="pullback">Tren pullback (parameter riset tahap tiga)</option>
+							<option value="emacross">EMA cross</option>
+							<option value="dca">DCA (beli berkala, take profit 3%)</option>
+							<option value="grid">Grid (satu pair)</option>
+							<option value="manual">Manual (order dari halaman Trading)</option>
+						</select>
+					}
+					@ui.Field("Pair (pisahkan dengan koma)") {
+						<input name="symbol" placeholder="BTCUSDT, ETHUSDT" required class={ ui.InputClass }/>
+					}
+					<fieldset class="sm:col-span-2 lg:col-span-3">
+						<legend class="mb-1.5 text-sm font-medium">Candle / interval DCA</legend>
+						<div class="flex flex-wrap gap-1.5">
+							for _, tf := range bindTimeframes {
+								<label class="cursor-pointer">
+									<input type="radio" name="timeframe" value={ tf } checked?={ tf == "1h" } class="peer sr-only"/>
+									<span class="inline-block rounded-md border border-outline px-2.5 py-1 text-xs font-medium tabular-nums text-muted transition-colors hover:text-on-surface peer-checked:border-primary peer-checked:bg-primary peer-checked:text-on-primary peer-focus-visible:outline-2 peer-focus-visible:outline-link">{ tf }</span>
+								</label>
+							}
+						</div>
+						<p class="mt-1 text-xs text-muted">Interval yang disediakan Binance. DCA membeli sekali per interval ini.</p>
+					</fieldset>
+					@ui.Field("Batas modal opsional (USDT)") {
+						<input name="amount" value="0" inputmode="decimal" class={ ui.InputClass }/>
+					}
+					@ui.Field("Nominal per order (USDT, DCA/grid)") {
+						<input name="quote" inputmode="decimal" placeholder="20" class={ ui.InputClass }/>
+					}
+					@ui.Field("Grid: batas bawah / atas") {
+						<div class="flex gap-2">
+							<input name="lower" inputmode="decimal" placeholder="bawah" class={ ui.InputClass }/>
+							<input name="upper" inputmode="decimal" placeholder="atas" class={ ui.InputClass }/>
+						</div>
+					}
+					@ui.Field("Grid: jumlah level") {
+						<input name="levels" inputmode="numeric" placeholder="10" class={ ui.InputClass }/>
+					}
+					<div class="flex items-end"><button type="submit" class={ ui.BtnPrimary }>Simpan konfigurasi</button></div>
+				</form>
+			}
+		</div>
+	</section>
+}
+
+// ---- Posisi & order ----
+templ positionsTab(v view) {
+	@live(v.Href("posisi")) {
+		@ui.CardFlush("Inventori per strategi", nil) {
+			if rows := v.Holdings(); len(rows) > 0 {
+				@ui.Table() {
+					<thead><tr><th>Pemilik</th><th>Pair</th><th>Kuantitas</th><th>Biaya pokok</th><th>Nilai saat ini</th></tr></thead>
+					<tbody>
+						for _, h := range rows {
+							<tr><td>{ h.Owner }</td><td>{ h.Symbol }</td><td>{ h.Quantity.String() }</td><td>@amount(v, h.Cost)</td><td>@amount(v, v.HoldingValue(h))</td></tr>
+						}
+					</tbody>
+				}
+			} else {
+				@ui.Empty("Tidak ada inventori.")
+			}
+		}
+		@ui.CardFlush("Order dan reservasi", nil) {
+			if rows := v.Orders(); len(rows) > 0 {
+				@ui.Table() {
+					<thead><tr><th>Pemilik</th><th>Pair / sisi</th><th>Status</th><th>Dana dipesan</th><th>Koin dipesan</th></tr></thead>
+					<tbody>
+						for _, o := range rows {
+							<tr><td>{ o.Owner }</td><td>{ o.Order.Symbol } { string(o.Order.Side) }</td><td>{ o.State }</td><td>@amount(v, o.QuoteReserved)</td><td>{ o.BaseReserved.String() }</td></tr>
+						}
+					</tbody>
+				}
+			} else {
+				@ui.Empty("Tidak ada order aktif.")
+			}
+		}
+		@ui.CardFlush("Eksekusi dan komisi aktual", nil) {
+			<p class="px-5 pt-4 text-xs text-muted">Komisi aset ketiga ditampilkan dalam aset asli. Nilai quote final masuk total fee strategi setelah harga aset komisi tersedia. Dashboard hanya memuat 7 hari terakhir; sisanya ada di arsip.</p>
+			{{ rows, total := v.Executions() }}
+			if len(rows) > 0 {
+				@ui.Table() {
+					<thead><tr><th>Waktu / pemilik</th><th>Pair / sisi</th><th>Kuantitas / harga</th><th>Komisi asli</th></tr></thead>
+					<tbody>
+						for _, e := range rows {
+							<tr>
+								<td>{ ts(e.Fill.Time) }<br/><span class="text-xs text-muted">{ e.Owner }</span></td>
+								<td>{ e.Fill.Symbol } { string(e.Fill.Side) }</td>
+								<td>{ e.Fill.Quantity.String() } / { e.Fill.Price.String() }</td>
+								<td>{ e.Fill.Commission.String() } { e.Fill.FeeAsset }<br/><span class="text-xs text-muted">Setara quote: { v.Money(e.Fill.Fee) }</span></td>
+							</tr>
+						}
+					</tbody>
+				}
+				if total > len(rows) {
+					<p class="px-5 pb-4 text-xs text-muted">Menampilkan { itoa(len(rows)) } terbaru dari { itoa(total) } eksekusi.</p>
+				}
+			} else {
+				@ui.Empty("Belum ada eksekusi.")
+			}
+		}
+	}
+}
+
+// ---- Riwayat ----
+templ historyTab(v view) {
+	@ui.Card("Sesi dan versi konfigurasi", nil) {
+		if len(v.State.Runs) == 0 {
+			@ui.Empty("Belum ada sesi.")
+		}
+		<ul class="space-y-3">
+			for _, r := range v.State.Runs {
+				<li>
+					{ r.Mode } · { r.Status } · { ts(r.StartedAt) } →
+					if r.EndedAt.IsZero() {
+						berjalan
+					} else {
+						{ ts(r.EndedAt) }
+					}
+					<br/>
+					<span class="text-xs text-muted">{ r.ID } · <code class="font-mono">{ r.ConfigurationHash }</code></span>
+				</li>
+			}
+		</ul>
+	}
+	@ui.Card("Riwayat perubahan", nil) {
+		{{ rows, total := v.History() }}
+		if len(rows) == 0 {
+			@ui.Empty("Belum ada perubahan.")
+		}
+		<ul class="space-y-2">
+			for _, h := range rows {
+				<li><span class="text-xs text-muted">{ ts(h.At) }</span> · { h.Kind } · { h.Scope } · { h.Message }</li>
+			}
+		</ul>
+		if total > len(rows) {
+			<p class="mt-3 text-xs text-muted">Menampilkan { itoa(len(rows)) } terbaru dari { itoa(total) } catatan.</p>
+		}
+	}
+}
+
+// amount is a USDT value with the selected USD/IDR value under it.
+templ amount(v view, d decimal.Decimal) {
+	<span class="tabular-nums">{ v.Money(d) }</span>
+	@fiat(v, d)
+}
+
+templ fiat(v view, d decimal.Decimal) {
+	if usd, idr, ok := v.FiatText(d); ok {
+		<span class="block text-xs font-normal text-muted tabular-nums" data-fiat data-usd={ usd } data-idr={ idr }>{ idr }</span>
+	}
+}

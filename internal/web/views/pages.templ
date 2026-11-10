@@ -1,87 +1,92 @@
 package views
 
+import "github.com/rizz404/trading-bot/internal/ui"
+
+const pillClass = "rounded-full border border-outline px-3 py-1 text-xs font-medium text-on-surface transition-colors hover:bg-surface-alt aria-[current=page]:border-primary aria-[current=page]:bg-badge aria-[current=page]:text-on-badge"
+
 templ Chart(p ChartPage) {
-	@Layout("Chart", "chart") {
-		<section>
-			<form method="get" action="/chart" class="picker">
-				<label>
-					Series
-					<select name="series" onchange="this.form.submit()">
+	@Layout("Grafik", "chart") {
+		@ui.Heading("Grafik harga", "Candle dengan penanda entry dan exit trade.", nil)
+		@ui.Card("", nil) {
+			<form method="get" action="/chart" class="max-w-md" hx-get="/chart" hx-trigger="change" hx-target="body" hx-swap="innerHTML" hx-push-url="true">
+				@ui.Field("Seri (bursa:pasar:simbol:timeframe)") {
+					<select name="series" class={ ui.InputClass }>
 						for _, s := range p.Series {
 							<option value={ s.Href } selected?={ s.Href == p.Selected }>{ s.Label }</option>
 						}
 					</select>
-				</label>
+				}
 			</form>
+			if len(p.Timeframes) > 1 {
+				<div class="mt-3 flex flex-wrap gap-2" aria-label="Timeframe">
+					for _, tf := range p.Timeframes {
+						<a class={ pillClass } href={ templ.SafeURL(tf.Href) } aria-current={ ui.Current(tf.Active) }>{ tf.Label }</a>
+					}
+				</div>
+			}
 			if p.Note != "" {
-				<p class="muted">{ p.Note }</p>
+				<p class="mt-3 text-muted">{ p.Note }</p>
 			}
-			if p.Src != "" {
-				<div class="chart tall" data-chart="candles" data-src={ p.Src }></div>
-				<p class="muted">Arrows mark trade entries (▲ long, ▼ short) and exits.</p>
+		}
+		if p.Src != "" {
+			@ui.Card("", nil) {
+				<div class="h-[32rem] w-full max-sm:h-96" data-chart="candles" data-src={ p.Src }></div>
+				<p class="mt-3 text-xs text-muted">Panah menandai entry (▲ long, ▼ short) dan exit.</p>
 			}
-		</section>
+		}
 	}
 }
 
 templ Backtests(rows []RunRow) {
-	@Layout("Backtests", "backtests") {
-		<section>
-			<h2>Backtest runs</h2>
-			<p class="muted">Saved with <code>backtest -save</code>.</p>
+	@Layout("Backtest", "backtests") {
+		@ui.Heading("Backtest tersimpan", "Disimpan dengan perintah backtest -save.", nil)
+		@ui.CardFlush("", nil) {
 			if len(rows) == 0 {
-				@Empty("No saved backtests.")
+				@ui.Empty("Belum ada backtest tersimpan.")
 			} else {
-				<table>
-					<thead><tr><th>#</th><th>Strategy</th><th>Symbols</th><th>Segment</th><th>Period</th><th>Return</th><th>Max DD</th><th>Sharpe</th><th>Trades</th><th>Win rate</th><th>PF</th></tr></thead>
+				@ui.Table() {
+					<thead><tr><th>#</th><th>Strategi</th><th>Simbol</th><th>Segmen</th><th>Periode</th><th>Return</th><th>Max DD</th><th>Sharpe</th><th>Trade</th><th>Win rate</th><th>PF</th></tr></thead>
 					<tbody>
 						for _, r := range rows {
 							<tr>
-								<td><a href={ templ.SafeURL(r.Href) }>{ r.ID }</a></td>
+								<td><a class={ ui.LinkClass } href={ templ.SafeURL(r.Href) }>{ itoa64(r.ID) }</a></td>
 								<td>{ r.Instance }</td><td>{ r.Symbols }</td><td>{ r.Segment }</td><td>{ r.Period }</td>
-								<td class={ templ.KV("pos", r.Positive), templ.KV("neg", !r.Positive) }>{ r.Return }</td>
+								<td class={ ui.Tone(tone(r.Positive)) }>{ r.Return }</td>
 								<td>{ r.MaxDD }</td><td>{ r.Sharpe }</td><td>{ r.Trades }</td><td>{ r.WinRate }</td><td>{ r.ProfitFactor }</td>
 							</tr>
 						}
 					</tbody>
-				</table>
+				}
 			}
-		</section>
+		}
 	}
 }
 
 templ Backtest(d RunDetail) {
 	@Layout("Backtest", "backtests") {
-		<section>
-			<h2>Backtest #{ d.Run.ID } · { d.Run.Instance }</h2>
-			<p class="muted">{ d.Run.Symbols } · { d.Run.Segment } · { d.Run.Period }</p>
-			<div class="cards">
-				for _, m := range d.Metrics {
-					<div class="card"><span class="label">{ m[0] }</span><span class="value">{ m[1] }</span></div>
-				}
-			</div>
-		</section>
-		<section>
-			<h2>Equity</h2>
-			<div class="chart" data-chart="line" data-src={ d.EquitySrc }></div>
-		</section>
-		if len(d.Charts) > 0 {
-			<section>
-				<h2>Charts with trades</h2>
-				<p>
-					for _, c := range d.Charts {
-						<a class="pill" href={ templ.SafeURL(c.Href) }>{ c.Label }</a>
-					}
-				</p>
-			</section>
+		@ui.Heading("Backtest #"+itoa64(d.Run.ID)+" · "+d.Run.Instance, d.Run.Symbols+" · "+d.Run.Segment+" · "+d.Run.Period, nil)
+		<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+			for _, m := range d.Metrics {
+				@ui.Stat(m[0], m[1], "", "")
+			}
+		</div>
+		@ui.Card("Equity", nil) {
+			<div class="h-72 w-full" data-chart="line" data-src={ d.EquitySrc }></div>
 		}
-		<section>
-			<h2>Parameters</h2>
-			<pre>{ d.Params }</pre>
-		</section>
-		<section>
-			<h2>Trades</h2>
+		if len(d.Charts) > 0 {
+			@ui.Card("Grafik dengan trade", nil) {
+				<div class="flex flex-wrap gap-2">
+					for _, c := range d.Charts {
+						<a class={ pillClass } href={ templ.SafeURL(c.Href) }>{ c.Label }</a>
+					}
+				</div>
+			}
+		}
+		@ui.Card("Parameter", nil) {
+			<pre class="overflow-x-auto whitespace-pre-wrap rounded-lg bg-surface-alt p-4 font-mono text-xs">{ d.Params }</pre>
+		}
+		@ui.CardFlush("Trade", nil) {
 			@Trades(d.Trades)
-		</section>
+		}
 	}
 }
