@@ -15,6 +15,25 @@ menjadi [website trading](trading-website.md) dengan label `TW-*`; dokumen
 detail repo itu ada di `agents/` ([handover trading-bot](agents/handover-agent.md)).
 Status VPS di sana checkpoint repo lain dan tidak diperiksa dari repo ini.
 
+Resolusi konflik merge (`c48b653`):
+
+- Versi presale repo ini dipertahankan untuk `plan-4.md`, `testing/plan-4-local.md`,
+  `handover-agent.md` dan `README.md` (README ditambah ringkasan merge).
+- `plan-4.md`, `agents/plan-4.md` dan `testing/plan-4-local.md` milik trading-bot
+  menjadi `trading-website.md`, `agents/trading-website.md` dan
+  `testing/trading-website-local.md`; judul dan label tahap `P4-x` diganti `TW-x`.
+- trading-bot memindahkan dokumen lama ke `agents/` dan `agents/archive/`.
+  Tautan banner arsip di file-file itu, `archive.md`, `legacy-readme.md`,
+  `handover-agent-legacy.md` dan dokumen presale disesuaikan ke path baru.
+- `strategy-2.md` memakai isi trading-bot dengan banner arsip repo ini.
+  `testing/readme.md` memakai pengantar presale dan tabel trading-bot.
+  `readme.md` dan `archive.md` ditambah entri website trading, panduan dan
+  handover trading-bot.
+- `.env.launch.example` mengikuti gateway baru `route-gateway.nexlabs.cloud`.
+  Makefile ter-merge otomatis; target `launch` tetap ada.
+- Pemeriksaan sesudah merge: tidak ada tautan lokal putus di `docs/`,
+  `docs/agents/` dan `docs/testing/`, dan tidak ada kerusakan encoding.
+
 **Verifikasi 10 November 2026:** atas permintaan user, build, seluruh unit test,
 race test, replay paper fixture dan satu pass nyata CEX/DEX dijalankan dan
 lulus setelah tiga perbaikan (`c2a0863`). Discovery presale masih menghasilkan

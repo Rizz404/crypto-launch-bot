@@ -40,6 +40,32 @@ gagal tanpa perbaikan):
   finalized kini diperbarui bila berumur lebih dari 15 detik sebelum tiap pool
   atau sale; bukti refresh ikut di `EvidenceIDs`.
 
+Test regresi baru: `TestCEXOldRetainedTradeRejectsWithoutClaimingListingTime`,
+`TestDEXRefreshesPrunedSnapshotBeforePoolReads`, dan pemeriksaan filter
+`symbolStatus=TRADING` pada `TestCEXHistoryRequiresTradeZeroAndKeepsVenueIdentity`.
+
+Data yang teramati pada pass nyata:
+
+- CEX: `0GUSDT`, `1000CATUSDT`, `1000CHEEMSUSDT` punya trade ID 0
+  (Desember 2024 sampai September 2025). Trade tertua yang tersimpan untuk
+  `1000SATSUSDT` dan `1INCHUSDT` dari November 2024. Kelimanya ditolak.
+- DEX: lima pool terbaru registry PancakeSwap V2 terbaca token0/token1 dan
+  data GoPlus. Satu token punya beberapa field GoPlus yang tidak lolos
+  (proxy, mintable, pausable, slippage modifiable, owner change balance,
+  source tidak terverifikasi, honeypot/blacklist unknown).
+  DexScreener belum mengenal pool-pool tersebut.
+
+Cara mengulang (Go hanya tersedia di WSL; pakai arsip sementara):
+
+```sh
+export GOTOOLCHAIN=auto GOFLAGS=-buildvcs=false
+go build -o /tmp/lv/launch ./cmd/launch
+/tmp/lv/launch -action replay-paper -fixture configs/launch.paper.fixture.json -archive /tmp/lv/research -paper-archive /tmp/lv/paper
+/tmp/lv/launch -action collect -source cex -limit 5 -archive /tmp/lv/research
+/tmp/lv/launch -action collect -source dex -limit 5 -archive /tmp/lv/research
+/tmp/lv/launch -action report -archive /tmp/lv/research
+```
+
 Temuan yang belum ditutup:
 
 - **Discovery presale tidak bisa menghasilkan kandidat.** `/launchpads`
