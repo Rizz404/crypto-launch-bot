@@ -66,8 +66,12 @@ checkout/source label/digest yang sama dan menyimpan bukti sebelum/sesudah.
 
 ## Rilis dan persiapan
 
-- Source dari repo private `Rizz404/trading-bot`; image dari CI/GHCR dengan
-  pasangan commit dan digest tetap. Jangan salin source laptop atau pakai `latest`.
+- Source dari repo private `Rizz404/trading-bot`. **Sejak 11 November 2026 (izin user) image bot dibangun di
+  VPS**: `bash deploy/vps-build.sh <commit>` membangun dari `git archive` commit yang sudah di-push (tanpa file
+  tak terlacak/`.env.vps`), memberi tag `ana-core:sha-<commit>`, mengisi `BOT_IMAGE`, dan menyimpan lima build
+  terakhir untuk rollback. Lalu `dc up -d --no-deps bot` (tanpa `dc pull`). Tes Go/vet/lint dijalankan di laptop
+  sebelum push; CI tetap jalan setiap push sebagai pengecekan — bila CI gagal setelah deploy, rollback ke tag
+  sebelumnya dulu. Image GHCR dari CI masih terbit dan boleh dipakai seperti dulu. Jangan pakai `latest`.
 - CI memeriksa format, modul, vet/lint, race test, build lima CLI, integrasi DB/
   migrasi/restart, alert Prometheus dan smoke image. Publikasi hanya dari `main`;
   PR membangun tanpa publikasi. Image bot mendukung amd64/arm64; image katalis
@@ -144,8 +148,8 @@ Enam kasus tahap tiga telah aktif; [T0, source/config/digest dan bukti](../testi
    `python3 deploy/vps-baseline-check.py`, simpan selisih yang sudah ada.
 2. Buat backup `bash deploy/vps-backup.sh`. Hentikan bot lama secara graceful;
    finish lebih dahulu jika eksperimen harus menyelesaikan order/inventori.
-3. Fetch dari GitHub dan checkout commit yang cocok dengan digest CI.
-   Update env melalui helper, tanpa mencetak file rahasia; `dc pull`.
+3. `bash deploy/vps-build.sh <commit>` (atau, cara lama: checkout commit yang cocok dengan digest CI, set
+   `BOT_IMAGE` lewat helper, `dc pull`). Update env lain melalui helper, tanpa mencetak file rahasia.
 4. Uji migrasi pada DB salinan. Trial baru memakai DB/wallet baru dengan modal
    eksplisit, bukan resume saldo lama. Set `BOT_DB_NAME` sebelum migrasi target.
 5. Jalankan `dc run --interactive=false --rm --no-deps bot migrate status`,
