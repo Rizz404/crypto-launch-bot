@@ -86,6 +86,9 @@ templ summaryTab(v view) {
 			@ui.Stat("PnL net akun", v.Money(v.PnL()), v.PnLTone(v.PnL()), "Drawdown saat ini: "+v.Drawdown(v.State.Equity(), v.State.Peak)) {
 				@fiat(v, v.PnL())
 			}
+			if bh, ok := v.BuyHold("account"); ok {
+				@ui.Stat("Buy-and-hold "+itoa(bh.Pairs)+" pair", signedPct(bh.Pct), v.PnLTone(bh.Pct), "Bot: "+signedPct(ReturnPct(v.PnL(), v.State.Spec.Capital))+" · sejak "+ts(bh.Since))
+			}
 			@ui.Stat("Cadangan belum dialokasikan", v.Money(v.State.Reserve), "", "") {
 				@fiat(v, v.State.Reserve)
 			}
@@ -369,6 +372,9 @@ templ instanceCard(v view, id string) {
 				}
 				@ui.Stat("PnL net", v.Money(v.InstancePnL(id)), v.PnLTone(v.InstancePnL(id)), "Drawdown "+v.Drawdown(v.State.InstanceEquity(id), i.Peak)) {
 					@fiat(v, v.InstancePnL(id))
+				}
+				if bh, ok := v.BuyHold(id); ok {
+					@ui.Stat("Buy-and-hold "+itoa(bh.Pairs)+" pair", signedPct(bh.Pct), v.PnLTone(bh.Pct), "Instance: "+signedPct(ReturnPct(v.InstancePnL(id), i.Funded))+" · sejak "+ts(bh.Since))
 				}
 			}
 			if i.Halted {

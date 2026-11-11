@@ -34,10 +34,11 @@ type view struct {
 	// Trade shows the trading screen in the menu; Auth the account links.
 	Trade, Auth bool
 	// Inactive lists strategies added since the last start (no engine yet).
-	Inactive []string
-	money    func(decimal.Decimal) string
-	fiat     Fiat
-	links    []ui.NavItem
+	Inactive   []string
+	money      func(decimal.Decimal) string
+	fiat       Fiat
+	startPrice func(symbol string, at time.Time) (decimal.Decimal, bool)
+	links      []ui.NavItem
 }
 
 var tabs = []ui.NavItem{

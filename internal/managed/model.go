@@ -110,6 +110,9 @@ type Instance struct {
 	Risk                         risk.Config
 	Halted                       bool
 	Reason                       string
+	// Started is when the instance was created; zero for instances older
+	// than this field, which then compare from the wallet start.
+	Started time.Time
 }
 type Binding struct {
 	ID, InstanceID, Status, Reason string
@@ -202,7 +205,7 @@ func NewState(spec Spec) (*State, error) {
 	}
 	s := &State{Version: 1, PriceAt: map[string]time.Time{}, FeeAssets: map[string]decimal.Decimal{}, PendingFees: map[string]FeeCharge{}, Spec: spec, ConfigHash: Hash(spec), Reserve: spec.Capital, Instances: map[string]*Instance{}, Bindings: map[string]*Binding{}, Holdings: map[string]*Holding{}, Orders: map[string]*Order{}, Seen: map[string]bool{}, Prices: map[string]decimal.Decimal{}, Baseline: map[string]decimal.Decimal{}, Requests: map[string]string{}, RequestAt: map[string]time.Time{}, StartedAt: time.Now().UTC()}
 	for _, i := range spec.Instances {
-		s.Instances[i.ID] = &Instance{ID: i.ID, Name: i.Name, Status: "running", Notify: i.Notify, Cash: i.Allocation, Funded: i.Allocation, Risk: i.Risk}
+		s.Instances[i.ID] = &Instance{ID: i.ID, Name: i.Name, Status: "running", Notify: i.Notify, Cash: i.Allocation, Funded: i.Allocation, Risk: i.Risk, Started: s.StartedAt}
 		s.Reserve = s.Reserve.Sub(i.Allocation)
 		for _, b := range i.Strategies {
 			id := i.ID + "/" + b.ID

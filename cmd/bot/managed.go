@@ -309,6 +309,12 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 		}
 		// Same graceful stop as Telegram /stop; the container restart policy starts it again.
 		handler.Restart = cancel
+		handler.StartPrice = func(ctx context.Context, exchange, symbol string, at time.Time) (decimal.Decimal, bool) {
+			var open decimal.Decimal
+			err := pool.QueryRow(ctx, `SELECT open FROM candles WHERE exchange = $1 AND market = 'spot' AND symbol = $2
+				AND timeframe = '1m' AND open_time >= $3 ORDER BY open_time LIMIT 1`, exchange, symbol, at).Scan(&open)
+			return open, err == nil
+		}
 		handler.Owners = managed.PGOwners{Pool: pool}
 		code, err := handler.Setup(ctx)
 		if err != nil {

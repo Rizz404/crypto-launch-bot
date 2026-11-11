@@ -388,3 +388,31 @@ func TestIDsAreGeneratedFromNames(t *testing.T) {
 		assert.NotNil(t, s.Bindings[id], id)
 	}
 }
+
+func TestBuyHoldComparesTheScopePairs(t *testing.T) {
+	sp := spec()
+	sp.Instances[0].Strategies[0].Symbols = []string{"ETHUSDT", "BTCUSDT"}
+	s, err := NewState(sp)
+	require.NoError(t, err)
+	s.Prices["ETHUSDT"], s.Prices["BTCUSDT"] = d("110"), d("45")
+	start := map[string]decimal.Decimal{"ETHUSDT": d("100"), "BTCUSDT": d("50")}
+	v := view{State: s, startPrice: func(sym string, at time.Time) (decimal.Decimal, bool) {
+		assert.Equal(t, s.StartedAt, at, "config instances compare from the wallet start")
+		p, ok := start[sym]
+		return p, ok
+	}}
+
+	bh, ok := v.BuyHold("a")
+	require.True(t, ok)
+	assert.Equal(t, 2, bh.Pairs)
+	assert.Equal(t, "0", bh.Pct.String(), "+10% ETH and -10% BTC, equal weight")
+	assert.Equal(t, "+5,00%", signedPct(d("5")))
+	assert.Equal(t, "-4,85%", signedPct(d("-4.85")))
+
+	delete(start, "BTCUSDT")
+	_, ok = v.BuyHold("a")
+	assert.False(t, ok, "hidden until every pair has a start price")
+	v.startPrice = nil
+	_, ok = v.BuyHold("account")
+	assert.False(t, ok)
+}

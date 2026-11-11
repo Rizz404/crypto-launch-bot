@@ -113,7 +113,7 @@ func (s *State) Apply(c Command) error {
 				return err
 			}
 		}
-		s.Instances[spec.ID] = &Instance{ID: spec.ID, Name: spec.Name, Status: "paused", Notify: spec.Notify, Risk: spec.Risk}
+		s.Instances[spec.ID] = &Instance{ID: spec.ID, Name: spec.Name, Status: "paused", Notify: spec.Notify, Risk: spec.Risk, Started: time.Now().UTC()}
 		for _, b := range spec.Strategies {
 			id := spec.ID + "/" + b.ID
 			s.Bindings[id] = &Binding{ID: id, InstanceID: spec.ID, Status: "paused", Reason: "restart runtime to initialize subscriptions", Spec: b}

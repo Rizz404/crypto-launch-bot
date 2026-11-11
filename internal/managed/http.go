@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/shopspring/decimal"
 )
@@ -34,6 +35,9 @@ type HTTP struct {
 	Markets func(mode string) *marketview.Hub
 	// Fiat converts amounts for the USD/IDR line; nil shows USDT only.
 	Fiat Fiat
+	// StartPrice feeds the buy-and-hold comparison; nil hides it.
+	StartPrice StartPrice
+	starts     sync.Map // exchange|symbol|unix -> decimal.Decimal; start prices never change
 	// Restart stops the process so the supervisor starts it again, which
 	// activates strategies added from the dashboard; nil hides the action.
 	Restart  func()
@@ -46,6 +50,24 @@ func (h *HTTP) view(wallet string, wallets []string, tab string, state *State, q
 	v := view{Wallet: wallet, Wallets: wallets, Tab: tab, State: state, Token: h.token, Error: q.URL.Query().Get("error"), OK: q.URL.Query().Get("ok"), money: h.Money, fiat: h.Fiat, links: h.NavLinks, Trade: h.Markets != nil, Auth: h.Owners != nil}
 	if rt := h.Wallets[wallet]; rt != nil && state != nil && h.Restart != nil {
 		v.Inactive = rt.Inactive(state)
+	}
+	if h.StartPrice != nil && state != nil {
+		// Candles are stored under the network name (app.ExchangeName).
+		exchange := state.Spec.Exchange
+		if state.Spec.Mode == "testnet" {
+			exchange += "-testnet"
+		}
+		v.startPrice = func(symbol string, at time.Time) (decimal.Decimal, bool) {
+			key := exchange + "|" + symbol + "|" + strconv.FormatInt(at.Unix(), 10)
+			if p, ok := h.starts.Load(key); ok {
+				return p.(decimal.Decimal), true
+			}
+			p, ok := h.StartPrice(q.Context(), exchange, symbol, at)
+			if ok {
+				h.starts.Store(key, p)
+			}
+			return p, ok
+		}
 	}
 	return v
 }
