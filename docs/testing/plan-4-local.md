@@ -49,6 +49,51 @@ Gap yang tersisa pada jalur presale:
 - Binary Spider di atas hasil build lokal; image `crypto-launch-bot-spider`
   belum di-publish dan pin digest di `Dockerfile.catalyst` masih nama lama.
 
+### Pass kedua dan implementasi fair launch (12 November, malam)
+
+Dijalankan atas permintaan user ("lanjutkan berdasarkan docs") di perangkat
+`fujiyama-office-windows`, WSL Fedora. `/tmp/lv` hilang setelah WSL restart, jadi
+binary dan arsip uji kini di `~/.local/state/crypto-launch-bot/lv` (di luar
+repo, bertahan antar-restart) supaya pass berulang menumpuk di satu arsip.
+
+| Pemeriksaan | Hasil |
+|---|---|
+| `collect` presale, dex, cex, curve (`-limit 5`) lalu `report` | Exit 0 semua; `entry_allowed` false untuk seluruh review; arsip 7 MB setelah 5 batch |
+| Presale | 7 pool yang sama dengan pass sebelumnya, semua `sale_closed`; tidak ada sale upcoming/live |
+| DEX | 5 pool baru, semua `held`; 1 terisi GeckoTerminal, 4 `market_metadata_unavailable` |
+| CEX | 5 simbol yang sama, ditolak `listing_older_than_30_days` (rotasi simbol tidak maju antar-arsip baru) |
+| Curve | 5 token four.meme terbaru, semua `held` |
+| `go vet`, `go test -race ./internal/launch ./cmd/launch` sesudah perubahan | Lulus |
+
+Pool `0xdbcc27573b47afcb616a4fa1457da2a492344fd9` selesai diselidiki lewat
+`bsc-dataseed` (baca saja):
+
+- Kodenya clone EIP-1167 dari `0x07f6351491b694f3a04c5f1e47d151d4ad927d45`,
+  `factory()` mengembalikan factory PinkSale yang sama, slot proxy EIP-1967 kosong.
+- Halaman PinkSale pool itu bertipe fair launch (soft cap saja, tanpa hard cap
+  dan rate). Pool kedua di kanal, `0x006c2baa…f4ab`, juga fair launch dan memakai
+  implementasi yang sama. Sembilan pool BSC di arsip terbagi 6/1/2 pada tiga
+  implementasi, semuanya dengan factory yang sama.
+- Implementasi ketiga berbagi 36 dari 43 selector dengan dua lainnya (dua
+  implementasi presale berbagi 43). Ketiganya tidak terverifikasi di Sourcify.
+- Keputusan agent: `0x07f6…7d45` ditambahkan ke daftar implementasi dikenal
+  dengan standar bukti yang sama seperti dua sebelumnya (pengamatan chain atas
+  pool yang disajikan pinksale.finance). Pass ulang: ketujuh kandidat
+  `known_pinksale_clone`.
+
+Cara mengulang pemeriksaan kontrak sale (JSON-RPC ke
+`https://bsc-dataseed.binance.org`, jeda ±1 detik antar-request):
+`eth_getCode` pool harus berbentuk
+`0x363d3d373d3d3d363d73<implementasi>5af43d82803e903d91602b57fd5bf3`, dan
+`eth_call` dengan data `0xc45a0155` (`factory()`) harus mengembalikan
+`0x1ee7736987f2ebd0f519ec5858b2b3bc6fd0c6a0`. Perintah pass ada di
+[panduan CLI](../presale-runtime.md#pass-berulang).
+
+Gap baru: tipe sale (presale/fair launch) belum menjadi fakta kandidat, padahal
+fair launch tidak punya harga tetap; `factory()` dilaporkan sendiri oleh
+kontrak, dan bukti bahwa factory yang men-deploy pool (transaksi pembuatan)
+belum diambil. Coverage tetap dua pass pada hari yang sama, bukan beberapa hari.
+
 ### Sumber tambahan (12 November, lanjutan)
 
 Atas keputusan user sesudah riset sumber: verifikasi clone PinkSale, kanal
@@ -71,8 +116,8 @@ Catatan dan gap:
   `-limit` token terbaru yang diperiksa (`bounded_curve_tail_not_complete`).
 - `curve` baru sebatas discovery: analisis, sizing dan paper belum mengenalnya,
   sehingga selalu `held` dengan `curve_exit_and_paper_adapter_pending`.
-- Pool yang ditandai bukan clone dikenal (`0xdbcc…4fd9`) belum diselidiki; bisa
-  implementasi ketiga yang sah atau kontrak asing.
+- Pool yang ditandai bukan clone dikenal (`0xdbcc…4fd9`) ternyata fair launch
+  dengan implementasi ketiga; lihat bagian pass kedua di atas.
 - Enumerasi pool PinkSale lewat event factory tidak berhasil: tidak ada log dari
   alamat `factory()` pada 360 ribu blok terakhir.
 - Kedua kanal belum memunculkan sale yang masih upcoming/live pada pass ini.

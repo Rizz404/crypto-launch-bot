@@ -69,6 +69,19 @@ selesai. Discovery presale belum bisa menghasilkan kandidat karena daftar
 PinkSale dirender JavaScript; user memilih menunda sumber seed. Rincian dan
 batasnya ada di [checkpoint lokal](testing/plan-4-local.md#verifikasi-10-november-2026).
 
+## Checkpoint sumber dan pass nyata — 12 November
+
+Sumber seed presale diputuskan user: dua kanal Telegram sebagai petunjuk tautan
+(satu resmi, satu ditandai tidak resmi), halaman detail PinkSale dan chain
+sebagai bukti. Spider pinned di-build lokal dan crawl presale lulus. Ditambah
+verifikasi clone/factory kontrak sale, GeckoTerminal sebagai metadata pool
+kedua, dan venue keempat four.meme (kind `curve`, sebatas discovery). Dua pass
+nyata di semua jalur lulus pada hari itu; pool yang semula ditandai asing
+terbukti fair launch PinkSale dengan implementasi ketiga. Belum ada sale
+presale yang masih terbuka, sehingga jalur presale belum pernah menghasilkan
+kandidat selain `rejected`. Rincian:
+[checkpoint lokal](testing/plan-4-local.md#verifikasi-12-november-2026).
+
 ## Fase dan kriteria selesai
 
 ### P4-0 — Reset dokumentasi
@@ -99,8 +112,9 @@ jalur presale/DEX/CEX tanpa integrasi sasaran, dan dependensi akses diketahui.
   seluruh entry tetap mati. Verifikasi pra-transaksi menjadi kewajiban P4-4.
 - [ ] Terima hasil tes dan sumber nyata: parsing/robots, API/RPC, finality,
   gap/recovery, coverage dan budget. 10 November: tes lulus, pass nyata CEX/DEX
-  lulus setelah perbaikan; presale terhalang daftar PinkSale berbasis JS,
-  Spider belum di-build, coverage berulang belum diuji.
+  lulus setelah perbaikan. 12 November: Spider di-build, crawl presale dan
+  curve lulus, dua pass semua jalur lulus. Tersisa: coverage beberapa hari,
+  sale presale yang masih terbuka, recovery/budget pada pass berulang.
 
 Selesai ketika kandidat dapat ditelusuri sampai sumber, informasi basi/konflik
 tidak meloloskan entry, dan penemuan tidak bergantung daftar ticker statis P3.
@@ -163,7 +177,8 @@ bukan resume pilot P3. Commit docs dan discovery sudah dibuat sesuai permintaan;
 checkpoint P4-3/P4-4 kemudian diminta user untuk di-commit; hash terbaru ada
 di `git log`. Tidak ada push, inference berbayar, deploy atau transaksi.
 Tes/build dan pass CEX/DEX nyata baru dijalankan 10 November atas permintaan
-user. Langkah berikutnya: pilih sumber seed daftar presale, build Spider,
-lalu uji pass berulang dan inference. Data,
+user. Langkah berikutnya (status 12 November): pass berulang beberapa hari,
+tipe sale sebagai fakta kandidat, lalu inference atas izin user; daftar
+lengkapnya di [handover](handover-agent.md). Data,
 ledger, modal dan T0 tetap dipertahankan; status server belum diperiksa.
 [Handover](handover-agent.md) dan [arsip](archive.md) menyimpan jejak historis.

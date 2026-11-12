@@ -55,6 +55,10 @@ Diputuskan user sesudah riset sumber lanjutan; bukti dan hasil pass nyata ada di
   Kanal hanya memasok URL; identitas dan syarat tetap dari halaman PinkSale dan chain.
 - **Verifikasi kontrak sale.** Pool harus clone EIP-1167 dari implementasi yang
   dikenal dan `factory()` cocok. Alamatnya hasil pengamatan chain, bukan publikasi PinkSale.
+  Tiga implementasi teramati dari 9 pool: `0xd18b…0109` (presale, 6 pool),
+  `0xeed5…fd0d` (presale manual listing, 1 pool) dan `0x07f6…7d45` (fair launch,
+  2 pool). Tipe sale belum menjadi fakta kandidat; fair launch tidak punya hard
+  cap atau rate tetap.
 - **GeckoTerminal** dipakai sebagai metadata pool kedua sesudah DexScreener
   lewat API publik `api.geckoterminal.com/api/v2` tanpa key (terbukti menjawab
   12 November). Batas rate dan syarat pakai belum diverifikasi.

@@ -44,9 +44,9 @@ beberapa menit). Go yang dipakai 1.27.2; bila Go bawaan lebih lama, set
 ```sh
 podman build -f Dockerfile.spider -t localhost/crypto-launch-bot-spider:local .
 cid=$(podman create localhost/crypto-launch-bot-spider:local /spider)
-podman cp "$cid:/spider" /tmp/lv/spider
+podman cp "$cid:/spider" "$HOME/.local/state/crypto-launch-bot/lv/spider"
 podman rm "$cid"
-/tmp/lv/spider --version
+"$HOME/.local/state/crypto-launch-bot/lv/spider" --version
 ```
 
 Versi yang benar: `spider_cli 2.53.9-p3.1`.
@@ -132,9 +132,38 @@ Perilaku sumber yang teramati 10 November:
   presale mengambil ulang blok finalized bila snapshot berumur lebih dari
   15 detik sebelum membaca tiap pool/sale.
 - Daftar `/launchpads` PinkSale dirender JavaScript dan tidak memuat tautan
-  sale, jadi collect presale saat ini berakhir dengan
-  `no_parseable_bsc_sale_pages_or_javascript_required`. Halaman detail sale
-  dirender server. Sumber seed daftar belum dipilih.
+  sale; halaman detail sale dirender server. Sejak 12 November tautan pool
+  diambil dari dua kanal Telegram, jadi gap
+  `no_parseable_bsc_sale_pages_or_javascript_required` hanya muncul bila kedua
+  kanal tidak memberi satu pun tautan BSC yang terbaca.
+
+## Pass berulang
+
+Untuk mengukur coverage, pakai satu arsip yang bertahan antar-restart, di luar
+repo, dan jalankan serial. `/tmp` di WSL terhapus saat restart. Simpan sebagai
+file `.sh` (shell WSL bawaan fish) lalu jalankan dengan `sh`:
+
+```sh
+export GOTOOLCHAIN=go1.27.2 GOFLAGS=-buildvcs=false
+D=$HOME/.local/state/crypto-launch-bot/lv
+mkdir -p "$D"
+go build -o "$D/launch" ./cmd/launch
+"$D/launch" -action collect -source presale -spider-binary "$D/spider" -archive "$D/research"
+"$D/launch" -action collect -source dex -limit 5 -archive "$D/research"
+"$D/launch" -action collect -source cex -limit 5 -archive "$D/research"
+"$D/launch" -action collect -source curve -limit 5 -archive "$D/research"
+"$D/launch" -action report -archive "$D/research" > "$D/report.json"
+```
+
+`$D/spider` adalah binary hasil build di atas. Ringkasan per kandidat:
+
+```sh
+jq -r '.reviews[] | [.candidate.kind, .status, .candidate.external_id, .candidate.state, (.reasons|join(","))] | @tsv' "$D/report.json"
+```
+
+Arsip itu lokal per perangkat dan tidak ikut Git; di perangkat lain coverage
+dimulai dari arsip kosong. Cursor pool DEX dan rotasi simbol CEX tersimpan di
+arsip, jadi arsip baru mengulang lima simbol CEX pertama.
 
 Gunakan satu collector serial per arsip. Lock penulisan arsip menjaga record,
 bukan koordinasi kuota lintas proses; proses paralel dapat menggandakan request.

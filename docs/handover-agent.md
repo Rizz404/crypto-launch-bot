@@ -12,12 +12,18 @@
   pekerjaan 12 November belum di-push. Push hanya atas izin user.
 - Pindah perangkat: yang tidak ikut Git adalah `.env`/`.env.catalyst` (nama DB
   di `TB_DATABASE__URL` kini `cryptolaunchbot`), binary Spider (bangun ulang,
-  lihat [panduan CLI](presale-runtime.md#perintah)) dan arsip uji `/tmp/lv`.
+  lihat [panduan CLI](presale-runtime.md#perintah)) dan arsip uji lokal
+  (lihat [pass berulang](presale-runtime.md#pass-berulang)).
   Volume/DB lokal lama bernama `tradingbot` tidak dipakai lagi.
-- Langkah berikut yang disarankan (belum diputuskan user): pass `collect`
-  berulang beberapa hari untuk mengukur coverage dan melihat apakah sale presale
-  terbuka muncul; selidiki pool `0xdbcc…4fd9` yang bukan clone dikenal; lalu
-  `analyze` pada model nyata. Untuk `curve`, analisis/sizing/paper belum ada.
+- Pass kedua 12 November malam lulus di semua jalur dan pool `0xdbcc…4fd9`
+  selesai diselidiki: fair launch PinkSale dengan implementasi ketiga
+  `0x07f6…7d45`, kini masuk daftar dikenal. Lihat
+  [checkpoint](testing/plan-4-local.md#pass-kedua-dan-implementasi-fair-launch-12-november-malam).
+- Langkah berikut yang disarankan (belum diputuskan user): ulangi `collect` pada
+  hari-hari berikutnya ke arsip yang sama untuk mengukur coverage dan melihat
+  apakah sale presale terbuka muncul; jadikan tipe sale (presale/fair launch)
+  fakta kandidat; lalu `analyze` pada model nyata (berbayar, butuh izin user).
+  Untuk `curve`, analisis/sizing/paper belum ada dan butuh keputusan policy.
 - Seed presale (12 November): kanal pengumuman resmi `t.me/s/pinkecosystem_ann`
   menjadi petunjuk tautan, halaman detail PinkSale dan chain tetap buktinya.
   Atas keputusan user ditambah: `PinkSaleTracking` (tidak resmi, ditandai
@@ -28,7 +34,8 @@
   [checkpoint](testing/plan-4-local.md#sumber-tambahan-12-november-lanjutan).
 - Lingkungan: Go hanya tersedia di WSL (`FedoraLinux-44`, shell fish), jadi
   tulis perintah ke file `.sh` dan set `GOTOOLCHAIN=go1.27.2` (bawaan 1.26).
-  Arsip uji ditulis ke `/tmp`, jangan ke `var/launch`.
+  Arsip uji jangan ke `var/launch`; di perangkat kantor arsip dan binary ada di
+  `~/.local/state/crypto-launch-bot/lv` (WSL) karena `/tmp` terhapus saat restart.
 - Penamaan (12 November; build, unit, integrasi dan test alert lulus sesudahnya): path module Go kini
   `github.com/rizz404/crypto-launch-bot`. Atas izin user (proyek belum ter-deploy)
   semua nama ikut diganti: brand UI, realm login, tag image, image Spider di
