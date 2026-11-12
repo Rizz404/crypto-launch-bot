@@ -80,12 +80,13 @@ func parseSale(doc catalyst.Document, evidence string, now time.Time) (Candidate
 }
 
 // PinkSale publishes no contract addresses. These were read from live BSC pools on
-// 2026-11-12: every sampled pool is an EIP-1167 clone of one of two implementations
+// 2026-11-12: every sampled pool is an EIP-1167 clone of one of three implementations
 // and returns the same factory(). A pool that differs is flagged, never trusted.
+// The third implementation backs fair launches (two sampled pools, no hard cap or rate).
 const pinkFactory = "0x1ee7736987f2ebd0f519ec5858b2b3bc6fd0c6a0"
 const factorySelector = "0xc45a0155"
 
-var pinkImplementations = []string{"0xd18b06e912575a388593ee07bf6f902bd6e30109", "0xeed5194c2d5f16cd1d54f37ca84603be7c0bfd0d"}
+var pinkImplementations = []string{"0xd18b06e912575a388593ee07bf6f902bd6e30109", "0xeed5194c2d5f16cd1d54f37ca84603be7c0bfd0d", "0x07f6351491b694f3a04c5f1e47d151d4ad927d45"}
 var minimalProxy = regexp.MustCompile(`^0x363d3d373d3d3d363d73([0-9a-f]{40})5af43d82803e903d91602b57fd5bf3$`)
 
 // presaleLeads only supply pool links; sale identity and terms come from the
