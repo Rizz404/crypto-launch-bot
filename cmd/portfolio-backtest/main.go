@@ -19,12 +19,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/broker"
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/managed"
-	"github.com/rizz404/trading-bot/internal/strategy"
-	_ "github.com/rizz404/trading-bot/internal/strategy/all"
+	"github.com/rizz404/crypto-launch-bot/internal/broker"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/managed"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
+	_ "github.com/rizz404/crypto-launch-bot/internal/strategy/all"
 	"github.com/shopspring/decimal"
 )
 

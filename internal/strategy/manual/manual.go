@@ -6,8 +6,8 @@ package manual
 import (
 	"errors"
 
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/strategy"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
 )
 
 func init() { strategy.Register("manual", func() strategy.Strategy { return &Strategy{} }) }

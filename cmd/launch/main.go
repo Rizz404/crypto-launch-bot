@@ -15,9 +15,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/catalyst"
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/launch"
+	"github.com/rizz404/crypto-launch-bot/internal/catalyst"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/launch"
 )
 
 func run(ctx context.Context, args []string, out io.Writer) error {

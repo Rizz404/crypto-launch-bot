@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/broker"
-	"github.com/rizz404/trading-bot/internal/storage"
+	"github.com/rizz404/crypto-launch-bot/internal/broker"
+	"github.com/rizz404/crypto-launch-bot/internal/storage"
 	"github.com/stretchr/testify/require"
 )
 

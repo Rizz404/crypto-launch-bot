@@ -1,9 +1,9 @@
 """Download official Binance spot archives, verify SHA256 and validate one-minute continuity.
-No credentials or trading endpoints are used. Cache defaults to /tmp/trading-bot-year.
+No credentials or trading endpoints are used. Cache defaults to /tmp/crypto-launch-bot-year.
 """
 import concurrent.futures as cf
 import csv, datetime as dt, hashlib, io, json, pathlib, sys, time, urllib.request, zipfile
-ROOT = pathlib.Path(sys.argv[1] if len(sys.argv)>1 else '/tmp/trading-bot-year')
+ROOT = pathlib.Path(sys.argv[1] if len(sys.argv)>1 else '/tmp/crypto-launch-bot-year')
 ROOT.mkdir(parents=True, exist_ok=True)
 SYMBOLS=['BTCUSDT','ETHUSDT','BNBUSDT','XRPUSDT','SOLUSDT']
 START=int(dt.datetime(2025,10,19,tzinfo=dt.timezone.utc).timestamp())

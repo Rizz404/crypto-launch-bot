@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/managed"
-	"github.com/rizz404/trading-bot/internal/ui"
+	"github.com/rizz404/crypto-launch-bot/internal/managed"
+	"github.com/rizz404/crypto-launch-bot/internal/ui"
 )
 
 // HTTP reuses the existing managed dashboard/control and protects research

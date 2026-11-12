@@ -7,9 +7,9 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/broker"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/portfolio"
+	"github.com/rizz404/crypto-launch-bot/internal/broker"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/portfolio"
 )
 
 // start starts the live brokers and loads the exchange state (after

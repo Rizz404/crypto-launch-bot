@@ -17,14 +17,14 @@ fi
 work=$(mktemp -d "$backup_dir/.incomplete-XXXXXXXX")
 trap 'rm -rf -- "$work"' EXIT
 dc() { docker compose --env-file .env.vps -f deploy/compose.vps.yml "$@"; }
-# Every trial database of this project. tradingbot keeps its historical name
+# Every trial database of this project. cryptolaunchbot keeps its historical name
 # database.dump; others are database-<name>.dump.
-mapfile -t databases < <(dc exec -T db psql -U bot -d tradingbot -At -c \
+mapfile -t databases < <(dc exec -T db psql -U bot -d cryptolaunchbot -At -c \
   "SELECT datname FROM pg_database WHERE NOT datistemplate AND datname <> 'postgres' AND datname ~ '^[a-z0-9_]+$' ORDER BY datname" </dev/null)
 dumps=()
 for db in "${databases[@]}"; do
   file=database.dump
-  [[ $db == tradingbot ]] || file="database-$db.dump"
+  [[ $db == cryptolaunchbot ]] || file="database-$db.dump"
   dc exec -T db pg_dump -U bot -d "$db" -Fc </dev/null > "$work/$file"
   # Validate the archive directory; a full restore drill is still a separate check.
   dc exec -T db pg_restore --list < "$work/$file" > "$work/archive-list-$db.txt"

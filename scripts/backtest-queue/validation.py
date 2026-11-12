@@ -58,7 +58,7 @@ def prepare(plan,status):
   expected=core.fetch(url+'.CHECKSUM').decode().split()[0]
   # Reuse earlier local downloads when present; never trust them without checksum verification.
   if not path.exists():
-   old=pathlib.Path('/tmp/trading-bot-year')/name
+   old=pathlib.Path('/tmp/crypto-launch-bot-year')/name
    if old.exists() and core.sha(old)==expected:shutil.copy2(old,path)
   if not path.exists() or core.sha(path)!=expected:
    b=core.fetch(url)

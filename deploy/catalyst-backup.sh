@@ -38,7 +38,7 @@ if [[ $(docker inspect -f '{{.State.Running}}' "$cid") == true ]]; then
   docker stop --time 30 "$cid" >/dev/null
 fi
 [[ $(docker inspect -f '{{.State.Running}}' "$cid") == false ]]
-dc exec -T db pg_dump -U catalyst -d tradingbot_catalyst_paper_v1 -Fc </dev/null > "$work/database.dump"
+dc exec -T db pg_dump -U catalyst -d cryptolaunchbot_catalyst_paper_v1 -Fc </dev/null > "$work/database.dump"
 dc exec -T db pg_restore --list < "$work/database.dump" > "$work/archive-list.txt"
 tar -C "$archive" -czf "$work/archive.tar.gz" .
 tar -czf "$work/config.tar.gz" .env.catalyst .env.catalyst-image configs/catalyst.policy.json deploy/compose.catalyst.yml deploy/compose.catalyst.pilot.yml

@@ -104,7 +104,7 @@ def main():
         slots = sum(p.is_file() and p.name.isdigit() for p in budget.iterdir()) if budget.exists() else 0
         sql = "SELECT json_build_object('halted',state->'Halted','attention',state->'Attention','revision',revision) FROM managed_wallets"
         ledger = json.loads(command(DC + ["exec", "-T", "db", "psql", "-qAt", "-U", "catalyst",
-                                         "-d", "tradingbot_catalyst_paper_v1", "-v", "ON_ERROR_STOP=1", "-c", sql]))
+                                         "-d", "cryptolaunchbot_catalyst_paper_v1", "-v", "ON_ERROR_STOP=1", "-c", sql]))
         backups = sorted(p for p in (REPO.parent / "backups").glob("backup-*")
                          if p.is_dir() and not p.is_symlink() and (p / "SHA256SUMS").is_file())
         backup_age = (now.timestamp() - backups[-1].stat().st_mtime) if backups else None

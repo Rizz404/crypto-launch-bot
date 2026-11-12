@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/rizz404/trading-bot/internal/broker"
-	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/broker"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
 )
 
 func TestSpotExecutionCaseSensitiveFieldsAndBaseFee(t *testing.T) {

@@ -22,7 +22,7 @@ func TestOpenRetriesRefusedConnectionsUntilConnectWait(t *testing.T) {
 	ConnectWait = 900 * time.Millisecond
 	t.Cleanup(func() { ConnectWait = old })
 	start := time.Now()
-	_, err = Open(context.Background(), "postgres://bot:pw@"+addr+"/tradingbot?sslmode=disable&connect_timeout=1", 2)
+	_, err = Open(context.Background(), "postgres://bot:pw@"+addr+"/cryptolaunchbot?sslmode=disable&connect_timeout=1", 2)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "ping database")
 	assert.GreaterOrEqual(t, time.Since(start), 500*time.Millisecond, "retried before giving up")
@@ -32,7 +32,7 @@ func TestOpenRetriesRefusedConnectionsUntilConnectWait(t *testing.T) {
 	cancel()
 	ConnectWait = time.Minute
 	start = time.Now()
-	_, err = Open(ctx, "postgres://bot:pw@"+addr+"/tradingbot?sslmode=disable", 2)
+	_, err = Open(ctx, "postgres://bot:pw@"+addr+"/cryptolaunchbot?sslmode=disable", 2)
 	require.Error(t, err)
 	assert.Less(t, time.Since(start), 2*time.Second, "shutdown interrupts the wait")
 }

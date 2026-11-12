@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/rizz404/trading-bot/internal/exchange"
+	"github.com/rizz404/crypto-launch-bot/internal/exchange"
 )
 
 func TestDepthSnapshotAndMarketMessages(t *testing.T) {

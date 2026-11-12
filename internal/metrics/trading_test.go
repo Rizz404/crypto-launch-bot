@@ -21,11 +21,11 @@ func TestTradingMetricsFlagsAndLatency(t *testing.T) {
 	var histograms int
 	for _, f := range families {
 		switch f.GetName() {
-		case "tradingbot_kill_switch":
+		case "cryptolaunchbot_kill_switch":
 			assert.Equal(t, 1.0, f.Metric[0].Gauge.GetValue())
-		case "tradingbot_paused":
+		case "cryptolaunchbot_paused":
 			assert.Zero(t, f.Metric[0].Gauge.GetValue())
-		case "tradingbot_order_place_seconds":
+		case "cryptolaunchbot_order_place_seconds":
 			for _, series := range f.Metric {
 				histograms++
 				assert.Equal(t, uint64(1), series.Histogram.GetSampleCount())

@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/exchange/binance"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/exchange/binance"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/require"
 )

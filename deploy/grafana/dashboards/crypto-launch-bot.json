@@ -1,6 +1,6 @@
 {
-  "uid": "tradingbot",
-  "title": "Trading Bot",
+  "uid": "cryptolaunchbot",
+  "title": "Crypto Launch Bot",
   "schemaVersion": 39,
   "version": 1,
   "editable": true,
@@ -10,7 +10,7 @@
     "to": "now"
   },
   "tags": [
-    "trading-bot"
+    "crypto-launch-bot"
   ],
   "panels": [
     {
@@ -30,7 +30,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(tradingbot_equity)",
+          "expr": "sum(cryptolaunchbot_equity)",
           "legendFormat": "",
           "datasource": {
             "type": "prometheus",
@@ -70,7 +70,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(tradingbot_unrealized_pnl)",
+          "expr": "sum(cryptolaunchbot_unrealized_pnl)",
           "legendFormat": "",
           "datasource": {
             "type": "prometheus",
@@ -123,7 +123,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(tradingbot_open_positions)",
+          "expr": "sum(cryptolaunchbot_open_positions)",
           "legendFormat": "",
           "datasource": {
             "type": "prometheus",
@@ -158,7 +158,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "max(tradingbot_kill_switch)",
+          "expr": "max(cryptolaunchbot_kill_switch)",
           "legendFormat": "",
           "datasource": {
             "type": "prometheus",
@@ -212,7 +212,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "max(tradingbot_paused)",
+          "expr": "max(cryptolaunchbot_paused)",
           "legendFormat": "",
           "datasource": {
             "type": "prometheus",
@@ -266,7 +266,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "tradingbot_equity",
+          "expr": "cryptolaunchbot_equity",
           "legendFormat": "{{account}}",
           "datasource": {
             "type": "prometheus",
@@ -292,7 +292,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "tradingbot_realized_pnl",
+          "expr": "cryptolaunchbot_realized_pnl",
           "legendFormat": "{{strategy}}",
           "datasource": {
             "type": "prometheus",
@@ -318,7 +318,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (result) (increase(tradingbot_trades_total[1h]))",
+          "expr": "sum by (result) (increase(cryptolaunchbot_trades_total[1h]))",
           "legendFormat": "{{result}}",
           "datasource": {
             "type": "prometheus",
@@ -344,7 +344,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "histogram_quantile(0.95, sum by (le, exchange) (rate(tradingbot_order_place_seconds_bucket[5m])))",
+          "expr": "histogram_quantile(0.95, sum by (le, exchange) (rate(cryptolaunchbot_order_place_seconds_bucket[5m])))",
           "legendFormat": "{{exchange}}",
           "datasource": {
             "type": "prometheus",
@@ -375,7 +375,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "tradingbot_exchange_used_weight",
+          "expr": "cryptolaunchbot_exchange_used_weight",
           "legendFormat": "{{exchange}} {{market}}",
           "datasource": {
             "type": "prometheus",
@@ -401,7 +401,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "time() - min by (exchange, market) (tradingbot_marketdata_last_candle_close_timestamp_seconds{timeframe=\"1m\"})",
+          "expr": "time() - min by (exchange, market) (cryptolaunchbot_marketdata_last_candle_close_timestamp_seconds{timeframe=\"1m\"})",
           "legendFormat": "{{exchange}} {{market}}",
           "datasource": {
             "type": "prometheus",
@@ -432,7 +432,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "increase(tradingbot_marketdata_stream_connects_total[15m])",
+          "expr": "increase(cryptolaunchbot_marketdata_stream_connects_total[15m])",
           "legendFormat": "{{exchange}} {{market}}",
           "datasource": {
             "type": "prometheus",
@@ -458,7 +458,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (level) (increase(tradingbot_notices_total[15m]))",
+          "expr": "sum by (level) (increase(cryptolaunchbot_notices_total[15m]))",
           "legendFormat": "{{level}}",
           "datasource": {
             "type": "prometheus",

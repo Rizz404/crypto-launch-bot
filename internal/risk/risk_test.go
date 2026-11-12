@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/portfolio"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/portfolio"
 )
 
 func TestSizeCapsRoundsAndRejectsMinimum(t *testing.T) {

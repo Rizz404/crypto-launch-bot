@@ -13,8 +13,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/rizz404/trading-bot/internal/portfolio"
-	"github.com/rizz404/trading-bot/internal/ui"
+	"github.com/rizz404/crypto-launch-bot/internal/portfolio"
+	"github.com/rizz404/crypto-launch-bot/internal/ui"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

@@ -19,12 +19,12 @@ import (
 	"github.com/a-h/templ"
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/portfolio"
-	"github.com/rizz404/trading-bot/internal/storage"
-	"github.com/rizz404/trading-bot/internal/strategy"
-	"github.com/rizz404/trading-bot/internal/ui"
-	"github.com/rizz404/trading-bot/internal/web/views"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/portfolio"
+	"github.com/rizz404/crypto-launch-bot/internal/storage"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
+	"github.com/rizz404/crypto-launch-bot/internal/ui"
+	"github.com/rizz404/crypto-launch-bot/internal/web/views"
 )
 
 // Live is the running trading session, if any.
@@ -82,7 +82,7 @@ func (s *Server) auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, pass, ok := r.BasicAuth()
 		if !ok || subtle.ConstantTimeCompare([]byte(pass), []byte(s.password)) != 1 {
-			w.Header().Set("WWW-Authenticate", `Basic realm="trading-bot", charset="UTF-8"`)
+			w.Header().Set("WWW-Authenticate", `Basic realm="crypto-launch-bot", charset="UTF-8"`)
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}

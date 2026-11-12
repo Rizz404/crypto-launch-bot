@@ -105,7 +105,7 @@ def port(name, default):
 
 now = dt.datetime.now(dt.timezone.utc)
 mode = env_value("TB_APP__MODE", "paper")
-DB_NAME = env_value("BOT_DB_NAME", "tradingbot")
+DB_NAME = env_value("BOT_DB_NAME", "cryptolaunchbot")
 exchange = "binance-testnet" if mode == "testnet" else "binance"
 metrics_port = port("BOT_METRICS_PORT", 19100)
 prometheus_port = port("PROMETHEUS_PORT", 19090)
@@ -124,13 +124,13 @@ sample = {
     "database": attempt(lambda: database(exchange)),
     "research_expected": research,
     "metrics": attempt(lambda: [line for line in http("http://127.0.0.1:%d/metrics" % metrics_port).splitlines()
-                                if line.startswith(("tradingbot_", "process_start_time_seconds "))]),
+                                if line.startswith(("cryptolaunchbot_", "process_start_time_seconds "))]),
     "disk_free_bytes": disk.free,
     "load": os.getloadavg(),
 }
 if research:
     sample["research_health"] = attempt(lambda: http("http://127.0.0.1:19102/healthz").strip())
-    sample["research_database"] = attempt(lambda: database("binance", "tradingbot_research_stage_three"))
+    sample["research_database"] = attempt(lambda: database("binance", "cryptolaunchbot_research_stage_three"))
 problems = [key for key in ("containers", "health", "grafana", "prometheus", "database", "metrics", "research_health", "research_database")
             if key in sample and not sample[key]["ok"]]
 if sample["containers"]["ok"]:
@@ -169,7 +169,7 @@ if sample["prometheus"]["ok"]:
     if not targets or any(t["health"] != "up" for t in targets):
         problems.append("prometheus_target")
 if sample["metrics"]["ok"] and not any(
-        line.startswith("tradingbot_build_info{") and 'mode="%s"' % mode in line
+        line.startswith("cryptolaunchbot_build_info{") and 'mode="%s"' % mode in line
         for line in sample["metrics"]["data"]):
     problems.append("unexpected_mode")
 if disk.free < 5 * 1024 ** 3:

@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/notify/telegram"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/notify/telegram"
 )
 
 // registerCommands installs the Telegram commands of a trading session.

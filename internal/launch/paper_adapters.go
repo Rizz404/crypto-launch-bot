@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/broker"
-	"github.com/rizz404/trading-bot/internal/catalyst"
-	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/broker"
+	"github.com/rizz404/crypto-launch-bot/internal/catalyst"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
 	"github.com/shopspring/decimal"
 )
 

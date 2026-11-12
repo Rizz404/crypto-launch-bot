@@ -12,9 +12,9 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/strategy"
-	"github.com/rizz404/trading-bot/internal/strategy/hedge"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy/hedge"
 )
 
 func init() { strategy.Register("xspread", func() strategy.Strategy { return &Strategy{} }) }

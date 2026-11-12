@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/ui"
+	"github.com/rizz404/crypto-launch-bot/internal/ui"
 )
 
 // researchData is what /research and /research.json both expose.
@@ -67,7 +67,7 @@ func actionTone(a string) string {
 func researchPage(d researchData) ui.Page {
 	return ui.Page{
 		Title:  "Riset katalis",
-		Brand:  "trading-bot",
+		Brand:  "crypto-launch-bot",
 		Active: "research",
 		Nav: []ui.NavItem{
 			{Key: "ledger", Label: "Ledger paper", Href: "/"},

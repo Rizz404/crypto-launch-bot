@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/catalyst"
+	"github.com/rizz404/crypto-launch-bot/internal/catalyst"
 	"github.com/shopspring/decimal"
 )
 

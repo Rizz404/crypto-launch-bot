@@ -4,7 +4,7 @@ services:
     image: docker.io/timescale/timescaledb:2.30.2-pg17
     environment:
       POSTGRES_USER: catalyst
-      POSTGRES_DB: tradingbot_catalyst_paper_v1
+      POSTGRES_DB: cryptolaunchbot_catalyst_paper_v1
       POSTGRES_PASSWORD: ${CATALYST_DB_PASSWORD:?set a dedicated database password}
       TIMESCALEDB_TELEMETRY: "off"
       TS_TUNE_MEMORY: 1GB
@@ -16,7 +16,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: [CMD-SHELL, "pg_isready -U catalyst -d tradingbot_catalyst_paper_v1"]
+      test: [CMD-SHELL, "pg_isready -U catalyst -d cryptolaunchbot_catalyst_paper_v1"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -48,7 +48,7 @@ services:
     command: ["-action", "run", "-archive", "/var/lib/catalyst"]
     env_file: ../.env.catalyst
     environment:
-      TB_CATALYST_DATABASE_URL: postgres://catalyst:${CATALYST_DB_PASSWORD:?set a dedicated database password}@db:5432/tradingbot_catalyst_paper_v1?sslmode=disable
+      TB_CATALYST_DATABASE_URL: postgres://catalyst:${CATALYST_DB_PASSWORD:?set a dedicated database password}@db:5432/cryptolaunchbot_catalyst_paper_v1?sslmode=disable
       GOMEMLIMIT: 384MiB
     restart: unless-stopped
     stop_grace_period: 30s

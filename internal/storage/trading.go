@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
 )
 
 // nullDec turns a zero decimal into NULL.

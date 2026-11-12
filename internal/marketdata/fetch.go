@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/exchange"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/exchange"
 )
 
 // FetchRange downloads closed candles with from <= open time < to, page by

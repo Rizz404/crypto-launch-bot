@@ -19,11 +19,11 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/broker"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/portfolio"
-	"github.com/rizz404/trading-bot/internal/risk"
-	"github.com/rizz404/trading-bot/internal/strategy"
+	"github.com/rizz404/crypto-launch-bot/internal/broker"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/portfolio"
+	"github.com/rizz404/crypto-launch-bot/internal/risk"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
 )
 
 // Hooks observe the engine; all are optional and are called with the

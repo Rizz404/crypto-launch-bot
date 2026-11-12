@@ -13,12 +13,12 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/broker"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/engine"
-	"github.com/rizz404/trading-bot/internal/portfolio"
-	"github.com/rizz404/trading-bot/internal/risk"
-	"github.com/rizz404/trading-bot/internal/strategy"
+	"github.com/rizz404/crypto-launch-bot/internal/broker"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/engine"
+	"github.com/rizz404/crypto-launch-bot/internal/portfolio"
+	"github.com/rizz404/crypto-launch-bot/internal/risk"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
 )
 
 // CandleSource loads stored candles. storage.Store implements it.

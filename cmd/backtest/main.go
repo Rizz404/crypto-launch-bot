@@ -22,15 +22,15 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/app"
-	"github.com/rizz404/trading-bot/internal/backtest"
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/logging"
-	"github.com/rizz404/trading-bot/internal/portfolio"
-	"github.com/rizz404/trading-bot/internal/storage"
-	"github.com/rizz404/trading-bot/internal/strategy"
-	_ "github.com/rizz404/trading-bot/internal/strategy/all"
+	"github.com/rizz404/crypto-launch-bot/internal/app"
+	"github.com/rizz404/crypto-launch-bot/internal/backtest"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/logging"
+	"github.com/rizz404/crypto-launch-bot/internal/portfolio"
+	"github.com/rizz404/crypto-launch-bot/internal/storage"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
+	_ "github.com/rizz404/crypto-launch-bot/internal/strategy/all"
 )
 
 func main() {

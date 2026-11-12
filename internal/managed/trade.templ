@@ -1,6 +1,6 @@
 package managed
 
-import "github.com/rizz404/trading-bot/internal/ui"
+import "github.com/rizz404/crypto-launch-bot/internal/ui"
 
 func tradePage(v tradeView) ui.Page {
 	p := v.shellPage(v.Symbol+" · Trading", "Data pasar dari websocket Binance, dibagikan server ke semua tab. Order lewat strategi manual memakai modal dan batas risiko instance-nya.")
@@ -363,7 +363,7 @@ templ fundsTable(v tradeView) {
 }
 
 templ authCard(title, msg string) {
-	@ui.Shell(ui.Page{Title: title, Brand: "trading-bot", Footer: "Akses dibatasi login."}) {
+	@ui.Shell(ui.Page{Title: title, Brand: "crypto-launch-bot", Footer: "Akses dibatasi login."}) {
 		<div class="mx-auto mt-10 max-w-sm">
 			@ui.Card(title, nil) {
 				if msg != "" {

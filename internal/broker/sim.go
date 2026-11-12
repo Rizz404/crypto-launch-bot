@@ -11,7 +11,7 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
 )
 
 // Fees are commission rates as fractions of notional (0.0005 = 0.05%).

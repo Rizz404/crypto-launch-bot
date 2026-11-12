@@ -1,7 +1,7 @@
 # Local stack: TimescaleDB, Prometheus, Grafana (and optionally the bot).
 #   podman compose -f deploy/compose.yml up -d
 #   podman compose -f deploy/compose.yml --profile bot up -d --build
-name: trading-bot
+name: crypto-launch-bot
 
 services:
   db:
@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-bot}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bot}
-      POSTGRES_DB: ${POSTGRES_DB:-tradingbot}
+      POSTGRES_DB: ${POSTGRES_DB:-cryptolaunchbot}
       TIMESCALEDB_TELEMETRY: "off"
     ports:
       - "127.0.0.1:${DB_PORT:-5432}:5432"
@@ -40,7 +40,7 @@ services:
       GF_ANALYTICS_REPORTING_ENABLED: "false"
       POSTGRES_USER: ${POSTGRES_USER:-bot}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bot}
-      POSTGRES_DB: ${POSTGRES_DB:-tradingbot}
+      POSTGRES_DB: ${POSTGRES_DB:-cryptolaunchbot}
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro,Z
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro,Z
@@ -59,7 +59,7 @@ services:
       dockerfile: Dockerfile
     command: ["run"]
     environment:
-      TB_DATABASE__URL: postgres://${POSTGRES_USER:-bot}:${POSTGRES_PASSWORD:-bot}@db:5432/${POSTGRES_DB:-tradingbot}?sslmode=disable
+      TB_DATABASE__URL: postgres://${POSTGRES_USER:-bot}:${POSTGRES_PASSWORD:-bot}@db:5432/${POSTGRES_DB:-cryptolaunchbot}?sslmode=disable
       TB_METRICS__LISTEN: 0.0.0.0:9100
     env_file:
       - path: ../.env

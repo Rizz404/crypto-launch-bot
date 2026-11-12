@@ -7,7 +7,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
 )
 
 // ErrOrderNotFound is returned by OrderQuerier when the exchange states that

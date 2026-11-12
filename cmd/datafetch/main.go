@@ -23,13 +23,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/app"
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/exchange"
-	"github.com/rizz404/trading-bot/internal/logging"
-	"github.com/rizz404/trading-bot/internal/marketdata"
-	"github.com/rizz404/trading-bot/internal/storage"
+	"github.com/rizz404/crypto-launch-bot/internal/app"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/exchange"
+	"github.com/rizz404/crypto-launch-bot/internal/logging"
+	"github.com/rizz404/crypto-launch-bot/internal/marketdata"
+	"github.com/rizz404/crypto-launch-bot/internal/storage"
 )
 
 func main() {

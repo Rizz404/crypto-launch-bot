@@ -16,14 +16,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/metrics"
-	"github.com/rizz404/trading-bot/internal/portfolio"
-	"github.com/rizz404/trading-bot/internal/risk"
-	"github.com/rizz404/trading-bot/internal/storage"
-	"github.com/rizz404/trading-bot/internal/strategy"
-	_ "github.com/rizz404/trading-bot/internal/strategy/all"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/metrics"
+	"github.com/rizz404/crypto-launch-bot/internal/portfolio"
+	"github.com/rizz404/crypto-launch-bot/internal/risk"
+	"github.com/rizz404/crypto-launch-bot/internal/storage"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
+	_ "github.com/rizz404/crypto-launch-bot/internal/strategy/all"
 )
 
 type errorLog struct {

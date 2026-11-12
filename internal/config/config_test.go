@@ -22,7 +22,7 @@ const baseYAML = `
 app:
   mode: %s
 database:
-  url: postgres://bot:bot@localhost:5432/tradingbot
+  url: postgres://bot:bot@localhost:5432/cryptolaunchbot
 exchanges:
   binance:
     enabled: true
@@ -303,7 +303,7 @@ func TestWebRequiresPasswordOffLoopbackAndRejectsYAMLSecrets(t *testing.T) {
 func TestWalletModesRunTogetherWithSeparateCredentials(t *testing.T) {
 	const yaml = `
 app: {mode: paper, allow_live: %t}
-database: {url: postgres://bot:bot@localhost:5432/tradingbot}
+database: {url: postgres://bot:bot@localhost:5432/cryptolaunchbot}
 web: {enabled: %t, listen: '127.0.0.1:18080'}
 exchanges:
   binance: {enabled: true, testnet: false}

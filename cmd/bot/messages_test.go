@@ -10,11 +10,11 @@ import (
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/fx"
-	"github.com/rizz404/trading-bot/internal/storage"
-	"github.com/rizz404/trading-bot/internal/strategy"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/fx"
+	"github.com/rizz404/crypto-launch-bot/internal/storage"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
 )
 
 // testMoney converts at 1 USDT = 1 USD = Rp 18.000.

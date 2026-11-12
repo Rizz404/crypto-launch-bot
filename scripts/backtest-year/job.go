@@ -11,11 +11,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/backtest"
-	"github.com/rizz404/trading-bot/internal/broker"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/risk"
-	"github.com/rizz404/trading-bot/internal/strategy"
+	"github.com/rizz404/crypto-launch-bot/internal/backtest"
+	"github.com/rizz404/crypto-launch-bot/internal/broker"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/risk"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
 	"github.com/shopspring/decimal"
 )
 

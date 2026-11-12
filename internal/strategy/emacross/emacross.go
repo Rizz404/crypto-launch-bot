@@ -8,9 +8,9 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/indicator"
-	"github.com/rizz404/trading-bot/internal/strategy"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/indicator"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
 )
 
 func init() { strategy.Register("emacross", func() strategy.Strategy { return &Strategy{} }) }

@@ -12,7 +12,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/ui"
+	"github.com/rizz404/crypto-launch-bot/internal/ui"
 )
 
 // recentRows caps the tables that grow with time; the rest is in the journal
@@ -106,7 +106,7 @@ func (v view) walletHref(id string) string {
 
 // shellPage is the common page frame; Active selects the menu item.
 func (v view) shellPage(title, footer string) ui.Page {
-	p := ui.Page{Title: title, Brand: "trading-bot", Active: v.Tab, Sidebar: v.Sidebar(), Footer: footer, Currency: v.fiat != nil}
+	p := ui.Page{Title: title, Brand: "crypto-launch-bot", Active: v.Tab, Sidebar: v.Sidebar(), Footer: footer, Currency: v.fiat != nil}
 	switch {
 	case v.Error != "":
 		p.Notice, p.NoticeTone = v.Error, "neg"

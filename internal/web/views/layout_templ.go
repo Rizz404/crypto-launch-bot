@@ -8,12 +8,12 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/rizz404/trading-bot/internal/ui"
+import "github.com/rizz404/crypto-launch-bot/internal/ui"
 
 func page(title, nav string) ui.Page {
 	return ui.Page{
 		Title:  title,
-		Brand:  "trading-bot",
+		Brand:  "crypto-launch-bot",
 		Active: nav,
 		Nav: []ui.NavItem{
 			{Key: "overview", Label: "Ringkasan", Href: "/"},

@@ -4,9 +4,9 @@ import (
 	"crypto/subtle"
 	"encoding/json"
 	"errors"
-	"github.com/rizz404/trading-bot/internal/marketview"
-	"github.com/rizz404/trading-bot/internal/risk"
-	"github.com/rizz404/trading-bot/internal/ui"
+	"github.com/rizz404/crypto-launch-bot/internal/marketview"
+	"github.com/rizz404/crypto-launch-bot/internal/risk"
+	"github.com/rizz404/crypto-launch-bot/internal/ui"
 	"io"
 	"net/http"
 	"net/url"
@@ -103,7 +103,7 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, q *http.Request) {
 	if !h.authorized(q) {
 		switch {
 		case h.Owners == nil:
-			w.Header().Set("WWW-Authenticate", `Basic realm="Trading bot"`)
+			w.Header().Set("WWW-Authenticate", `Basic realm="Crypto launch bot"`)
 			http.Error(w, "Autentikasi diperlukan", http.StatusUnauthorized)
 		case q.Method == http.MethodGet && !strings.HasPrefix(q.URL.Path, "/api/") && q.URL.Path != "/stream":
 			http.Redirect(w, q, "/login", http.StatusSeeOther)

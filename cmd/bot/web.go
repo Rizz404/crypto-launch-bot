@@ -9,12 +9,12 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/portfolio"
-	"github.com/rizz404/trading-bot/internal/storage"
-	"github.com/rizz404/trading-bot/internal/strategy"
-	"github.com/rizz404/trading-bot/internal/web"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/portfolio"
+	"github.com/rizz404/crypto-launch-bot/internal/storage"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
+	"github.com/rizz404/crypto-launch-bot/internal/web"
 )
 
 // liveView exposes a session to the dashboard.

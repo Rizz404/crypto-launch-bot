@@ -20,8 +20,8 @@ func NewRegistry(version, mode string) *prometheus.Registry {
 		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
 	)
 	info := prometheus.NewGauge(prometheus.GaugeOpts{
-		Name:        "tradingbot_build_info",
-		Help:        "Build and runtime information about the trading bot.",
+		Name:        "cryptolaunchbot_build_info",
+		Help:        "Build and runtime information about the crypto launch bot.",
 		ConstLabels: prometheus.Labels{"version": version, "mode": mode},
 	})
 	info.Set(1)

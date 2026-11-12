@@ -1,4 +1,4 @@
-module github.com/rizz404/trading-bot
+module github.com/rizz404/crypto-launch-bot
 
 go 1.27.2
 

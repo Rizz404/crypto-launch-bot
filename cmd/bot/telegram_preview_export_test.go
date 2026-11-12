@@ -12,12 +12,12 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/rizz404/trading-bot/internal/broker"
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/fx"
-	"github.com/rizz404/trading-bot/internal/managed"
-	"github.com/rizz404/trading-bot/internal/notify/telegram"
+	"github.com/rizz404/crypto-launch-bot/internal/broker"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/fx"
+	"github.com/rizz404/crypto-launch-bot/internal/managed"
+	"github.com/rizz404/crypto-launch-bot/internal/notify/telegram"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/require"
 )

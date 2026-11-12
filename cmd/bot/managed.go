@@ -15,20 +15,20 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/rizz404/trading-bot/internal/app"
-	"github.com/rizz404/trading-bot/internal/broker"
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/exchange"
-	"github.com/rizz404/trading-bot/internal/exchange/binance"
-	"github.com/rizz404/trading-bot/internal/fx"
-	"github.com/rizz404/trading-bot/internal/managed"
-	"github.com/rizz404/trading-bot/internal/marketdata"
-	"github.com/rizz404/trading-bot/internal/marketview"
-	"github.com/rizz404/trading-bot/internal/metrics"
-	"github.com/rizz404/trading-bot/internal/notify/telegram"
-	"github.com/rizz404/trading-bot/internal/storage"
-	"github.com/rizz404/trading-bot/internal/strategy"
+	"github.com/rizz404/crypto-launch-bot/internal/app"
+	"github.com/rizz404/crypto-launch-bot/internal/broker"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/exchange"
+	"github.com/rizz404/crypto-launch-bot/internal/exchange/binance"
+	"github.com/rizz404/crypto-launch-bot/internal/fx"
+	"github.com/rizz404/crypto-launch-bot/internal/managed"
+	"github.com/rizz404/crypto-launch-bot/internal/marketdata"
+	"github.com/rizz404/crypto-launch-bot/internal/marketview"
+	"github.com/rizz404/crypto-launch-bot/internal/metrics"
+	"github.com/rizz404/crypto-launch-bot/internal/notify/telegram"
+	"github.com/rizz404/crypto-launch-bot/internal/storage"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
 	"github.com/shopspring/decimal"
 )
 
@@ -52,7 +52,7 @@ func lockWallets(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool) ([
 	slices.Sort(sorted)
 	var leases []*managed.Lease
 	for _, key := range sorted {
-		l, err := managed.Acquire(ctx, pool, "trading-bot/"+key)
+		l, err := managed.Acquire(ctx, pool, "crypto-launch-bot/"+key)
 		if err != nil {
 			for _, old := range leases {
 				old.Close(context.Background())
@@ -77,7 +77,7 @@ func runManaged(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, lea
 		}
 	}
 	reg := metrics.NewRegistry(version, string(cfg.App.Mode))
-	gauge := prometheus.NewGaugeVec(prometheus.GaugeOpts{Name: "tradingbot_managed_equity", Help: "Managed equity by virtual instance."}, []string{"wallet", "instance"})
+	gauge := prometheus.NewGaugeVec(prometheus.GaugeOpts{Name: "cryptolaunchbot_managed_equity", Help: "Managed equity by virtual instance."}, []string{"wallet", "instance"})
 	reg.MustRegister(gauge)
 	feedMetrics := marketdata.NewMetrics(reg)
 	store := storage.NewStore(pool)

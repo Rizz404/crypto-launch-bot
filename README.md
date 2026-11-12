@@ -1,4 +1,4 @@
-# trading-bot — Presale dan listing baru
+# crypto-launch-bot — Presale dan listing baru
 
 Proyek bot untuk menemukan dan memverifikasi informasi presale serta listing
 baru di DEX/CEX, termasuk memecoin. Target akhirnya adalah analisis dengan AI

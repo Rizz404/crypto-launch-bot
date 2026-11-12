@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/catalyst"
+	"github.com/rizz404/crypto-launch-bot/internal/catalyst"
 )
 
 var pinkPath = regexp.MustCompile(`^/launchpad/bsc/(0x[0-9a-fA-F]{40})$`)

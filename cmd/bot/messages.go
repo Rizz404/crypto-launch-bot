@@ -14,13 +14,13 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/fx"
-	"github.com/rizz404/trading-bot/internal/managed"
-	"github.com/rizz404/trading-bot/internal/notify/telegram"
-	"github.com/rizz404/trading-bot/internal/storage"
-	"github.com/rizz404/trading-bot/internal/strategy"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/fx"
+	"github.com/rizz404/crypto-launch-bot/internal/managed"
+	"github.com/rizz404/crypto-launch-bot/internal/notify/telegram"
+	"github.com/rizz404/crypto-launch-bot/internal/storage"
+	"github.com/rizz404/crypto-launch-bot/internal/strategy"
 )
 
 var esc = telegram.Escape

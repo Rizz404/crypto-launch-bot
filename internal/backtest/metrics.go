@@ -7,7 +7,7 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"github.com/rizz404/trading-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
 )
 
 // Metrics summarise a backtest. Ratios are fractions (0.1 = 10%).

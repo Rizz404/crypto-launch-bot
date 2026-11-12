@@ -5,25 +5,25 @@ tests:
   - name: failures and alert hold times
     interval: 1m
     input_series:
-      - series: 'up{job="tradingbot",instance="host"}'
+      - series: 'up{job="cryptolaunchbot",instance="host"}'
         values: '0x20'
-      - series: 'tradingbot_kill_switch'
+      - series: 'cryptolaunchbot_kill_switch'
         values: '1x20'
-      - series: 'tradingbot_marketdata_last_candle_close_timestamp_seconds{timeframe="1m"}'
+      - series: 'cryptolaunchbot_marketdata_last_candle_close_timestamp_seconds{timeframe="1m"}'
         values: '0x20'
-      - series: 'tradingbot_notices_total{level="error"}'
+      - series: 'cryptolaunchbot_notices_total{level="error"}'
         values: '0+1x20'
-      - series: 'tradingbot_exchange_used_weight{exchange="binance",market="futures"}'
+      - series: 'cryptolaunchbot_exchange_used_weight{exchange="binance",market="futures"}'
         values: '2000x20'
-      - series: 'tradingbot_order_place_seconds_bucket{exchange="binance",result="ok",le="1"}'
+      - series: 'cryptolaunchbot_order_place_seconds_bucket{exchange="binance",result="ok",le="1"}'
         values: '0+1x20'
-      - series: 'tradingbot_order_place_seconds_bucket{exchange="binance",result="ok",le="5"}'
+      - series: 'cryptolaunchbot_order_place_seconds_bucket{exchange="binance",result="ok",le="5"}'
         values: '0+10x20'
-      - series: 'tradingbot_order_place_seconds_bucket{exchange="binance",result="ok",le="+Inf"}'
+      - series: 'cryptolaunchbot_order_place_seconds_bucket{exchange="binance",result="ok",le="+Inf"}'
         values: '0+10x20'
     alert_rule_test:
       - eval_time: 2m
-        alertname: TradingBotDown
+        alertname: CryptoLaunchBotDown
         exp_alerts: []
       - eval_time: 5m
         alertname: StaleMarketData
@@ -32,10 +32,10 @@ tests:
         alertname: SlowOrderPlacement
         exp_alerts: []
       - eval_time: 15m
-        alertname: TradingBotDown
+        alertname: CryptoLaunchBotDown
         exp_alerts:
-          - exp_labels: {severity: critical, job: tradingbot, instance: host}
-            exp_annotations: {summary: Trading bot metrics endpoint is down}
+          - exp_labels: {severity: critical, job: cryptolaunchbot, instance: host}
+            exp_annotations: {summary: Crypto launch bot metrics endpoint is down}
       - eval_time: 15m
         alertname: KillSwitchActive
         exp_alerts:
@@ -64,24 +64,24 @@ tests:
   - name: healthy signals do not alert
     interval: 1m
     input_series:
-      - series: 'up{job="tradingbot",instance="host"}'
+      - series: 'up{job="cryptolaunchbot",instance="host"}'
         values: '1x20'
-      - series: 'up{job="tradingbot",instance="container"}'
+      - series: 'up{job="cryptolaunchbot",instance="container"}'
         values: '1x20'
-      - series: 'tradingbot_kill_switch'
+      - series: 'cryptolaunchbot_kill_switch'
         values: '0x20'
-      - series: 'tradingbot_marketdata_last_candle_close_timestamp_seconds{timeframe="1m"}'
+      - series: 'cryptolaunchbot_marketdata_last_candle_close_timestamp_seconds{timeframe="1m"}'
         values: '0+60x20'
-      - series: 'tradingbot_notices_total{level="error"}'
+      - series: 'cryptolaunchbot_notices_total{level="error"}'
         values: '0x20'
-      - series: 'tradingbot_exchange_used_weight{exchange="binance",market="futures"}'
+      - series: 'cryptolaunchbot_exchange_used_weight{exchange="binance",market="futures"}'
         values: '100x20'
-      - series: 'tradingbot_order_place_seconds_bucket{exchange="binance",result="ok",le="1"}'
+      - series: 'cryptolaunchbot_order_place_seconds_bucket{exchange="binance",result="ok",le="1"}'
         values: '0+10x20'
-      - series: 'tradingbot_order_place_seconds_bucket{exchange="binance",result="ok",le="+Inf"}'
+      - series: 'cryptolaunchbot_order_place_seconds_bucket{exchange="binance",result="ok",le="+Inf"}'
         values: '0+10x20'
     alert_rule_test:
-      - {eval_time: 15m, alertname: TradingBotDown, exp_alerts: []}
+      - {eval_time: 15m, alertname: CryptoLaunchBotDown, exp_alerts: []}
       - {eval_time: 15m, alertname: KillSwitchActive, exp_alerts: []}
       - {eval_time: 15m, alertname: StaleMarketData, exp_alerts: []}
       - {eval_time: 15m, alertname: EngineErrors, exp_alerts: []}
@@ -91,13 +91,13 @@ tests:
   - name: healthy p2 cannot hide failed research
     interval: 1m
     input_series:
-      - series: 'up{job="tradingbot",instance="container"}'
+      - series: 'up{job="cryptolaunchbot",instance="container"}'
         values: '1x20'
-      - series: 'up{job="tradingbot",instance="research"}'
+      - series: 'up{job="cryptolaunchbot",instance="research"}'
         values: '0x20'
     alert_rule_test:
       - eval_time: 5m
-        alertname: TradingBotDown
+        alertname: CryptoLaunchBotDown
         exp_alerts:
-          - exp_labels: {severity: critical, job: tradingbot, instance: research}
-            exp_annotations: {summary: Trading bot metrics endpoint is down}
+          - exp_labels: {severity: critical, job: cryptolaunchbot, instance: research}
+            exp_annotations: {summary: Crypto launch bot metrics endpoint is down}

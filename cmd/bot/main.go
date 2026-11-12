@@ -1,4 +1,4 @@
-// Command bot runs the trading bot.
+// Command bot runs the crypto launch bot.
 //
 // Usage:
 //
@@ -19,14 +19,14 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/config"
-	"github.com/rizz404/trading-bot/internal/fx"
-	"github.com/rizz404/trading-bot/internal/logging"
-	"github.com/rizz404/trading-bot/internal/marketdata"
-	"github.com/rizz404/trading-bot/internal/metrics"
-	"github.com/rizz404/trading-bot/internal/notify/telegram"
-	"github.com/rizz404/trading-bot/internal/storage"
-	_ "github.com/rizz404/trading-bot/internal/strategy/all"
+	"github.com/rizz404/crypto-launch-bot/internal/config"
+	"github.com/rizz404/crypto-launch-bot/internal/fx"
+	"github.com/rizz404/crypto-launch-bot/internal/logging"
+	"github.com/rizz404/crypto-launch-bot/internal/marketdata"
+	"github.com/rizz404/crypto-launch-bot/internal/metrics"
+	"github.com/rizz404/crypto-launch-bot/internal/notify/telegram"
+	"github.com/rizz404/crypto-launch-bot/internal/storage"
+	_ "github.com/rizz404/crypto-launch-bot/internal/strategy/all"
 )
 
 // version is set at build time with -ldflags "-X main.version=...".
@@ -115,7 +115,7 @@ func runBot(ctx context.Context, cfg *config.Config, log *slog.Logger) error {
 	if cfg.App.Mode == config.ModeBacktest {
 		return errors.New("backtest mode is not run by \"bot run\"; use cmd/backtest (fase 2)")
 	}
-	log.Info("starting trading bot", "version", version, "mode", cfg.App.Mode, "exchanges", cfg.EnabledExchanges())
+	log.Info("starting crypto launch bot", "version", version, "mode", cfg.App.Mode, "exchanges", cfg.EnabledExchanges())
 
 	pool, err := storage.Open(ctx, cfg.Database.URL.Reveal(), cfg.Database.MaxConns)
 	if err != nil {

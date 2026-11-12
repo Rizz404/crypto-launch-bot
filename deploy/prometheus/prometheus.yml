@@ -5,7 +5,7 @@ rule_files:
   - /etc/prometheus/alerts.yml
 
 scrape_configs:
-  - job_name: tradingbot
+  - job_name: cryptolaunchbot
     static_configs:
       # Bot running in the compose "bot" profile.
       - targets: ["bot:9100"]

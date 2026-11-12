@@ -174,7 +174,7 @@ def report(run,plan,rows,failures):
 def notify(run,title,body):
  result={'attempted_utc':now(),'title':title,'body':body}
  try:
-  p=subprocess.run(['notify-send','--app-name=Trading Bot Research','--urgency=critical','--expire-time=0',title,body],capture_output=True,text=True,timeout=10)
+  p=subprocess.run(['notify-send','--app-name=Crypto Launch Bot Research','--urgency=critical','--expire-time=0',title,body],capture_output=True,text=True,timeout=10)
   result.update(delivered=p.returncode==0,error=p.stderr[:500] if p.returncode else None)
  except Exception as e:result.update(delivered=False,error=str(e))
  atomic(run/'notification.json',result)
@@ -239,12 +239,12 @@ def worker(run):
  finally:lock.close()
 
 def launch(run):
- plan=read(run/'plan.json');unit='trading-bot-research-'+run.name.removeprefix('run-').lower()
+ plan=read(run/'plan.json');unit='crypto-launch-bot-research-'+run.name.removeprefix('run-').lower()
  args=['systemd-run','--user','--collect','--unit='+unit,'--description=Local crypto backtest research queue','--property=Type=exec','--property=CPUQuota=150%','--property=MemoryMax=3G','--property=MemoryHigh=2500M','--property=Nice=10','--property=IOWeight=10','--property=TasksMax=64','--property=WorkingDirectory='+plan['project'],'--property=StandardOutput=append:'+str(run/'worker.log'),'--property=StandardError=append:'+str(run/'worker.log'),'--setenv=GOMAXPROCS=2','--setenv=GOMEMLIMIT=1536MiB','--setenv=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/'+str(os.getuid())+'/bus',sys.executable,str(run/'worker.py'),'worker','--run-dir',str(run)]
  subprocess.run(args,check=True);atomic(run/'service.json',{'unit':unit+'.service','launched_utc':now()});print(unit+'.service',flush=True)
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('command',choices=['init','launch','worker','status']);p.add_argument('--run-dir',type=pathlib.Path);p.add_argument('--cache',type=pathlib.Path,default=pathlib.Path('/tmp/trading-bot-year'));a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('command',choices=['init','launch','worker','status']);p.add_argument('--run-dir',type=pathlib.Path);p.add_argument('--cache',type=pathlib.Path,default=pathlib.Path('/tmp/crypto-launch-bot-year'));a=p.parse_args()
  if a.command=='init':init(pathlib.Path.cwd(),a.cache);return
  if a.run_dir is None:p.error('--run-dir is required')
  run=a.run_dir.resolve()

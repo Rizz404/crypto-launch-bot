@@ -15,18 +15,18 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/rizz404/trading-bot/internal/catalyst"
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/exchange/binance"
-	"github.com/rizz404/trading-bot/internal/managed"
-	"github.com/rizz404/trading-bot/internal/notify/telegram"
-	"github.com/rizz404/trading-bot/internal/storage"
+	"github.com/rizz404/crypto-launch-bot/internal/catalyst"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/exchange/binance"
+	"github.com/rizz404/crypto-launch-bot/internal/managed"
+	"github.com/rizz404/crypto-launch-bot/internal/notify/telegram"
+	"github.com/rizz404/crypto-launch-bot/internal/storage"
 )
 
 func validatePilotDatabase(raw string) error {
 	cfg, err := pgxpool.ParseConfig(raw)
-	if raw == "" || err != nil || cfg.ConnConfig.User != "catalyst" || !strings.HasPrefix(cfg.ConnConfig.Database, "tradingbot_catalyst_") {
-		return errors.New("pilot requires its own tradingbot_catalyst_* database and catalyst role")
+	if raw == "" || err != nil || cfg.ConnConfig.User != "catalyst" || !strings.HasPrefix(cfg.ConnConfig.Database, "cryptolaunchbot_catalyst_") {
+		return errors.New("pilot requires its own cryptolaunchbot_catalyst_* database and catalyst role")
 	}
 	return nil
 }

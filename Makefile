@@ -43,7 +43,7 @@ test-monitoring:
 
 # Needs the compose database running (make up).
 test-integration:
-	TB_TEST_DATABASE_URL=$${TB_TEST_DATABASE_URL:-postgres://bot:bot@localhost:5432/tradingbot?sslmode=disable} \
+	TB_TEST_DATABASE_URL=$${TB_TEST_DATABASE_URL:-postgres://bot:bot@localhost:5432/cryptolaunchbot?sslmode=disable} \
 		go test -count=1 -tags integration ./...
 
 lint:
@@ -68,7 +68,7 @@ run: build
 	./bin/bot run
 
 image:
-	podman build --build-arg VERSION=$(VERSION) -t trading-bot:$(VERSION) .
+	podman build --build-arg VERSION=$(VERSION) -t crypto-launch-bot:$(VERSION) .
 
 clean:
 	rm -rf bin

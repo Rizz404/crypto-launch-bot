@@ -17,8 +17,8 @@ import time
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 STATE = ROOT / 'var/paper-eth'
-UNIT = 'trading-bot-eth-paper'
-CONTAINER = 'trading-bot-eth-paper-db'
+UNIT = 'crypto-launch-bot-eth-paper'
+CONTAINER = 'crypto-launch-bot-eth-paper-db'
 DATABASE = 'ethpaper_trial'
 ENV = {k: v for k, v in os.environ.items() if not k.startswith('TB_')}
 
@@ -71,7 +71,7 @@ def start():
         subprocess.run(['podman', 'run', '-d', '--name', CONTAINER,
                         '--memory', '768m', '--cpus', '1',
                         '-p', '127.0.0.1:55434:5432',
-                        '-v', 'trading-bot-eth-paper-data:/var/lib/postgresql/data',
+                        '-v', 'crypto-launch-bot-eth-paper-data:/var/lib/postgresql/data',
                         '-e', 'POSTGRES_USER=ethpaper', '-e', 'POSTGRES_DB=ethpaper',
                         '-e', 'POSTGRES_PASSWORD', '-e', 'TIMESCALEDB_TELEMETRY=off',
                         'docker.io/timescale/timescaledb:2.30.2-pg17'],

@@ -13,7 +13,7 @@ services:
     image: docker.io/timescale/timescaledb:2.30.2-pg17
     environment:
       POSTGRES_USER: bot
-      POSTGRES_DB: tradingbot
+      POSTGRES_DB: cryptolaunchbot
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}
       TIMESCALEDB_TELEMETRY: "off"
       TS_TUNE_MEMORY: 1GB
@@ -25,7 +25,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bot -d tradingbot"]
+      test: ["CMD-SHELL", "pg_isready -U bot -d cryptolaunchbot"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -60,7 +60,7 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env.vps}
       GF_ANALYTICS_REPORTING_ENABLED: "false"
       POSTGRES_USER: bot
-      POSTGRES_DB: tradingbot
+      POSTGRES_DB: cryptolaunchbot
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
@@ -112,7 +112,7 @@ services:
       TB_APP__ALLOW_LIVE: "false"
       # A new trial gets its own database in the same server (BOT_DB_NAME);
       # earlier trials stay untouched in theirs.
-      TB_DATABASE__URL: postgres://bot:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}@db:5432/${BOT_DB_NAME:-tradingbot}?sslmode=disable
+      TB_DATABASE__URL: postgres://bot:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}@db:5432/${BOT_DB_NAME:-cryptolaunchbot}?sslmode=disable
       TB_METRICS__LISTEN: 0.0.0.0:9100
       TB_WEB__LISTEN: 0.0.0.0:8080
       TB_WEB__PASSWORD: ${TB_WEB__PASSWORD:?Set TB_WEB__PASSWORD in .env.vps}
@@ -152,7 +152,7 @@ services:
     environment:
       TB_APP__MODE: paper
       TB_APP__ALLOW_LIVE: "false"
-      TB_DATABASE__URL: postgres://bot:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}@db:5432/tradingbot_research_stage_three?sslmode=disable
+      TB_DATABASE__URL: postgres://bot:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.vps}@db:5432/cryptolaunchbot_research_stage_three?sslmode=disable
       TB_METRICS__LISTEN: 0.0.0.0:9100
       TB_WEB__LISTEN: 0.0.0.0:8080
       TB_WEB__PASSWORD: ${TB_WEB__PASSWORD:?Set TB_WEB__PASSWORD in .env.vps}

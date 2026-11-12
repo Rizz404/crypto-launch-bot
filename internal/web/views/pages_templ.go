@@ -8,7 +8,7 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/rizz404/trading-bot/internal/ui"
+import "github.com/rizz404/crypto-launch-bot/internal/ui"
 
 const pillClass = "rounded-full border border-outline px-3 py-1 text-xs font-medium text-on-surface transition-colors hover:bg-surface-alt aria-[current=page]:border-primary aria-[current=page]:bg-badge aria-[current=page]:text-on-badge"
 

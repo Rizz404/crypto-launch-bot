@@ -9,10 +9,10 @@ import (
 )
 
 func TestPilotRejectsP2DatabaseAndMissingConfigBeforeNetwork(t *testing.T) {
-	for _, dsn := range []string{"", "postgres://bot:fixture@db/tradingbot_research_stage_two", "postgres://catalyst:fixture@db/tradingbot", "postgres://bot:fixture@db/tradingbot_catalyst_paper_v1"} {
+	for _, dsn := range []string{"", "postgres://bot:fixture@db/cryptolaunchbot_research_stage_two", "postgres://catalyst:fixture@db/cryptolaunchbot", "postgres://bot:fixture@db/cryptolaunchbot_catalyst_paper_v1"} {
 		require.Error(t, validatePilotDatabase(dsn))
 	}
-	require.NoError(t, validatePilotDatabase("postgres://catalyst:fixture@db/tradingbot_catalyst_paper_v1"))
+	require.NoError(t, validatePilotDatabase("postgres://catalyst:fixture@db/cryptolaunchbot_catalyst_paper_v1"))
 	policy, err := filepath.Abs("../../configs/catalyst.policy.json")
 	require.NoError(t, err)
 	t.Setenv("TB_CATALYST_DATABASE_URL", "")

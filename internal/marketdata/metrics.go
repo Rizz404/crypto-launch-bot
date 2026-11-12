@@ -14,19 +14,19 @@ type Metrics struct {
 func NewMetrics(reg prometheus.Registerer) *Metrics {
 	m := &Metrics{
 		closedCandles: prometheus.NewCounterVec(prometheus.CounterOpts{
-			Name: "tradingbot_marketdata_closed_candles_total",
+			Name: "cryptolaunchbot_marketdata_closed_candles_total",
 			Help: "Closed candles received from the live stream.",
 		}, []string{"exchange", "market", "timeframe"}),
 		backfilled: prometheus.NewCounterVec(prometheus.CounterOpts{
-			Name: "tradingbot_marketdata_backfilled_candles_total",
+			Name: "cryptolaunchbot_marketdata_backfilled_candles_total",
 			Help: "Candles fetched through REST to fill gaps.",
 		}, []string{"exchange", "market", "timeframe"}),
 		connects: prometheus.NewCounterVec(prometheus.CounterOpts{
-			Name: "tradingbot_marketdata_stream_connects_total",
+			Name: "cryptolaunchbot_marketdata_stream_connects_total",
 			Help: "Successful stream (re)connections.",
 		}, []string{"exchange", "market"}),
 		lastClose: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "tradingbot_marketdata_last_candle_close_timestamp_seconds",
+			Name: "cryptolaunchbot_marketdata_last_candle_close_timestamp_seconds",
 			Help: "Close time of the newest closed candle per series; alert when it falls behind.",
 		}, []string{"exchange", "market", "symbol", "timeframe"}),
 	}

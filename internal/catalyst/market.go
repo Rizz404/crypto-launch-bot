@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/exchange"
-	"github.com/rizz404/trading-bot/internal/exchange/binance"
-	"github.com/rizz404/trading-bot/internal/indicator"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/exchange"
+	"github.com/rizz404/crypto-launch-bot/internal/exchange/binance"
+	"github.com/rizz404/crypto-launch-bot/internal/indicator"
 	"github.com/shopspring/decimal"
 )
 

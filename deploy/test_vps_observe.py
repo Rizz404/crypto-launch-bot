@@ -35,7 +35,7 @@ class ResearchObserverTests(unittest.TestCase):
                 if ':19102/' in url and broken == 'health':
                     raise RuntimeError('unhealthy')
                 if url.endswith('/metrics'):
-                    return 'tradingbot_build_info{mode="paper"} 1'
+                    return 'cryptolaunchbot_build_info{mode="paper"} 1'
                 if url.endswith('/targets'):
                     return json.dumps({'data': {'activeTargets': [{'health': 'up'}, {'health': 'up'}]}})
                 if url.endswith('/api/health'):

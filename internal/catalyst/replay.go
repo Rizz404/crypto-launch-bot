@@ -9,8 +9,8 @@ import (
 	"slices"
 	"time"
 
-	"github.com/rizz404/trading-bot/internal/domain"
-	"github.com/rizz404/trading-bot/internal/managed"
+	"github.com/rizz404/crypto-launch-bot/internal/domain"
+	"github.com/rizz404/crypto-launch-bot/internal/managed"
 	"github.com/shopspring/decimal"
 )
 

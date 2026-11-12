@@ -8,7 +8,7 @@ package managed
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/rizz404/trading-bot/internal/ui"
+import "github.com/rizz404/crypto-launch-bot/internal/ui"
 
 func tradePage(v tradeView) ui.Page {
 	p := v.shellPage(v.Symbol+" · Trading", "Data pasar dari websocket Binance, dibagikan server ke semua tab. Order lewat strategi manual memakai modal dan batas risiko instance-nya.")
@@ -2819,7 +2819,7 @@ func authCard(title, msg string) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = ui.Shell(ui.Page{Title: title, Brand: "trading-bot", Footer: "Akses dibatasi login."}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var172), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ui.Shell(ui.Page{Title: title, Brand: "crypto-launch-bot", Footer: "Akses dibatasi login."}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var172), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
