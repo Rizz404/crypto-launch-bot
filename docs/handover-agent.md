@@ -11,8 +11,21 @@
 - Menunggu keputusan user: sumber seed daftar presale dan build Spider. Jangan
   memilih sendiri; detail opsi di [checkpoint](testing/plan-4-local.md#verifikasi-10-november-2026).
 - Lingkungan: Go hanya tersedia di WSL (`FedoraLinux-44`, shell fish), jadi
-  tulis perintah ke file `.sh`. Path module Go masih `github.com/rizz404/trading-bot`.
-  Arsip uji ditulis ke `/tmp`, jangan ke `var/launch`.
+  tulis perintah ke file `.sh`. Arsip uji ditulis ke `/tmp`, jangan ke `var/launch`.
+- Penamaan (12 November, belum di-build/test ulang): path module Go kini
+  `github.com/rizz404/crypto-launch-bot`. Atas izin user (proyek belum ter-deploy)
+  semua nama ikut diganti: brand UI, realm login, tag image, image Spider di
+  workflow, database `cryptolaunchbot*`, kunci advisory lock, metric/job/alert
+  Prometheus `cryptolaunchbot_*`, dashboard Grafana, project compose lokal dan
+  path cache/unit skrip riset. Akibatnya volume/DB lokal lama bernama `tradingbot`
+  tidak terpakai lagi dan env privat (`.env*`) harus disesuaikan user sendiri.
+  Belum diganti: pin digest `trading-bot-spider` di `Dockerfile.catalyst` (image
+  dengan nama baru belum pernah di-publish) dan label menu "Trading bot". Sisa
+  `trading-bot` di docs merujuk repo asal atau catatan historis.
+- Upstream `Rizz404/trading-bot` sesudah `562c73e`: `680a704` (pembanding
+  buy-and-hold di dashboard) dan `85def1c` (cache build Dockerfile,
+  `deploy/vps-build.sh`) sudah di-cherry-pick 12 November. Tiga commit docs
+  mereka sampai `13d8e72` tidak diambil.
 - Memori Hindsight untuk sesi ini gagal disimpan; dokumen ini sumber kebenarannya.
 - Mulai baca dari [indeks docs](readme.md), lalu [Plan 4](plan-4.md) dan
   [checkpoint pengujian](testing/plan-4-local.md).
