@@ -2,8 +2,9 @@
 
 **Implementasi development 29 Oktober 2026.** Pada 10 November, `report`,
 `replay-paper` dan satu pass nyata `collect -source cex|dex` dijalankan di WSL
-dan lulus setelah perbaikan; presale dan `analyze` belum.
-[Pilihan integrasi](presale-integrations.md) dan [checkpoint](testing/plan-4-local.md#verifikasi-10-november-2026)
+dan lulus setelah perbaikan. Pada 12 November `collect -source presale|curve`
+juga lulus dengan Spider build lokal; `analyze` belum.
+[Pilihan integrasi](presale-integrations.md) dan [checkpoint](testing/plan-4-local.md#verifikasi-12-november-2026)
 menjelaskan sumber serta batas bukti. Bukan runtime transaksi atau pilot.
 
 ## Perintah
@@ -20,6 +21,7 @@ manual sebaiknya diarahkan ke direktori sementara dengan `-archive`.
 ./bin/launch -action collect -source dex -limit 5
 ./bin/launch -action collect -source cex -limit 5
 ./bin/launch -action collect -source presale -spider-binary /path/to/spider
+./bin/launch -action collect -source curve -limit 5
 ./bin/launch -action analyze -candidate ID_DARI_REPORT -policy configs/launch.policy.json -env-file .env.launch
 ```
 
@@ -29,6 +31,25 @@ default `var/launch`, diabaikan Git, terpisah dari `var/catalyst` serta seluruh
 ledger. `report/collect` tidak membaca env atau memanggil AI. `analyze` membaca
 credential hanya bila dijalankan eksplisit dan dapat memakai kuota/biaya
 gateway. Tidak ada Telegram, wallet, order atau claim/refund finansial.
+
+Sumber `presale` membaca dua kanal Telegram sebagai petunjuk tautan lalu
+men-scrape halaman detail PinkSale; `curve` membaca token four.meme terbaru
+lewat RPC dan hanya menghasilkan kandidat riset (`held`).
+
+Binary Spider tidak ada di repo dan belum ada image yang di-publish dengan nama
+baru, jadi tiap perangkat harus membangunnya sendiri sekali (Rust di container,
+beberapa menit). Go yang dipakai 1.27.2; bila Go bawaan lebih lama, set
+`GOTOOLCHAIN=go1.27.2`.
+
+```sh
+podman build -f Dockerfile.spider -t localhost/crypto-launch-bot-spider:local .
+cid=$(podman create localhost/crypto-launch-bot-spider:local /spider)
+podman cp "$cid:/spider" /tmp/lv/spider
+podman rm "$cid"
+/tmp/lv/spider --version
+```
+
+Versi yang benar: `spider_cli 2.53.9-p3.1`.
 
 ## Analisis AI eksplisit
 

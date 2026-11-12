@@ -7,18 +7,29 @@
   pass nyata CEX/DEX lulus 10 November. Crawl presale via Spider lulus
   12 November. Belum dijalankan: `analyze` (inference berbayar), evaluasi model,
   pilot, wallet/transaksi.
-- Git: `main` berisi merge trading-bot dan perbaikan Plan 4, **belum di-push**
-  (sekitar 53 commit di depan `origin/main`). Push hanya atas izin user.
+- Git: `main` berisi merge trading-bot, rename, cherry-pick upstream dan sumber
+  baru Plan 4. Periksa `git status -sb`: bila masih di depan `origin/main`,
+  pekerjaan 12 November belum di-push. Push hanya atas izin user.
+- Pindah perangkat: yang tidak ikut Git adalah `.env`/`.env.catalyst` (nama DB
+  di `TB_DATABASE__URL` kini `cryptolaunchbot`), binary Spider (bangun ulang,
+  lihat [panduan CLI](presale-runtime.md#perintah)) dan arsip uji `/tmp/lv`.
+  Volume/DB lokal lama bernama `tradingbot` tidak dipakai lagi.
+- Langkah berikut yang disarankan (belum diputuskan user): pass `collect`
+  berulang beberapa hari untuk mengukur coverage dan melihat apakah sale presale
+  terbuka muncul; selidiki pool `0xdbcc…4fd9` yang bukan clone dikenal; lalu
+  `analyze` pada model nyata. Untuk `curve`, analisis/sizing/paper belum ada.
 - Seed presale (12 November): kanal pengumuman resmi `t.me/s/pinkecosystem_ann`
   menjadi petunjuk tautan, halaman detail PinkSale dan chain tetap buktinya.
-  Crawl nyata dengan Spider build lokal lulus (3 kandidat, semua sale tertutup).
-  Menunggu keputusan user: cara menambah coverage sale baru (event factory lewat
-  RPC atau `PinkSaleTracking` yang tidak resmi). Jangan memilih sendiri; lihat
-  [checkpoint](testing/plan-4-local.md#verifikasi-12-november-2026).
+  Atas keputusan user ditambah: `PinkSaleTracking` (tidak resmi, ditandai
+  `lead_official: 0`), verifikasi clone/factory kontrak sale, GeckoTerminal
+  sebagai metadata pool DEX, dan venue keempat four.meme (kind `curve`, sebatas
+  discovery; analisis/paper belum mengenalnya). Pass nyata lulus untuk presale,
+  DEX dan curve; belum ada sale presale yang masih terbuka. Lihat
+  [checkpoint](testing/plan-4-local.md#sumber-tambahan-12-november-lanjutan).
 - Lingkungan: Go hanya tersedia di WSL (`FedoraLinux-44`, shell fish), jadi
   tulis perintah ke file `.sh` dan set `GOTOOLCHAIN=go1.27.2` (bawaan 1.26).
   Arsip uji ditulis ke `/tmp`, jangan ke `var/launch`.
-- Penamaan (12 November, belum di-build/test ulang): path module Go kini
+- Penamaan (12 November; build, unit, integrasi dan test alert lulus sesudahnya): path module Go kini
   `github.com/rizz404/crypto-launch-bot`. Atas izin user (proyek belum ter-deploy)
   semua nama ikut diganti: brand UI, realm login, tag image, image Spider di
   workflow, database `cryptolaunchbot*`, kunci advisory lock, metric/job/alert

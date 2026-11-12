@@ -49,6 +49,34 @@ Gap yang tersisa pada jalur presale:
 - Binary Spider di atas hasil build lokal; image `crypto-launch-bot-spider`
   belum di-publish dan pin digest di `Dockerfile.catalyst` masih nama lama.
 
+### Sumber tambahan (12 November, lanjutan)
+
+Atas keputusan user sesudah riset sumber: verifikasi clone PinkSale, kanal
+tidak resmi sebagai petunjuk kedua (ditandai), GeckoTerminal sebagai metadata
+pool, dan four.meme sebagai venue keempat. Build, vet dan race test paket
+`catalyst`/`launch`/`cmd/launch` lulus, lalu satu pass nyata per jalur.
+
+| Perubahan | Sumber kebenaran | Hasil pass nyata |
+|---|---|---|
+| Kontrak sale harus clone EIP-1167 dari implementasi PinkSale yang dikenal dan `factory()` cocok (`inspectSale`) | Dibaca dari 6 pool BSC; PinkSale tidak mempublikasikan alamat kontrak | 6 dari 7 pool `known_pinksale_clone`; 1 ditandai `sale_contract_not_known_pinksale_clone` |
+| `t.me/s/PinkSaleTracking` sebagai petunjuk kedua, fakta `lead_official: 0` | Tidak tercantum di tautan resmi PinkSale | 7 kandidat presale (3 kanal resmi, 4 kanal tidak resmi), semua `sale_closed` |
+| GeckoTerminal `networks/bsc/pools/<pool>` bila DexScreener kosong | API publik tanpa key; batas rate dan syarat pakai belum diverifikasi | 1 pool terisi DexScreener, 4 tetap `market_metadata_unavailable` (GeckoTerminal belum mengindeks) |
+| Kind `curve`, venue `four-meme`: log `TokenCreate` TokenManager2 lalu konfirmasi `getTokenInfo` Helper3 | [Panduan integrasi dan ABI resmi](https://github.com/four-meme-community/fourmeme-docs) | 5 token terbaru terbaca (versi 2, manager cocok, dana kurva), semua `held` |
+
+Catatan dan gap:
+
+- `bsc-dataseed` menolak `eth_getLogs`, jadi log four.meme diambil dari
+  `bsc-rpc.publicnode.com` (host baru di allowlist) sebagai petunjuk; tiap token
+  dikonfirmasi lewat Helper3 di `bsc-dataseed`. Jendela 2.000 blok, hanya
+  `-limit` token terbaru yang diperiksa (`bounded_curve_tail_not_complete`).
+- `curve` baru sebatas discovery: analisis, sizing dan paper belum mengenalnya,
+  sehingga selalu `held` dengan `curve_exit_and_paper_adapter_pending`.
+- Pool yang ditandai bukan clone dikenal (`0xdbcc…4fd9`) belum diselidiki; bisa
+  implementasi ketiga yang sah atau kontrak asing.
+- Enumerasi pool PinkSale lewat event factory tidak berhasil: tidak ada log dari
+  alamat `factory()` pada 360 ribu blok terakhir.
+- Kedua kanal belum memunculkan sale yang masih upcoming/live pada pass ini.
+
 ## Verifikasi 10 November 2026
 
 Dijalankan atas permintaan user di WSL Fedora (go1.27.2) setelah merge

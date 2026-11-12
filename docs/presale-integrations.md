@@ -43,13 +43,35 @@ sale, kelayakan akun, ataupun hak refund. P4-2 menahan seluruh entry presale
 sampai provenance kontrak/ABI, state dan syarat partisipasi diverifikasi untuk
 adapter eksekusi P4-4. Tidak ada wallet yang disiapkan pada fase ini.
 
+## Perubahan 12 November 2026
+
+Diputuskan user sesudah riset sumber lanjutan; bukti dan hasil pass nyata ada di
+[checkpoint](testing/plan-4-local.md#sumber-tambahan-12-november-lanjutan).
+
+- **Petunjuk daftar presale.** Indeks PinkSale dirender JavaScript, jadi tautan
+  pool diambil dari kanal Telegram: `pinkecosystem_ann` (tercantum di
+  [Social Links](https://docs.pinksale.finance/important/social-links) PinkSale)
+  dan `PinkSaleTracking` (tidak tercantum; kandidatnya diberi `lead_official: 0`).
+  Kanal hanya memasok URL; identitas dan syarat tetap dari halaman PinkSale dan chain.
+- **Verifikasi kontrak sale.** Pool harus clone EIP-1167 dari implementasi yang
+  dikenal dan `factory()` cocok. Alamatnya hasil pengamatan chain, bukan publikasi PinkSale.
+- **GeckoTerminal** dipakai sebagai metadata pool kedua sesudah DexScreener
+  lewat API publik `api.geckoterminal.com/api/v2` tanpa key (terbukti menjawab
+  12 November). Batas rate dan syarat pakai belum diverifikasi.
+- **Venue keempat: four.meme** (kind `curve`, bonding curve BSC). Alamat
+  TokenManager2/Helper3, event dan ABI dari
+  [panduan integrasi resmi](https://github.com/four-meme-community/fourmeme-docs).
+  Log dibaca dari `bsc-rpc.publicnode.com` karena `bsc-dataseed` menolak
+  `eth_getLogs`; tiap token dikonfirmasi lewat Helper3. Baru discovery:
+  policy/analisis/paper P4-3–P4-4 tetap hanya mengenal tiga jalur awal.
+
 ## Alternatif yang ditunda
 
 | Pilihan | Alasan dan pemicu evaluasi ulang |
 |---|---|
 | Solana | Perlu model mint/authority, program, RPC/finality dan adapter tersendiri. Tunda agar jalur EVM pertama selesai; bukan penilaian potensi token |
 | Ethereum/Base dan chain EVM lain | Registry serta provenance kontrak berbeda; tambah setelah penerimaan jalur BSC. Biaya aktual tidak dibandingkan atau diklaim lebih mahal |
-| GeckoTerminal/CoinGecko | [Dokumentasi new pools terkini](https://docs.coingecko.com/reference/latest-pools-network) menampilkan host Pro berkey. Dokumentasi lama GeckoTerminal mengarah ke portal CoinGecko; akses public lama tidak dibuktikan. Tunda agar tidak mengasumsikan endpoint key-free yang belum terverifikasi |
+| GeckoTerminal/CoinGecko | [Dokumentasi new pools terkini](https://docs.coingecko.com/reference/latest-pools-network) menampilkan host Pro berkey. Dokumentasi lama GeckoTerminal mengarah ke portal CoinGecko; akses public lama tidak dibuktikan. Tunda agar tidak mengasumsikan endpoint key-free yang belum terverifikasi. **Diubah 12 November:** endpoint publik tanpa key terbukti menjawab dan dipakai sebagai metadata kedua (lihat di atas) |
 | DODO CrowdPooling | [Dokumentasi subgraph](https://docs.dodoex.io/en/developer/developers-portal/api/web3-data/subgraph-data) mensyaratkan key untuk layanan self-hosted atau layanan Graph berbiaya. Tunda sampai akses tersedia; baca source factory bukan bukti semua sale masih aktif |
 | CEX selain Binance, Pancake V3/Infinity | Memerlukan kontrak data/adapter dan evaluasi akses baru; tidak diperlukan untuk mencakup tiga jalur awal |
 
