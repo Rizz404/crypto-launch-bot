@@ -1,10 +1,25 @@
 # Handover agent — Presale dan listing baru
 
-**Checkpoint 29 Oktober 2026.** [Plan 4](plan-4.md) adalah satu-satunya roadmap
-aktif. Commit docs **`839fa2e`** dan discovery P4-1/P4-2 **`108b3fa`** selesai
-sesuai permintaan user. Lanjutan terbaru menulis analisis/policy P4-3 sesuai
-profil yang dipilih, lalu paper/simulasi P4-4; tes/build, evaluasi model baru,
-integrasi runtime dan pilot belum dijalankan. Mulai dari [indeks docs](readme.md).
+## Mulai di sini (status 12 November 2026)
+
+- [Plan 4](plan-4.md) presale/listing baru adalah satu-satunya roadmap aktif.
+  P4-1–P4-4 sudah diimplementasi; build, unit/race test, replay paper dan satu
+  pass nyata CEX/DEX lulus 10 November. Belum dijalankan: `analyze` (inference
+  berbayar), crawl presale via Spider, evaluasi model, pilot, wallet/transaksi.
+- Git: `main` berisi merge trading-bot dan perbaikan Plan 4, **belum di-push**
+  (sekitar 53 commit di depan `origin/main`). Push hanya atas izin user.
+- Menunggu keputusan user: sumber seed daftar presale dan build Spider. Jangan
+  memilih sendiri; detail opsi di [checkpoint](testing/plan-4-local.md#verifikasi-10-november-2026).
+- Lingkungan: Go hanya tersedia di WSL (`FedoraLinux-44`, shell fish), jadi
+  tulis perintah ke file `.sh`. Path module Go masih `github.com/rizz404/trading-bot`.
+  Arsip uji ditulis ke `/tmp`, jangan ke `var/launch`.
+- Memori Hindsight untuk sesi ini gagal disimpan; dokumen ini sumber kebenarannya.
+- Mulai baca dari [indeks docs](readme.md), lalu [Plan 4](plan-4.md) dan
+  [checkpoint pengujian](testing/plan-4-local.md).
+
+**Checkpoint 29 Oktober 2026 (historis).** Commit docs **`839fa2e`** dan
+discovery P4-1/P4-2 **`108b3fa`** selesai sesuai permintaan user, lalu P4-3
+analisis/policy dan P4-4 paper/simulasi ditulis.
 
 **Merge 10 November 2026:** `Rizz404/trading-bot` sampai `562c73e` (49 commit
 sesudah basis bersama `f6ffcd6`) di-merge atas permintaan user. Masuk: UI
@@ -59,7 +74,7 @@ seed dan build Spider. Hasil serta gap: [checkpoint](testing/plan-4-local.md#ver
   `Rizz404/crypto-launch-bot`.
   Commit docs/discovery dan checkpoint P4-3/P4-4 diminta user;
   gunakan `git log` untuk hash checkpoint terbaru. Tidak ada
-  tidak ada push/deploy, perubahan DB atau runtime VPS.
+  push/deploy, perubahan DB atau runtime VPS.
 
 ## Kondisi yang diketahui
 
