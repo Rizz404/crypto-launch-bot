@@ -79,55 +79,95 @@ func parseSale(doc catalyst.Document, evidence string, now time.Time) (Candidate
 	return c, true
 }
 
+// PinkSale publishes no contract addresses. These were read from live BSC pools on
+// 2026-11-12: every sampled pool is an EIP-1167 clone of one of two implementations
+// and returns the same factory(). A pool that differs is flagged, never trusted.
+const pinkFactory = "0x1ee7736987f2ebd0f519ec5858b2b3bc6fd0c6a0"
+const factorySelector = "0xc45a0155"
+
+var pinkImplementations = []string{"0xd18b06e912575a388593ee07bf6f902bd6e30109", "0xeed5194c2d5f16cd1d54f37ca84603be7c0bfd0d"}
+var minimalProxy = regexp.MustCompile(`^0x363d3d373d3d3d363d73([0-9a-f]{40})5af43d82803e903d91602b57fd5bf3$`)
+
+// presaleLeads only supply pool links; sale identity and terms come from the
+// pinksale.finance pages and the chain. PinkSale's own index is rendered by
+// JavaScript. The tracking channel is not listed among PinkSale's official links.
+var presaleLeads = []struct {
+	source   catalyst.Source
+	official bool
+}{
+	{catalyst.Source{ID: "p4-pinksale-telegram-ann", URL: "https://t.me/s/pinkecosystem_ann"}, true},
+	{catalyst.Source{ID: "p4-pinksale-telegram-tracking", URL: "https://t.me/s/PinkSaleTracking"}, false},
+}
+
+// inspectSale checks the sale contract against the known PinkSale clone shape.
+func (c *Client) inspectSale(ctx context.Context, candidate *Candidate, block chainSnapshot) {
+	var code string
+	proof, err := c.rpc(ctx, "eth_getCode", []any{candidate.ExternalID, block.Number}, &code)
+	candidate.EvidenceIDs = append(candidate.EvidenceIDs, proof)
+	if err != nil || len(code) <= 2 {
+		candidate.Gaps = append(candidate.Gaps, "sale_contract_code_unavailable")
+		return
+	}
+	candidate.Facts["sale_code"] = "present_not_factory_verified"
+	clone := minimalProxy.FindStringSubmatch(strings.ToLower(code))
+	value, proof, err := c.call(ctx, candidate.ExternalID, factorySelector, block.Number)
+	candidate.EvidenceIDs = append(candidate.EvidenceIDs, proof)
+	factory, parseErr := abiAddress(value)
+	if err != nil || parseErr != nil || factory != pinkFactory || len(clone) != 2 || !slices.Contains(pinkImplementations, "0x"+clone[1]) {
+		candidate.Gaps = append(candidate.Gaps, "sale_contract_not_known_pinksale_clone")
+		return
+	}
+	candidate.Facts["sale_code"] = "known_pinksale_clone"
+	candidate.Facts["sale_implementation"] = "0x" + clone[1]
+	candidate.Facts["sale_factory"] = factory
+}
+
 func (c *Client) discoverPresales(ctx context.Context, binary string) Batch {
 	b := Batch{Version: Version, Kind: "presale", At: time.Now().UTC()}
 	source := catalyst.Source{ID: "p4-pinksale-bsc", URL: "https://www.pinksale.finance/launchpads",
 		Primary: true, ArticlePattern: `^/launchpad/bsc/0x[0-9a-fA-F]{40}$`}
-	// PinkSale's own index is rendered by JavaScript, so its documented
-	// announcement channel supplies the pool links. It is a lead only: sale
-	// identity and terms come from the pinksale.finance pages and the chain.
-	lead := catalyst.Source{ID: "p4-pinksale-telegram-ann", URL: "https://t.me/s/pinkecosystem_ann"}
-	leadEvidence, e, err := catalyst.CollectDiscoveryLinked(ctx, c.Archive, binary, lead, source)
-	if err != nil {
-		b.Gaps = append(b.Gaps, err.Error())
-		return b
-	}
-	leadID, leadErr := c.Archive.Put("launch-web", leadEvidence)
-	id, err := c.Archive.Put("launch-web", e)
-	if err != nil || leadErr != nil {
-		b.Gaps = append(b.Gaps, "website_evidence_archive_failed")
-		return b
-	}
 	block, chainProof, chainErr := c.finalized(ctx)
-	b.EvidenceIDs = append([]string{id, leadID}, chainProof...)
-	for _, doc := range e.Documents {
-		candidate, ok := parseSale(doc, id, e.FirstSeenAt)
-		if !ok {
+	b.EvidenceIDs = slices.Clone(chainProof)
+	seen := map[string]bool{}
+	for _, lead := range presaleLeads {
+		leadEvidence, e, err := catalyst.CollectDiscoveryLinked(ctx, c.Archive, binary, lead.source, source)
+		if err != nil {
+			b.Gaps = append(b.Gaps, lead.source.ID+": "+err.Error())
 			continue
 		}
-		if chainErr == nil {
-			var refreshProof []string
-			block, refreshProof, chainErr = c.refresh(ctx, block)
-			chainProof = append(chainProof, refreshProof...)
+		leadID, leadErr := c.Archive.Put("launch-web", leadEvidence)
+		id, err := c.Archive.Put("launch-web", e)
+		if err != nil || leadErr != nil {
+			b.Gaps = append(b.Gaps, "website_evidence_archive_failed")
+			continue
 		}
-		candidate.EvidenceIDs = append(candidate.EvidenceIDs, chainProof...)
-		if chainErr != nil {
-			candidate.Gaps = append(candidate.Gaps, chainErr.Error())
-		} else {
-			c.inspectToken(ctx, &candidate, block)
-			var code string
-			proof, codeErr := c.rpc(ctx, "eth_getCode", []any{candidate.ExternalID, block.Number}, &code)
-			candidate.EvidenceIDs = append(candidate.EvidenceIDs, proof)
-			if codeErr != nil || len(code) <= 2 {
-				candidate.Gaps = append(candidate.Gaps, "sale_contract_code_unavailable")
-			} else {
-				candidate.Facts["sale_code"] = "present_not_factory_verified"
+		b.EvidenceIDs = append(b.EvidenceIDs, id, leadID)
+		for _, doc := range e.Documents {
+			candidate, ok := parseSale(doc, id, e.FirstSeenAt)
+			if !ok || seen[candidate.ExternalID] {
+				continue
 			}
+			seen[candidate.ExternalID] = true
+			candidate.EvidenceIDs = append(candidate.EvidenceIDs, leadID)
+			candidate.Facts["lead_source"] = lead.source.ID
+			candidate.Facts["lead_official"] = map[bool]string{true: "1", false: "0"}[lead.official]
+			if chainErr == nil {
+				var refreshProof []string
+				block, refreshProof, chainErr = c.refresh(ctx, block)
+				chainProof = append(chainProof, refreshProof...)
+			}
+			candidate.EvidenceIDs = append(candidate.EvidenceIDs, chainProof...)
+			if chainErr != nil {
+				candidate.Gaps = append(candidate.Gaps, chainErr.Error())
+			} else {
+				c.inspectToken(ctx, &candidate, block)
+				c.inspectSale(ctx, &candidate, block)
+			}
+			candidate.Seal()
+			b.Candidates = append(b.Candidates, candidate)
 		}
-		candidate.Seal()
-		b.Candidates = append(b.Candidates, candidate)
 	}
-	b.Gaps = append(b.Gaps, "bounded_website_coverage_not_complete", "lead_channel_lists_promoted_sales_only")
+	b.Gaps = append(b.Gaps, "bounded_website_coverage_not_complete")
 	if len(b.Candidates) == 0 {
 		b.Gaps = append(b.Gaps, "no_parseable_bsc_sale_pages_or_javascript_required")
 	}
