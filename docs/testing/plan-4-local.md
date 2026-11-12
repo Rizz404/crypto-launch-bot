@@ -7,6 +7,48 @@ P4-3/P4-4 disertakan pada checkpoint commit berikutnya atas permintaan user
 uji fungsi, build, crawl CLI, koneksi RPC/API melalui aplikasi, inference,
 Telegram, database, server, deploy atau transaksi yang dijalankan.
 
+## Verifikasi 12 November 2026
+
+Dijalankan atas permintaan user di WSL Fedora (`GOTOOLCHAIN=go1.27.2`; Go
+bawaan WSL 1.26) setelah rename ke `crypto-launch-bot` dan cherry-pick
+`680a704`/`85def1c` dari upstream. Arsip uji di `/tmp/lv`. Tanpa inference,
+wallet, signer atau transaksi.
+
+| Pemeriksaan | Hasil |
+|---|---|
+| `go build ./...`, `go vet ./...`, `go test ./...` | Lulus, 29 paket |
+| Test integrasi seperti job CI (storage, siklus migrasi, sesi paper, managed, pilot catalyst; `-race`, DB sementara `cryptolaunchbot_ci_test`) | Lulus |
+| `promtool test rules alerts.test.yml` | Lulus |
+| Build Spider pinned dari `Dockerfile.spider` (podman lokal) | `spider_cli 2.53.9-p3.1` |
+| `collect -source presale` lalu `report` | Exit 0; 3 kandidat presale terbaca, semua `rejected`, `entry_allowed` false |
+
+Sumber seed presale diputuskan user mengikuti saran agent: kanal Telegram
+sebagai petunjuk tautan, halaman detail PinkSale dan chain sebagai bukti.
+Pemeriksaan tautan resmi mengubah pilihan kanalnya:
+
+- `t.me/PinkSaleTracking` **tidak** tercantum di
+  [Social Links](https://docs.pinksale.finance/important/social-links) PinkSale,
+  jadi tidak boleh disebut resmi. Yang tercantum hanya grup `t.me/pinkecosystem`
+  dan kanal pengumuman `t.me/pinkecosystem_ann`.
+- Seed yang dipakai: `https://t.me/s/pinkecosystem_ann`. Spider membaca satu
+  halaman kanal, mengambil maksimal lima tautan `/launchpad/bsc/0x…` terbaru,
+  lalu men-scrape halaman detailnya (`catalyst.CollectDiscoveryLinked`). Robots
+  `t.me` dan Cloudflare PinkSale meloloskan agent `ana-scout-research`.
+- Hasil pass nyata: tiga pool unik, semuanya sale Oktober yang sudah `ended`
+  atau `canceled`, sehingga ditolak `sale_closed`. Token address, jadwal,
+  status, kode kontrak sale dan data GoPlus terbaca untuk ketiganya.
+
+Gap yang tersisa pada jalur presale:
+
+- Kanal pengumuman hanya memuat sale yang dipromosikan dan pada pass ini tidak
+  memuat satu pun sale yang masih upcoming/live. Jalur terbukti berfungsi,
+  tetapi coverage untuk sale baru belum memadai (gap batch
+  `lead_channel_lists_promoted_sales_only`). Opsi lanjutan menunggu keputusan
+  user: event factory PinkSale lewat RPC, atau `PinkSaleTracking` sebagai
+  petunjuk tambahan yang tidak resmi.
+- Binary Spider di atas hasil build lokal; image `crypto-launch-bot-spider`
+  belum di-publish dan pin digest di `Dockerfile.catalyst` masih nama lama.
+
 ## Verifikasi 10 November 2026
 
 Dijalankan atas permintaan user di WSL Fedora (go1.27.2) setelah merge
@@ -75,8 +117,9 @@ Temuan yang belum ditutup:
   token address, status serta `Start time`/`End time … (UTC)`. Robots
   mengizinkan agent `ana-scout-research`; user agent generik seperti curl
   diblokir Cloudflare (403). Atas keputusan user, sumber daftar/seed
-  ditunda dan dicatat sebagai gap. Opsi yang ditemukan: kanal Telegram resmi
-  `t.me/s/PinkSaleTracking` (dirender server, 9 tautan BSC saat dicek) atau
+  ditunda dan dicatat sebagai gap. Opsi yang ditemukan: kanal Telegram
+  `t.me/s/PinkSaleTracking` (dirender server, 9 tautan BSC saat dicek; pada
+  12 November terbukti tidak tercantum sebagai kanal resmi) atau
   `api.pinksale.finance/api/v1/pool/list` (berfungsi tetapi tidak
   terdokumentasi, bertentangan dengan kontrak integrasi).
 - Binary Spider pinned belum di-build secara lokal, jadi crawl presale melalui

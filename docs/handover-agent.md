@@ -4,14 +4,20 @@
 
 - [Plan 4](plan-4.md) presale/listing baru adalah satu-satunya roadmap aktif.
   P4-1–P4-4 sudah diimplementasi; build, unit/race test, replay paper dan satu
-  pass nyata CEX/DEX lulus 10 November. Belum dijalankan: `analyze` (inference
-  berbayar), crawl presale via Spider, evaluasi model, pilot, wallet/transaksi.
+  pass nyata CEX/DEX lulus 10 November. Crawl presale via Spider lulus
+  12 November. Belum dijalankan: `analyze` (inference berbayar), evaluasi model,
+  pilot, wallet/transaksi.
 - Git: `main` berisi merge trading-bot dan perbaikan Plan 4, **belum di-push**
   (sekitar 53 commit di depan `origin/main`). Push hanya atas izin user.
-- Menunggu keputusan user: sumber seed daftar presale dan build Spider. Jangan
-  memilih sendiri; detail opsi di [checkpoint](testing/plan-4-local.md#verifikasi-10-november-2026).
+- Seed presale (12 November): kanal pengumuman resmi `t.me/s/pinkecosystem_ann`
+  menjadi petunjuk tautan, halaman detail PinkSale dan chain tetap buktinya.
+  Crawl nyata dengan Spider build lokal lulus (3 kandidat, semua sale tertutup).
+  Menunggu keputusan user: cara menambah coverage sale baru (event factory lewat
+  RPC atau `PinkSaleTracking` yang tidak resmi). Jangan memilih sendiri; lihat
+  [checkpoint](testing/plan-4-local.md#verifikasi-12-november-2026).
 - Lingkungan: Go hanya tersedia di WSL (`FedoraLinux-44`, shell fish), jadi
-  tulis perintah ke file `.sh`. Arsip uji ditulis ke `/tmp`, jangan ke `var/launch`.
+  tulis perintah ke file `.sh` dan set `GOTOOLCHAIN=go1.27.2` (bawaan 1.26).
+  Arsip uji ditulis ke `/tmp`, jangan ke `var/launch`.
 - Penamaan (12 November, belum di-build/test ulang): path module Go kini
   `github.com/rizz404/crypto-launch-bot`. Atas izin user (proyek belum ter-deploy)
   semua nama ikut diganti: brand UI, realm login, tag image, image Spider di
