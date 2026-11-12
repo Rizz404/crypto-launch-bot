@@ -41,7 +41,7 @@ func NewClient(archive catalyst.Archive) *Client {
 
 func (c *Client) fetch(ctx context.Context, target string, request any, out any) (string, error) {
 	u, err := url.Parse(target)
-	if err != nil || u.Scheme != "https" || u.User != nil || u.Port() != "" || u.Fragment != "" || !slices.Contains([]string{"api.dexscreener.com", "api.gopluslabs.io", "data-api.binance.vision", "bsc-dataseed.bnbchain.org"}, u.Host) {
+	if err != nil || u.Scheme != "https" || u.User != nil || u.Port() != "" || u.Fragment != "" || !slices.Contains([]string{"api.dexscreener.com", "api.geckoterminal.com", "api.gopluslabs.io", "data-api.binance.vision", "bsc-dataseed.bnbchain.org", "bsc-rpc.publicnode.com"}, u.Host) {
 		return "", errors.New("API origin outside discovery allowlist")
 	}
 	if c.requests >= 160 {
@@ -101,13 +101,17 @@ func (c *Client) fetch(ctx context.Context, target string, request any, out any)
 }
 
 func (c *Client) rpc(ctx context.Context, method string, params any, out any) (string, error) {
+	return c.rpcAt(ctx, rpcURL, method, params, out)
+}
+
+func (c *Client) rpcAt(ctx context.Context, node, method string, params any, out any) (string, error) {
 	var reply struct {
 		ID      int             `json:"id"`
 		JSONRPC string          `json:"jsonrpc"`
 		Result  json.RawMessage `json:"result"`
 		Error   json.RawMessage `json:"error"`
 	}
-	id, err := c.fetch(ctx, rpcURL, map[string]any{"jsonrpc": "2.0", "id": 1, "method": method, "params": params}, &reply)
+	id, err := c.fetch(ctx, node, map[string]any{"jsonrpc": "2.0", "id": 1, "method": method, "params": params}, &reply)
 	if err != nil {
 		return id, err
 	}

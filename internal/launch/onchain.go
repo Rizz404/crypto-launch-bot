@@ -122,6 +122,47 @@ func (c *Client) inspectToken(ctx context.Context, candidate *Candidate, block c
 	candidate.Facts["security_provider"] = "goplus"
 }
 
+// geckoPool fills pool creation time, price and reserve from GeckoTerminal when
+// its token pair matches the on-chain pair. Provider data is never identity proof.
+func (c *Client) geckoPool(ctx context.Context, candidate *Candidate, pool, a0, a1 string) (string, bool) {
+	var data struct {
+		Data struct {
+			Attributes struct {
+				Address   string `json:"address"`
+				CreatedAt string `json:"pool_created_at"`
+				PriceUSD  string `json:"base_token_price_usd"`
+				Reserve   string `json:"reserve_in_usd"`
+			} `json:"attributes"`
+			Relationships map[string]struct {
+				Data struct {
+					ID string `json:"id"`
+				} `json:"data"`
+			} `json:"relationships"`
+		} `json:"data"`
+	}
+	id, err := c.fetch(ctx, "https://api.geckoterminal.com/api/v2/networks/bsc/pools/"+pool, nil, &data)
+	rel := data.Data.Relationships
+	base, be := address(strings.TrimPrefix(rel["base_token"].Data.ID, "bsc_"))
+	quote, qe := address(strings.TrimPrefix(rel["quote_token"].Data.ID, "bsc_"))
+	if err != nil || !strings.EqualFold(data.Data.Attributes.Address, pool) || rel["dex"].Data.ID != "pancakeswap_v2" {
+		return id, false
+	}
+	if be != nil || qe != nil || !((base == a0 && quote == a1) || (base == a1 && quote == a0)) {
+		candidate.Gaps = append(candidate.Gaps, "provider_pair_identity_conflict")
+		return id, false
+	}
+	candidate.Asset = Asset{Chain: "eip155:56", Address: base}
+	candidate.Quote = quote
+	if created, e := time.Parse(time.RFC3339, data.Data.Attributes.CreatedAt); e == nil {
+		candidate.StartsAt = created.UTC()
+	}
+	candidate.TimeBasis = "provider_pool_creation"
+	candidate.Facts["market_provider"] = "geckoterminal"
+	candidate.Facts["price_usd"] = data.Data.Attributes.PriceUSD
+	candidate.Facts["liquidity_usd"] = data.Data.Attributes.Reserve
+	return id, true
+}
+
 func poolWindow(count uint64, limit int, next *uint64) (uint64, uint64, error) {
 	if limit < 1 {
 		return 0, 0, errors.New("invalid pool scan limit")
@@ -233,11 +274,18 @@ func (c *Client) discoverDEX(ctx context.Context, limit int, next *uint64) Batch
 					candidate.StartsAt = time.UnixMilli(pair.PairCreatedAt).UTC()
 				}
 				candidate.TimeBasis = "provider_pool_creation"
+				candidate.Facts["market_provider"] = "dexscreener"
 				candidate.Facts["price_usd"] = pair.PriceUSD
 				if pair.Liquidity.USD != nil {
 					candidate.Facts["liquidity_usd"] = strconv.FormatFloat(*pair.Liquidity.USD, 'f', -1, 64)
 				}
 			}
+		}
+		if !matched {
+			// DexScreener often has not indexed a pool yet; GeckoTerminal is asked second.
+			var id string
+			id, matched = c.geckoPool(ctx, &candidate, pool, a0, a1)
+			candidate.EvidenceIDs = append(candidate.EvidenceIDs, id)
 		}
 		if !matched {
 			candidate.Gaps = append(candidate.Gaps, "market_metadata_unavailable")
