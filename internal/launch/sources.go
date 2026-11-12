@@ -83,18 +83,23 @@ func (c *Client) discoverPresales(ctx context.Context, binary string) Batch {
 	b := Batch{Version: Version, Kind: "presale", At: time.Now().UTC()}
 	source := catalyst.Source{ID: "p4-pinksale-bsc", URL: "https://www.pinksale.finance/launchpads",
 		Primary: true, ArticlePattern: `^/launchpad/bsc/0x[0-9a-fA-F]{40}$`}
-	e, err := catalyst.CollectDiscoveryWebsite(ctx, c.Archive, binary, source)
+	// PinkSale's own index is rendered by JavaScript, so its documented
+	// announcement channel supplies the pool links. It is a lead only: sale
+	// identity and terms come from the pinksale.finance pages and the chain.
+	lead := catalyst.Source{ID: "p4-pinksale-telegram-ann", URL: "https://t.me/s/pinkecosystem_ann"}
+	leadEvidence, e, err := catalyst.CollectDiscoveryLinked(ctx, c.Archive, binary, lead, source)
 	if err != nil {
 		b.Gaps = append(b.Gaps, err.Error())
 		return b
 	}
+	leadID, leadErr := c.Archive.Put("launch-web", leadEvidence)
 	id, err := c.Archive.Put("launch-web", e)
-	if err != nil {
+	if err != nil || leadErr != nil {
 		b.Gaps = append(b.Gaps, "website_evidence_archive_failed")
 		return b
 	}
 	block, chainProof, chainErr := c.finalized(ctx)
-	b.EvidenceIDs = append([]string{id}, chainProof...)
+	b.EvidenceIDs = append([]string{id, leadID}, chainProof...)
 	for _, doc := range e.Documents {
 		candidate, ok := parseSale(doc, id, e.FirstSeenAt)
 		if !ok {
@@ -122,7 +127,7 @@ func (c *Client) discoverPresales(ctx context.Context, binary string) Batch {
 		candidate.Seal()
 		b.Candidates = append(b.Candidates, candidate)
 	}
-	b.Gaps = append(b.Gaps, "bounded_website_coverage_not_complete")
+	b.Gaps = append(b.Gaps, "bounded_website_coverage_not_complete", "lead_channel_lists_promoted_sales_only")
 	if len(b.Candidates) == 0 {
 		b.Gaps = append(b.Gaps, "no_parseable_bsc_sale_pages_or_javascript_required")
 	}

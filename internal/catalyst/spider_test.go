@@ -259,3 +259,49 @@ esac
 	p.Sources[0].ArticlePattern = "("
 	require.ErrorContains(t, p.Validate(), "article pattern")
 }
+
+func TestSpiderLinkedScrapesOtherHostPagesNewestFirst(t *testing.T) {
+	dir := t.TempDir()
+	binary, calls := filepath.Join(dir, "spider"), filepath.Join(dir, "calls")
+	lead := Source{ID: "lead", URL: "https://t.example/s/channel"}
+	source := Source{ID: "sale", URL: "https://example.org/list", ArticlePattern: `^/sale/[a-z]+$`}
+	leadPage, old, fresh := testSpiderPage(), testSpiderPage(), testSpiderPage()
+	leadPage.URL = lead.URL
+	leadPage.Content = `<a href="https://example.org/sale/old">o</a><a href="https://evil.example/sale/x">e</a>
+<a href="https://example.org/other">x</a><a href="/sale/relative">r</a><a href="https://example.org/sale/new?ref=1">n</a>`
+	old.URL, old.Content = "https://example.org/sale/old", "<main>Old sale</main>"
+	fresh.URL, fresh.Content = "https://example.org/sale/new", "<main>New sale</main>"
+	script := `#!/bin/sh
+if [ "$1" = "--version" ]; then
+  printf 'spider_cli 2.53.9-p3.1\n'
+  exit 0
+fi
+[ "$7" = "1" ] || exit 15
+printf '%s\n' "$2" >> '` + calls + `'
+case "$2" in
+  https://t.example/s/channel) printf '%s\n' '` + string(spiderJSON(t, leadPage)) + `' ;;
+  https://example.org/sale/old) printf '%s\n' '` + string(spiderJSON(t, old)) + `' ;;
+  https://example.org/sale/new) printf '%s\n' '` + string(spiderJSON(t, fresh)) + `' ;;
+  *) exit 17 ;;
+esac
+`
+	require.NoError(t, os.WriteFile(binary, []byte(script), 0700))
+	c := &Collector{spiderBinary: binary, client: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+		return response(404, "text/plain", ""), nil
+	})}}
+	leadEvidence, e, err := c.fetchLinked(t.Context(), lead, source)
+	require.NoError(t, err)
+	require.Equal(t, "lead", leadEvidence.SourceID)
+	require.Len(t, leadEvidence.Documents, 1)
+	require.Equal(t, "sale", e.SourceID)
+	require.Len(t, e.Documents, 2, "only pages on the source host matching the pattern")
+	require.Contains(t, e.Body, "New sale")
+	require.Contains(t, e.Body, "Old sale")
+	order, err := os.ReadFile(calls)
+	require.NoError(t, err)
+	require.Equal(t, "https://t.example/s/channel\nhttps://example.org/sale/new\nhttps://example.org/sale/old\n", string(order))
+
+	source.ArticlePattern = `^/nothing$`
+	_, _, err = c.fetchLinked(t.Context(), lead, source)
+	require.ErrorContains(t, err, "no article links")
+}

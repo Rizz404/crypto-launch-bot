@@ -69,13 +69,8 @@ func (c *Collector) fetchSpider(ctx context.Context, source Source) (Evidence, i
 		return Evidence{}, 0, err
 	}
 	defer closeProxy()
-	version := &boundedOutput{cancel: cancel}
-	check := exec.CommandContext(ctx, c.spiderBinary, "--version")
-	check.Env = []string{"RUST_LOG=error"}
-	check.Stdout = version
-	check.WaitDelay = time.Second
-	if err = check.Run(); err != nil || strings.TrimSpace(version.String()) != "spider_cli "+SpiderVersion {
-		return Evidence{}, 0, errors.New("spider version must be " + SpiderVersion)
+	if err = c.checkSpiderVersion(ctx, cancel); err != nil {
+		return Evidence{}, 0, err
 	}
 	output := &boundedOutput{cancel: cancel}
 	if source.ArticlePattern == "" {
@@ -106,6 +101,77 @@ func (c *Collector) fetchSpider(ctx context.Context, source Source) (Evidence, i
 	return spiderEvidence(source, output.Bytes(), time.Now().UTC())
 }
 
+func (c *Collector) checkSpiderVersion(ctx context.Context, cancel context.CancelFunc) error {
+	version := &boundedOutput{cancel: cancel}
+	check := exec.CommandContext(ctx, c.spiderBinary, "--version")
+	check.Env = []string{"RUST_LOG=error"}
+	check.Stdout = version
+	check.WaitDelay = time.Second
+	if err := check.Run(); err != nil || strings.TrimSpace(version.String()) != "spider_cli "+SpiderVersion {
+		return errors.New("spider version must be " + SpiderVersion)
+	}
+	return nil
+}
+
+// fetchLinked scrapes one lead page on another host, then the pages on
+// source's host that it links to. The lead only supplies URLs: documents and
+// identity come from source's host, and the lead is returned as provenance.
+func (c *Collector) fetchLinked(ctx context.Context, lead, source Source) (Evidence, Evidence, error) {
+	ctx, cancel := context.WithTimeout(ctx, 120*time.Second)
+	defer cancel()
+	fail := func(err error) (Evidence, Evidence, error) { return Evidence{}, Evidence{}, err }
+	proxies := map[string]string{}
+	for _, s := range []Source{lead, source} {
+		if _, err := publicURL(s.URL); err != nil {
+			return fail(err)
+		}
+		if err := c.checkRobots(ctx, s.URL); err != nil {
+			return fail(err)
+		}
+		proxy, closeProxy, err := spiderProxy(ctx, s.URL)
+		if err != nil {
+			return fail(err)
+		}
+		defer closeProxy()
+		proxies[s.ID] = proxy
+	}
+	if err := c.checkSpiderVersion(ctx, cancel); err != nil {
+		return fail(err)
+	}
+	host, err := sourceHost(source.URL)
+	if err != nil {
+		return fail(err)
+	}
+	leadOutput := &boundedOutput{cancel: cancel}
+	if err = c.runSpider(ctx, lead.URL, 1, proxies[lead.ID], leadOutput); err != nil {
+		return fail(err)
+	}
+	now := time.Now().UTC()
+	leadEvidence, _, err := spiderEvidence(lead, leadOutput.Bytes(), now)
+	if err != nil {
+		return fail(err)
+	}
+	links, err := seedLinks(source.ArticlePattern, host, leadOutput.Bytes())
+	if err != nil {
+		return fail(err)
+	}
+	// Lead feeds such as Telegram previews list the newest post last.
+	slices.Reverse(links)
+	output := &boundedOutput{cancel: cancel}
+	for _, link := range links[:min(len(links), spiderPages)] {
+		select {
+		case <-ctx.Done():
+			return fail(errors.New("spider timed out between linked pages"))
+		case <-time.After(time.Second):
+		}
+		if err = c.runSpider(ctx, link, 1, proxies[source.ID], output); err != nil {
+			return fail(err)
+		}
+	}
+	e, _, err := pagesEvidence(source, output.Bytes(), now, false)
+	return leadEvidence, e, err
+}
+
 // runSpider appends one scrape to output, whose limit spans every run of a fetch.
 func (c *Collector) runSpider(ctx context.Context, target string, limit int, proxy string, output *boundedOutput) error {
 	cmd := exec.CommandContext(ctx, c.spiderBinary,
@@ -128,8 +194,19 @@ func (c *Collector) runSpider(ctx context.Context, target string, limit int, pro
 // articleLinks returns up to spiderPages-1 same-host links from the seed page
 // whose path matches the source pattern, in seed-page order.
 func articleLinks(source Source, output []byte) ([]string, error) {
-	pattern, err := regexp.Compile(source.ArticlePattern)
+	links, err := seedLinks(source.ArticlePattern, "", output)
 	if err != nil {
+		return nil, err
+	}
+	// shortcut: seed order is trusted as newest first, as the configured index pages list posts; use published dates if a source does not.
+	return links[:min(len(links), spiderPages-1)], nil
+}
+
+// seedLinks returns the HTTPS links on the seed page whose path matches
+// pattern, deduplicated in page order. An empty host means the seed's own.
+func seedLinks(articlePattern, host string, output []byte) ([]string, error) {
+	pattern, err := regexp.Compile(articlePattern)
+	if err != nil || articlePattern == "" {
 		return nil, errors.New("invalid source article pattern")
 	}
 	var seed spiderPage
@@ -139,6 +216,9 @@ func articleLinks(source Source, output []byte) ([]string, error) {
 	base, err := publicURL(seed.URL)
 	if err != nil {
 		return nil, err
+	}
+	if host == "" {
+		host = base.Hostname()
 	}
 	doc, err := html.Parse(strings.NewReader(seed.Content))
 	if err != nil {
@@ -155,7 +235,7 @@ func articleLinks(source Source, output []byte) ([]string, error) {
 				continue
 			}
 			u, err := base.Parse(strings.TrimSpace(a.Val))
-			if err != nil || u.Scheme != "https" || !strings.EqualFold(u.Hostname(), base.Hostname()) || !pattern.MatchString(u.Path) {
+			if err != nil || u.Scheme != "https" || u.User != nil || u.Port() != "" || !strings.EqualFold(u.Hostname(), host) || !pattern.MatchString(u.Path) {
 				continue
 			}
 			u.RawQuery, u.Fragment = "", ""
@@ -168,11 +248,16 @@ func articleLinks(source Source, output []byte) ([]string, error) {
 	if len(links) == 0 {
 		return nil, errors.New("seed page has no article links; coverage incomplete")
 	}
-	// shortcut: seed order is trusted as newest first, as the configured index pages list posts; use published dates if a source does not.
-	return links[:min(len(links), spiderPages-1)], nil
+	return links, nil
 }
 
 func spiderEvidence(source Source, output []byte, now time.Time) (Evidence, int, error) {
+	return pagesEvidence(source, output, now, true)
+}
+
+// pagesEvidence builds evidence from scraped pages on source's host. needSeed
+// requires source.URL itself among them; linked collection has no such page.
+func pagesEvidence(source Source, output []byte, now time.Time, needSeed bool) (Evidence, int, error) {
 	if len(output) > spiderOutputBytes {
 		return Evidence{}, 0, errors.New("spider output exceeds limit")
 	}
@@ -208,7 +293,7 @@ func spiderEvidence(source Source, output []byte, now time.Time) (Evidence, int,
 		}
 		pages = append(pages, page)
 	}
-	if !foundSeed {
+	if needSeed && !foundSeed {
 		return Evidence{}, 0, errors.New("spider did not return the configured seed page")
 	}
 	// Stable ordering avoids a new research revision due to crawler arrival order.

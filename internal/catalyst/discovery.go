@@ -37,3 +37,21 @@ func CollectDiscoveryWebsite(ctx context.Context, archive Archive, binary string
 	e, _, err := c.fetch(ctx, source)
 	return e, err
 }
+
+// CollectDiscoveryLinked is CollectDiscoveryWebsite for a source whose own
+// index cannot be scraped: one lead page on another host supplies the links to
+// source's pages matching its ArticlePattern. It returns the lead evidence
+// (provenance only) and the evidence of the linked pages.
+func CollectDiscoveryLinked(ctx context.Context, archive Archive, binary string, lead, source Source) (Evidence, Evidence, error) {
+	for _, s := range []Source{lead, source} {
+		if !identifier.MatchString(s.ID) || len(s.Symbols) != 0 {
+			return Evidence{}, Evidence{}, errors.New("discovery source needs an ID and no symbol binding")
+		}
+	}
+	path, err := exec.LookPath(binary)
+	if err != nil {
+		return Evidence{}, Evidence{}, errors.New("pinned Spider binary is required; no HTTP fallback")
+	}
+	c := &Collector{Archive: archive, client: DiscoveryClient(), spiderBinary: path}
+	return c.fetchLinked(ctx, lead, source)
+}
