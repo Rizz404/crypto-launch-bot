@@ -23,7 +23,7 @@ func history(archive catalyst.Archive) ([]Batch, error) {
 		if err = archive.Read("launch-batches", id, &b); err != nil {
 			return nil, err
 		}
-		if b.Version != Version || !slices.Contains([]string{"presale", "dex", "cex"}, b.Kind) || b.At.IsZero() {
+		if b.Version != Version || !slices.Contains(kinds, b.Kind) || b.At.IsZero() {
 			return nil, errors.New("invalid launch batch version or kind")
 		}
 		batches = append(batches, b)
@@ -35,8 +35,8 @@ func history(archive catalyst.Archive) ([]Batch, error) {
 // Collect performs one bounded read-only pass. Archive writes only store
 // research records; no database, Telegram, AI or trading credentials are used.
 func Collect(ctx context.Context, archive catalyst.Archive, kind, spider string, limit int) (Report, error) {
-	if !slices.Contains([]string{"all", "presale", "dex", "cex"}, kind) || limit < 1 || limit > 10 {
-		return Report{}, errors.New("source must be all/presale/dex/cex; limit must be 1–10")
+	if (kind != "all" && !slices.Contains(kinds, kind)) || limit < 1 || limit > 10 {
+		return Report{}, errors.New("source must be all/presale/dex/cex/curve; limit must be 1–10")
 	}
 	batches, err := history(archive)
 	if err != nil {
@@ -54,7 +54,7 @@ func Collect(ctx context.Context, archive catalyst.Archive, kind, spider string,
 		}
 	}
 	client := NewClient(archive)
-	for _, source := range []string{"presale", "dex", "cex"} {
+	for _, source := range kinds {
 		if kind != "all" && kind != source {
 			continue
 		}
@@ -69,6 +69,8 @@ func Collect(ctx context.Context, archive catalyst.Archive, kind, spider string,
 			batch = client.discoverDEX(ctx, limit, nextPool)
 		case "cex":
 			batch = client.discoverCEX(ctx, limit, scanned)
+		case "curve":
+			batch = client.discoverCurve(ctx, limit)
 		}
 		if _, err = archive.Put("launch-batches", batch); err != nil {
 			return Report{}, err
@@ -146,7 +148,7 @@ func ReadReport(archive catalyst.Archive, now time.Time) (Report, error) {
 
 func summarize(batches []Batch, now time.Time, evidence func(string) error) (Report, error) {
 	r := Report{Version: Version, At: now, ResearchOnly: true, Sources: map[string]Batch{}}
-	for _, kind := range []string{"presale", "dex", "cex"} {
+	for _, kind := range kinds {
 		r.Sources[kind] = Batch{Version: Version, Kind: kind, Gaps: []string{"source_not_collected"}}
 	}
 	latest, first, conflicts := map[string]Candidate{}, map[string]time.Time{}, map[string]bool{}

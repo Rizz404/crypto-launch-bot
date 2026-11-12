@@ -324,3 +324,112 @@ func TestScannerCannotOverwriteOnchainProofAndRPCFailureStaysUnknown(t *testing.
 		t.Fatal("RPC error accepted")
 	}
 }
+
+func jsonReply(body string) (*http.Response, error) {
+	return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(body))}, nil
+}
+
+func abiWord(hexValue string) string { return strings.Repeat("0", 64-len(hexValue)) + hexValue }
+
+func TestGeckoPoolFillsMarketOnlyWhenPairMatchesChain(t *testing.T) {
+	pool, a0, a1 := "0x"+strings.Repeat("ab", 20), "0x"+strings.Repeat("cd", 20), "0x"+strings.Repeat("ef", 20)
+	body := `{"data":{"attributes":{"address":"` + pool + `","pool_created_at":"2026-11-12T04:35:42Z","base_token_price_usd":"0.5","reserve_in_usd":"1234.5"},
+"relationships":{"base_token":{"data":{"id":"bsc_` + a1 + `"}},"quote_token":{"data":{"id":"bsc_` + a0 + `"}},"dex":{"data":{"id":"pancakeswap_v2"}}}}}`
+	c := NewClient(catalyst.Archive{Dir: t.TempDir()})
+	c.limiter = rate.NewLimiter(rate.Inf, 1)
+	c.HTTP = &http.Client{Transport: roundTrip(func(req *http.Request) (*http.Response, error) {
+		if req.URL.Host != "api.geckoterminal.com" || req.URL.Path != "/api/v2/networks/bsc/pools/"+pool {
+			t.Fatalf("unexpected request %s", req.URL)
+		}
+		return jsonReply(body)
+	})}
+	candidate := Candidate{Facts: map[string]string{}}
+	if _, ok := c.geckoPool(context.Background(), &candidate, pool, a0, a1); !ok || candidate.Asset.Address != a1 || candidate.Quote != a0 ||
+		candidate.StartsAt.IsZero() || candidate.TimeBasis != "provider_pool_creation" || candidate.Facts["market_provider"] != "geckoterminal" || candidate.Facts["liquidity_usd"] != "1234.5" {
+		t.Fatalf("matching pool not used: %+v", candidate)
+	}
+	other := Candidate{Facts: map[string]string{}}
+	if _, ok := c.geckoPool(context.Background(), &other, pool, a0, testAddress); ok || !slices.Contains(other.Gaps, "provider_pair_identity_conflict") || !other.StartsAt.IsZero() {
+		t.Fatalf("provider pair overrode chain identity: %+v", other)
+	}
+}
+
+func TestSaleContractMustBeKnownPinkSaleClone(t *testing.T) {
+	check := func(implementation, factory string) Candidate {
+		c := NewClient(catalyst.Archive{Dir: t.TempDir()})
+		c.limiter = rate.NewLimiter(rate.Inf, 1)
+		c.HTTP = &http.Client{Transport: roundTrip(func(req *http.Request) (*http.Response, error) {
+			var body struct{ Method string }
+			_ = json.NewDecoder(req.Body).Decode(&body)
+			if body.Method == "eth_getCode" {
+				return jsonReply(`{"jsonrpc":"2.0","id":1,"result":"0x363d3d373d3d3d363d73` + implementation[2:] + `5af43d82803e903d91602b57fd5bf3"}`)
+			}
+			return jsonReply(`{"jsonrpc":"2.0","id":1,"result":"0x` + abiWord(factory[2:]) + `"}`)
+		})}
+		candidate := Candidate{ExternalID: testAddress, Facts: map[string]string{}}
+		c.inspectSale(context.Background(), &candidate, chainSnapshot{Number: "0x1"})
+		return candidate
+	}
+	if c := check(pinkImplementations[0], pinkFactory); c.Facts["sale_code"] != "known_pinksale_clone" || c.Facts["sale_factory"] != pinkFactory || len(c.Gaps) != 0 {
+		t.Fatalf("known clone not recognised: %+v", c)
+	}
+	for name, c := range map[string]Candidate{"implementation": check(testAddress, pinkFactory), "factory": check(pinkImplementations[0], testAddress)} {
+		if c.Facts["sale_code"] != "present_not_factory_verified" || !slices.Contains(c.Gaps, "sale_contract_not_known_pinksale_clone") {
+			t.Fatalf("foreign %s accepted: %+v", name, c)
+		}
+	}
+}
+
+func TestCurveDiscoveryConfirmsLeadLogsThroughHelper(t *testing.T) {
+	token := "0x" + strings.Repeat("ab", 20)
+	discover := func(manager string) Batch {
+		c := NewClient(catalyst.Archive{Dir: t.TempDir()})
+		c.limiter = rate.NewLimiter(rate.Inf, 1)
+		c.HTTP = &http.Client{Transport: roundTrip(func(req *http.Request) (*http.Response, error) {
+			reply := func(result string) (*http.Response, error) {
+				return jsonReply(`{"jsonrpc":"2.0","id":1,"result":` + result + `}`)
+			}
+			if req.URL.Host == "api.gopluslabs.io" {
+				return jsonReply(`{"code":0}`)
+			}
+			var body struct{ Method string }
+			_ = json.NewDecoder(req.Body).Decode(&body)
+			if req.URL.Host == "bsc-rpc.publicnode.com" {
+				if body.Method != "eth_getLogs" {
+					t.Fatalf("lead node asked for %s", body.Method)
+				}
+				data := "0x" + abiWord(testAddress[2:]) + abiWord(token[2:]) + strings.Repeat(abiWord("0"), 6)
+				return reply(`[{"address":"` + testAddress + `","topics":["` + tokenCreateTopic + `"],"data":"` + data + `","blockNumber":"0x10"},
+{"address":"` + fourMemeManager + `","topics":["` + tokenCreateTopic + `"],"data":"` + data + `","blockNumber":"0x10"}]`)
+			}
+			switch body.Method {
+			case "eth_chainId":
+				return reply(`"0x38"`)
+			case "eth_getBlockByNumber":
+				return reply(fmt.Sprintf(`{"number":"0x64","hash":"0x%064x","timestamp":"0x%x"}`, 1, time.Now().Unix()))
+			case "eth_getCode":
+				return reply(`"0x6000"`)
+			case "eth_getLogs":
+				t.Fatal("logs requested from the state node")
+			}
+			info := abiWord("2") + abiWord(manager[2:]) + strings.Repeat(abiWord("0"), 10)
+			return reply(`"0x` + info + `"`)
+		})}
+		return c.discoverCurve(context.Background(), 5)
+	}
+	b := discover(fourMemeManager)
+	if len(b.Candidates) != 1 || !slices.Contains(b.Gaps, "curve_log_malformed") {
+		t.Fatalf("foreign log not dropped: %+v", b)
+	}
+	c := b.Candidates[0]
+	if c.Kind != "curve" || c.Venue != "four-meme" || c.ExternalID != token || c.Quote != "BNB" || c.State != "bonding_curve" || c.TimeBasis != "onchain_creation_block" || c.StartsAt.IsZero() || c.Asset.Key() == "" {
+		t.Fatalf("bad curve candidate: %+v", c)
+	}
+	r := Verify(c, time.Now().UTC(), nil)
+	if r.Status != "held" || r.EntryAllowed || !slices.Contains(r.Reasons, "curve_exit_and_paper_adapter_pending") || slices.Contains(r.Reasons, "curve_manager_not_confirmed") || slices.Contains(r.Reasons, "trading_start_not_verified") {
+		t.Fatalf("unexpected curve review: %+v", r)
+	}
+	if r = Verify(discover(testAddress).Candidates[0], time.Now().UTC(), nil); !slices.Contains(r.Reasons, "curve_manager_not_confirmed") {
+		t.Fatalf("foreign manager accepted: %+v", r)
+	}
+}

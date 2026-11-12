@@ -23,10 +23,10 @@ import (
 func run(ctx context.Context, args []string, out io.Writer) error {
 	f := flag.NewFlagSet("launch", flag.ContinueOnError)
 	action := f.String("action", "report", "report, collect, analyze, replay-paper (synthetic offline) or paper-report")
-	kind := f.String("source", "all", "all, presale, dex or cex")
+	kind := f.String("source", "all", "all, presale, dex, cex or curve")
 	dir := f.String("archive", "var/launch", "isolated research archive, never a financial ledger")
 	spider := f.String("spider-binary", "spider", "pinned Spider CLI for presale website collection")
-	limit := f.Int("limit", 5, "DEX tail/CEX symbols per pass, 1–10; presale uses the 5-page Spider budget")
+	limit := f.Int("limit", 5, "DEX tail/CEX symbols/curve tokens per pass, 1–10; presale uses the 5-page Spider budget per lead")
 	candidateID := f.String("candidate", "", "candidate ID from report, required for analyze")
 	policyPath := f.String("policy", "configs/launch.policy.json", "approved paper-only analysis policy")
 	contextPath := f.String("context", "", "optional explicit paper-context JSON; otherwise initial virtual state")

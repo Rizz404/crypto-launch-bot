@@ -18,6 +18,10 @@ const Version = "launch-discovery-v1"
 const MaxAge = 30 * 24 * time.Hour
 const EvidenceTTL = 15 * time.Minute
 
+// kinds are the discovery paths. "curve" (bonding-curve launchpads) is
+// research-only: analysis, sizing and paper trading accept the first three.
+var kinds = []string{"presale", "dex", "cex", "curve"}
+
 var addressPattern = regexp.MustCompile(`^0x[0-9a-fA-F]{40}$`)
 var symbolPattern = regexp.MustCompile(`^[A-Z0-9]{2,32}$`)
 
@@ -137,9 +141,22 @@ func Verify(c Candidate, now time.Time, sourceGaps []string) Review {
 		} else if now.Sub(c.StartsAt) > MaxAge {
 			reject("listing_older_than_30_days")
 		}
-		if c.TimeBasis != "first_trade_id_zero" {
+		onchainStart := c.Kind == "curve" && (c.TimeBasis == "onchain_launch_time" || c.TimeBasis == "onchain_creation_block")
+		if c.TimeBasis != "first_trade_id_zero" && !onchainStart {
 			hold("trading_start_not_verified")
 		}
+	}
+	if c.Kind == "curve" {
+		if c.Facts["token_manager"] != fourMemeManager || c.Facts["version"] != "2" {
+			hold("curve_manager_not_confirmed")
+		}
+		if c.State == "graduated" {
+			hold("curve_graduated_trades_on_dex")
+		} else if c.State != "bonding_curve" {
+			hold("curve_state_unknown")
+		}
+		// Discovery only: no analysis action, sizing or paper adapter covers curve trades yet.
+		hold("curve_exit_and_paper_adapter_pending")
 	}
 	if c.Kind == "presale" {
 		if c.EndsAt.IsZero() || (!c.StartsAt.IsZero() && !c.EndsAt.After(c.StartsAt)) {
@@ -153,7 +170,7 @@ func Verify(c Candidate, now time.Time, sourceGaps []string) Review {
 		}
 		hold("sale_contract_and_terms_not_verified")
 	}
-	if c.Kind != "presale" && c.Kind != "dex" && c.Kind != "cex" {
+	if !slices.Contains(kinds, c.Kind) {
 		reject("unsupported_kind")
 	}
 	if c.Kind == "cex" && c.State != "TRADING" {
@@ -168,7 +185,7 @@ func Verify(c Candidate, now time.Time, sourceGaps []string) Review {
 			hold("book_invalid_or_empty")
 		}
 	}
-	if c.Kind == "dex" || c.Kind == "presale" {
+	if c.Kind == "dex" || c.Kind == "presale" || c.Kind == "curve" {
 		for _, key := range []string{"chain_verified", "contract_code", "finalized_block"} {
 			if c.Facts[key] == "" || c.Facts[key] == "unknown" {
 				hold(key + "_unknown")
