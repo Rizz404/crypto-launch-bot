@@ -86,7 +86,12 @@ func parseSale(doc catalyst.Document, evidence string, now time.Time) (Candidate
 const pinkFactory = "0x1ee7736987f2ebd0f519ec5858b2b3bc6fd0c6a0"
 const factorySelector = "0xc45a0155"
 
-var pinkImplementations = []string{"0xd18b06e912575a388593ee07bf6f902bd6e30109", "0xeed5194c2d5f16cd1d54f37ca84603be7c0bfd0d", "0x07f6351491b694f3a04c5f1e47d151d4ad927d45"}
+// The sale type follows the implementation: a fair launch has no fixed rate or hard cap.
+var pinkImplementations = map[string]string{
+	"0xd18b06e912575a388593ee07bf6f902bd6e30109": "presale",
+	"0xeed5194c2d5f16cd1d54f37ca84603be7c0bfd0d": "presale",
+	"0x07f6351491b694f3a04c5f1e47d151d4ad927d45": "fairlaunch",
+}
 var minimalProxy = regexp.MustCompile(`^0x363d3d373d3d3d363d73([0-9a-f]{40})5af43d82803e903d91602b57fd5bf3$`)
 
 // presaleLeads only supply pool links; sale identity and terms come from the
@@ -114,12 +119,13 @@ func (c *Client) inspectSale(ctx context.Context, candidate *Candidate, block ch
 	value, proof, err := c.call(ctx, candidate.ExternalID, factorySelector, block.Number)
 	candidate.EvidenceIDs = append(candidate.EvidenceIDs, proof)
 	factory, parseErr := abiAddress(value)
-	if err != nil || parseErr != nil || factory != pinkFactory || len(clone) != 2 || !slices.Contains(pinkImplementations, "0x"+clone[1]) {
+	if err != nil || parseErr != nil || factory != pinkFactory || len(clone) != 2 || pinkImplementations["0x"+clone[1]] == "" {
 		candidate.Gaps = append(candidate.Gaps, "sale_contract_not_known_pinksale_clone")
 		return
 	}
 	candidate.Facts["sale_code"] = "known_pinksale_clone"
 	candidate.Facts["sale_implementation"] = "0x" + clone[1]
+	candidate.Facts["sale_type"] = pinkImplementations["0x"+clone[1]]
 	candidate.Facts["sale_factory"] = factory
 }
 

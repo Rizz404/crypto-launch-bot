@@ -370,11 +370,14 @@ func TestSaleContractMustBeKnownPinkSaleClone(t *testing.T) {
 		c.inspectSale(context.Background(), &candidate, chainSnapshot{Number: "0x1"})
 		return candidate
 	}
-	if c := check(pinkImplementations[0], pinkFactory); c.Facts["sale_code"] != "known_pinksale_clone" || c.Facts["sale_factory"] != pinkFactory || len(c.Gaps) != 0 {
-		t.Fatalf("known clone not recognised: %+v", c)
+	const presale, fairlaunch = "0xd18b06e912575a388593ee07bf6f902bd6e30109", "0x07f6351491b694f3a04c5f1e47d151d4ad927d45"
+	for implementation, kind := range map[string]string{presale: "presale", fairlaunch: "fairlaunch"} {
+		if c := check(implementation, pinkFactory); c.Facts["sale_code"] != "known_pinksale_clone" || c.Facts["sale_type"] != kind || c.Facts["sale_factory"] != pinkFactory || len(c.Gaps) != 0 {
+			t.Fatalf("known %s clone not recognised: %+v", kind, c)
+		}
 	}
-	for name, c := range map[string]Candidate{"implementation": check(testAddress, pinkFactory), "factory": check(pinkImplementations[0], testAddress)} {
-		if c.Facts["sale_code"] != "present_not_factory_verified" || !slices.Contains(c.Gaps, "sale_contract_not_known_pinksale_clone") {
+	for name, c := range map[string]Candidate{"implementation": check(testAddress, pinkFactory), "factory": check(presale, testAddress)} {
+		if c.Facts["sale_code"] != "present_not_factory_verified" || c.Facts["sale_type"] != "" || !slices.Contains(c.Gaps, "sale_contract_not_known_pinksale_clone") {
 			t.Fatalf("foreign %s accepted: %+v", name, c)
 		}
 	}
