@@ -17,6 +17,13 @@ const fourMemeHelper = "0xf251f83e40a78868fcfa3fa4599dad6494e46034"
 const tokenCreateTopic = "0x396d5e902b675b032348d3d2e9517ee8f0c4a926603fbc075d3d282ff00cad20"
 const getTokenInfo = "0x1f69565f"
 
+// tryBuy(address,uint256,uint256) and trySell(address,uint256) on the helper.
+const tryBuy = "0xe21b103a"
+const trySell = "0xc6f43e8c"
+
+// curveProbeWei (0.01 BNB) sizes the round-trip estimate; it is not a position size.
+const curveProbeWei = 10_000_000_000_000_000
+
 // bsc-dataseed refuses eth_getLogs, so a second public node supplies the logs.
 // It is a lead only: every token is confirmed through the helper on rpcURL.
 const logsURL = "https://bsc-rpc.publicnode.com"
@@ -114,6 +121,11 @@ func (c *Client) discoverCurve(ctx context.Context, limit int) Batch {
 			if launch := num(6); launch.IsInt64() && launch.Sign() > 0 {
 				candidate.StartsAt, candidate.TimeBasis = time.Unix(launch.Int64(), 0).UTC(), "onchain_launch_time"
 			}
+			if candidate.State == "bonding_curve" && candidate.Quote == "BNB" {
+				c.curveQuote(ctx, &candidate, created[1][2:], block.Number)
+			} else if candidate.State == "bonding_curve" {
+				candidate.Gaps = append(candidate.Gaps, "curve_quote_asset_not_native")
+			}
 		}
 		if candidate.StartsAt.IsZero() {
 			// No scheduled launch: trading opened with the creation block.
@@ -131,4 +143,41 @@ func (c *Client) discoverCurve(ctx context.Context, limit int) Batch {
 	}
 	b.EvidenceIDs = proof
 	return b
+}
+
+// curveQuote records the helper's estimate for buying with the probe and selling the
+// result straight back. It is curve arithmetic without gas, not proof a holder can sell.
+func (c *Client) curveQuote(ctx context.Context, candidate *Candidate, tokenWord, block string) {
+	value, id, err := c.call(ctx, fourMemeHelper, tryBuy+tokenWord+fmt.Sprintf("%064x%064x", 0, curveProbeWei), block)
+	candidate.EvidenceIDs = append(candidate.EvidenceIDs, id)
+	buy := words(value, 8)
+	if err != nil || buy == nil {
+		candidate.Gaps = append(candidate.Gaps, "curve_quote_unavailable")
+		return
+	}
+	manager, managerErr := abiAddress(buy[0])
+	amount, amountErr := abiUint(buy[2])
+	cost, costErr := abiUint(buy[3])
+	fee, feeErr := abiUint(buy[4])
+	if managerErr != nil || amountErr != nil || costErr != nil || feeErr != nil || manager != fourMemeManager || amount.Sign() <= 0 || cost.Sign() <= 0 {
+		candidate.Gaps = append(candidate.Gaps, "curve_quote_unavailable")
+		return
+	}
+	value, id, err = c.call(ctx, fourMemeHelper, trySell+tokenWord+buy[2][2:], block)
+	candidate.EvidenceIDs = append(candidate.EvidenceIDs, id)
+	sell := words(value, 4)
+	if err != nil || sell == nil {
+		candidate.Gaps = append(candidate.Gaps, "curve_sell_quote_unavailable")
+		return
+	}
+	funds, fundsErr := abiUint(sell[2])
+	paid := new(big.Int).Add(cost, fee)
+	if fundsErr != nil || funds.Sign() <= 0 || funds.Cmp(paid) > 0 {
+		candidate.Gaps = append(candidate.Gaps, "curve_sell_quote_unavailable")
+		return
+	}
+	candidate.Facts["curve_probe_wei"] = strconv.FormatInt(curveProbeWei, 10)
+	candidate.Facts["curve_buy_tokens"], candidate.Facts["curve_buy_paid_wei"] = amount.String(), paid.String()
+	candidate.Facts["curve_sell_funds_wei"] = funds.String()
+	candidate.Facts["curve_round_trip_cost_fraction"] = new(big.Rat).SetFrac(new(big.Int).Sub(paid, funds), paid).FloatString(6)
 }

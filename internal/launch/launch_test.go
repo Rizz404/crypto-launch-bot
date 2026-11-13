@@ -395,7 +395,10 @@ func TestCurveDiscoveryConfirmsLeadLogsThroughHelper(t *testing.T) {
 			if req.URL.Host == "api.gopluslabs.io" {
 				return jsonReply(`{"code":0}`)
 			}
-			var body struct{ Method string }
+			var body struct {
+				Method string
+				Params []json.RawMessage
+			}
 			_ = json.NewDecoder(req.Body).Decode(&body)
 			if req.URL.Host == "bsc-rpc.publicnode.com" {
 				if body.Method != "eth_getLogs" {
@@ -415,6 +418,16 @@ func TestCurveDiscoveryConfirmsLeadLogsThroughHelper(t *testing.T) {
 			case "eth_getLogs":
 				t.Fatal("logs requested from the state node")
 			}
+			if len(body.Params) > 0 && strings.Contains(string(body.Params[0]), tryBuy) {
+				// 1000 tokens for cost 99 + fee 1.
+				return reply(`"0x` + abiWord(fourMemeManager[2:]) + abiWord("0") + abiWord("3e8") + abiWord("63") + abiWord("1") + strings.Repeat(abiWord("0"), 3) + `"`)
+			}
+			if len(body.Params) > 0 && strings.Contains(string(body.Params[0]), trySell) {
+				if !strings.Contains(string(body.Params[0]), abiWord("3e8")) {
+					t.Fatal("sell quote did not use the bought amount")
+				}
+				return reply(`"0x` + abiWord(fourMemeManager[2:]) + abiWord("0") + abiWord("60") + abiWord("1") + `"`)
+			}
 			info := abiWord("2") + abiWord(manager[2:]) + strings.Repeat(abiWord("0"), 10)
 			return reply(`"0x` + info + `"`)
 		})}
@@ -427,6 +440,9 @@ func TestCurveDiscoveryConfirmsLeadLogsThroughHelper(t *testing.T) {
 	c := b.Candidates[0]
 	if c.Kind != "curve" || c.Venue != "four-meme" || c.ExternalID != token || c.Quote != "BNB" || c.State != "bonding_curve" || c.TimeBasis != "onchain_creation_block" || c.StartsAt.IsZero() || c.Asset.Key() == "" {
 		t.Fatalf("bad curve candidate: %+v", c)
+	}
+	if c.Facts["curve_buy_tokens"] != "1000" || c.Facts["curve_buy_paid_wei"] != "100" || c.Facts["curve_sell_funds_wei"] != "96" || c.Facts["curve_round_trip_cost_fraction"] != "0.040000" {
+		t.Fatalf("bad curve round-trip quote: %+v", c.Facts)
 	}
 	r := Verify(c, time.Now().UTC(), nil)
 	if r.Status != "held" || r.EntryAllowed || !slices.Contains(r.Reasons, "holder_liquidity_and_exit_policy_pending") || slices.Contains(r.Reasons, "curve_manager_not_confirmed") || slices.Contains(r.Reasons, "trading_start_not_verified") {
