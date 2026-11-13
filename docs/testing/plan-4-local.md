@@ -49,6 +49,29 @@ Gap yang tersisa pada jalur presale:
 - Binary Spider di atas hasil build lokal; image `crypto-launch-bot-spider`
   belum di-publish dan pin digest di `Dockerfile.catalyst` masih nama lama.
 
+## Pass hari kedua — 13 November 2026
+
+Dijalankan atas permintaan user ("lanjutkan yang belum") pada 01:08 UTC ke arsip
+yang sama (`~/.local/state/crypto-launch-bot/lv/research`), sesudah `sale_type`
+ditambahkan sebagai fakta kandidat (`go vet` dan `go test -race` paket
+`internal/launch`/`cmd/launch` lulus). Tanpa inference, wallet atau transaksi.
+
+| Jalur | Hasil |
+|---|---|
+| Presale | Exit 0; 7 pool yang sama, semua `sale_closed`; `sale_type` terisi (6 `presale`, 1 `fairlaunch`). Tidak ada sale upcoming/live |
+| DEX | Exit 0; cursor maju, 5 pool baru (total 10, semua `held`); 2 dari 5 terisi GeckoTerminal; muncul `factory_backlog_pending` |
+| CEX | Exit 0; rotasi maju ke 5 simbol berikutnya (total 10, semua ditolak `listing_older_than_30_days`) |
+| Curve | Exit 0; 5 token baru (total 10, semua `held`) |
+| `report` | Exit 0; first-seen pass pertama dipertahankan; `entry_allowed` false untuk semua; arsip 12 MB, 9 batch |
+
+Yang terbukti: cursor DEX, rotasi CEX dan first-seen bertahan antar-pass pada
+arsip yang sama. Yang belum: tiga pass dalam ±10 jam bukan coverage beberapa
+hari. Dua kanal presale tidak berubah isinya antara dua hari itu, jadi jalur
+presale belum pernah diuji dengan sale yang masih terbuka. `factory_backlog_pending`
+menunjukkan `-limit 5` lebih lambat daripada laju pool baru PancakeSwap; laju
+dan limit yang memadai belum diukur. Rotasi CEX lima simbol per pass butuh
+ratusan pass untuk satu putaran ±1.300 simbol USDT.
+
 ### Pass kedua dan implementasi fair launch (12 November, malam)
 
 Dijalankan atas permintaan user ("lanjutkan berdasarkan docs") di perangkat
@@ -89,8 +112,8 @@ Cara mengulang pemeriksaan kontrak sale (JSON-RPC ke
 `0x1ee7736987f2ebd0f519ec5858b2b3bc6fd0c6a0`. Perintah pass ada di
 [panduan CLI](../presale-runtime.md#pass-berulang).
 
-Gap baru: tipe sale (presale/fair launch) belum menjadi fakta kandidat, padahal
-fair launch tidak punya harga tetap; `factory()` dilaporkan sendiri oleh
+Gap baru: tipe sale baru menjadi fakta `sale_type` pada 13 November dan belum
+dipakai analisis/paper, padahal fair launch tidak punya harga tetap; `factory()` dilaporkan sendiri oleh
 kontrak, dan bukti bahwa factory yang men-deploy pool (transaksi pembuatan)
 belum diambil. Coverage tetap dua pass pada hari yang sama, bukan beberapa hari.
 

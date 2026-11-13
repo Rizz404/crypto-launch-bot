@@ -19,11 +19,15 @@
   selesai diselidiki: fair launch PinkSale dengan implementasi ketiga
   `0x07f6…7d45`, kini masuk daftar dikenal. Lihat
   [checkpoint](testing/plan-4-local.md#pass-kedua-dan-implementasi-fair-launch-12-november-malam).
-- Langkah berikut yang disarankan (belum diputuskan user): ulangi `collect` pada
-  hari-hari berikutnya ke arsip yang sama untuk mengukur coverage dan melihat
-  apakah sale presale terbuka muncul; jadikan tipe sale (presale/fair launch)
-  fakta kandidat; lalu `analyze` pada model nyata (berbayar, butuh izin user).
-  Untuk `curve`, analisis/sizing/paper belum ada dan butuh keputusan policy.
+- 13 November: `sale_type` (`presale`/`fairlaunch`) menjadi fakta kandidat dan
+  [pass hari kedua](testing/plan-4-local.md#pass-hari-kedua--13-november-2026)
+  lulus; cursor DEX, rotasi CEX dan first-seen bertahan antar-pass. Semua sudah
+  di-push atas izin user.
+- Langkah berikut: ulangi `collect` pada hari-hari berikutnya ke arsip yang
+  sama (presale belum pernah menemui sale terbuka; `-limit 5` tertinggal dari
+  laju pool DEX dan terlalu kecil untuk rotasi CEX). Menunggu keputusan user:
+  `analyze` pada model nyata (berbayar) dan policy analisis/sizing/paper untuk
+  `curve` serta fair launch.
 - Seed presale (12 November): kanal pengumuman resmi `t.me/s/pinkecosystem_ann`
   menjadi petunjuk tautan, halaman detail PinkSale dan chain tetap buktinya.
   Atas keputusan user ditambah: `PinkSaleTracking` (tidak resmi, ditandai

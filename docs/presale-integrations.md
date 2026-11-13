@@ -57,8 +57,9 @@ Diputuskan user sesudah riset sumber lanjutan; bukti dan hasil pass nyata ada di
   dikenal dan `factory()` cocok. Alamatnya hasil pengamatan chain, bukan publikasi PinkSale.
   Tiga implementasi teramati dari 9 pool: `0xd18b…0109` (presale, 6 pool),
   `0xeed5…fd0d` (presale manual listing, 1 pool) dan `0x07f6…7d45` (fair launch,
-  2 pool). Tipe sale belum menjadi fakta kandidat; fair launch tidak punya hard
-  cap atau rate tetap.
+  2 pool). Implementasi menentukan fakta `sale_type` (`presale`/`fairlaunch`);
+  fair launch tidak punya hard cap atau rate tetap, dan analisis/paper belum
+  memakai fakta itu.
 - **GeckoTerminal** dipakai sebagai metadata pool kedua sesudah DexScreener
   lewat API publik `api.geckoterminal.com/api/v2` tanpa key (terbukti menjawab
   12 November). Batas rate dan syarat pakai belum diverifikasi.
