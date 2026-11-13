@@ -36,9 +36,11 @@
   November WIB sudah terpakai tanpa hasil.
 - Langkah berikut: ulangi pass (`-limit 10`) pada hari-hari berikutnya ke arsip
   yang sama; presale belum pernah menemui sale terbuka. Sesudah env diperbaiki,
-  ulangi `analyze` 1–2 kandidat. Pekerjaan kode berikutnya: quote kurva nyata
-  lewat Helper3 `tryBuy`/`trySell`, lalu policy holder/likuiditas/exit yang kini
-  menahan semua kandidat DEX, presale dan curve.
+  ulangi `analyze` 1–2 kandidat. Estimasi bolak-balik kurva (Helper3
+  `tryBuy`/`trySell`) sudah menjadi fakta kandidat. Pekerjaan kode berikutnya:
+  policy holder/likuiditas/exit yang kini menahan semua kandidat DEX, presale
+  dan curve (ambangnya keputusan policy), lalu kurs BNB/USDT dan gas supaya
+  quote nyata bisa menjadi route quote paper.
 - Seed presale (12 November): kanal pengumuman resmi `t.me/s/pinkecosystem_ann`
   menjadi petunjuk tautan, halaman detail PinkSale dan chain tetap buktinya.
   Atas keputusan user ditambah: `PinkSaleTracking` (tidak resmi, ditandai

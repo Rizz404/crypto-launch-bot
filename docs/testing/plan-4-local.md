@@ -84,8 +84,17 @@ Test baru: `TestCurveTradesLikeAnOnChainSwapOnlyWhileOnTheCurve`,
 `TestCurveEntryProposalNeedsBondingCurveState`; `curve` masuk ke
 `TestPaperSizeIncludesCostsAndNeverEnablesEntry`.
 
-Belum ada: quote kurva dari sumber nyata (Helper3 `tryBuy`/`trySell`), langkah
-curve di fixture contoh, dan policy holder/likuiditas/exit yang membuat DEX,
+Sesudah itu discovery curve ditambah estimasi bolak-balik Helper3 (`tryBuy`
+0,01 BNB lalu `trySell`; selector `0xe21b103a`/`0xc6f43e8c` diturunkan dari
+[interface resmi](https://github.com/four-meme-community/fourmeme-docs) lewat
+`web3_sha3` dan dicoba pada token nyata). Test launch lulus lagi, lalu
+`collect -source curve -limit 10`: exit 0, kesepuluh token terbaru memberi
+`curve_round_trip_cost_fraction` 0,0235 (fee 1% per sisi ditambah selisih
+kurva, belum termasuk gas), tanpa gap quote. Arsip uji mencatatnya sebagai
+fakta; quote ini belum disambungkan ke adapter paper.
+
+Belum ada: quote kurva sebagai `PaperRouteQuote` (butuh kurs BNB/USDT dan gas),
+langkah curve di fixture contoh, dan policy holder/likuiditas/exit yang membuat DEX,
 presale dan curve bisa keluar dari `held`. `liquidity_usd` dari GeckoTerminal
 kosong untuk pool yang baru dibuat, dan 0 dari DexScreener.
 

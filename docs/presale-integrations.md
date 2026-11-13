@@ -69,9 +69,11 @@ Diputuskan user sesudah riset sumber lanjutan; bukti dan hasil pass nyata ada di
   [panduan integrasi resmi](https://github.com/four-meme-community/fourmeme-docs).
   Log dibaca dari `bsc-rpc.publicnode.com` karena `bsc-dataseed` menolak
   `eth_getLogs`; tiap token dikonfirmasi lewat Helper3. Sejak 13 November
-  policy `launch-paper-v2`, analisis dan paper mengenal `curve` setara DEX;
-  quote beli/jual kurva dari sumber nyata (Helper3 `tryBuy`/`trySell`) belum
-  dibuat, jadi kandidat tetap `held`.
+  policy `launch-paper-v2`, analisis dan paper mengenal `curve` setara DEX.
+  Discovery juga meminta estimasi bolak-balik ke Helper3: `tryBuy` dengan
+  0,01 BNB lalu `trySell` atas jumlah token yang didapat, dicatat sebagai fakta
+  `curve_round_trip_cost_fraction` (tanpa gas; hanya untuk quote BNB). Itu
+  aritmetika kurva, bukan bukti holder bisa menjual, jadi kandidat tetap `held`.
 
 ## Alternatif yang ditunda
 
