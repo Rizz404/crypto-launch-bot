@@ -46,6 +46,7 @@ tidak terreservasi yang dapat dijual. Validator P4-3 disesuaikan untuk itu.
 |---|---|
 | CEX | Reuse `broker.Sim.MatchBook`: buy di ask/sell di bid, limit price, lot step, minimum notional dan maksimal 10% best-level depth. Konsumsi depth dicatat per snapshot/side agar quote sama tidak dipakai berulang. Partial fill/fee settle dari delta receipt kumulatif |
 | DEX | Membutuhkan route quote eksplisit: aset, pool/kandidat, waktu/expiry, input/output, min-out, biaya/gas, likuiditas dan kemampuan menjual yang diasumsikan dalam fixture. Quote dikunci pada broadcast. Settlement menunggu receipt final; quote yang kedaluwarsa sesudah broadcast tidak membatalkan transaksi yang sudah pending |
+| Curve | Sejak 13 November: jalur yang sama dengan DEX (quote eksplisit dikunci pada broadcast, min-out, receipt final). Entry hanya untuk kandidat `four-meme` berstatus `bonding_curve`. Belum ada langkah curve di fixture contoh; cakupannya unit test |
 | Presale | Kontribusi membuat principal terkunci, tanpa token tradable. Allocation/finalized proof memberi jumlah token, total unlock dan hak refund. Refund mengurangi principal, claim memindahkan bagian cost basis ke inventori sesuai proporsi; vesting berikutnya tidak menciptakan modal baru |
 
 Semua input ekonomi dinormalisasi ke USDT secara **eksplisit dalam fixture**.

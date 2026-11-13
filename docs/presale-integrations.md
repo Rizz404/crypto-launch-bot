@@ -58,8 +58,9 @@ Diputuskan user sesudah riset sumber lanjutan; bukti dan hasil pass nyata ada di
   Tiga implementasi teramati dari 9 pool: `0xd18b…0109` (presale, 6 pool),
   `0xeed5…fd0d` (presale manual listing, 1 pool) dan `0x07f6…7d45` (fair launch,
   2 pool). Implementasi menentukan fakta `sale_type` (`presale`/`fairlaunch`);
-  fair launch tidak punya hard cap atau rate tetap, dan analisis/paper belum
-  memakai fakta itu.
+  fair launch tidak punya hard cap atau rate tetap. Fakta itu masuk packet
+  analisis dan prompt v2 melarang model mengasumsikan harga; sizing tetap
+  budget presale.
 - **GeckoTerminal** dipakai sebagai metadata pool kedua sesudah DexScreener
   lewat API publik `api.geckoterminal.com/api/v2` tanpa key (terbukti menjawab
   12 November). Batas rate dan syarat pakai belum diverifikasi.
@@ -67,8 +68,10 @@ Diputuskan user sesudah riset sumber lanjutan; bukti dan hasil pass nyata ada di
   TokenManager2/Helper3, event dan ABI dari
   [panduan integrasi resmi](https://github.com/four-meme-community/fourmeme-docs).
   Log dibaca dari `bsc-rpc.publicnode.com` karena `bsc-dataseed` menolak
-  `eth_getLogs`; tiap token dikonfirmasi lewat Helper3. Baru discovery:
-  policy/analisis/paper P4-3–P4-4 tetap hanya mengenal tiga jalur awal.
+  `eth_getLogs`; tiap token dikonfirmasi lewat Helper3. Sejak 13 November
+  policy `launch-paper-v2`, analisis dan paper mengenal `curve` setara DEX;
+  quote beli/jual kurva dari sumber nyata (Helper3 `tryBuy`/`trySell`) belum
+  dibuat, jadi kandidat tetap `held`.
 
 ## Alternatif yang ditunda
 

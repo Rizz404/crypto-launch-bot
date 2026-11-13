@@ -34,7 +34,8 @@ gateway. Tidak ada Telegram, wallet, order atau claim/refund finansial.
 
 Sumber `presale` membaca dua kanal Telegram sebagai petunjuk tautan lalu
 men-scrape halaman detail PinkSale; `curve` membaca token four.meme terbaru
-lewat RPC dan hanya menghasilkan kandidat riset (`held`).
+lewat RPC dan hanya menghasilkan kandidat riset (`held`). `-limit` dibatasi
+1–10 per pass.
 
 Binary Spider tidak ada di repo dan belum ada image yang di-publish dengan nama
 baru, jadi tiap perangkat harus membangunnya sendiri sekali (Rust di container,
@@ -63,6 +64,9 @@ Untuk memakai file gateway lama tanpa menyalin key, flag eksplisit
 `-env-file .env.catalyst` mendukung `TB_CATALYST_BASE_URL/MODEL/API_KEY`
 sebagai fallback; namespace `TB_LAUNCH_*` yang tersedia diprioritaskan.
 Tidak ada fallback pembacaan file lama otomatis dan token Telegram tidak dibaca.
+Periksa `TB_CATALYST_BASE_URL`/`TB_LAUNCH_BASE_URL` sebelum memakai kuota:
+gateway pindah ke `route-gateway.nexlabs.cloud` sejak 30 Oktober dan host lama
+gagal TLS. Request yang gagal di transport tetap memakai slot harian.
 
 Tanpa `-context`, analisis memakai konteks awal virtual 1.000 USDT tanpa posisi,
 bukan mengambil saldo/ledger lama. `-context /path/paper-context.json` menerima

@@ -49,6 +49,46 @@ Gap yang tersisa pada jalur presale:
 - Binary Spider di atas hasil build lokal; image `crypto-launch-bot-spider`
   belum di-publish dan pin digest di `Dockerfile.catalyst` masih nama lama.
 
+## Pass ketiga, analyze dan policy v2 — 13 November 2026
+
+Dijalankan sesudah user berkata "lanjut terus, pilih yang best practice, tanya
+hanya jika benar-benar crucial". Tanpa wallet, signer atau transaksi.
+
+| Pemeriksaan | Hasil |
+|---|---|
+| `collect` dex, cex, curve dengan `-limit 10` (batas flag 1–10), lalu presale | Exit 0 semua. DEX 168 detik, CEX 42 detik, curve 97 detik |
+| `report` sesudahnya | DEX 20 `held`, CEX 20 `rejected`, curve 19 `held`, presale 7 `rejected`; tidak ada `accepted_for_research`; arsip 18 MB |
+| `analyze` pada 2 kandidat (fair launch `0xdbcc…4fd9`, pool DEX `0x7555…b509`) dengan `-env-file .env.catalyst` | Gagal keduanya: `inference transport failed`, 0 token, 2 dari 12 slot hari itu terpakai |
+| `go build ./...`, `go vet`, `go test ./...`, `go test -race` paket launch sesudah policy v2 | Lulus |
+| `replay-paper` fixture dengan policy v2 | Exit 0, 18 langkah, kas 1008.961, fees 0.539 (sama seperti v1) |
+
+Penyebab `analyze` gagal: `TB_CATALYST_BASE_URL` di `.env.catalyst` perangkat
+kantor masih host lama `route-gateway.fbe.co.id`, yang sertifikat TLS-nya tidak
+cocok. Host baru `route-gateway.nexlabs.cloud` menjawab 401 tanpa key, jadi
+hidup. Agent tidak mengubah env privat, dan percobaan menimpa host lewat
+variabel proses ditolak pengaman izin Claude Code. Yang harus dilakukan user:
+ganti host di `.env.catalyst` atau buat `.env.launch`. Dukungan schema/usage
+gateway dan kualitas model tetap belum teruji.
+
+Perubahan kode yang diuji di atas:
+
+- `launch-paper-v2`: `curve_fraction` 0,01; angka lain sama dengan v1.
+- `launch-analyst-v2`: `PROPOSE_ENTRY` boleh untuk token curve berstatus
+  `bonding_curve`; prompt menyebut curve dan fair launch.
+- Paper: kind `curve` (venue `four-meme`) memakai jalur quote/broadcast/receipt
+  yang sama dengan DEX; entry ditolak bila token sudah `graduated`.
+- Verifikasi: alasan `curve_exit_and_paper_adapter_pending` dihapus. Curve
+  tetap `held` oleh `holder_liquidity_and_exit_policy_pending`, sama seperti DEX.
+
+Test baru: `TestCurveTradesLikeAnOnChainSwapOnlyWhileOnTheCurve`,
+`TestCurveEntryProposalNeedsBondingCurveState`; `curve` masuk ke
+`TestPaperSizeIncludesCostsAndNeverEnablesEntry`.
+
+Belum ada: quote kurva dari sumber nyata (Helper3 `tryBuy`/`trySell`), langkah
+curve di fixture contoh, dan policy holder/likuiditas/exit yang membuat DEX,
+presale dan curve bisa keluar dari `held`. `liquidity_usd` dari GeckoTerminal
+kosong untuk pool yang baru dibuat, dan 0 dari DexScreener.
+
 ## Pass hari kedua — 13 November 2026
 
 Dijalankan atas permintaan user ("lanjutkan yang belum") pada 01:08 UTC ke arsip
@@ -137,8 +177,8 @@ Catatan dan gap:
   `bsc-rpc.publicnode.com` (host baru di allowlist) sebagai petunjuk; tiap token
   dikonfirmasi lewat Helper3 di `bsc-dataseed`. Jendela 2.000 blok, hanya
   `-limit` token terbaru yang diperiksa (`bounded_curve_tail_not_complete`).
-- `curve` baru sebatas discovery: analisis, sizing dan paper belum mengenalnya,
-  sehingga selalu `held` dengan `curve_exit_and_paper_adapter_pending`.
+- `curve` pada 12 November baru sebatas discovery; sejak 13 November policy,
+  analisis dan paper mengenalnya (lihat bagian policy v2 di atas).
 - Pool yang ditandai bukan clone dikenal (`0xdbcc…4fd9`) ternyata fair launch
   dengan implementasi ketiga; lihat bagian pass kedua di atas.
 - Enumerasi pool PinkSale lewat event factory tidak berhasil: tidak ada log dari

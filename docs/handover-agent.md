@@ -23,11 +23,22 @@
   [pass hari kedua](testing/plan-4-local.md#pass-hari-kedua--13-november-2026)
   lulus; cursor DEX, rotasi CEX dan first-seen bertahan antar-pass. Semua sudah
   di-push atas izin user.
-- Langkah berikut: ulangi `collect` pada hari-hari berikutnya ke arsip yang
-  sama (presale belum pernah menemui sale terbuka; `-limit 5` tertinggal dari
-  laju pool DEX dan terlalu kecil untuk rotasi CEX). Menunggu keputusan user:
-  `analyze` pada model nyata (berbayar) dan policy analisis/sizing/paper untuk
-  `curve` serta fair launch.
+- 13 November, lanjutan: user berkata "lanjut terus, pilih yang best practice,
+  tanya hanya jika benar-benar crucial" dan mengizinkan `analyze`, policy
+  curve/fair launch dan limit lebih besar. Hasil:
+  [policy `launch-paper-v2`](presale-analysis.md#policy-yang-dibekukan) dengan
+  curve 1%, prompt `launch-analyst-v2`, paper curve setara DEX, pass `-limit 10`.
+  Rincian di [checkpoint](testing/plan-4-local.md#pass-ketiga-analyze-dan-policy-v2--13-november-2026).
+- **Terhalang, butuh user:** `analyze` gagal di transport karena
+  `TB_CATALYST_BASE_URL` di `.env.catalyst` perangkat kantor masih host lama.
+  User perlu menggantinya ke `https://route-gateway.nexlabs.cloud/v1` (atau
+  membuat `.env.launch`); agent tidak mengubah env privat. Dua slot AI 13
+  November WIB sudah terpakai tanpa hasil.
+- Langkah berikut: ulangi pass (`-limit 10`) pada hari-hari berikutnya ke arsip
+  yang sama; presale belum pernah menemui sale terbuka. Sesudah env diperbaiki,
+  ulangi `analyze` 1–2 kandidat. Pekerjaan kode berikutnya: quote kurva nyata
+  lewat Helper3 `tryBuy`/`trySell`, lalu policy holder/likuiditas/exit yang kini
+  menahan semua kandidat DEX, presale dan curve.
 - Seed presale (12 November): kanal pengumuman resmi `t.me/s/pinkecosystem_ann`
   menjadi petunjuk tautan, halaman detail PinkSale dan chain tetap buktinya.
   Atas keputusan user ditambah: `PinkSaleTracking` (tidak resmi, ditandai

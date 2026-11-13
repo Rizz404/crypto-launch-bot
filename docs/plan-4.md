@@ -82,6 +82,17 @@ presale yang masih terbuka, sehingga jalur presale belum pernah menghasilkan
 kandidat selain `rejected`. Rincian:
 [checkpoint lokal](testing/plan-4-local.md#verifikasi-12-november-2026).
 
+## Checkpoint policy v2 — 13 November
+
+User menyerahkan keputusan lanjutan ke agent dengan arahan memilih praktik
+terbaik. Hasilnya: `sale_type` menjadi fakta kandidat presale; policy
+`launch-paper-v2` menambah `curve_fraction` 1% (setara presale/DEX) dan prompt
+`launch-analyst-v2` mengenal curve serta fair launch; paper memperlakukan trade
+curve seperti swap DEX. Pass hari kedua dan pass `-limit 10` lulus. Dua request
+`analyze` gagal di transport karena host gateway di env perangkat ini sudah
+tidak berlaku, jadi kualitas model tetap belum teruji. Rincian:
+[checkpoint lokal](testing/plan-4-local.md#pass-ketiga-analyze-dan-policy-v2--13-november-2026).
+
 ## Fase dan kriteria selesai
 
 ### P4-0 — Reset dokumentasi
@@ -127,9 +138,12 @@ tidak meloloskan entry, dan penemuan tidak bergantung daftar ticker statis P3.
   budget layanan/AI, interval monitoring dan batas biaya berdasarkan P4-1.
 - [x] Bekukan `launch-paper-v1` dan `launch-evaluation-v1`; user memilih profil
   serta kuota melalui pertanyaan terstruktur. Pilot belum diaktifkan.
+  13 November: `launch-paper-v2` menambah curve 1% atas keputusan agent yang
+  didelegasikan user.
 - [ ] Verifikasi kode/tes dan kualitas model nyata pada ketiga jalur; sumber
   P4-2 tetap harus diterima sebelum pilot. Checklist kode bukan hasil runtime.
-  10 November: unit test lulus; inference nyata belum dijalankan.
+  10 November: unit test lulus. 13 November: dua request inference gagal di
+  transport (host gateway lama), belum ada keluaran model yang dinilai.
 
 Selesai ketika output AI tervalidasi, tidak dapat menaikkan batas policy, dan
 ketiga jalur punya aturan simulasi serta parameter yang disepakati.

@@ -2,12 +2,17 @@
 
 **29 Oktober 2026.** User menyetujui profil paper dan kuota di bawah melalui
 pertanyaan terstruktur, sesudah meminta commit P4-1/P4-2 lalu lanjut P4-3.
-Commit sebelumnya **`108b3fa`**. Unit test lulus pada 10 November; inference
-nyata belum dijalankan. Tidak mengaktifkan pilot atau uang asli.
+Commit sebelumnya **`108b3fa`**. Unit test lulus pada 10 November. Inference nyata
+dicoba 13 November dan gagal sebelum mencapai model (lihat
+[checkpoint](testing/plan-4-local.md#pass-ketiga-analyze-dan-policy-v2--13-november-2026)). Tidak mengaktifkan pilot atau uang asli.
 
 ## Policy yang dibekukan
 
-Versi **`launch-paper-v1`**, metode **`launch-evaluation-v1`**.
+Versi **`launch-paper-v2`**, metode **`launch-evaluation-v1`**, prompt/schema
+**`launch-analyst-v2`**. v2 (13 November) hanya menambah `curve_fraction` 1%
+untuk venue keempat; semua angka v1 yang dipilih user tidak berubah. User
+menyerahkan pilihan ini ke agent ("pilih yang best practice"), jadi angka 1%
+adalah keputusan agent yang meniru presale/DEX, bukan angka yang user sebut.
 Konfigurasi: [launch.policy.json](../configs/launch.policy.json). Kode menolak
 perubahan parameter yang tidak sesuai policy versi ini; perubahan berikutnya
 perlu persetujuan dan versi baru. Hash policy masuk ke packet/hasil analisis.
@@ -17,6 +22,7 @@ perlu persetujuan dan versi baru. Hash policy masuk ke packet/hasil analisis.
 | Modal | 1.000 USDT virtual untuk satu buku paper bersama ketiga jalur; bukan 1.000 per kandidat |
 | Exposure | Maksimal dua sekaligus, termasuk kontribusi terkunci dan reservasi |
 | Presale/DEX | Budget kerugian skenario maksimal 1% modal per kandidat, menganggap seluruh nominal bisa hilang dan menyediakan ruang biaya |
+| Curve (four.meme) | Sama seperti presale/DEX: 1% full-loss per kandidat. Fair launch PinkSale tetap memakai budget presale |
 | CEX | Nominal maksimal 10%, risiko rencana maksimal 0,5%; stop distance dan biaya harus diketahui dari input strategi deterministik, bukan keluaran AI |
 | Halt harian | Pada penurunan equity ≥2% dari day-start WIB; reset harian hanya dari ledger, bukan model |
 | Drawdown | Pada penurunan equity ≥8% dari peak sepanjang run; pergantian hari tidak mereset peak |
@@ -26,7 +32,7 @@ perlu persetujuan dan versi baru. Hash policy masuk ke packet/hasil analisis.
 | Review | Jendela dedup/review minimum 300 detik; analisis saat perubahan material tunduk kuota. Bukan janji 288 analisis/hari |
 
 Model biaya tidak menganggap fee yang belum diketahui sebagai nol. Dengan
-`B=min(equity, modal_awal)`, budget skenario presale/DEX adalah `B×1%`;
+`B=min(equity, modal_awal)`, budget skenario presale/DEX/curve adalah `B×1%`;
 nominal dibatasi `budget/(1+cost_fraction)`. CEX dibatasi nilai lebih kecil
 antara `B×10%` dan `(B×0,5%)/(stop_fraction+cost_fraction)`. Semua jalur juga
 dibatasi kas tersedia setelah ruang biaya dan pembulatan ke bawah.
@@ -60,6 +66,10 @@ asset key, policy hash dan position ID bila ada. Aksi yang tersedia:
   identitas, lifecycle, kutipan, freshness, exposure, consumed ID serta halt.
   Acuan protokol: [dokumentasi resmi OpenAI](https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=chat).
   Dukungan gateway/model belum dibuktikan untuk prompt baru.
+- `PROPOSE_ENTRY` berlaku untuk listing DEX/CEX dan token curve yang masih
+  berstatus `bonding_curve`; token yang sudah `graduated` tidak boleh diusulkan
+  masuk lewat curve. Prompt v2 juga menyatakan fair launch (`sale_type`
+  `fairlaunch`) tidak punya harga tetap sampai sale selesai.
 - Held/rejected tidak boleh menghasilkan proposal entry/kontribusi. Presale
   mendatang hanya WATCH. Claim/refund harus menunjuk sale dan exposure tepat,
   dengan status claimable/refundable eksplisit; tidak diturunkan dari tanggal.
@@ -72,7 +82,7 @@ asset key, policy hash dan position ID bila ada. Aksi yang tersedia:
   status verifikasi atau memasukkan evidence palsu.
 
 Semua hasil **`entry_allowed=false`**. Bahkan proposal valid adalah hasil
-riset, belum reservasi/fill/order. Gap P4-2 membuat presale/DEX v1 tetap held;
+riset, belum reservasi/fill/order. Gap P4-2 membuat presale/DEX/curve tetap held;
 P4-3 tidak memalsukan verifikasi agar bisa menghasilkan entry.
 
 ## Alur dan kuota
@@ -103,6 +113,7 @@ Bekukan metode ini sebelum pilot; implementasi fill/ledger adalah P4-4.
 |---|---|
 | Presale | Catat kontribusi, alokasi, claim/vesting/refund sesuai bukti. Tanpa data akses/alokasi/terms andal, hasil observasi saja; tidak membuat fill atau return. Dana tetap committed sampai penyelesaian terbukti |
 | DEX | Butuh quote/rute, jumlah, kondisi jual dan biaya/gas yang terverifikasi pada waktu keputusan. Candle CEX atau USD pool price tidak menghasilkan fill. Gagal/pending/revert dan gas tetap masuk hasil |
+| Curve | Sama seperti DEX: butuh quote beli/jual kurva (jumlah, min-out, fee, gas) pada waktu keputusan. Sesudah graduasi, jalan keluar adalah rute DEX, bukan kurva |
 | CEX | Gunakan book fresh, spread/depth dan fee terverifikasi; batasi fill pada depth tersedia dan catat partial/reject, jangan memakai candle close sebagai harga pasti |
 
 Untuk semua jalur, parameter strategi yang memasok stop/biaya, freshness
