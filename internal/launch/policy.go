@@ -8,7 +8,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-const PaperPolicyVersion = "launch-paper-v1"
+const PaperPolicyVersion = "launch-paper-v2"
 const EvaluationVersion = "launch-evaluation-v1"
 
 // PaperPolicy is approved configuration, never model output or live authority.
@@ -19,6 +19,7 @@ type PaperPolicy struct {
 	MaxExposures          int             `json:"max_exposures"`
 	PresaleFraction       decimal.Decimal `json:"presale_fraction"`
 	DEXFraction           decimal.Decimal `json:"dex_fraction"`
+	CurveFraction         decimal.Decimal `json:"curve_fraction"`
 	CEXFraction           decimal.Decimal `json:"cex_fraction"`
 	CEXRiskFraction       decimal.Decimal `json:"cex_risk_fraction"`
 	DailyHaltFraction     decimal.Decimal `json:"daily_halt_fraction"`
@@ -33,14 +34,14 @@ func ApprovedPaperPolicy() PaperPolicy {
 	return PaperPolicy{Version: PaperPolicyVersion, EvaluationVersion: EvaluationVersion,
 		InitialUSDT: decimal.NewFromInt(1000), MaxExposures: 2,
 		PresaleFraction: decimal.RequireFromString("0.01"), DEXFraction: decimal.RequireFromString("0.01"),
-		CEXFraction: decimal.RequireFromString("0.10"), CEXRiskFraction: decimal.RequireFromString("0.005"),
+		CurveFraction: decimal.RequireFromString("0.01"), CEXFraction: decimal.RequireFromString("0.10"), CEXRiskFraction: decimal.RequireFromString("0.005"),
 		DailyHaltFraction: decimal.RequireFromString("0.02"), DrawdownHaltFraction: decimal.RequireFromString("0.08"),
 		CallsPerWIBDay: 12, MaxOutputTokens: 2048, DecisionTTLSeconds: 300, ReviewIntervalSeconds: 300}
 }
 
 func (p PaperPolicy) Validate() error {
 	if catalyst.Hash(p) != catalyst.Hash(ApprovedPaperPolicy()) {
-		return errors.New("policy differs from approved launch-paper-v1; approve and version changes separately")
+		return errors.New("policy differs from approved " + PaperPolicyVersion + "; approve and version changes separately")
 	}
 	return nil
 }
@@ -94,7 +95,7 @@ func (s PaperContext) Validate(now time.Time) error {
 		if position.ID == "" || position.CandidateID == "" || position.AssetKey == "" || seen[position.ID] || !position.NotionalUSDT.IsPositive() || position.LockedUSDT.IsNegative() || position.ReservedUSDT.IsNegative() || position.LockedUSDT.Add(position.ReservedUSDT).GreaterThan(position.NotionalUSDT) {
 			return errors.New("invalid or duplicate paper exposure")
 		}
-		if position.Kind != "presale" && position.Kind != "dex" && position.Kind != "cex" {
+		if position.Kind != "presale" && position.Kind != "dex" && position.Kind != "cex" && position.Kind != "curve" {
 			return errors.New("unsupported exposure kind")
 		}
 		seen[position.ID] = true
@@ -149,6 +150,8 @@ func (p PaperPolicy) PlanSize(kind string, s PaperContext, stopFraction, costFra
 	case "presale":
 	case "dex":
 		fraction = p.DEXFraction
+	case "curve":
+		fraction = p.CurveFraction
 	case "cex":
 		fraction = p.CEXFraction
 	default:

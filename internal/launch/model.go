@@ -18,8 +18,7 @@ const Version = "launch-discovery-v1"
 const MaxAge = 30 * 24 * time.Hour
 const EvidenceTTL = 15 * time.Minute
 
-// kinds are the discovery paths. "curve" (bonding-curve launchpads) is
-// research-only: analysis, sizing and paper trading accept the first three.
+// kinds are the discovery paths. "curve" is a bonding-curve launchpad token.
 var kinds = []string{"presale", "dex", "cex", "curve"}
 
 var addressPattern = regexp.MustCompile(`^0x[0-9a-fA-F]{40}$`)
@@ -155,8 +154,6 @@ func Verify(c Candidate, now time.Time, sourceGaps []string) Review {
 		} else if c.State != "bonding_curve" {
 			hold("curve_state_unknown")
 		}
-		// Discovery only: no analysis action, sizing or paper adapter covers curve trades yet.
-		hold("curve_exit_and_paper_adapter_pending")
 	}
 	if c.Kind == "presale" {
 		if c.EndsAt.IsZero() || (!c.StartsAt.IsZero() && !c.EndsAt.After(c.StartsAt)) {

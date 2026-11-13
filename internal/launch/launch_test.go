@@ -429,7 +429,7 @@ func TestCurveDiscoveryConfirmsLeadLogsThroughHelper(t *testing.T) {
 		t.Fatalf("bad curve candidate: %+v", c)
 	}
 	r := Verify(c, time.Now().UTC(), nil)
-	if r.Status != "held" || r.EntryAllowed || !slices.Contains(r.Reasons, "curve_exit_and_paper_adapter_pending") || slices.Contains(r.Reasons, "curve_manager_not_confirmed") || slices.Contains(r.Reasons, "trading_start_not_verified") {
+	if r.Status != "held" || r.EntryAllowed || !slices.Contains(r.Reasons, "holder_liquidity_and_exit_policy_pending") || slices.Contains(r.Reasons, "curve_manager_not_confirmed") || slices.Contains(r.Reasons, "trading_start_not_verified") {
 		t.Fatalf("unexpected curve review: %+v", r)
 	}
 	if r = Verify(discover(testAddress).Candidates[0], time.Now().UTC(), nil); !slices.Contains(r.Reasons, "curve_manager_not_confirmed") {

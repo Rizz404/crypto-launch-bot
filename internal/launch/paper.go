@@ -197,10 +197,10 @@ func (s *PaperState) submit(i PaperIntent, now time.Time, p PaperPolicy) error {
 	sealed := c
 	sealed.EvidenceIDs = slices.Clone(c.EvidenceIDs)
 	sealed.Seal()
-	if c.ID != sealed.ID || c.Revision != sealed.Revision || c.Asset.Key() == "" || !slices.Contains([]string{"presale", "dex", "cex"}, c.Kind) {
+	if c.ID != sealed.ID || c.Revision != sealed.Revision || c.Asset.Key() == "" || !slices.Contains([]string{"presale", "dex", "cex", "curve"}, c.Kind) {
 		return errors.New("candidate identity/revision invalid")
 	}
-	if (c.Kind == "presale" && (c.Venue != "pinksale" || c.Asset.Chain != "eip155:56")) || (c.Kind == "dex" && (c.Venue != "pancakeswap-v2" || c.Asset.Chain != "eip155:56")) || (c.Kind == "cex" && c.Venue != "binance-spot") {
+	if (c.Kind == "presale" && (c.Venue != "pinksale" || c.Asset.Chain != "eip155:56")) || (c.Kind == "dex" && (c.Venue != "pancakeswap-v2" || c.Asset.Chain != "eip155:56")) || (c.Kind == "curve" && (c.Venue != "four-meme" || c.Asset.Chain != "eip155:56")) || (c.Kind == "cex" && c.Venue != "binance-spot") {
 		return errors.New("unsupported paper venue")
 	}
 	if s.pending(i.PositionID) {
@@ -234,6 +234,8 @@ func (s *PaperState) submit(i PaperIntent, now time.Time, p PaperPolicy) error {
 			}
 		} else if i.Action != "buy" || now.Sub(c.StartsAt) > MaxAge {
 			return errors.New("listing outside paper universe")
+		} else if c.Kind == "curve" && c.State != "bonding_curve" {
+			return errors.New("curve entry needs a token still on its bonding curve")
 		}
 		size, err := p.PlanSize(c.Kind, s.Context(now), i.StopFraction, i.CostFraction, true, now)
 		if err != nil {

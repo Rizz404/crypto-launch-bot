@@ -341,3 +341,31 @@ func TestPaperUnknownExpiryAndUnsafeAdmissionDoNotReleaseReservations(t *testing
 		t.Fatal("terminal acknowledgment did not release unused capital")
 	}
 }
+
+func TestCurveTradesLikeAnOnChainSwapOnlyWhileOnTheCurve(t *testing.T) {
+	curve := func(id, state string) PaperIntent {
+		i := fixtureIntent("dex", id, testNow)
+		i.Candidate.Kind, i.Candidate.Venue, i.Candidate.State = "curve", "four-meme", state
+		i.Candidate.Seal()
+		return i
+	}
+	store := newTestPaperStore(t)
+	graduated := curve("graduated", "graduated")
+	if _, err := store.Step(context.Background(), PaperStep{ID: "graduated", At: testNow, Op: "submit", Intent: &graduated}); err == nil {
+		t.Fatal("graduated token entered through the curve")
+	}
+	i := curve("curve", "bonding_curve")
+	putStep(t, store, PaperStep{ID: "reserve", At: testNow, Op: "submit", Intent: &i})
+	if _, err := store.Step(context.Background(), PaperStep{ID: "no-quote", At: testNow.Add(time.Second), Op: "broadcast", OrderID: i.ID, ExternalID: "fixture:curve-tx"}); err == nil {
+		t.Fatal("curve buy broadcast without a quote")
+	}
+	q := PaperRouteQuote{ID: "fixture:curve-quote", At: testNow.Add(time.Second), ExpiresAt: testNow.Add(5 * time.Second), CandidateID: i.Candidate.ID, AssetKey: i.Candidate.Asset.Key(), InputUSDT: dec("9"), Quantity: dec("0.09"), MinQuantity: dec("0.085"), FeeUSDT: dec("0.05"), GasUSDT: dec("0.05"), CostsKnown: true, LiquidityVerified: true, SellableVerified: true}
+	putStep(t, store, PaperStep{ID: "broadcast", At: q.At, Op: "broadcast", OrderID: i.ID, ExternalID: "fixture:curve-tx", Route: &q})
+	r := presaleReceipt("curve-fill", "curve-tx", "0.1")
+	r.SpentUSDT = dec("9")
+	r.Quantity = dec("0.09")
+	s := putStep(t, store, PaperStep{ID: "final", At: testNow.Add(2 * time.Second), Op: "receipt", OrderID: i.ID, Receipt: &r})
+	if !s.Positions[i.PositionID].Quantity.Equal(dec("0.09")) || s.Context(testNow.Add(2 * time.Second)).Positions[0].Kind != "curve" {
+		t.Fatalf("curve swap did not settle as curve exposure: %+v", s.Positions)
+	}
+}

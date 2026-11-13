@@ -31,7 +31,7 @@ func TestApprovedPolicyMatchesCommittedConfig(t *testing.T) {
 func TestPaperSizeIncludesCostsAndNeverEnablesEntry(t *testing.T) {
 	p := ApprovedPaperPolicy()
 	s := InitialPaperContext(testNow, p)
-	for _, kind := range []string{"presale", "dex", "cex"} {
+	for _, kind := range []string{"presale", "dex", "curve", "cex"} {
 		result, err := p.PlanSize(kind, s, decimal.RequireFromString("0.05"), decimal.RequireFromString("0.002"), true, testNow)
 		if err != nil {
 			t.Fatal(err)

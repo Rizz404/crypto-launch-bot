@@ -20,7 +20,8 @@ func (s *PaperState) broadcast(step PaperStep) error {
 	if o.Intent.Candidate.Kind == "cex" {
 		return errors.New("CEX uses book matching, not chain broadcast")
 	}
-	if o.Intent.Candidate.Kind == "dex" {
+	// A bonding-curve trade is an on-chain swap too: same quote, min-out and finality contract.
+	if o.Intent.Candidate.Kind == "dex" || o.Intent.Candidate.Kind == "curve" {
 		q := step.Route
 		if q == nil || !strings.HasPrefix(q.ID, "fixture:") || q.CandidateID != o.Intent.Candidate.ID || q.AssetKey != o.Intent.Candidate.Asset.Key() || q.At.Before(o.At) || q.At.After(step.At) || step.At.Sub(q.At) > 5*time.Second || !q.ExpiresAt.After(step.At) || !q.CostsKnown || !q.LiquidityVerified || !q.SellableVerified || q.FeeUSDT.IsNegative() || q.GasUSDT.IsNegative() || q.FeeUSDT.Add(q.GasUSDT).GreaterThan(o.Intent.MaxFeeUSDT) {
 			return errors.New("DEX quote/route/cost/liquidity/exit evidence missing or stale")

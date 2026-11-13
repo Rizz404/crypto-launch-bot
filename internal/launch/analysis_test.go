@@ -232,3 +232,19 @@ func TestDailyQuotaSurvivesFailuresAndWIBBoundary(t *testing.T) {
 		t.Fatal(fmt.Sprint("failed call refunded a quota slot"))
 	}
 }
+
+func TestCurveEntryProposalNeedsBondingCurveState(t *testing.T) {
+	for state, wanted := range map[string]string{"bonding_curve": "no longer eligible", "graduated": "bonding curve"} {
+		p, d := decisionFixture()
+		c := &p.Verification.Candidate
+		c.Kind, c.Venue, c.State, c.TimeBasis = "curve", "four-meme", state, "onchain_creation_block"
+		c.Asset = Asset{Chain: "eip155:56", Address: testAddress}
+		c.Seal()
+		d.CandidateID, d.CandidateRevision, d.AssetKey = c.ID, c.Revision, c.Asset.Key()
+		// The packet status stays accepted, so a live curve token passes the lifecycle rule
+		// and stops at fresh verification; a graduated one stops at the lifecycle rule.
+		if err := ValidateDecision(d, p, testNow); err == nil || !strings.Contains(err.Error(), wanted) {
+			t.Fatalf("%s: got %v, want %q", state, err, wanted)
+		}
+	}
+}
