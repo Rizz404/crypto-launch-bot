@@ -29,6 +29,11 @@
   [policy `launch-paper-v2`](presale-analysis.md#policy-yang-dibekukan) dengan
   curve 1%, prompt `launch-analyst-v2`, paper curve setara DEX, pass `-limit 10`.
   Rincian di [checkpoint](testing/plan-4-local.md#pass-ketiga-analyze-dan-policy-v2--13-november-2026).
+- 14 November: policy `launch-paper-v3` menetapkan batas exit DEX/curve
+  (pajak, holder, likuiditas, biaya curve). Pajak, holder dan gas curve dibaca
+  dari chain. Pass nyata: semua tetap `held` karena alasan policy yang konkret,
+  bukan lagi `holder_liquidity_and_exit_policy_pending`. Lihat
+  [checkpoint](testing/plan-4-local.md#policy-exit-v3-dan-data-curve-dari-chain--14-november-2026).
 - **Terhalang, butuh user:** `analyze` gagal di transport karena
   `TB_CATALYST_BASE_URL` di `.env.catalyst` perangkat kantor masih host lama.
   User perlu menggantinya ke `https://route-gateway.nexlabs.cloud/v1` (atau

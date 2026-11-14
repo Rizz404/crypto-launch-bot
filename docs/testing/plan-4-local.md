@@ -49,6 +49,46 @@ Gap yang tersisa pada jalur presale:
 - Binary Spider di atas hasil build lokal; image `crypto-launch-bot-spider`
   belum di-publish dan pin digest di `Dockerfile.catalyst` masih nama lama.
 
+## Policy exit v3 dan data curve dari chain — 14 November 2026
+
+User menyetujui batas exit usulan agent dan memilih data holder curve dari
+chain (opsi 2), karena GoPlus mengosongkan pajak/holder token four.meme yang
+belum listing di DEX. Policy menjadi `launch-paper-v3`; aturannya di
+[kontrak P4-3](../presale-analysis.md#policy-yang-dibekukan). Alasan
+`holder_liquidity_and_exit_policy_pending` kini hanya untuk presale.
+
+Temuan yang membentuk implementasi:
+
+- 29 dari 29 token four.meme terbaru adalah TaxToken9 (creator type 9) dengan
+  pajak 2–3% per sisi. Pajak dibaca dari `feeRateBuy()`/`feeRateSell()` token
+  (persen), atau `feeRate()` untuk tipe 5 (basis point). Tipe 0 terbukti tanpa
+  pajak dari transaksi beli nyata: `msg.value` = cost + fee protokol. Tipe lain
+  memberi gap `curve_creator_type_unrecognised`.
+- Estimasi jual Helper3 untuk token pajak 2–3% hanya 0,09% di bawah token
+  tanpa pajak. Jadi pajak ditambahkan terpisah ke biaya curve, tidak dianggap
+  sudah termasuk.
+- Supply awal dipegang TokenManager2 sebagai inventori kurva, sehingga holder
+  dihitung dari replay log `Transfer` sejak blok pembuatan tanpa manager.
+- Gas swap dari receipt nyata: buy ±210 ribu, sell ±193 ribu, harga 0,05 gwei.
+  Bolak-balik dihitung 460 ribu gas (termasuk approve) × `eth_gasPrice` × ask
+  BNBUSDT Binance, sekitar 0,014 USDT.
+- `cannot_sell_all` GoPlus kosong sebelum listing DEX. Untuk curve,
+  estimasi jual Helper3 atas jumlah yang dibeli dipakai sebagai cek exit.
+- DEX: konsentrasi dari daftar top-10 GoPlus, tanpa pool, dead dan holder
+  terkunci. Slot yang dibuang diisi share terkecil yang terlihat, supaya holder
+  ke-11 yang tersembunyi tidak membuat hasil tampak lebih aman.
+
+| Pemeriksaan | Hasil |
+|---|---|
+| `go vet`, `go test` paket `launch` dan `cmd/launch`, `golangci-lint` | Lulus; test baru `TestExitPolicyHoldsUnknownsAndLimits`, `TestCurveTaxByCreatorType`, `TestGoPlusHoldersSkipPoolLockedAndDeadButKeepHiddenTail` |
+| `collect -source curve -limit 10` lalu `dex -limit 10` di Windows (arsip sementara) | Exit 0 keduanya. Curve: semua `held`; token pajak tertahan `curve_round_trip_cost_above_policy` (2,3% kurva + 4–6% pajak), token tanpa pajak hanya oleh `holder_count_below_policy`. DEX: semua `held`, umumnya pajak/likuiditas unknown dan holder terkonsentrasi |
+
+Belum: quote curve sebagai `PaperRouteQuote`. Journal paper sengaja hanya
+menerima quote berawalan `fixture:`. Menyambungkan quote nyata adalah langkah
+paper prospektif (P4-5) yang mengubah batas keamanan itu, jadi menunggu
+keputusan. `holder_count` GoPlus untuk pool DEX yang baru bisa 0 walau ada
+likuiditas; hasilnya ditahan, tidak lolos.
+
 ## Dukungan Windows — 14 November 2026
 
 Atas permintaan user, test, CLI dan skrip pendukung dibuat lintas platform. Penyebab

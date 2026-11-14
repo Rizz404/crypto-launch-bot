@@ -8,11 +8,13 @@ dicoba 13 November dan gagal sebelum mencapai model (lihat
 
 ## Policy yang dibekukan
 
-Versi **`launch-paper-v2`**, metode **`launch-evaluation-v1`**, prompt/schema
+Versi **`launch-paper-v3`**, metode **`launch-evaluation-v1`**, prompt/schema
 **`launch-analyst-v2`**. v2 (13 November) hanya menambah `curve_fraction` 1%
 untuk venue keempat; semua angka v1 yang dipilih user tidak berubah. User
 menyerahkan pilihan ini ke agent ("pilih yang best practice"), jadi angka 1%
 adalah keputusan agent yang meniru presale/DEX, bukan angka yang user sebut.
+v3 (14 November) menambah batas exit DEX/curve yang diusulkan agent dan
+disetujui user; angka v2 tidak berubah.
 Konfigurasi: [launch.policy.json](../configs/launch.policy.json). Kode menolak
 perubahan parameter yang tidak sesuai policy versi ini; perubahan berikutnya
 perlu persetujuan dan versi baru. Hash policy masuk ke packet/hasil analisis.
@@ -30,6 +32,11 @@ perlu persetujuan dan versi baru. Hash policy masuk ke packet/hasil analisis.
 | AI | Maksimal 12 request/hari WIB, maksimal 2.048 output token/request; request gagal tetap memakai slot |
 | Packet/keputusan | Input maksimal 48 KiB; maksimal delapan bukti dengan prefix teks 4.000 byte/bukti; keputusan kedaluwarsa setelah 300 detik |
 | Review | Jendela dedup/review minimum 300 detik; analisis saat perubahan material tunduk kuota. Bukan janji 288 analisis/hari |
+| Pajak (DEX/curve) | `buy_tax` dan `sell_tax` masing-masing ≤5% |
+| Holder (DEX/curve) | Holder tunggal ≤10%, top 10 ≤50%, minimal 50 holder. Tidak dihitung: pool/LP, TokenManager four.meme, kontrak token, alamat dead/zero dan holder `is_locked` |
+| Likuiditas DEX | ≥10.000 USD |
+| Biaya curve | Selisih kurva Helper3 + gas bolak-balik dibagi plafon posisi curve (10 USDT) + pajak beli + pajak jual ≤5% |
+| Data kosong | Fakta yang hilang atau tidak valid menahan kandidat (`*_unknown`), tidak dianggap aman |
 
 Model biaya tidak menganggap fee yang belum diketahui sebagai nol. Dengan
 `B=min(equity, modal_awal)`, budget skenario presale/DEX/curve adalah `B×1%`;
