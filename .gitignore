@@ -26,3 +26,4 @@ __pycache__/
 /var/catalyst/
 /var/launch/
 /var/launch-paper/
+/var/launch-eval/
