@@ -2,8 +2,8 @@
 Candidate selection uses prior training results only. All annual periods replay at 1m.
 A passed research gate means eligibility for prospective paper review, never live approval.
 """
-import argparse, collections, concurrent.futures, csv, datetime as dt, fcntl, hashlib
-import importlib.util, io, json, os, pathlib, shutil, statistics, subprocess, sys, zipfile
+import argparse, collections, concurrent.futures, csv, datetime as dt, hashlib
+import importlib.util, io, json, os, pathlib, shutil, statistics, subprocess, sys, tempfile, zipfile
 
 core_path=pathlib.Path(__file__).with_name('queue_core.py')
 if not core_path.exists():core_path=pathlib.Path(__file__).with_name('queue.py')
@@ -58,7 +58,7 @@ def prepare(plan,status):
   expected=core.fetch(url+'.CHECKSUM').decode().split()[0]
   # Reuse earlier local downloads when present; never trust them without checksum verification.
   if not path.exists():
-   old=pathlib.Path('/tmp/crypto-launch-bot-year')/name
+   old=pathlib.Path(tempfile.gettempdir())/'crypto-launch-bot-year'/name
    if old.exists() and core.sha(old)==expected:shutil.copy2(old,path)
   if not path.exists() or core.sha(path)!=expected:
    b=core.fetch(url)
@@ -131,7 +131,7 @@ def worker(run):
  for path,key in [('bin/backtest','binary_sha256'),('worker.py','worker_sha256'),('queue_core.py','core_sha256')]:
   if core.sha(run/path)!=plan[key]:raise RuntimeError('frozen code changed '+path)
  if core.sha(run/'plan.json')!=(run/'plan.sha256').read_text().strip():raise RuntimeError('frozen plan changed')
- lock=(run/'worker.lock').open('w');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+ lock=(run/'worker.lock').open('w');core.lock_exclusive(lock)
  completed=0;failed=0
  def status(state,**kw):core.atomic(run/'status.json',{'state':state,'updated_utc':core.now(),'pid':os.getpid(),'completed_jobs':completed,'failed_jobs':failed,'max_jobs':360,**kw})
  try:

@@ -49,6 +49,8 @@ class ObserverTests(unittest.TestCase):
 
 
 class BackupTests(unittest.TestCase):
+    # The VPS backup is a bash script driving a shebang docker stub; Windows has neither.
+    @unittest.skipIf(os.name == "nt", "catalyst-backup.sh runs on the Linux VPS only")
     def test_dump_failure_restarts_only_worker_and_publishes_no_backup(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

@@ -2,11 +2,21 @@
 init freezes 216 candidates; launch starts one resource-limited user systemd service.
 worker performs historical-data preparation, training selection and fixed validation.
 """
-import argparse, concurrent.futures, csv, datetime as dt, fcntl, hashlib, io
-import itertools, json, math, os, pathlib, shutil, statistics, subprocess, sys, time, urllib.request, zipfile
+import argparse, concurrent.futures, csv, datetime as dt, hashlib, io
+import itertools, json, math, os, pathlib, shutil, statistics, subprocess, sys, tempfile, time, urllib.request, zipfile
 
 SYMBOLS=['BTCUSDT','ETHUSDT','BNBUSDT','XRPUSDT','SOLUSDT']
 UTC=dt.timezone.utc
+
+def lock_exclusive(f):
+ """Nonblocking exclusive lock on an open file; BlockingIOError when another worker holds it."""
+ if os.name=='nt':
+  import msvcrt
+  try:msvcrt.locking(f.fileno(),msvcrt.LK_NBLCK,1)
+  except OSError as e:raise BlockingIOError(str(e)) from e
+ else:
+  import fcntl
+  fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)
 
 def now(): return dt.datetime.now(UTC).isoformat()
 def sha(path):
@@ -54,7 +64,7 @@ def configurations():
 def init(project,cache):
  project=project.resolve();run=project/'var/backtest-research'/('run-'+dt.datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ'))
  run.mkdir(parents=True,exist_ok=False);data=project/'var/backtest-research/data';data.mkdir(parents=True,exist_ok=True)
- # Preserve the already-verified one-minute dataset outside volatile /tmp.
+ # Preserve the already-verified one-minute dataset outside the volatile temp dir.
  hashes={}
  for name in [s+'.csv' for s in SYMBOLS]+['instruments.json','manifest.json']:
   src=cache/name;dst=data/name
@@ -184,7 +194,7 @@ def worker(run):
  if sha(run/'plan.json')!=(run/'plan.sha256').read_text().strip():raise RuntimeError('frozen plan changed')
  if sha(run/'bin/backtest')!=plan['binary_sha256']:raise RuntimeError('frozen executable changed')
  lock=(run/'worker.lock').open('w')
- try:fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+ try:lock_exclusive(lock)
  except BlockingIOError:raise RuntimeError('another worker owns this queue')
  completed=0;failed=0
  def status(state,**kw):atomic(run/'status.json',{'state':state,'updated_utc':now(),'pid':os.getpid(),'completed_jobs':completed,'failed_jobs':failed,'max_jobs':2340,**kw})
@@ -244,7 +254,7 @@ def launch(run):
  subprocess.run(args,check=True);atomic(run/'service.json',{'unit':unit+'.service','launched_utc':now()});print(unit+'.service',flush=True)
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('command',choices=['init','launch','worker','status']);p.add_argument('--run-dir',type=pathlib.Path);p.add_argument('--cache',type=pathlib.Path,default=pathlib.Path('/tmp/crypto-launch-bot-year'));a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('command',choices=['init','launch','worker','status']);p.add_argument('--run-dir',type=pathlib.Path);p.add_argument('--cache',type=pathlib.Path,default=pathlib.Path(tempfile.gettempdir())/'crypto-launch-bot-year');a=p.parse_args()
  if a.command=='init':init(pathlib.Path.cwd(),a.cache);return
  if a.run_dir is None:p.error('--run-dir is required')
  run=a.run_dir.resolve()

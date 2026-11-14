@@ -1,5 +1,5 @@
 // Command backtest-year compares existing spot strategies on verified archive CSVs.
-// Run download.py first, then: go run ./scripts/backtest-year -data /tmp/crypto-launch-bot-year
+// Run download.py first, then: go run ./scripts/backtest-year (data defaults to <OS temp>/crypto-launch-bot-year)
 // It uses the existing backtest engine and has no exchange client or trading credentials.
 package main
 
@@ -148,7 +148,7 @@ func candidates() []candidate {
 }
 
 func main() {
-	data := flag.String("data", "/tmp/crypto-launch-bot-year", "verified archive CSV directory")
+	data := flag.String("data", filepath.Join(os.TempDir(), "crypto-launch-bot-year"), "verified archive CSV directory")
 	out := flag.String("out", "docs/testing/backtest", "report directory")
 	suite := flag.String("suite", "baseline", "baseline or candidates")
 	declare := flag.Bool("declare", false, "write candidate specification and exit before simulations")

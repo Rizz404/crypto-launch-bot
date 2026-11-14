@@ -1,9 +1,9 @@
 """Verify the fixed five-candidate experiment and compare it with the prior run."""
-import csv,hashlib,json,pathlib,statistics,subprocess
+import csv,hashlib,json,pathlib,statistics,subprocess,tempfile
 root=pathlib.Path('.')
 out=root/'docs/testing/candidates'
 base=root/'docs/testing/backtest'
-raw=pathlib.Path('/tmp/crypto-launch-bot-year')
+raw=pathlib.Path(tempfile.gettempdir())/'crypto-launch-bot-year'
 read=lambda p:json.loads(p.read_text())
 v=read(out/'results.json');old=read(base/'results.json')
 assert len(v['results'])==25 and all(r['Status']=='completed' for r in v['results'])

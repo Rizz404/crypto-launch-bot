@@ -126,7 +126,7 @@ sample = {
     "metrics": attempt(lambda: [line for line in http("http://127.0.0.1:%d/metrics" % metrics_port).splitlines()
                                 if line.startswith(("cryptolaunchbot_", "process_start_time_seconds "))]),
     "disk_free_bytes": disk.free,
-    "load": os.getloadavg(),
+    "load": os.getloadavg() if hasattr(os, "getloadavg") else None,
 }
 if research:
     sample["research_health"] = attempt(lambda: http("http://127.0.0.1:19102/healthz").strip())

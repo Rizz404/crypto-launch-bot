@@ -138,7 +138,7 @@ func run() error {
 		return errors.New("invalid end date")
 	}
 	// Validation only; no database connection, exchange client, secrets or .env.
-	cfg, err := config.Load(*configuration, "/dev/null")
+	cfg, err := config.Load(*configuration, os.DevNull)
 	if err != nil {
 		return err
 	}
