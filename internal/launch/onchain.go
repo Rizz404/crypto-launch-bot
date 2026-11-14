@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/shopspring/decimal"
 )
 
 const pancakeFactory = "0xca143ce32fe78f1f7019d7d551a6402fc5350c73"
@@ -118,8 +120,47 @@ func (c *Client) inspectToken(ctx context.Context, candidate *Candidate, block c
 			candidate.Facts[key] = value
 		}
 	}
+	if candidate.Kind == "dex" {
+		goplusHolders(candidate, security.Result[addr]["holders"])
+	}
 	// GoPlus is a corroborating scanner; its findings do not prove sellability.
 	candidate.Facts["security_provider"] = "goplus"
+}
+
+// goplusHolders derives concentration from GoPlus's top-10 list, skipping the pool
+// itself, dead/zero addresses and locked balances. Excluded slots are filled with
+// the smallest listed share so a hidden 11th holder cannot make the result look safer.
+func goplusHolders(candidate *Candidate, raw json.RawMessage) {
+	var holders []struct {
+		Address  string `json:"address"`
+		Percent  string `json:"percent"`
+		IsLocked int    `json:"is_locked"`
+	}
+	if json.Unmarshal(raw, &holders) != nil || len(holders) == 0 {
+		return
+	}
+	var shares []decimal.Decimal
+	floor := decimal.NewFromInt(1)
+	skipped := 0
+	for _, h := range holders {
+		who, addrErr := address(h.Address)
+		share, shareErr := decimal.NewFromString(h.Percent)
+		if addrErr != nil && !strings.EqualFold(h.Address, zeroAddress) || shareErr != nil || share.IsNegative() || share.GreaterThan(decimal.NewFromInt(1)) {
+			return
+		}
+		floor = decimal.Min(floor, share)
+		if h.IsLocked == 1 || who == candidate.ExternalID || who == deadAddress || addrErr != nil {
+			skipped++
+			continue
+		}
+		shares = append(shares, share)
+	}
+	unseen := 0
+	if len(holders) == 10 {
+		unseen = skipped
+	}
+	holderFacts(candidate, shares, unseen, floor)
+	candidate.Facts["holder_source"] = "goplus_top10"
 }
 
 // geckoPool fills pool creation time, price and reserve from GeckoTerminal when

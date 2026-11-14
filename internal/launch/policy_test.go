@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 	"time"
 
@@ -25,6 +26,42 @@ func TestApprovedPolicyMatchesCommittedConfig(t *testing.T) {
 	p.CallsPerWIBDay++
 	if p.Validate() == nil {
 		t.Fatal("modified policy inherited approval")
+	}
+}
+
+func TestExitPolicyHoldsUnknownsAndLimits(t *testing.T) {
+	p := ApprovedPaperPolicy()
+	safe := func(kind string) Candidate {
+		// Curve at the limit: 0.02 curve + 0.1/10 gas + 0.01 + 0.01 tax = 0.05.
+		return Candidate{Kind: kind, Facts: map[string]string{"buy_tax": "0.01", "sell_tax": "0.01", "top_holder_fraction": "0.10",
+			"top10_holder_fraction": "0.50", "holder_count": "50", "liquidity_usd": "10000",
+			"curve_round_trip_cost_fraction": "0.02", "curve_round_trip_gas_usdt": "0.1"}}
+	}
+	for _, kind := range []string{"dex", "curve"} {
+		if reasons := p.ExitReasons(safe(kind)); len(reasons) != 0 {
+			t.Fatalf("%s at the limits was held: %v", kind, reasons)
+		}
+	}
+	for _, tc := range []struct {
+		kind, key, value, reason string
+	}{
+		{"dex", "sell_tax", "0.0501", "sell_tax_above_policy"},
+		{"dex", "buy_tax", "", "buy_tax_unknown"},
+		{"dex", "buy_tax", "-0.01", "buy_tax_unknown"},
+		{"dex", "top_holder_fraction", "0.11", "top_holder_fraction_above_policy"},
+		{"dex", "top10_holder_fraction", "", "top10_holder_fraction_unknown"},
+		{"dex", "holder_count", "49", "holder_count_below_policy"},
+		{"dex", "liquidity_usd", "9999", "liquidity_usd_below_policy"},
+		{"dex", "liquidity_usd", "", "liquidity_usd_unknown"},
+		{"curve", "curve_round_trip_gas_usdt", "0.11", "curve_round_trip_cost_above_policy"},
+		{"curve", "sell_tax", "0.02", "curve_round_trip_cost_above_policy"},
+		{"curve", "curve_round_trip_gas_usdt", "", "curve_round_trip_cost_unknown"},
+	} {
+		c := safe(tc.kind)
+		c.Facts[tc.key] = tc.value
+		if reasons := p.ExitReasons(c); !slices.Contains(reasons, tc.reason) {
+			t.Fatalf("%s %s=%q: want %s, got %v", tc.kind, tc.key, tc.value, tc.reason, reasons)
+		}
 	}
 }
 

@@ -8,7 +8,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-const PaperPolicyVersion = "launch-paper-v2"
+const PaperPolicyVersion = "launch-paper-v3"
 const EvaluationVersion = "launch-evaluation-v1"
 
 // PaperPolicy is approved configuration, never model output or live authority.
@@ -28,6 +28,13 @@ type PaperPolicy struct {
 	MaxOutputTokens       int             `json:"max_output_tokens"`
 	DecisionTTLSeconds    int             `json:"decision_ttl_seconds"`
 	ReviewIntervalSeconds int             `json:"review_interval_seconds"`
+	// Exit limits for on-chain listings (DEX and curve). Fractions are 0–1.
+	MaxTaxFraction            decimal.Decimal `json:"max_tax_fraction"`
+	MaxTopHolderFraction      decimal.Decimal `json:"max_top_holder_fraction"`
+	MaxTop10HolderFraction    decimal.Decimal `json:"max_top10_holder_fraction"`
+	MinHolderCount            int             `json:"min_holder_count"`
+	MinLiquidityUSD           decimal.Decimal `json:"min_liquidity_usd"`
+	MaxCurveRoundTripFraction decimal.Decimal `json:"max_curve_round_trip_fraction"`
 }
 
 func ApprovedPaperPolicy() PaperPolicy {
@@ -36,7 +43,59 @@ func ApprovedPaperPolicy() PaperPolicy {
 		PresaleFraction: decimal.RequireFromString("0.01"), DEXFraction: decimal.RequireFromString("0.01"),
 		CurveFraction: decimal.RequireFromString("0.01"), CEXFraction: decimal.RequireFromString("0.10"), CEXRiskFraction: decimal.RequireFromString("0.005"),
 		DailyHaltFraction: decimal.RequireFromString("0.02"), DrawdownHaltFraction: decimal.RequireFromString("0.08"),
-		CallsPerWIBDay: 12, MaxOutputTokens: 2048, DecisionTTLSeconds: 300, ReviewIntervalSeconds: 300}
+		CallsPerWIBDay: 12, MaxOutputTokens: 2048, DecisionTTLSeconds: 300, ReviewIntervalSeconds: 300,
+		MaxTaxFraction: decimal.RequireFromString("0.05"), MaxTopHolderFraction: decimal.RequireFromString("0.10"),
+		MaxTop10HolderFraction: decimal.RequireFromString("0.50"), MinHolderCount: 50,
+		MinLiquidityUSD: decimal.NewFromInt(10000), MaxCurveRoundTripFraction: decimal.RequireFromString("0.05")}
+}
+
+// ExitReasons applies the approved tax, holder, liquidity and curve-cost limits to
+// a DEX or curve listing. Missing or malformed facts hold; they are never read as safe.
+func (p PaperPolicy) ExitReasons(c Candidate) []string {
+	var reasons []string
+	value := func(key string) (decimal.Decimal, bool) {
+		d, err := decimal.NewFromString(c.Facts[key])
+		return d, err == nil && !d.IsNegative()
+	}
+	atMost := func(key string, v decimal.Decimal, ok bool, limit decimal.Decimal) {
+		if !ok {
+			reasons = append(reasons, key+"_unknown")
+		} else if v.GreaterThan(limit) {
+			reasons = append(reasons, key+"_above_policy")
+		}
+	}
+	for _, key := range []string{"buy_tax", "sell_tax"} {
+		v, ok := value(key)
+		atMost(key, v, ok, p.MaxTaxFraction)
+	}
+	v, ok := value("top_holder_fraction")
+	atMost("top_holder_fraction", v, ok, p.MaxTopHolderFraction)
+	v, ok = value("top10_holder_fraction")
+	atMost("top10_holder_fraction", v, ok, p.MaxTop10HolderFraction)
+	if v, ok = value("holder_count"); !ok {
+		reasons = append(reasons, "holder_count_unknown")
+	} else if v.LessThan(decimal.NewFromInt(int64(p.MinHolderCount))) {
+		reasons = append(reasons, "holder_count_below_policy")
+	}
+	switch c.Kind {
+	case "dex":
+		if v, ok = value("liquidity_usd"); !ok {
+			reasons = append(reasons, "liquidity_usd_unknown")
+		} else if v.LessThan(p.MinLiquidityUSD) {
+			reasons = append(reasons, "liquidity_usd_below_policy")
+		}
+	case "curve":
+		// Gas is spread over the largest curve position the policy allows. Token taxes are
+		// added on top: Helper3's sell estimate for 2–3% tax tokens was only 0.09% below an
+		// untaxed token on 2026-11-14, so it does not appear to include them.
+		curve, curveOK := value("curve_round_trip_cost_fraction")
+		gas, gasOK := value("curve_round_trip_gas_usdt")
+		buy, buyOK := value("buy_tax")
+		sell, sellOK := value("sell_tax")
+		cost := curve.Add(gas.Div(p.InitialUSDT.Mul(p.CurveFraction))).Add(buy).Add(sell)
+		atMost("curve_round_trip_cost", cost, curveOK && gasOK && buyOK && sellOK, p.MaxCurveRoundTripFraction)
+	}
+	return reasons
 }
 
 func (p PaperPolicy) Validate() error {

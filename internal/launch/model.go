@@ -189,6 +189,11 @@ func Verify(c Candidate, now time.Time, sourceGaps []string) Review {
 			}
 		}
 		for _, key := range []string{"is_honeypot", "cannot_sell_all", "is_blacklisted"} {
+			// GoPlus only reports cannot_sell_all once a token trades on a DEX; on the
+			// curve the manager's sell estimate for the bought amount is the exit check.
+			if key == "cannot_sell_all" && c.Kind == "curve" && c.Facts["curve_sell_funds_wei"] != "" {
+				continue
+			}
 			if c.Facts[key] == "1" {
 				reject(key)
 			} else if c.Facts[key] != "0" {
@@ -203,7 +208,13 @@ func Verify(c Candidate, now time.Time, sourceGaps []string) Review {
 		if c.Facts["is_open_source"] != "1" {
 			hold("contract_source_not_verified")
 		}
-		hold("holder_liquidity_and_exit_policy_pending")
+		if c.Kind == "presale" {
+			hold("holder_liquidity_and_exit_policy_pending")
+		} else {
+			for _, reason := range ApprovedPaperPolicy().ExitReasons(c) {
+				hold(reason)
+			}
+		}
 	}
 	r.Reasons = append(r.Reasons, "entry_disabled_until_p4_3_and_p4_4")
 	slices.Sort(r.Reasons)

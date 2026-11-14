@@ -325,6 +325,28 @@ func TestScannerCannotOverwriteOnchainProofAndRPCFailureStaysUnknown(t *testing.
 	}
 }
 
+func TestGoPlusHoldersSkipPoolLockedAndDeadButKeepHiddenTail(t *testing.T) {
+	pool := "0x" + strings.Repeat("ab", 20)
+	holder := func(addr, percent string, locked int) string {
+		return fmt.Sprintf(`{"address":"%s","percent":"%s","is_locked":%d}`, addr, percent, locked)
+	}
+	list := []string{holder(pool, "0.40", 0), holder(deadAddress, "0.20", 1), holder("0x"+strings.Repeat("11", 20), "0.08", 0)}
+	for i := range 7 {
+		list = append(list, holder(fmt.Sprintf("0x%040x", i+1), "0.01", 0))
+	}
+	c := Candidate{Kind: "dex", ExternalID: pool, Facts: map[string]string{}}
+	goplusHolders(&c, json.RawMessage("["+strings.Join(list, ",")+"]"))
+	// 0.08 + 7×0.01 seen, plus two hidden holders of at most 0.01 replacing the pool and dead slots.
+	if c.Facts["top_holder_fraction"] != "0.080000" || c.Facts["top10_holder_fraction"] != "0.170000" {
+		t.Fatalf("bad concentration: %+v", c.Facts)
+	}
+	c = Candidate{Kind: "dex", ExternalID: pool, Facts: map[string]string{}}
+	goplusHolders(&c, json.RawMessage(`[{"address":"`+pool+`","percent":"bad"}]`))
+	if c.Facts["top_holder_fraction"] != "" {
+		t.Fatal("malformed holder list produced concentration facts")
+	}
+}
+
 func jsonReply(body string) (*http.Response, error) {
 	return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(body))}, nil
 }
@@ -395,6 +417,9 @@ func TestCurveDiscoveryConfirmsLeadLogsThroughHelper(t *testing.T) {
 			if req.URL.Host == "api.gopluslabs.io" {
 				return jsonReply(`{"code":0}`)
 			}
+			if req.URL.Host == "data-api.binance.vision" {
+				return jsonReply(`{"symbol":"BNBUSDT","askPrice":"600"}`)
+			}
 			var body struct {
 				Method string
 				Params []json.RawMessage
@@ -403,6 +428,13 @@ func TestCurveDiscoveryConfirmsLeadLogsThroughHelper(t *testing.T) {
 			if req.URL.Host == "bsc-rpc.publicnode.com" {
 				if body.Method != "eth_getLogs" {
 					t.Fatalf("lead node asked for %s", body.Method)
+				}
+				if strings.Contains(string(body.Params[0]), transferTopic) {
+					// Mint 1000 to the manager, which sells 60 to a buyer and 40 to a second buyer.
+					transfer := func(from, to, amount string) string {
+						return `{"address":"` + token + `","topics":["` + transferTopic + `","0x` + abiWord(from) + `","0x` + abiWord(to) + `"],"data":"0x` + abiWord(amount) + `","blockNumber":"0x10"}`
+					}
+					return reply(`[` + transfer("0", fourMemeManager[2:], "3e8") + `,` + transfer(fourMemeManager[2:], strings.Repeat("11", 20), "3c") + `,` + transfer(fourMemeManager[2:], strings.Repeat("22", 20), "28") + `]`)
 				}
 				data := "0x" + abiWord(testAddress[2:]) + abiWord(token[2:]) + strings.Repeat(abiWord("0"), 6)
 				return reply(`[{"address":"` + testAddress + `","topics":["` + tokenCreateTopic + `"],"data":"` + data + `","blockNumber":"0x10"},
@@ -417,6 +449,21 @@ func TestCurveDiscoveryConfirmsLeadLogsThroughHelper(t *testing.T) {
 				return reply(`"0x6000"`)
 			case "eth_getLogs":
 				t.Fatal("logs requested from the state node")
+			case "eth_gasPrice":
+				return reply(`"0x2faf080"`) // 0.05 gwei
+			}
+			call := ""
+			if len(body.Params) > 0 {
+				call = string(body.Params[0])
+			}
+			switch {
+			case strings.Contains(call, tokenInfos):
+				// TaxToken9: creator type 9 in template bits 10–15.
+				return reply(`"0x` + abiWord(token[2:]) + abiWord("0") + abiWord("2400") + strings.Repeat(abiWord("0"), 10) + `"`)
+			case strings.Contains(call, feeRateBuy):
+				return reply(`"0x` + abiWord("2") + `"`)
+			case strings.Contains(call, feeRateSell):
+				return reply(`"0x` + abiWord("3") + `"`)
 			}
 			if len(body.Params) > 0 && strings.Contains(string(body.Params[0]), tryBuy) {
 				// 1000 tokens for cost 99 + fee 1.
@@ -444,11 +491,44 @@ func TestCurveDiscoveryConfirmsLeadLogsThroughHelper(t *testing.T) {
 	if c.Facts["curve_buy_tokens"] != "1000" || c.Facts["curve_buy_paid_wei"] != "100" || c.Facts["curve_sell_funds_wei"] != "96" || c.Facts["curve_round_trip_cost_fraction"] != "0.040000" {
 		t.Fatalf("bad curve round-trip quote: %+v", c.Facts)
 	}
+	// 0.05 gwei × 460k gas × 600 USDT/BNB.
+	if c.Facts["curve_creator_type"] != "9" || c.Facts["buy_tax"] != "0.0200" || c.Facts["sell_tax"] != "0.0300" || c.Facts["curve_round_trip_gas_usdt"] != "0.013800" {
+		t.Fatalf("bad curve tax/gas facts: %+v", c.Facts)
+	}
+	if c.Facts["holder_count"] != "2" || c.Facts["top_holder_fraction"] != "0.060000" || c.Facts["top10_holder_fraction"] != "0.100000" || c.Facts["holder_source"] != "chain_transfers" {
+		t.Fatalf("manager inventory counted as a holder: %+v", c.Facts)
+	}
 	r := Verify(c, time.Now().UTC(), nil)
-	if r.Status != "held" || r.EntryAllowed || !slices.Contains(r.Reasons, "holder_liquidity_and_exit_policy_pending") || slices.Contains(r.Reasons, "curve_manager_not_confirmed") || slices.Contains(r.Reasons, "trading_start_not_verified") {
+	if r.Status != "held" || r.EntryAllowed || !slices.Contains(r.Reasons, "holder_count_below_policy") || slices.Contains(r.Reasons, "buy_tax_above_policy") ||
+		slices.Contains(r.Reasons, "curve_manager_not_confirmed") || slices.Contains(r.Reasons, "trading_start_not_verified") || slices.Contains(r.Reasons, "cannot_sell_all_unknown") {
 		t.Fatalf("unexpected curve review: %+v", r)
 	}
 	if r = Verify(discover(testAddress).Candidates[0], time.Now().UTC(), nil); !slices.Contains(r.Reasons, "curve_manager_not_confirmed") {
 		t.Fatalf("foreign manager accepted: %+v", r)
+	}
+}
+
+func TestCurveTaxByCreatorType(t *testing.T) {
+	token := "0x" + strings.Repeat("ab", 20)
+	for template, want := range map[string]string{"0": "0.0000/0.0000", "1400": "0.0150/0.0150", "3f": "0.0000/0.0000", "1c00": "unrecognised"} {
+		c := NewClient(catalyst.Archive{Dir: t.TempDir()})
+		c.limiter = rate.NewLimiter(rate.Inf, 1)
+		c.HTTP = &http.Client{Transport: roundTrip(func(req *http.Request) (*http.Response, error) {
+			body, _ := io.ReadAll(req.Body)
+			result := abiWord(token[2:]) + abiWord("0") + abiWord(template) + strings.Repeat(abiWord("0"), 10)
+			if strings.Contains(string(body), feeRate) {
+				result = abiWord("96") // 150 basis points
+			}
+			return jsonReply(`{"jsonrpc":"2.0","id":1,"result":"0x` + result + `"}`)
+		})}
+		candidate := Candidate{Facts: map[string]string{}}
+		c.curveTax(context.Background(), &candidate, token, abiWord(token[2:]), "0x1")
+		got := candidate.Facts["buy_tax"] + "/" + candidate.Facts["sell_tax"]
+		if slices.Contains(candidate.Gaps, "curve_creator_type_unrecognised") {
+			got = "unrecognised"
+		}
+		if got != want {
+			t.Fatalf("template %s: got %s, want %s", template, got, want)
+		}
 	}
 }
