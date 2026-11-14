@@ -1,7 +1,7 @@
 # Plan 4 research collector: launch CLI plus the pinned Spider binary for presale pages.
 # SPIDER_IMAGE is any image holding spider_cli 2.53.9-p3.1 at SPIDER_PATH; the server
 # passes its local ana-scout image so builds need no registry access.
-ARG SPIDER_IMAGE=ghcr.io/rizz404/trading-bot-spider@sha256:480faea43abdb2b2e8bd6cf136ecd250e8c37039e925f0bdb38f14385a318e19
+ARG SPIDER_IMAGE=ghcr.io/rizz404/crypto-launch-bot-spider@sha256:092dfbbddd5faad3ca8ca99abd47ed7e88c52b8355b6e64464258a58ac8ae5e0
 ARG SPIDER_PATH=/spider
 FROM ${SPIDER_IMAGE} AS spider
 
