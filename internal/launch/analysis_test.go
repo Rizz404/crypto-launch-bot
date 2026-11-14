@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -229,7 +228,7 @@ func TestDailyQuotaSurvivesFailuresAndWIBBoundary(t *testing.T) {
 		}
 	}
 	if err := failedArchive.ReserveResearchInference(time.Now()); err == nil {
-		t.Fatal(fmt.Sprint("failed call refunded a quota slot"))
+		t.Fatal("failed call refunded a quota slot")
 	}
 }
 

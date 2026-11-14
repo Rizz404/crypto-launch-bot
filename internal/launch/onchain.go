@@ -147,7 +147,7 @@ func (c *Client) geckoPool(ctx context.Context, candidate *Candidate, pool, a0, 
 	if err != nil || !strings.EqualFold(data.Data.Attributes.Address, pool) || rel["dex"].Data.ID != "pancakeswap_v2" {
 		return id, false
 	}
-	if be != nil || qe != nil || !((base == a0 && quote == a1) || (base == a1 && quote == a0)) {
+	if be != nil || qe != nil || !samePair(base, quote, a0, a1) {
 		candidate.Gaps = append(candidate.Gaps, "provider_pair_identity_conflict")
 		return id, false
 	}
@@ -161,6 +161,11 @@ func (c *Client) geckoPool(ctx context.Context, candidate *Candidate, pool, a0, 
 	candidate.Facts["price_usd"] = data.Data.Attributes.PriceUSD
 	candidate.Facts["liquidity_usd"] = data.Data.Attributes.Reserve
 	return id, true
+}
+
+// samePair reports whether provider tokens x, y are the on-chain pair a, b in either order.
+func samePair(x, y, a, b string) bool {
+	return x == a && y == b || x == b && y == a
 }
 
 func poolWindow(count uint64, limit int, next *uint64) (uint64, uint64, error) {
@@ -259,7 +264,7 @@ func (c *Client) discoverDEX(ctx context.Context, limit int, next *uint64) Batch
 				}
 				base, be := address(pair.BaseToken.Address)
 				quote, qe := address(pair.QuoteToken.Address)
-				if be != nil || qe != nil || !((base == a0 && quote == a1) || (base == a1 && quote == a0)) {
+				if be != nil || qe != nil || !samePair(base, quote, a0, a1) {
 					candidate.Gaps = append(candidate.Gaps, "provider_pair_identity_conflict")
 					continue
 				}
