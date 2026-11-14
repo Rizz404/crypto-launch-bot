@@ -24,6 +24,79 @@ func spiderJSON(t *testing.T, pages ...spiderPage) []byte {
 	return out.Bytes()
 }
 
+// fakeSpiderFixture drives a copy of this test binary acting as the Spider CLI,
+// so subprocess tests run on every OS without a shell.
+type fakeSpiderFixture struct {
+	Version string            `json:"version"`
+	Limit   string            `json:"limit"`
+	Pages   map[string]string `json:"pages"`
+	Calls   string            `json:"calls,omitempty"`
+}
+
+const fakeSpiderName = "fake-spider"
+
+func TestMain(m *testing.M) {
+	if strings.HasPrefix(filepath.Base(os.Args[0]), fakeSpiderName) {
+		os.Exit(runFakeSpider(os.Args[1:]))
+	}
+	os.Exit(m.Run())
+}
+
+func runFakeSpider(args []string) int {
+	self, err := os.Executable()
+	if err != nil {
+		return 10
+	}
+	raw, err := os.ReadFile(filepath.Join(filepath.Dir(self), fakeSpiderName+".json"))
+	var f fakeSpiderFixture
+	if err != nil || json.Unmarshal(raw, &f) != nil {
+		return 10
+	}
+	if len(args) == 1 && args[0] == "--version" {
+		fmt.Println("spider_cli " + f.Version)
+		return 0
+	}
+	if os.Getenv("TB_CATALYST_API_KEY") != "" || os.Getenv("HTTPS_PROXY") != "" {
+		return 11
+	}
+	if len(args) != 17 || args[0] != "--url" || args[3] != "--http" || args[5] != "--limit" || args[6] != f.Limit || args[15] != "scrape" || args[16] != "--output-html" {
+		return 15
+	}
+	if f.Calls != "" {
+		calls, err := os.OpenFile(f.Calls, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		if err != nil {
+			return 12
+		}
+		_, err = fmt.Fprintln(calls, args[1])
+		if closeErr := calls.Close(); err != nil || closeErr != nil {
+			return 12
+		}
+	}
+	page, ok := f.Pages[args[1]]
+	if !ok {
+		return 17
+	}
+	fmt.Println(page)
+	return 0
+}
+
+// fakeSpider copies the running test binary under a name that TestMain
+// recognises and writes its fixture next to it.
+func fakeSpider(t *testing.T, f fakeSpiderFixture) string {
+	t.Helper()
+	self, err := os.Executable()
+	require.NoError(t, err)
+	data, err := os.ReadFile(self)
+	require.NoError(t, err)
+	dir := t.TempDir()
+	binary := filepath.Join(dir, fakeSpiderName+filepath.Ext(self))
+	require.NoError(t, os.WriteFile(binary, data, 0700))
+	raw, err := json.Marshal(f)
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(filepath.Join(dir, fakeSpiderName+".json"), raw, 0600))
+	return binary
+}
+
 func testSpiderPage() spiderPage {
 	return spiderPage{URL: testPolicy().Sources[0].URL, StatusCode: 200,
 		Headers: map[string]string{"content-type": "text/html; charset=utf-8"}, Content: "<main>Timing is TBA.</main>"}
@@ -146,24 +219,10 @@ func TestRejectedArchiveRecordInvalidatesPreviousSnapshot(t *testing.T) {
 }
 
 func TestSpiderSubprocessAndCache(t *testing.T) {
-	// A shell fixture exercises argument/env handling without a public crawl.
+	// A fake binary exercises argument/env handling without a public crawl.
 	dir := t.TempDir()
-	binary := filepath.Join(dir, "spider")
-	payload := string(spiderJSON(t, testSpiderPage()))
-	script := `#!/bin/sh
-if [ "$1" = "--version" ]; then
-  printf 'spider_cli 2.53.9-p3.1\n'
-  exit 0
-fi
-[ -z "$TB_CATALYST_API_KEY" ] || exit 11
-[ -z "$HTTPS_PROXY" ] || exit 12
-[ "$1" = "--url" ] || exit 13
-[ "$4" = "--http" ] || exit 14
-[ "$6" = "--limit" ] && [ "$7" = "5" ] || exit 15
-[ "${16}" = "scrape" ] && [ "${17}" = "--output-html" ] || exit 16
-printf '%s\n' '` + payload + `'
-`
-	require.NoError(t, os.WriteFile(binary, []byte(script), 0700))
+	binary := fakeSpider(t, fakeSpiderFixture{Version: SpiderVersion, Limit: "5",
+		Pages: map[string]string{testSpiderPage().URL: string(spiderJSON(t, testSpiderPage()))}})
 	t.Setenv("TB_CATALYST_API_KEY", "fixture-secret")
 	t.Setenv("HTTPS_PROXY", "http://must-not-be-inherited.invalid")
 	p := testPolicy()
@@ -195,8 +254,7 @@ func TestSpiderRefusesMissingOrWrongBinary(t *testing.T) {
 	}
 	for _, version := range []string{"0.0.0", "2.53.9"} {
 		t.Run(version, func(t *testing.T) {
-			binary := filepath.Join(t.TempDir(), "spider")
-			require.NoError(t, os.WriteFile(binary, []byte("#!/bin/sh\nprintf 'spider_cli "+version+"\\n'\n"), 0700))
+			binary := fakeSpider(t, fakeSpiderFixture{Version: version})
 			c, err := NewSpiderCollector(testPolicy(), Archive{Dir: t.TempDir()}, binary)
 			require.NoError(t, err)
 			ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
@@ -226,24 +284,14 @@ func TestSpiderArticleLinksSeedOrderSameHost(t *testing.T) {
 
 func TestSpiderScrapesSelectedArticles(t *testing.T) {
 	dir := t.TempDir()
-	binary := filepath.Join(dir, "spider")
 	seed := testSpiderPage()
 	seed.Content = `<a href="/2026/10/22/new">n</a><a href="/category/x">c</a>`
 	article := testSpiderPage()
 	article.URL, article.Content = "https://example.org/2026/10/22/new", "<main>Upgrade article</main>"
-	script := `#!/bin/sh
-if [ "$1" = "--version" ]; then
-  printf 'spider_cli 2.53.9-p3.1\n'
-  exit 0
-fi
-[ "$7" = "1" ] || exit 15
-case "$2" in
-  https://example.org/events) printf '%s\n' '` + string(spiderJSON(t, seed)) + `' ;;
-  https://example.org/2026/10/22/new) printf '%s\n' '` + string(spiderJSON(t, article)) + `' ;;
-  *) exit 17 ;;
-esac
-`
-	require.NoError(t, os.WriteFile(binary, []byte(script), 0700))
+	binary := fakeSpider(t, fakeSpiderFixture{Version: SpiderVersion, Limit: "1", Pages: map[string]string{
+		"https://example.org/events":         string(spiderJSON(t, seed)),
+		"https://example.org/2026/10/22/new": string(spiderJSON(t, article)),
+	}})
 	p := testPolicy()
 	p.Sources[0].ArticlePattern = `^/\d{4}/\d{2}/\d{2}/[a-z0-9-]+$`
 	require.NoError(t, p.Validate())
@@ -261,8 +309,7 @@ esac
 }
 
 func TestSpiderLinkedScrapesOtherHostPagesNewestFirst(t *testing.T) {
-	dir := t.TempDir()
-	binary, calls := filepath.Join(dir, "spider"), filepath.Join(dir, "calls")
+	calls := filepath.Join(t.TempDir(), "calls")
 	lead := Source{ID: "lead", URL: "https://t.example/s/channel"}
 	source := Source{ID: "sale", URL: "https://example.org/list", ArticlePattern: `^/sale/[a-z]+$`}
 	leadPage, old, fresh := testSpiderPage(), testSpiderPage(), testSpiderPage()
@@ -271,21 +318,11 @@ func TestSpiderLinkedScrapesOtherHostPagesNewestFirst(t *testing.T) {
 <a href="https://example.org/other">x</a><a href="/sale/relative">r</a><a href="https://example.org/sale/new?ref=1">n</a>`
 	old.URL, old.Content = "https://example.org/sale/old", "<main>Old sale</main>"
 	fresh.URL, fresh.Content = "https://example.org/sale/new", "<main>New sale</main>"
-	script := `#!/bin/sh
-if [ "$1" = "--version" ]; then
-  printf 'spider_cli 2.53.9-p3.1\n'
-  exit 0
-fi
-[ "$7" = "1" ] || exit 15
-printf '%s\n' "$2" >> '` + calls + `'
-case "$2" in
-  https://t.example/s/channel) printf '%s\n' '` + string(spiderJSON(t, leadPage)) + `' ;;
-  https://example.org/sale/old) printf '%s\n' '` + string(spiderJSON(t, old)) + `' ;;
-  https://example.org/sale/new) printf '%s\n' '` + string(spiderJSON(t, fresh)) + `' ;;
-  *) exit 17 ;;
-esac
-`
-	require.NoError(t, os.WriteFile(binary, []byte(script), 0700))
+	binary := fakeSpider(t, fakeSpiderFixture{Version: SpiderVersion, Limit: "1", Calls: calls, Pages: map[string]string{
+		"https://t.example/s/channel":  string(spiderJSON(t, leadPage)),
+		"https://example.org/sale/old": string(spiderJSON(t, old)),
+		"https://example.org/sale/new": string(spiderJSON(t, fresh)),
+	}})
 	c := &Collector{spiderBinary: binary, client: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
 		return response(404, "text/plain", ""), nil
 	})}}
