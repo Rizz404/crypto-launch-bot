@@ -65,6 +65,19 @@ func TestExitPolicyHoldsUnknownsAndLimits(t *testing.T) {
 	}
 }
 
+func TestCurveRoundTripCostSumsSpreadGasAndTaxes(t *testing.T) {
+	p := ApprovedPaperPolicy()
+	c := Candidate{Facts: map[string]string{"curve_round_trip_cost_fraction": "0.023288", "curve_round_trip_gas_usdt": "0.014232", "buy_tax": "0.02", "sell_tax": "0.03"}}
+	// 0.023288 + 0.014232/10 + 0.02 + 0.03
+	if cost, ok := p.CurveRoundTripCost(c); !ok || cost.StringFixed(6) != "0.074711" {
+		t.Fatalf("got %s ok=%v", cost, ok)
+	}
+	delete(c.Facts, "sell_tax")
+	if _, ok := p.CurveRoundTripCost(c); ok {
+		t.Fatal("missing tax treated as zero")
+	}
+}
+
 func TestPaperSizeIncludesCostsAndNeverEnablesEntry(t *testing.T) {
 	p := ApprovedPaperPolicy()
 	s := InitialPaperContext(testNow, p)

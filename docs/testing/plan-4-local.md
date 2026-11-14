@@ -98,6 +98,26 @@ lewat nama combo lulus, dilayani target pertama: `valid`, `REJECT`, 9,5 s,
 baru lulus smoke, belum analyze nyata. Fallback hanya untuk error layanan,
 bukan untuk jawaban yang ditolak validator.
 
+Sesudah user mengganti `.env.launch` ke `TB_LAUNCH_API_KEY` dan
+`TB_LAUNCH_MODEL=launch-research`, tiga analyze lewat CLI tanpa override:
+
+| Kandidat | Prompt | Hasil |
+|---|---|---|
+| Curve, held (holder) | v2 | Ditolak validator: Sonnet juga menulis `eip155:56/0x…` |
+| DEX, held (holder 95%, pajak unknown) | v2 | Valid, `REJECT`, menyebut batas policy yang dilanggar |
+| Curve, pajak 10%/10% | v3 | Valid, `REJECT`, memakai total biaya turunan 0,2247 |
+
+Dua model berbeda membuat salah ketik `asset_key` yang sama, jadi masalahnya
+di input: packet v2 hanya memuat bagian-bagian aset, bukan kuncinya. Prompt
+`launch-analyst-v3` menambah `asset_key` dan `derived.curve_round_trip_total_cost_fraction`
+di packet, dan meminta identitas disalin, bukan disusun ulang. Validator kini juga
+menolak packet yang `asset_key`-nya tidak cocok dengan kandidat. Kedua field
+memakai `omitempty`, supaya hash packet v2 yang sudah diarsipkan tidak berubah.
+Kesalahan ini sempat terjadi sebelum diperbaiki: `report` gagal dengan
+`archive checksum mismatch` pada arsip hari itu (ada test regresinya).
+
+Slot AI 14 November WIB terpakai 7 dari 12.
+
 ## Policy exit v3 dan data curve dari chain — 14 November 2026
 
 User menyetujui batas exit usulan agent dan memilih data holder curve dari

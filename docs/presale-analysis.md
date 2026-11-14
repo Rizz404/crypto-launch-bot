@@ -9,7 +9,8 @@ dicoba 13 November dan gagal sebelum mencapai model (lihat
 ## Policy yang dibekukan
 
 Versi **`launch-paper-v3`**, metode **`launch-evaluation-v1`**, prompt/schema
-**`launch-analyst-v2`**. v2 (13 November) hanya menambah `curve_fraction` 1%
+**`launch-analyst-v3`** (14 November: packet memuat `asset_key` persis dan total
+biaya curve turunan; schema keputusan tidak berubah). v2 (13 November) hanya menambah `curve_fraction` 1%
 untuk venue keempat; semua angka v1 yang dipilih user tidak berubah. User
 menyerahkan pilihan ini ke agent ("pilih yang best practice"), jadi angka 1%
 adalah keputusan agent yang meniru presale/DEX, bukan angka yang user sebut.

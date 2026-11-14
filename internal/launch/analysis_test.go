@@ -15,7 +15,7 @@ import (
 func decisionFixture() (AnalysisPacket, Decision) {
 	p := ApprovedPaperPolicy()
 	c := sampleCEX()
-	packet := AnalysisPacket{Version: AnalysisVersion, At: testNow, Policy: p, PolicyHash: catalyst.Hash(p), Context: InitialPaperContext(testNow, p),
+	packet := AnalysisPacket{Version: AnalysisVersion, At: testNow, Policy: p, PolicyHash: catalyst.Hash(p), AssetKey: c.Asset.Key(), Context: InitialPaperContext(testNow, p),
 		Verification: Verify(c, testNow, nil), Evidence: []analysisEvidence{{ID: "proof", At: testNow, Text: "The first trade is available and the market is open."}}}
 	d := Decision{CandidateID: c.ID, CandidateRevision: c.Revision, AssetKey: c.Asset.Key(), PolicyHash: packet.PolicyHash, Action: "PROPOSE_ENTRY",
 		Thesis: "new venue liquidity", Counterargument: "price can fall", Invalidation: "liquidity disappears", HoldRationale: "review if thesis persists", Reason: "research proposal",
@@ -29,6 +29,7 @@ func TestDecisionRejectsEscalationFabricationAndExpiry(t *testing.T) {
 		change func(*AnalysisPacket, *Decision)
 	}{
 		{"wrong_asset", func(_ *AnalysisPacket, d *Decision) { d.AssetKey = "different" }},
+		{"tampered_packet_asset", func(p *AnalysisPacket, d *Decision) { p.AssetKey, d.AssetKey = "different", "different" }},
 		{"wrong_revision", func(_ *AnalysisPacket, d *Decision) { d.CandidateRevision = "old" }},
 		{"wrong_policy", func(_ *AnalysisPacket, d *Decision) { d.PolicyHash = "larger-risk" }},
 		{"fabricated_quote", func(_ *AnalysisPacket, d *Decision) { d.Citations[0].Quote = "guaranteed profit" }},
@@ -172,7 +173,10 @@ func TestInferenceIsArchivedDeduplicatedAndExpires(t *testing.T) {
 		if err := json.Unmarshal(input, &p); err != nil {
 			t.Fatal(err)
 		}
-		d := Decision{CandidateID: p.Verification.Candidate.ID, CandidateRevision: p.Verification.Candidate.Revision, AssetKey: p.Verification.Candidate.Asset.Key(), PolicyHash: p.PolicyHash, Action: "WATCH", Reason: "more evidence needed", Citations: []catalyst.Citation{{EvidenceID: p.Evidence[0].ID, Quote: "market is open"}}}
+		if p.AssetKey == "" || p.AssetKey != p.Verification.Candidate.Asset.Key() {
+			t.Fatalf("packet does not carry the exact asset key: %q", p.AssetKey)
+		}
+		d := Decision{CandidateID: p.Verification.Candidate.ID, CandidateRevision: p.Verification.Candidate.Revision, AssetKey: p.AssetKey, PolicyHash: p.PolicyHash, Action: "WATCH", Reason: "more evidence needed", Citations: []catalyst.Citation{{EvidenceID: p.Evidence[0].ID, Quote: "market is open"}}}
 		b, _ := json.Marshal(d)
 		return string(b), "mock-served", 100, 100, nil
 	})
@@ -232,6 +236,28 @@ func TestDailyQuotaSurvivesFailuresAndWIBBoundary(t *testing.T) {
 	}
 }
 
+func TestArchivedV2PacketStillReadsAfterPacketFieldsWereAdded(t *testing.T) {
+	a := catalyst.Archive{Dir: t.TempDir()}
+	// The v2 packet layout, archived before asset_key and derived existed.
+	old := struct {
+		Version      string             `json:"version"`
+		At           time.Time          `json:"at"`
+		Policy       PaperPolicy        `json:"policy"`
+		PolicyHash   string             `json:"policy_hash"`
+		Verification Review             `json:"verification"`
+		Context      PaperContext       `json:"context"`
+		Evidence     []analysisEvidence `json:"evidence"`
+	}{"launch-analyst-v2", testNow, ApprovedPaperPolicy(), "h", Review{Status: "held"}, InitialPaperContext(testNow, ApprovedPaperPolicy()), []analysisEvidence{}}
+	id, err := a.Put("launch-ai-inputs", old)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var packet AnalysisPacket
+	if err = a.Read("launch-ai-inputs", id, &packet); err != nil {
+		t.Fatalf("old packet unreadable: %v", err)
+	}
+}
+
 func TestCurveEntryProposalNeedsBondingCurveState(t *testing.T) {
 	for state, wanted := range map[string]string{"bonding_curve": "no longer eligible", "graduated": "bonding curve"} {
 		p, d := decisionFixture()
@@ -239,7 +265,7 @@ func TestCurveEntryProposalNeedsBondingCurveState(t *testing.T) {
 		c.Kind, c.Venue, c.State, c.TimeBasis = "curve", "four-meme", state, "onchain_creation_block"
 		c.Asset = Asset{Chain: "eip155:56", Address: testAddress}
 		c.Seal()
-		d.CandidateID, d.CandidateRevision, d.AssetKey = c.ID, c.Revision, c.Asset.Key()
+		d.CandidateID, d.CandidateRevision, d.AssetKey, p.AssetKey = c.ID, c.Revision, c.Asset.Key(), c.Asset.Key()
 		// The packet status stays accepted, so a live curve token passes the lifecycle rule
 		// and stops at fresh verification; a graduated one stops at the lifecycle rule.
 		if err := ValidateDecision(d, p, testNow); err == nil || !strings.Contains(err.Error(), wanted) {

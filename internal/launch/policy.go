@@ -85,17 +85,28 @@ func (p PaperPolicy) ExitReasons(c Candidate) []string {
 			reasons = append(reasons, "liquidity_usd_below_policy")
 		}
 	case "curve":
-		// Gas is spread over the largest curve position the policy allows. Token taxes are
-		// added on top: Helper3's sell estimate for 2–3% tax tokens was only 0.09% below an
-		// untaxed token on 2026-11-14, so it does not appear to include them.
-		curve, curveOK := value("curve_round_trip_cost_fraction")
-		gas, gasOK := value("curve_round_trip_gas_usdt")
-		buy, buyOK := value("buy_tax")
-		sell, sellOK := value("sell_tax")
-		cost := curve.Add(gas.Div(p.InitialUSDT.Mul(p.CurveFraction))).Add(buy).Add(sell)
-		atMost("curve_round_trip_cost", cost, curveOK && gasOK && buyOK && sellOK, p.MaxCurveRoundTripFraction)
+		cost, ok := p.CurveRoundTripCost(c)
+		atMost("curve_round_trip_cost", cost, ok, p.MaxCurveRoundTripFraction)
 	}
 	return reasons
+}
+
+// CurveRoundTripCost is the curve spread plus gas spread over the largest curve position
+// the policy allows, plus buy and sell tax. Taxes are added on top: Helper3's sell estimate
+// for 2–3% tax tokens was only 0.09% below an untaxed token on 2026-11-14.
+func (p PaperPolicy) CurveRoundTripCost(c Candidate) (decimal.Decimal, bool) {
+	total := decimal.Zero
+	for _, key := range []string{"curve_round_trip_cost_fraction", "curve_round_trip_gas_usdt", "buy_tax", "sell_tax"} {
+		v, err := decimal.NewFromString(c.Facts[key])
+		if err != nil || v.IsNegative() {
+			return decimal.Zero, false
+		}
+		if key == "curve_round_trip_gas_usdt" {
+			v = v.Div(p.InitialUSDT.Mul(p.CurveFraction))
+		}
+		total = total.Add(v)
+	}
+	return total, true
 }
 
 func (p PaperPolicy) Validate() error {
