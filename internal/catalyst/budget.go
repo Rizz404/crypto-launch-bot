@@ -40,13 +40,7 @@ func (a Archive) reserveInference(now time.Time) error {
 			return err
 		}
 		for _, path := range []string{dir, filepath.Dir(dir), a.Dir} {
-			d, err := os.Open(path)
-			if err != nil {
-				return err
-			}
-			err = d.Sync()
-			_ = d.Close()
-			if err != nil {
+			if err = SyncDir(path); err != nil {
 				return err
 			}
 		}

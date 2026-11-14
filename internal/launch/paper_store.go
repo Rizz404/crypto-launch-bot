@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
-	"syscall"
 
 	"github.com/rizz404/crypto-launch-bot/internal/catalyst"
 )
@@ -97,10 +96,10 @@ func (store PaperStore) Step(ctx context.Context, step PaperStep) (PaperState, e
 	defer func() { _ = f.Close() }()
 	// Nonblocking: another worker retries through the coordinator, not while
 	// holding a partially modified state or an unbounded shell wait.
-	if err = syscall.Flock(int(f.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
+	if err = catalyst.LockFile(f, false); err != nil {
 		return PaperState{}, errors.New("paper journal is busy")
 	}
-	defer func() { _ = syscall.Flock(int(f.Fd()), syscall.LOCK_UN) }()
+	defer func() { _ = catalyst.UnlockFile(f) }()
 	s, err := store.Load()
 	if err != nil {
 		return s, err

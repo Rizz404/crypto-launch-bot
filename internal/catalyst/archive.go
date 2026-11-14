@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
-	"syscall"
 )
 
 // Archive stores immutable, content-addressed research records, never funds.
@@ -42,10 +41,10 @@ func (a Archive) Put(kind string, value any) (string, error) {
 		return "", err
 	}
 	defer func() { _ = lock.Close() }()
-	if err = syscall.Flock(int(lock.Fd()), syscall.LOCK_EX); err != nil {
+	if err = LockFile(lock, true); err != nil {
 		return "", err
 	}
-	defer func() { _ = syscall.Flock(int(lock.Fd()), syscall.LOCK_UN) }()
+	defer func() { _ = UnlockFile(lock) }()
 	dir := filepath.Join(a.Dir, kind)
 	target := filepath.Join(dir, id+".json")
 	if st, statErr := os.Stat(target); statErr == nil && st.Size() > maxArchiveBytes {
@@ -84,21 +83,10 @@ func (a Archive) Put(kind string, value any) (string, error) {
 	if err = os.Link(f.Name(), target); err != nil && !errors.Is(err, fs.ErrExist) {
 		return "", err
 	}
-	d, err := os.Open(dir)
-	if err != nil {
+	if err = SyncDir(dir); err != nil {
 		return "", err
 	}
-	defer func() { _ = d.Close() }()
-	if err = d.Sync(); err != nil {
-		return "", err
-	}
-	root, err := os.Open(a.Dir)
-	if err != nil {
-		return "", err
-	}
-	err = root.Sync()
-	_ = root.Close()
-	if err != nil {
+	if err = SyncDir(a.Dir); err != nil {
 		return "", err
 	}
 	return id, nil
@@ -134,12 +122,12 @@ func (a Archive) capacity(extra int64) error {
 	if err != nil {
 		return err
 	}
-	var st syscall.Statfs_t
-	if err = syscall.Statfs(a.Dir, &st); err != nil {
+	available, total, err := diskSpace(a.Dir)
+	if err != nil {
 		return err
 	}
-	reserve := min(int64(1<<30), int64(st.Blocks)*st.Bsize/10)
-	if int64(st.Bavail)*st.Bsize < reserve+extra {
+	reserve := min(int64(1<<30), total/10)
+	if available < reserve+extra {
 		return errors.New("archive filesystem headroom exhausted")
 	}
 	return nil

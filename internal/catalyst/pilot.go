@@ -474,10 +474,5 @@ func persistJSON(dir, name string, value any) error {
 	if err = os.Rename(f.Name(), filepath.Join(dir, name)); err != nil {
 		return err
 	}
-	d, err := os.Open(dir)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = d.Close() }()
-	return d.Sync()
+	return SyncDir(dir)
 }

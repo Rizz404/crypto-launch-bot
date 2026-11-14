@@ -381,13 +381,7 @@ func reserveAnalysis(archive catalyst.Archive, id string) error {
 		return err
 	}
 	for _, path := range []string{dir, archive.Dir} {
-		d, err := os.Open(path)
-		if err != nil {
-			return err
-		}
-		err = d.Sync()
-		_ = d.Close()
-		if err != nil {
+		if err = catalyst.SyncDir(path); err != nil {
 			return fmt.Errorf("persist inference marker: %w", err)
 		}
 	}

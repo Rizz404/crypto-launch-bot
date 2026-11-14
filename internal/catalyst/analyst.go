@@ -201,20 +201,14 @@ func (a *Analyst) analyze(ctx context.Context, archive Archive, policy Policy, e
 	if err = os.MkdirAll(dir, 0700); err != nil {
 		return r, err
 	}
-	lock, err := os.OpenFile(dir+"/"+r.ID, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
+	lock, err := os.OpenFile(filepath.Join(dir, r.ID), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
 	if err != nil {
 		return r, ErrDuplicateInference
 	}
 	if err = lock.Close(); err != nil {
 		return r, err
 	}
-	directory, err := os.Open(dir)
-	if err != nil {
-		return r, err
-	}
-	err = directory.Sync()
-	_ = directory.Close()
-	if err != nil {
+	if err = SyncDir(dir); err != nil {
 		return r, err
 	}
 	if err = archive.reserveInference(now); err != nil {
