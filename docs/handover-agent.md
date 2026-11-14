@@ -44,6 +44,11 @@
   lulus, 35 menunggu kuota hari berikutnya. Lihat
   [runtime](presale-runtime.md#pass-terjadwal-di-server) dan
   [checkpoint](testing/plan-4-local.md#pass-terjadwal-dan-set-evaluasi-14-november-lanjutan).
+- 14 November, CI: image kini dipublikasikan sebagai `ghcr.io/rizz404/crypto-launch-bot`
+  (bot) dan `ghcr.io/rizz404/crypto-launch-bot-launch` (Plan 4 + Spider); Spider
+  dari `crypto-launch-bot-spider@sha256:092dfbbd…`. Job container yang gagal sejak
+  12 November karena izin package repo lama kini hijau (run `43613585398`). Image
+  lama `ana-core`/`ana-scout` milik `trading-bot` dan server tetap memakainya.
 - (Historis, perangkat kantor 13 November) `analyze` gagal di transport karena
   `TB_CATALYST_BASE_URL` di `.env.catalyst` perangkat kantor masih host lama.
   User perlu menggantinya ke `https://route-gateway.nexlabs.cloud/v1` (atau
