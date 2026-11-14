@@ -49,6 +49,38 @@ Gap yang tersisa pada jalur presale:
 - Binary Spider di atas hasil build lokal; image `crypto-launch-bot-spider`
   belum di-publish dan pin digest di `Dockerfile.catalyst` masih nama lama.
 
+## Analyze nyata pertama dan pilihan model — 14 November 2026
+
+`.env.launch` diisi user (key memakai nama `TB_CATALYST_API_KEY`; `loadAnalyst`
+memakai itu sebagai cadangan `TB_LAUNCH_API_KEY`). User meminta model selain
+`cx/gpt-6-luna-low`, tier terendah. Arsip: `%LOCALAPPDATA%\crypto-launch-bot\lv\research`.
+
+Smoke `json_schema` strict (1 request per model, di luar kuota aplikasi):
+`cx/gpt-6-luna-low`, `cx/gpt-6-luna-medium`, `cx/gpt-6.1-sol-low`,
+`cx/gpt-6.1-sol-medium`, `cc/claude-sonnet-5-5-medium`,
+`claude/claude-sonnet-5-5-medium`, `openrouter/anthropic/claude-sonnet-5.5-medium`
+dan `openrouter/google/gemini-3.1-pro-preview` lulus (finish `stop`, JSON
+sesuai schema, 2–6 detik). `cxa/gpt-6-sol-medium` HTTP 503. Endpoint admin
+`/api/*` menjawab 403 untuk key ini; hanya `/v1/models` dan `/v1/combos` terbaca.
+
+Lalu `collect -source curve -limit 10` dan `analyze` satu kandidat curve
+(`held`: pajak 2%/3%, 1 holder) dengan tiga model, memakai 3 dari 12 slot hari itu:
+
+| Model | Hasil | Waktu | Token in/out |
+|---|---|---:|---:|
+| `cx/gpt-6-luna-low` | **Ditolak validator**: `asset_key` ditulis `eip155:56/0x…` (garis miring), bukan `eip155:56:0x…` | 11,7 s | 13.945 / 526 |
+| `cx/gpt-6.1-sol-medium` | Valid, `WATCH` | 22,2 s | 13.945 / 642 |
+| `cc/claude-sonnet-5-5-medium` | Valid, `WATCH` | 8,9 s | 16.798 / 929 |
+
+Validator bekerja seperti dirancang: identitas yang salah satu karakter pun
+ditolak dan slot tetap terpakai. Sol menandai bahwa `curve_round_trip_cost_fraction`
+0,023 tampak di bawah batas 0,05 padahal alasan `curve_round_trip_cost_above_policy`.
+Selisih itu berasal dari pajak yang ditambahkan policy, yang tidak dijelaskan
+di packet. Model melaporkannya sebagai inkonsistensi, tidak mengabaikannya.
+
+Satu kasus per model bukan evaluasi. Penerimaan pilot tetap butuh minimal
+sepuluh kasus berlabel per jalur ([metode](../presale-analysis.md#metode-simulasi-dan-evaluasi-v1)).
+
 ## Policy exit v3 dan data curve dari chain — 14 November 2026
 
 User menyetujui batas exit usulan agent dan memilih data holder curve dari

@@ -34,7 +34,11 @@
   dari chain. Pass nyata: semua tetap `held` karena alasan policy yang konkret,
   bukan lagi `holder_liquidity_and_exit_policy_pending`. Lihat
   [checkpoint](testing/plan-4-local.md#policy-exit-v3-dan-data-curve-dari-chain--14-november-2026).
-- **Terhalang, butuh user:** `analyze` gagal di transport karena
+- 14 November: `analyze` nyata pertama berhasil di perangkat Windows. Luna-low
+  ditolak validator (format `asset_key`); `cx/gpt-6.1-sol-medium` dan
+  `cc/claude-sonnet-5-5-medium` valid. Lihat
+  [checkpoint](testing/plan-4-local.md#analyze-nyata-pertama-dan-pilihan-model--14-november-2026).
+- (Historis, perangkat kantor 13 November) `analyze` gagal di transport karena
   `TB_CATALYST_BASE_URL` di `.env.catalyst` perangkat kantor masih host lama.
   User perlu menggantinya ke `https://route-gateway.nexlabs.cloud/v1` (atau
   membuat `.env.launch`); agent tidak mengubah env privat. Dua slot AI 13
