@@ -1,0 +1,25 @@
+name: crypto-launch
+
+# One-shot research collector; ana-core and ana-scout are untouched.
+services:
+  launch:
+    image: ${LAUNCH_IMAGE:?set the locally built launch image}
+    restart: "no"
+    init: true
+    cpus: "0.50"
+    mem_limit: 512m
+    pids_limit: 128
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:size=16m,noexec,nosuid
+    env_file:
+      - path: /opt/crypto-launch/.env.launch
+        required: false
+    volumes:
+      - archive:/var/lib/launch
+    command: ["-action", "report", "-archive", "/var/lib/launch/research", "-spider-binary", "/usr/local/bin/spider"]
+
+volumes:
+  archive:

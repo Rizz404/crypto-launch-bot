@@ -1,0 +1,12 @@
+[Unit]
+Description=Plan 4 launch research pass (collect all sources, write report)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/crypto-launch/repo/deploy/launch-collect.sh
+UMask=0077
+Nice=10
+# Four sources at up to 12 minutes each, plus the report.
+TimeoutStartSec=60min

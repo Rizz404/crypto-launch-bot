@@ -1,0 +1,28 @@
+# Plan 4 research collector: launch CLI plus the pinned Spider binary for presale pages.
+# SPIDER_IMAGE is any image holding spider_cli 2.53.9-p3.1 at SPIDER_PATH; the server
+# passes its local ana-scout image so builds need no registry access.
+ARG SPIDER_IMAGE=ghcr.io/rizz404/trading-bot-spider@sha256:480faea43abdb2b2e8bd6cf136ecd250e8c37039e925f0bdb38f14385a318e19
+ARG SPIDER_PATH=/spider
+FROM ${SPIDER_IMAGE} AS spider
+
+FROM docker.io/library/golang:1.27.2-bookworm AS build
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
+COPY cmd/launch ./cmd/launch
+COPY internal ./internal
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 go build -trimpath -ldflags '-s -w' -o /out/launch ./cmd/launch
+
+FROM docker.io/library/debian:bookworm-slim
+ARG SPIDER_PATH
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libssl3 && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /var/lib/launch && chown 65532:65532 /var/lib/launch
+WORKDIR /app
+COPY --from=spider ${SPIDER_PATH} /usr/local/bin/spider
+COPY --from=build /out/launch /app/launch
+COPY configs/launch.policy.json /app/configs/launch.policy.json
+RUN test "$(/usr/local/bin/spider --version)" = "spider_cli 2.53.9-p3.1"
+USER 65532:65532
+ENTRYPOINT ["/app/launch"]
+CMD ["-action", "report", "-archive", "/var/lib/launch/research"]
