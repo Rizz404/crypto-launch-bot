@@ -23,7 +23,15 @@ Sejak 14 November, pass `collect` keempat jalur lalu `report` berjalan di
 | Laporan | `/opt/crypto-launch/reports/latest.json`; disimpan 30 hari, arsip tidak dipangkas |
 
 Pass ini tanpa inference: `.env.launch` server tidak dibuat, dan `analyze`
-tetap aksi manual. Update ke commit baru:
+tetap aksi manual. Sejak 14 November, setiap pass juga menjalankan
+`-action shadow` (pilot baseline [`launch-pilot-v1`](presale-evaluation.md#pilot-shadow-launch-pilot-v1-dibekukan-14-november-2026))
+dan menulis `reports/shadow-latest.json`.
+
+Sejak hari yang sama, gap cakupan batch (`bounded_*`, `factory_backlog_pending`)
+tidak lagi menahan kandidat yang sudah diperiksa lengkap. Gap itu tetap tampil di
+`sources` laporan; gap kegagalan sumber tetap menahan semua kandidat.
+
+Update ke commit baru:
 
 ```sh
 cd /opt/crypto-launch/repo && git fetch -q origin main && git checkout -q --detach origin/main

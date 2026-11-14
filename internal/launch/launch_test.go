@@ -136,6 +136,19 @@ func TestHistoryPreservesFirstSeenAndHoldsConflict(t *testing.T) {
 	}
 }
 
+func TestCoverageGapsDoNotHoldInspectedCandidates(t *testing.T) {
+	c := sampleCEX()
+	b := Batch{Version: Version, Kind: "cex", At: testNow, Candidates: []Candidate{c}, Gaps: []string{"bounded_cex_scan_not_complete"}}
+	r, err := summarize([]Batch{b}, testNow, func(string) error { return nil })
+	if err != nil || r.Reviews[0].Status != "accepted_for_research" || !slices.Contains(r.Sources["cex"].Gaps, "bounded_cex_scan_not_complete") {
+		t.Fatalf("coverage gap held a fully inspected candidate or vanished from the report: %+v %v", r.Reviews[0], err)
+	}
+	b.Gaps = append(b.Gaps, "exchange_info_unavailable")
+	if r, _ = summarize([]Batch{b}, testNow, func(string) error { return nil }); r.Reviews[0].Status != "held" {
+		t.Fatal("source failure no longer holds candidates")
+	}
+}
+
 type roundTrip func(*http.Request) (*http.Response, error)
 
 func (f roundTrip) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }

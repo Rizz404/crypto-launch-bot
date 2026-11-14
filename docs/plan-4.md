@@ -166,6 +166,9 @@ punya bukti baru dan tidak ada adapter yang diam-diam memakai uang asli.
 
 ### P4-5 — Monitoring dan penerimaan pilot
 
+- [x] 14 November: pilot shadow baseline tanpa AI `launch-pilot-v1` dipasang di
+  server; parameter dibekukan sebelum hasil ([evaluasi](presale-evaluation.md#pilot-shadow-launch-pilot-v1-dibekukan-14-november-2026)).
+  Evaluasi model 40 kasus berjalan bertahap (5/40 lulus).
 - [ ] Dashboard/Telegram menampilkan sumber/gap, alasan keputusan, saldo
   tersedia/terkunci, posisi, status transaksi dan biaya per jalur.
 - [ ] Proteksi dan rekonsiliasi berjalan independen dari latensi/gagalnya AI;

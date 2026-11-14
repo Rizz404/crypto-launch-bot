@@ -12,6 +12,10 @@ import (
 	"github.com/rizz404/crypto-launch-bot/internal/catalyst"
 )
 
+func coverageGap(gap string) bool {
+	return strings.HasPrefix(gap, "bounded_") || gap == "factory_backlog_pending"
+}
+
 func history(archive catalyst.Archive) ([]Batch, error) {
 	ids, err := archive.IDs("launch-batches")
 	if err != nil {
@@ -201,7 +205,9 @@ func summarize(batches []Batch, now time.Time, evidence func(string) error) (Rep
 			}
 		}
 		source := r.Sources[candidate.Kind]
-		gaps := slices.Clone(source.Gaps)
+		// Coverage gaps say the pass did not see every listing; they say nothing about a
+		// candidate it did inspect, so only failure gaps hold individual candidates.
+		gaps := slices.DeleteFunc(slices.Clone(source.Gaps), coverageGap)
 		if source.At.After(candidate.ObservedAt) && len(source.Candidates) == 0 {
 			gaps = append(gaps, "candidate_not_reobserved")
 		}

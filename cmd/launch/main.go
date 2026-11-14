@@ -22,7 +22,7 @@ import (
 
 func run(ctx context.Context, args []string, out io.Writer) error {
 	f := flag.NewFlagSet("launch", flag.ContinueOnError)
-	action := f.String("action", "report", "report, collect, analyze, replay-paper (synthetic offline) or paper-report")
+	action := f.String("action", "report", "report, collect, analyze, shadow (no-AI baseline pilot), replay-paper (synthetic offline) or paper-report")
 	kind := f.String("source", "all", "all, presale, dex, cex or curve")
 	dir := f.String("archive", "var/launch", "isolated research archive, never a financial ledger")
 	spider := f.String("spider-binary", "spider", "pinned Spider CLI for presale website collection")
@@ -93,6 +93,21 @@ func run(ctx context.Context, args []string, out io.Writer) error {
 			State   launch.PaperState   `json:"state"`
 			Context launch.PaperContext `json:"context"`
 		}{state, state.Context(state.At)})
+	}
+	if *action == "shadow" {
+		p := launch.PaperPolicy{}
+		if err = readJSON(*policyPath, &p); err != nil {
+			return err
+		}
+		ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
+		defer cancel()
+		state, shadowErr := launch.Shadow(ctx, launch.NewClient(archive), p, time.Now().UTC())
+		encoder := json.NewEncoder(out)
+		encoder.SetIndent("", "  ")
+		if err = encoder.Encode(state); err != nil {
+			return err
+		}
+		return shadowErr
 	}
 	var report launch.Report
 	switch *action {

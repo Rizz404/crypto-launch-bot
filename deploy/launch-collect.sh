@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# One research pass on the Plan 4 archive: collect every source, then write a report.
-# No inference, wallet or trading credentials. Run by crypto-launch-collect.service.
+# One research pass on the Plan 4 archive: collect every source, write a report, then
+# advance the virtual shadow pilot. No inference, wallet or trading credentials.
+# Run by crypto-launch-collect.service.
 set -euo pipefail
 cd /opt/crypto-launch/repo
 image=$(cat /opt/crypto-launch/image)
@@ -18,6 +19,13 @@ for source in curve dex cex presale; do
 done
 run -action report -archive /var/lib/launch/research > "$reports/report-$stamp.json"
 ln -sfn "report-$stamp.json" "$reports/latest.json"
+# No-AI baseline pilot launch-pilot-v1: virtual entries/exits on live quotes only.
+if run -action shadow -archive /var/lib/launch/research > "$reports/shadow-$stamp.json"; then
+  ln -sfn "shadow-$stamp.json" "$reports/shadow-latest.json"
+else
+  echo "shadow pass failed" >&2
+  status=1
+fi
 # Keep 30 days of reports; the archive itself is never pruned here.
-find "$reports" -name 'report-*.json' -mtime +30 -delete
+find "$reports" \( -name 'report-*.json' -o -name 'shadow-*.json' \) -mtime +30 -delete
 exit "$status"
