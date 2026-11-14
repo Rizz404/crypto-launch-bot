@@ -38,6 +38,12 @@
   ditolak validator (format `asset_key`); `cx/gpt-6.1-sol-medium` dan
   `cc/claude-sonnet-5-5-medium` valid. Lihat
   [checkpoint](testing/plan-4-local.md#analyze-nyata-pertama-dan-pilihan-model--14-november-2026).
+- 14 November, lanjutan: pass `collect` keempat jalur berjalan otomatis di
+  `plesk-newest` tiap 4 jam (`crypto-launch-collect.timer`, `/opt/crypto-launch`,
+  tanpa AI). Set evaluasi 40 kasus `scripts/launch-model-eval` sudah ada; 5
+  lulus, 35 menunggu kuota hari berikutnya. Lihat
+  [runtime](presale-runtime.md#pass-terjadwal-di-server) dan
+  [checkpoint](testing/plan-4-local.md#pass-terjadwal-dan-set-evaluasi-14-november-lanjutan).
 - (Historis, perangkat kantor 13 November) `analyze` gagal di transport karena
   `TB_CATALYST_BASE_URL` di `.env.catalyst` perangkat kantor masih host lama.
   User perlu menggantinya ke `https://route-gateway.nexlabs.cloud/v1` (atau

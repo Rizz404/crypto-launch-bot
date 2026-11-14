@@ -118,6 +118,38 @@ Kesalahan ini sempat terjadi sebelum diperbaiki: `report` gagal dengan
 
 Slot AI 14 November WIB terpakai 7 dari 12.
 
+### Pass terjadwal dan set evaluasi (14 November, lanjutan)
+
+User meminta pass berkala di server, bukan di laptop, dan menyerahkan detailnya
+ke agent. Hasil di `plesk-newest` ([runtime](../presale-runtime.md#pass-terjadwal-di-server)):
+
+| Pemeriksaan | Hasil |
+|---|---|
+| Build `Dockerfile.launch` di server, Spider dari image `ana-scout` | `spider_cli 2.53.9-p3.1`, CLI berjalan |
+| `systemd-analyze verify` unit baru | Lulus |
+| Pass manual lalu pass pertama dari timer | `Result=success`, ±10 menit per pass. Curve 10 `held`, DEX 10 `held`, CEX 10 `rejected`, presale 7 `rejected` |
+
+Satu perubahan di server di luar `/opt/crypto-launch`: `/root/.ssh/known_hosts`
+memuat host key GitHub yang ditambahkan agent saat probe (ada backup
+`.bak-20261114-launch`). Entri itu dihapus; checkout memakai `known_hosts`
+milik deploy key `ana-core`.
+
+Set evaluasi [`scripts/launch-model-eval`](../../scripts/launch-model-eval):
+40 kasus sintetis berlabel, 10 per jalur, mencakup baseline, unknown, konflik,
+pasar buruk, lifecycle dan injeksi prompt. Test memastikan setiap fixture
+diverifikasi sesuai label sebelum model dipanggil, dan tidak ada label
+proposal untuk kandidat `held`/`rejected`. Script memakai budget harian arsip
+Plan 4 yang sama, lalu melanjutkan kasus yang belum ada hasilnya pada hari berikutnya.
+
+Batch pertama dengan `launch-research`: 5/5 lulus (`curve-clean` WATCH,
+`curve-honeypot` REJECT, `cex-older-than-30d` REJECT, `dex-injection` WATCH,
+`presale-injection` WATCH). Slot 14 November habis (12/12). Sisa 35 kasus:
+lanjutkan dengan
+
+```powershell
+go run ./scripts/launch-model-eval -budget-archive "$env:LOCALAPPDATA\crypto-launch-bot\lv\research"
+```
+
 ## Policy exit v3 dan data curve dari chain — 14 November 2026
 
 User menyetujui batas exit usulan agent dan memilih data holder curve dari

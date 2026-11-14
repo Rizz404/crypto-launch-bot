@@ -7,6 +7,33 @@ juga lulus dengan Spider build lokal; `analyze` belum.
 [Pilihan integrasi](presale-integrations.md) dan [checkpoint](testing/plan-4-local.md#verifikasi-12-november-2026)
 menjelaskan sumber serta batas bukti. Bukan runtime transaksi atau pilot.
 
+## Pass terjadwal di server
+
+Sejak 14 November, pass `collect` keempat jalur lalu `report` berjalan di
+`plesk-newest` tiap 4 jam (00:07, 04:07, … UTC, ±5 menit), terpisah dari
+`ana-core` dan `ana-scout`.
+
+| Item | Lokasi |
+|---|---|
+| Direktori | `/opt/crypto-launch` (root, 0700): `repo/`, `image`, `reports/` |
+| Image | `crypto-launch:sha-<commit>`, build lokal dari [Dockerfile.launch](../Dockerfile.launch); binary Spider diambil dari image `ana-scout` yang sudah ada di server |
+| Compose | Project `crypto-launch` ([compose.launch.yml](../deploy/compose.launch.yml)), read-only, 0,5 CPU, 512 MB |
+| Arsip | Volume `crypto-launch_archive` (`/var/lib/launch/research` di container) |
+| Jadwal | `crypto-launch-collect.timer` → [launch-collect.sh](../deploy/launch-collect.sh) |
+| Laporan | `/opt/crypto-launch/reports/latest.json`; disimpan 30 hari, arsip tidak dipangkas |
+
+Pass ini tanpa inference: `.env.launch` server tidak dibuat, dan `analyze`
+tetap aksi manual. Update ke commit baru:
+
+```sh
+cd /opt/crypto-launch/repo && git fetch -q origin main && git checkout -q --detach origin/main
+rev=$(git rev-parse --short HEAD)
+docker build -f Dockerfile.launch --build-arg SPIDER_IMAGE=ghcr.io/rizz404/ana-scout:sha-c1ce8569c15eaa1685ad2488a9293ac041411150 --build-arg SPIDER_PATH=/usr/local/bin/spider -t crypto-launch:sha-$rev .
+echo crypto-launch:sha-$rev > /opt/crypto-launch/image
+```
+
+Checkout memakai deploy key read-only `ana-core` (`core.sshCommand` repo).
+
 ## Perintah
 
 CLI `cmd/launch` terpisah dari `bot` dan `catalyst`. Build melalui target build
