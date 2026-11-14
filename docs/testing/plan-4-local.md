@@ -81,6 +81,23 @@ di packet. Model melaporkannya sebagai inkonsistensi, tidak mengabaikannya.
 Satu kasus per model bukan evaluasi. Penerimaan pilot tetap butuh minimal
 sepuluh kasus berlabel per jalur ([metode](../presale-analysis.md#metode-simulasi-dan-evaluasi-v1)).
 
+Atas permintaan user, agent membuat combo OmniRoute **`launch-research`**
+(strategi `priority`, `maxRetries` 1, urutan manual) memakai management key
+yang user isikan di `.env.launch`:
+
+1. `cc/claude-sonnet-5-5-medium`
+2. `cx/gpt-6.1-sol-medium`
+3. `openrouter/google/gemini-3.1-pro-preview`
+4. `openrouter/anthropic/claude-sonnet-5.5-medium`
+
+Luna-low (ditolak validator), `cxa/gpt-6-sol-medium` (HTTP 503) dan
+`claude/claude-sonnet-5-5` (parent-nya `cc/claude-sonnet-5-5`, jadi tidak
+menambah jalur) tidak dimasukkan. Dua smoke `json_schema` dan satu `analyze`
+lewat nama combo lulus, dilayani target pertama: `valid`, `REJECT`, 9,5 s,
+10.108/957 token. Fallback ke target 2–4 belum terbukti jalan; target 3 dan 4
+baru lulus smoke, belum analyze nyata. Fallback hanya untuk error layanan,
+bukan untuk jawaban yang ditolak validator.
+
 ## Policy exit v3 dan data curve dari chain — 14 November 2026
 
 User menyetujui batas exit usulan agent dan memilih data holder curve dari
