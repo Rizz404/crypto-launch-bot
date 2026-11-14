@@ -49,6 +49,47 @@ Gap yang tersisa pada jalur presale:
 - Binary Spider di atas hasil build lokal; image `crypto-launch-bot-spider`
   belum di-publish dan pin digest di `Dockerfile.catalyst` masih nama lama.
 
+## Dukungan Windows — 14 November 2026
+
+Atas permintaan user, test, CLI dan skrip pendukung dibuat lintas platform. Penyebab
+gagal sebelumnya: `syscall.Flock`/`Statfs` tidak ada di Windows. Kini
+`internal/catalyst/fs_unix.go` dan `fs_windows.go` (`golang.org/x/sys/windows`,
+dependency yang sudah ada) menyediakan `LockFile`, `UnlockFile`, `SyncDir` dan
+ruang disk. `SyncDir` di Windows hanya memeriksa direktori karena handle
+direktori tidak bisa di-fsync; isi file tetap di-fsync. Perilaku Linux sama.
+
+Perubahan lintas platform lain pada hari yang sama:
+
+- Test Spider tidak lagi memakai skrip `#!/bin/sh`. Binary palsu adalah salinan
+  test binary itu sendiri (`TestMain` di `spider_test.go`), jadi keempat test
+  subprocess jalan di semua OS tanpa skip.
+- `cmd/portfolio-backtest` memakai `os.DevNull`, bukan `/dev/null`.
+- Default cache `/tmp/crypto-launch-bot-year` pada skrip backtest Go/Python
+  kini `<temp OS>/crypto-launch-bot-year`. Di Linux hasilnya tetap `/tmp/...`.
+- `scripts/backtest-queue`: `fcntl.flock` diganti `lock_exclusive` (msvcrt di
+  Windows). `launch` tetap memakai `systemd-run`, jadi khusus Linux.
+- `deploy/vps-observe.py`: `os.getloadavg` opsional. Test backup
+  `catalyst-backup.sh` di-skip di Windows karena script itu khusus VPS Linux.
+- `Makefile`: asset Tailwind dipilih per OS/arch dengan checksum dari
+  `sha256sums.txt` rilis 4.3.3, dan binary memakai suffix `$(go env GOEXE)`.
+  Di Windows butuh GNU make dan shell POSIX (Git Bash/MSYS2).
+- `.gitattributes` `eol=lf`: script bash dan `gofmt` di CI butuh LF. Checkout
+  Windows dengan `core.autocrlf=true` sebelumnya menghasilkan CRLF.
+- CI: job `windows` (`go vet`, `go test`, test Python).
+
+| Pemeriksaan | Hasil |
+|---|---|
+| Windows: `go build ./...`, `go vet ./...`, `go test ./...` | Lulus semua paket, test Spider subprocess tidak di-skip |
+| Windows: unittest `deploy` dan `scripts/backtest-queue` | Lulus (1 skip: backup bash) |
+| Windows: lock `lock_exclusive` kedua pada file yang sama | Ditolak, sesuai harapan |
+| Cross: `GOOS=linux go vet ./...`, `GOOS=darwin go vet ./...` | Lulus |
+| Linux: test binary `catalyst`, `launch`, `cmd/launch`, `cmd/portfolio-backtest` (dikompilasi `GOOS=linux`, dijalankan di WSL Fedora 45) | Lulus |
+| Linux: unittest `scripts/backtest-queue` | Lulus |
+
+Belum diverifikasi: `Makefile` (tidak ada `make` di Windows maupun WSL lokal),
+job CI Windows (belum di-push), race test, test integrasi DB, dan test backup
+bash di Linux (WSL Fedora 45 lokal tidak punya `awk`; runner Ubuntu CI punya).
+
 ## Pass ketiga, analyze dan policy v2 — 13 November 2026
 
 Dijalankan sesudah user berkata "lanjut terus, pilih yang best practice, tanya

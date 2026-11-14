@@ -49,9 +49,11 @@
   discovery; analisis/paper belum mengenalnya). Pass nyata lulus untuk presale,
   DEX dan curve; belum ada sale presale yang masih terbuka. Lihat
   [checkpoint](testing/plan-4-local.md#sumber-tambahan-12-november-lanjutan).
-- Lingkungan: Go hanya tersedia di WSL (`FedoraLinux-44`, shell fish), jadi
-  tulis perintah ke file `.sh` dan set `GOTOOLCHAIN=go1.27.2` (bawaan 1.26).
-  Arsip uji jangan ke `var/launch`; di perangkat kantor arsip dan binary ada di
+- Lingkungan: sejak 14 November proyek lintas platform. `go test ./...` dan
+  test Python lulus di Windows dan Linux; CI menambah job Windows. Lihat
+  [checkpoint](testing/plan-4-local.md#dukungan-windows--14-november-2026).
+  WSL tidak lagi wajib (perangkat kantor masih bisa memakai `FedoraLinux-44`
+  dengan `GOTOOLCHAIN=go1.27.2`). Arsip uji jangan ke `var/launch`; di perangkat kantor arsip dan binary ada di
   `~/.local/state/crypto-launch-bot/lv` (WSL) karena `/tmp` terhapus saat restart.
 - Penamaan (12 November; build, unit, integrasi dan test alert lulus sesudahnya): path module Go kini
   `github.com/rizz404/crypto-launch-bot`. Atas izin user (proyek belum ter-deploy)
@@ -143,7 +145,7 @@ tambahan pada catalyst, ignore `var/launch` dan target build CLI. Tidak ada
 dependency/migrasi/config uang baru. Sumber API dan RPC dibatasi allowlist;
 presale tetap Spider/robots pinned, tanpa fallback HTTP. Archive immutable
 terpisah; laporan memisahkan status accepted-for-research/held/rejected dan
-selalu mematikan entry. Pemakaian archive lama mengharuskan Linux/WSL/container.
+selalu mematikan entry. Archive jalan di Linux dan Windows sejak 14 November.
 [Panduan CLI](presale-runtime.md), [checkpoint](testing/plan-4-local.md).
 
 P4-3 menambah `launch-paper-v1`, helper sizing, context paper eksplisit,

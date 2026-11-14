@@ -88,8 +88,8 @@ hanya memiliki satu aksi outstanding, dan position ID tidak dipakai ulang.
 
 ## Perintah dan fixture contoh
 
-Referensi berikut **belum dijalankan**. Runtime memakai Linux/WSL/container
-karena archive dan lock memakai syscall Unix.
+Replay fixture sudah dijalankan sejak 10 November. Archive dan lock jalan di
+Linux maupun Windows sejak 14 November.
 
 ```sh
 ./bin/launch -action replay-paper -fixture configs/launch.paper.fixture.json -paper-archive var/launch-paper

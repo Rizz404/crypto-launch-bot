@@ -10,8 +10,9 @@ menjelaskan sumber serta batas bukti. Bukan runtime transaksi atau pilot.
 ## Perintah
 
 CLI `cmd/launch` terpisah dari `bot` dan `catalyst`. Build melalui target build
-yang sudah ada kini juga menyertakan `bin/launch`. Jalankan pada Linux/WSL atau
-container yang sesuai; archive reuse masih memakai syscall Unix. Belum ada
+yang sudah ada kini juga menyertakan `bin/launch`. Sejak 14 November archive,
+lock dan journal jalan di Linux maupun Windows (`internal/catalyst/fs_*.go`);
+binary Spider pinned tetap build Linux/container. Belum ada
 image/deployment/daemon khusus Plan 4. Perintah berikut referensi; arsip uji
 manual sebaiknya diarahkan ke direktori sementara dengan `-archive`.
 

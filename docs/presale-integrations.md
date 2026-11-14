@@ -119,8 +119,8 @@ record tetap tunduk batas arsip 8 MiB. Kuota arsip 256 MiB menghentikan penulisa
 baru, tidak menghapus bukti. Ini budget development, belum kapasitas VPS yang
 diukur atau jadwal daemon. Jangan menafsirkan cooldown sebagai SLA freshness.
 
-Prasyarat saat runtime kelak diuji: Linux/WSL/container untuk archive yang
-memakai syscall Unix, Go sesuai go.mod, binary Spider pinned 2.53.9-p3.1 bagi
+Prasyarat saat runtime kelak diuji: Linux atau Windows (sejak 14 November),
+Go sesuai go.mod, binary Spider pinned 2.53.9-p3.1 bagi
 presale, serta akses publik DNS/TLS ke host terpilih. Tidak memerlukan token
 Telegram, key trading, key OmniRoute atau database untuk P4-1/P4-2.
 
