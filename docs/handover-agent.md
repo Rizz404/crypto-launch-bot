@@ -44,6 +44,11 @@
   lulus, 35 menunggu kuota hari berikutnya. Lihat
   [runtime](presale-runtime.md#pass-terjadwal-di-server) dan
   [checkpoint](testing/plan-4-local.md#pass-terjadwal-dan-set-evaluasi-14-november-lanjutan).
+- **Pilot shadow `launch-pilot-v1` berjalan sejak T0 2026-11-14T16:41Z** di
+  server, tiap pass 4 jam, tanpa AI. Entry baru berhenti 28 November 16:41Z.
+  Parameternya dibekukan; jangan mengubah angka di tengah pilot. Lihat
+  [evaluasi](presale-evaluation.md#pilot-shadow-launch-pilot-v1-dibekukan-14-november-2026)
+  dan [checkpoint](testing/plan-4-local.md#ci-hijau-dan-pilot-shadow-dimulai-14-november-malam).
 - 14 November, CI: image kini dipublikasikan sebagai `ghcr.io/rizz404/crypto-launch-bot`
   (bot) dan `ghcr.io/rizz404/crypto-launch-bot-launch` (Plan 4 + Spider); Spider
   dari `crypto-launch-bot-spider@sha256:092dfbbd…`. Job container yang gagal sejak

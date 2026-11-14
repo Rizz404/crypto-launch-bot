@@ -150,6 +150,22 @@ lanjutkan dengan
 go run ./scripts/launch-model-eval -budget-archive "$env:LOCALAPPDATA\crypto-launch-bot\lv\research"
 ```
 
+### CI hijau dan pilot shadow dimulai (14 November, malam)
+
+- CI run `43613585398` hijau di semua job untuk pertama kali sejak 12 November,
+  setelah image dipindah ke nama `crypto-launch-bot*` milik repo ini.
+- Laporan server menunjukkan semua kandidat `held` hanya karena gap cakupan
+  batch (`bounded_*`). Gap itu menyatakan pass tidak melihat semua listing, bukan
+  bahwa kandidat yang diperiksa kurang bukti. Kini hanya gap kegagalan sumber
+  yang menahan kandidat; test `TestCoverageGapsDoNotHoldInspectedCandidates`.
+- Pilot shadow `launch-pilot-v1` dipasang di server (`c968220`). **T0
+  2026-11-14T16:41:26Z.** Pass pertama: satu kandidat lolos semua aturan,
+  `APPBUSDT` (listing Binance 28 Oktober, 17 hari), dibeli virtual 0,0608 unit
+  seharga 24,64 USDT termasuk fee. Batasnya risiko CEX 0,5% dengan stop 20%,
+  bukan plafon nominal 10%. Curve, DEX dan presale tidak ada yang lolos.
+- Hasil pilot dibaca dari `/opt/crypto-launch/reports/shadow-latest.json`.
+  Pilot berakhir untuk entry baru pada 2026-11-28T16:41Z.
+
 ## Policy exit v3 dan data curve dari chain — 14 November 2026
 
 User menyetujui batas exit usulan agent dan memilih data holder curve dari
