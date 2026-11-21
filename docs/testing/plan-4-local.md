@@ -150,6 +150,34 @@ lanjutkan dengan
 go run ./scripts/launch-model-eval -budget-archive "$env:LOCALAPPDATA\crypto-launch-bot\lv\research"
 ```
 
+### Gangguan server dan pilot v2 — 21 November 2026
+
+User menanyakan status. Pemeriksaan server menemukan **22 pass gagal berturut-turut**
+dari 16 November 04:07Z sampai 21 November 08:07Z. Penyebabnya
+`pull access denied for crypto-launch`: image lokal dihapus oleh cron
+`/etc/cron.d/docker-image-prune` (`docker image prune -af --filter until=24h`,
+dibuat 10 November). Container `run --rm` tidak tersisa, jadi image dianggap
+tidak terpakai. Tidak ada notifikasi; kegagalan baru terlihat saat dicek.
+
+Perbaikan (`2fdda49`, `c64c176`):
+- Jadwal membuat container berhenti `crypto-launch-pin` dan `crypto-launch-spider-pin`,
+  supaya kedua image tetap direferensikan. Image yang sudah hilang dibangun
+  ulang dari commit-nya, dan `--pull never` mencegah pencarian ke registry.
+- Pilot v1 tidak berhenti walaupun 5,5 hari tanpa pass, karena degradasi diukur
+  sesudah pass sehat menyegarkannya. Kode v2 mengukurnya sebelum itu; test
+  `TestShadowStopsAfterALongGapWithoutPasses`.
+
+Hasil v1 sebelum dibatalkan (bukti, bukan penilaian): dua entry CEX, `APPBUSDT`
+keluar 21,42 dari biaya 24,64 dan `BOTBUSDT` keluar 26,75 dari biaya 24,70,
+keduanya lewat batas 72 jam setelah 5,5 hari. `ANTBUSDT` sempat dibeli pada pass
+pemulihan dan tetap terbuka di journal v1. Equity akhir v1 998,82. Salinan:
+`/opt/crypto-launch/reports/shadow-v1-final.json`.
+
+**Pilot v2 T0 2026-11-21T12:03:54Z**, angka sama dengan v1, entry baru sampai
+2026-12-05T12:03Z. Pass pertama: belum ada kandidat yang lolos.
+
+Cron prune milik host tidak diubah karena juga melayani layanan lain di server.
+
 ### CI hijau dan pilot shadow dimulai (14 November, malam)
 
 - CI run `43613585398` hijau di semua job untuk pertama kali sejak 12 November,

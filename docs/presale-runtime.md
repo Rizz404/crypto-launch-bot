@@ -42,6 +42,19 @@ echo crypto-launch:sha-$rev > /opt/crypto-launch/image
 
 Checkout memakai deploy key read-only `ana-core` (`core.sshCommand` repo).
 
+Host menjalankan `docker image prune -af --filter until=24h` tiap hari pukul
+00:33 UTC (`/etc/cron.d/docker-image-prune`). Script jadwal menjaga image tetap
+ada dengan container berhenti `crypto-launch-pin` dan `crypto-launch-spider-pin`.
+Jangan hapus container itu. Kalau image tetap hilang, pass berikutnya membangunnya
+ulang dari commit di `/opt/crypto-launch/image`.
+
+Status cepat:
+
+```sh
+systemctl show crypto-launch-collect.service -p Result
+journalctl -u crypto-launch-collect.service -n 20 -o cat
+```
+
 ## Perintah
 
 CLI `cmd/launch` terpisah dari `bot` dan `catalyst`. Build melalui target build

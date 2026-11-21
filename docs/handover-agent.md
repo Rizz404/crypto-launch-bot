@@ -44,8 +44,10 @@
   lulus, 35 menunggu kuota hari berikutnya. Lihat
   [runtime](presale-runtime.md#pass-terjadwal-di-server) dan
   [checkpoint](testing/plan-4-local.md#pass-terjadwal-dan-set-evaluasi-14-november-lanjutan).
-- **Pilot shadow `launch-pilot-v1` berjalan sejak T0 2026-11-14T16:41Z** di
-  server, tiap pass 4 jam, tanpa AI. Entry baru berhenti 28 November 16:41Z.
+- **Pilot shadow `launch-pilot-v2` berjalan sejak T0 2026-11-21T12:03Z** di
+  server, tiap pass 4 jam, tanpa AI. Entry baru berhenti 5 Desember 12:03Z.
+  v1 (T0 14 November) dibatalkan setelah cron prune image server menghentikan
+  pass selama 5,5 hari; lihat [checkpoint](testing/plan-4-local.md#gangguan-server-dan-pilot-v2--21-november-2026).
   Parameternya dibekukan; jangan mengubah angka di tengah pilot. Lihat
   [evaluasi](presale-evaluation.md#pilot-shadow-launch-pilot-v1-dibekukan-14-november-2026)
   dan [checkpoint](testing/plan-4-local.md#ci-hijau-dan-pilot-shadow-dimulai-14-november-malam).
