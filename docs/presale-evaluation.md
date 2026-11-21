@@ -56,15 +56,30 @@ tanpa AI pada universe dan biaya yang sama bila datanya memungkinkan.
 5. **Live:** temuan kritis selesai, signer/limit/backup/recovery/insiden siap,
    dan ada izin eksplisit user untuk integrasi serta nominal konkret.
 
-## Pilot shadow `launch-pilot-v1` (dibekukan 14 November 2026)
+## Pilot shadow `launch-pilot-v1`/`v2` (dibekukan 14 November 2026)
 
 User memilih shadow baseline tanpa AI dan menyetujui parameter berikut sebelum
 ada hasil. Kode: [`internal/launch/shadow.go`](../internal/launch/shadow.go).
 Mengubah angka apa pun berarti versi pilot baru, bukan penyesuaian di tengah jalan.
 
+**v1 dibatalkan, bukan dinilai.** Cron server (`docker image prune -af --filter
+until=24h`) menghapus image lokal, sehingga tidak ada pass dari 16 November
+00:18Z sampai 21 November 11:50Z. Aturan stop 72 jam semestinya menghentikan v1,
+tetapi kode v1 hanya mengukur degradasi saat pass berjalan, dan pass yang
+mengakhiri jeda itu sehat. Akibatnya, dua posisi v1 keluar lewat batas 72 jam,
+5,5 hari setelah dibuka. Hasil v1 (`launch-shadow`, 10 record) disimpan sebagai
+bukti, bukan hasil pilot.
+
+**v2 memakai angka v1 tanpa perubahan**, dengan dua perbaikan:
+- degradasi diukur sebelum pass yang sedang berjalan menyegarkannya;
+- jadwal menyimpan container "pin" agar image tidak ikut di-prune, dan membangun
+  ulang image yang hilang dari commit yang sama.
+
+Journal v2: `launch-shadow-v2`, T0 baru pada pass v2 pertama.
+
 | Parameter | Nilai |
 |---|---|
-| T0 | Pass `shadow` pertama di server (dicatat di journal `launch-shadow`) |
+| T0 | Pass `shadow` pertama versi tersebut di server (journal `launch-shadow-v2` untuk v2) |
 | Durasi | 14 hari sejak T0; sesudahnya tidak ada entry baru, posisi terbuka tetap dipantau sampai exit |
 | Modal dan sizing | 1.000 USDT virtual dan batas `launch-paper-v3` (curve 1% full-loss, CEX 10%/0,5% risiko, dua exposure, halt 2% harian dan 8% drawdown) |
 | Jalur entry | Curve dan CEX berstatus `accepted_for_research`, urut first-seen lalu ID. DEX dan presale tidak, karena keduanya selalu `held` (pool creation bukan trade pertama; syarat sale tidak terverifikasi) |

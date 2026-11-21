@@ -17,7 +17,10 @@ import (
 // ShadowVersion names the pilot parameters the user approved on 2026-11-14. The
 // shadow book is a deterministic no-AI baseline: it records what policy would buy
 // at live quotes and marks it with live sell quotes. It never signs or sends anything.
-const ShadowVersion = "launch-pilot-v1"
+// v2 keeps v1's numbers; v1 missed its own 72h stop during a 5.5-day host outage
+// because it only checked degradation when a pass ran. Each version has its own journal.
+const ShadowVersion = "launch-pilot-v2"
+const shadowJournal = "launch-shadow-v2"
 
 const (
 	shadowDays        = 14
@@ -91,7 +94,7 @@ func (s *ShadowState) event(now time.Time, kind, ref, detail string) {
 
 // LoadShadow returns the newest state, checking that the chain of records is unbroken.
 func LoadShadow(archive catalyst.Archive) (ShadowState, string, error) {
-	ids, err := archive.IDs("launch-shadow")
+	ids, err := archive.IDs(shadowJournal)
 	if err != nil || len(ids) == 0 {
 		return ShadowState{}, "", err
 	}
@@ -99,7 +102,7 @@ func LoadShadow(archive catalyst.Archive) (ShadowState, string, error) {
 	states := map[string]ShadowState{}
 	for _, id := range ids {
 		var s ShadowState
-		if err = archive.Read("launch-shadow", id, &s); err != nil {
+		if err = archive.Read(shadowJournal, id, &s); err != nil {
 			return ShadowState{}, "", err
 		}
 		if s.Version != ShadowVersion || bySeq[s.Sequence] != "" {
@@ -144,12 +147,15 @@ func Shadow(ctx context.Context, client *Client, p PaperPolicy, now time.Time) (
 	if err != nil {
 		return s, err
 	}
+	// Measured before this pass refreshes it: a long gap with no passes at all is
+	// degradation too, even when the pass that ends the gap is healthy.
+	degraded := now.Sub(s.LastHealthyAt)
 	if sourcesHealthy(report, now) {
 		s.LastHealthyAt = now
 	}
 	s.mark(ctx, client, now)
 	s.value(now)
-	if s.Stopped == "" && now.Sub(s.LastHealthyAt) >= shadowMaxDegraded {
+	if s.Stopped == "" && degraded >= shadowMaxDegraded {
 		s.Stopped = "sources_degraded_72h"
 		s.event(now, "stop", "", s.Stopped)
 	}
@@ -161,7 +167,7 @@ func Shadow(ctx context.Context, client *Client, p PaperPolicy, now time.Time) (
 		s.enter(report, p, now)
 	}
 	s.value(now)
-	if _, err = archive.Put("launch-shadow", s); err != nil {
+	if _, err = archive.Put(shadowJournal, s); err != nil {
 		return s, err
 	}
 	return s, nil

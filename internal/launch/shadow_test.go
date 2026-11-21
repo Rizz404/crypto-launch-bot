@@ -160,6 +160,28 @@ func TestShadowBuysOnlyAcceptedCandidatesAndExitsOnLiveQuotes(t *testing.T) {
 	}
 }
 
+// A pilot that ran no passes for 5.5 days (host image pruned) must stop when the
+// next pass arrives, even though that pass's sources are healthy again.
+func TestShadowStopsAfterALongGapWithoutPasses(t *testing.T) {
+	now := time.Now().UTC().Truncate(time.Second)
+	m := &shadowMarket{bid: "1", sellWei: "1"}
+	p := ApprovedPaperPolicy()
+	a := shadowArchive(t, now)
+	if _, err := Shadow(context.Background(), m.client(t, a), p, now); err != nil {
+		t.Fatal(err)
+	}
+	later := now.Add(132 * time.Hour)
+	for _, kind := range kinds {
+		if _, err := a.Put("launch-batches", Batch{Version: Version, Kind: kind, At: later}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	s, err := Shadow(context.Background(), m.client(t, a), p, later)
+	if err != nil || s.Stopped != "sources_degraded_72h" {
+		t.Fatalf("gap without passes did not stop the pilot: %v %q", err, s.Stopped)
+	}
+}
+
 func TestShadowStopsOnDrawdownAndRefusesPolicyChange(t *testing.T) {
 	now := time.Now().UTC().Truncate(time.Second)
 	a := shadowArchive(t, now)
@@ -171,17 +193,17 @@ func TestShadowStopsOnDrawdownAndRefusesPolicyChange(t *testing.T) {
 	}
 	// Simulate a loss recorded in a later state to check the drawdown gate.
 	s.Sequence, s.CashUSDT = 2, decimal.NewFromInt(900)
-	if _, err = a.Put("launch-shadow", s); err != nil {
+	if _, err = a.Put(shadowJournal, s); err != nil {
 		t.Fatal(err)
 	}
 	if _, _, err = LoadShadow(a); err == nil {
 		t.Fatal("record without its chain link accepted")
 	}
-	ids, _ := a.IDs("launch-shadow")
+	ids, _ := a.IDs(shadowJournal)
 	first := ""
 	for _, id := range ids {
 		var x ShadowState
-		_ = a.Read("launch-shadow", id, &x)
+		_ = a.Read(shadowJournal, id, &x)
 		if x.Sequence == 1 {
 			first = id
 		}
@@ -189,9 +211,9 @@ func TestShadowStopsOnDrawdownAndRefusesPolicyChange(t *testing.T) {
 	b := catalyst.Archive{Dir: t.TempDir()}
 	s.Previous = first
 	var one ShadowState
-	_ = a.Read("launch-shadow", first, &one)
-	_, _ = b.Put("launch-shadow", one)
-	_, _ = b.Put("launch-shadow", s)
+	_ = a.Read(shadowJournal, first, &one)
+	_, _ = b.Put(shadowJournal, one)
+	_, _ = b.Put(shadowJournal, s)
 	for _, kind := range kinds {
 		_, _ = b.Put("launch-batches", Batch{Version: Version, Kind: kind, At: now})
 	}
